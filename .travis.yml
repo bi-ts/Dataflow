@@ -1,0 +1,14 @@
+language: cpp
+matrix:
+  include:
+  - os: osx
+    osx_image: xcode7.3
+    compiler: clang
+script:
+- mkdir build
+- cd build
+- cmake -DCMAKE_INSTALL_PREFIX="../dataflow++-$TRAVIS_TAG" -G"Xcode" ..
+- cmake --build . --config Release
+- ctest -V -C Release .
+- cmake --build . --config Debug
+- ctest -V -C Debug .
