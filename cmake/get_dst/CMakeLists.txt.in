@@ -1,0 +1,17 @@
+
+cmake_minimum_required(VERSION 3.4)
+
+project(get-dst LANGUAGES NONE)
+
+include(ExternalProject)
+
+ExternalProject_add(dst
+  PREFIX "@EXT_PROJECTS_DIR@/dst"
+  URL "https://github.com/bi-ts/dst/releases/download/@DST_VERSION@/dst-@DST_VERSION@.zip"
+  URL_MD5 @DST_PACKAGE_MD5@
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+  )
+
