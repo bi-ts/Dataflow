@@ -38,9 +38,9 @@ node_activator::node_activator()
 }
 
 bool node_activator::update_(node_id id,
-                            bool init,
-                            const node** p_deps,
-                            std::size_t deps_count)
+                             bool init,
+                             const node** p_deps,
+                             std::size_t deps_count)
 {
   assert(p_deps != nullptr && deps_count == 1);
 

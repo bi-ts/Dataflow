@@ -40,7 +40,7 @@ public:
 
   friend value_type get(const color_map& cm, vertex_descriptor v)
   {
-  if (cm.graph_[v].vertex_color == vertex::color::white)
+    if (cm.graph_[v].vertex_color == vertex::color::white)
     {
       return boost::white_color;
     }
