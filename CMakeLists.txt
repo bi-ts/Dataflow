@@ -36,9 +36,10 @@ add_library(${PROJECT_NAME} SHARED
 
   include/dataflow/internal/config.h
   include/dataflow/internal/node.h
-  include/dataflow/internal/nodes_factory.h
+  include/dataflow/internal/node_activator.h
   include/dataflow/internal/node_t.h
   include/dataflow/internal/nodes.h
+  include/dataflow/internal/nodes_factory.h
   include/dataflow/internal/ref.h
 
   src/introspect.cpp

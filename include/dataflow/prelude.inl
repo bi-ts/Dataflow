@@ -21,6 +21,7 @@
 #endif
 
 #include "internal/config.h"
+#include "internal/node_activator.h"
 #include "internal/nodes.h"
 
 #include <cstdlib> // std::abs

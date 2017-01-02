@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "dataflow++_export.h"
-
 #include "config.h"
 #include "node_t.h"
 #include "nodes_factory.h"
@@ -280,28 +278,6 @@ private:
   {
     return "if";
   }
-
-  virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
-  {
-    return std::make_pair(sizeof(*this), alignof(decltype(*this)));
-  }
-};
-
-class DATAFLOW___EXPORT node_activator final : public node_t<bool>
-{
-public:
-  static ref create(const ref& condition);
-
-public:
-  explicit node_activator();
-
-private:
-  virtual bool update_(node_id id,
-                       bool initialized,
-                       const node** p_args,
-                       std::size_t args_count) override;
-
-  virtual std::string label_() const override;
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
   {
