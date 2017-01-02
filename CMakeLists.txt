@@ -11,26 +11,26 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
-find_package(Boost 1.61.0 EXACT QUIET)                                          
-                                                                                
-if(NOT Boost_FOUND)                                                             
-  include(get_boost)                                                            
-  get_boost(1.61.0 015ae4afa6f3e597232bfe1dab949ace)                            
-endif()                                                                         
-                                                                                
-if(NOT TARGET dst)                                                              
-  include(get_dst)                                                              
-  get_dst(0.1.1 4e9a8215e1165bf8aaec002620d4db4d)                               
-endif()                   
+find_package(Boost 1.61.0 EXACT QUIET)
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-  set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")                              
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")        
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")        
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.8")                                       
+if(NOT Boost_FOUND)
+  include(get_boost)
+  get_boost(1.61.0 015ae4afa6f3e597232bfe1dab949ace)
 endif()
 
-add_library(${PROJECT_NAME} SHARED 
+if(NOT TARGET dst)
+  include(get_dst)
+  get_dst(0.1.1 4e9a8215e1165bf8aaec002620d4db4d)
+endif()
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+  set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.8")
+endif()
+
+add_library(${PROJECT_NAME} SHARED
   include/dataflow/introspect.h
   include/dataflow/introspect.inl
   include/dataflow/prelude.h
@@ -48,8 +48,8 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude.cpp
 
   src/internal/converter.h
-  src/internal/engine.cpp 
-  src/internal/engine.h 
+  src/internal/engine.cpp
+  src/internal/engine.h
   src/internal/graph.h
   src/internal/node_main_activator.h
   src/internal/node_activator.cpp
@@ -72,8 +72,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE 
-  ${Boost_INCLUDE_DIRS} 
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${Boost_INCLUDE_DIRS}
 )
 
 add_subdirectory(test)
