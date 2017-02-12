@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -30,6 +30,10 @@
 
 namespace dataflow
 {
+
+/// \defgroup prelude
+/// \{
+
 namespace detail
 {
 template <typename T, typename U = void>
@@ -245,6 +249,9 @@ template <typename T>
 ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
 template <typename T, typename = detail::enable_if_not_ref_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
+
+/// \}
+
 }
 
 #include "prelude.inl"

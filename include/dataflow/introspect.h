@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -39,6 +39,10 @@ namespace dataflow
 {
 namespace introspect
 {
+
+/// \defgroup introspect
+/// \{
+
 namespace detail
 {
 template <typename T> class iterator_impl
@@ -209,10 +213,9 @@ DATAFLOW___EXPORT std::string value(dependency_graph::vertex_descriptor v);
 DATAFLOW___EXPORT bool
 is_dependency_active(dependency_graph::edge_descriptor e);
 
-/**
- * Checks if the given edge represents a _logical_ dependency.
- * A logical dependency links an active node with its activator.
- */
+/// Checks if the given edge represents a _logical_ dependency.
+///
+/// A logical dependency links an active node with its activator.
 DATAFLOW___EXPORT bool
 is_dependency_logical(dependency_graph::edge_descriptor e);
 
@@ -221,6 +224,8 @@ is_dependency_primary(dependency_graph::edge_descriptor e);
 
 DATAFLOW___EXPORT bool
 is_dependency_secondary(dependency_graph::edge_descriptor e);
+
+/// \}
 
 } // introspect
 } // dataflow
