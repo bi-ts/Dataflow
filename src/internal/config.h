@@ -18,13 +18,10 @@
 
 #pragma once
 
-#include <cassert>
+#include <dataflow/internal/config.h>
 
-#define DATAFLOW___CHECK_ARGUMENT(x) assert(x)
-
-#define DATAFLOW___CHECK_NOT_CALLED()                                          \
-  assert(!"The function is not supposed to be called")
-
-#define DATAFLOW___CHECK_PRECONDITION(x) assert(x)
-#define DATAFLOW___CHECK_CONDITION(x) assert(x)
-#define DATAFLOW___CHECK_POSTCONDITION(x) assert(x)
+#define CHECK_ARGUMENT(x) DATAFLOW___CHECK_ARGUMENT(x)
+#define CHECK_NOT_CALLED() DATAFLOW___CHECK_NOT_CALLED()
+#define CHECK_PRECONDITION(x) DATAFLOW___CHECK_PRECONDITION(x)
+#define CHECK_CONDITION(x) DATAFLOW___CHECK_CONDITION(x)
+#define CHECK_POSTCONDITION(x) DATAFLOW___CHECK_POSTCONDITION(x)

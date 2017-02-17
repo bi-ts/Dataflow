@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,7 +18,8 @@
 
 #pragma once
 
-#include <dataflow/internal/config.h>
+#include "config.h"
+
 #include <dataflow/internal/node.h>
 
 namespace dataflow
@@ -38,7 +39,7 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DF_CHECK_NOT_CALLED();
+    CHECK_NOT_CALLED();
 
     return false;
   }

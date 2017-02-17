@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -69,7 +69,7 @@ template <typename T> bool ref::is_of_type() const
 
 template <typename T> const T& ref::value() const
 {
-  DF_CHECK_PRECONDITION(this->is_of_type<T>());
+  DATAFLOW___CHECK_PRECONDITION(this->is_of_type<T>());
 
   return static_cast<const node_t<T>*>(get_())->value();
 }

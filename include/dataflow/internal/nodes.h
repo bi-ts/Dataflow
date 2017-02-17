@@ -51,7 +51,7 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DF_CHECK_NOT_CALLED();
+    DATAFLOW___CHECK_NOT_CALLED();
 
     return false;
   }
@@ -75,7 +75,7 @@ class node_unary final : public node_t<T>, public Policy
 public:
   static ref create(const ref& x, const Policy& policy = Policy())
   {
-    DF_CHECK_ARGUMENT(x.template is_of_type<X>());
+    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<X>());
 
     const auto id = x.id();
 
@@ -93,8 +93,8 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DF_CHECK_ARGUMENT(p_args != nullptr);
-    DF_CHECK_ARGUMENT(args_count == 1);
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 1);
 
     return this->set_value_(
       Policy::calculate(extract_node_value<X>(p_args[0])));
@@ -119,8 +119,8 @@ class node_binary final : public node_t<T>, public Policy
 public:
   static ref create(const ref& x, const ref& y, const Policy& policy = Policy())
   {
-    DF_CHECK_ARGUMENT(x.template is_of_type<X>());
-    DF_CHECK_ARGUMENT(y.template is_of_type<Y>());
+    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<X>());
+    DATAFLOW___CHECK_PRECONDITION(y.template is_of_type<Y>());
 
     const std::array<node_id, 2> args = {{x.id(), y.id()}};
 
@@ -139,8 +139,8 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DF_CHECK_ARGUMENT(p_args != nullptr);
-    DF_CHECK_ARGUMENT(args_count == 2);
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
 
     return this->set_value_(Policy::calculate(
       extract_node_value<X>(p_args[0]), extract_node_value<Y>(p_args[1])));
@@ -208,7 +208,7 @@ template <typename T> class node_current final : public node_t<T>
 public:
   static ref create(ref x)
   {
-    DF_CHECK_ARGUMENT(x.template is_of_type<T>());
+    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
 
     return nodes_factory::create_active<node_current<T>>(x.id());
   }
@@ -223,8 +223,8 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DF_CHECK_ARGUMENT(p_args != nullptr);
-    DF_CHECK_ARGUMENT(args_count == 1);
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 1);
 
     return this->set_value_(extract_node_value<T>(p_args[0]));
   }
@@ -248,9 +248,9 @@ public:
   static ref
   create(const ref& basis, const ref& consequence, const ref& alternative)
   {
-    DF_CHECK_ARGUMENT(basis.template is_of_type<bool>());
-    DF_CHECK_ARGUMENT(consequence.template is_of_type<T>());
-    DF_CHECK_ARGUMENT(alternative.template is_of_type<T>());
+    DATAFLOW___CHECK_PRECONDITION(basis.template is_of_type<bool>());
+    DATAFLOW___CHECK_PRECONDITION(consequence.template is_of_type<T>());
+    DATAFLOW___CHECK_PRECONDITION(alternative.template is_of_type<T>());
 
     const std::array<node_id, 3> args = {
       {basis.id(), alternative.id(), consequence.id()}};
@@ -268,8 +268,8 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DF_CHECK_ARGUMENT(p_args != nullptr);
-    DF_CHECK_ARGUMENT(args_count == 2);
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
 
     return this->set_value_(extract_node_value<T>(p_args[1]));
   }

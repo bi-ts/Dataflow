@@ -137,7 +137,7 @@ template <typename T>
 dataflow::ref<T>::ref(const internal::ref& r)
 : internal::ref(r)
 {
-  DF_CHECK_ARGUMENT(r.is_of_type<T>());
+  DATAFLOW___CHECK_PRECONDITION(r.is_of_type<T>());
 }
 
 // eager
@@ -164,7 +164,7 @@ dataflow::var<T>::var(const internal::ref& r)
 template <typename T>
 const dataflow::var<T>& dataflow::var<T>::operator=(const T& v) const
 {
-  DF_CHECK_PRECONDITION(
+  DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
 
   static_cast<const internal::node_var<T>*>(this->get_())->set_next_value(v);

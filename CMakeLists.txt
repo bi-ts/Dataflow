@@ -47,6 +47,7 @@ add_library(${PROJECT_NAME} SHARED
   src/introspect.cpp
   src/prelude.cpp
 
+  src/internal/config.h
   src/internal/converter.h
   src/internal/engine.cpp
   src/internal/engine.h

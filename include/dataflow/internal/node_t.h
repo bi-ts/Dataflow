@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -92,7 +92,7 @@ private:
 
 template <typename T> const T& extract_node_value(const node* p_node)
 {
-  DF_CHECK_ARGUMENT(dynamic_cast<const node_t<T>*>(p_node));
+  DATAFLOW___CHECK_PRECONDITION(dynamic_cast<const node_t<T>*>(p_node));
 
   return static_cast<const node_t<T>*>(p_node)->value();
 }
