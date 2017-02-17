@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,6 +17,9 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
+#ifndef DATAFLOW___INTERNAL_ENGINE_H
+#define DATAFLOW___INTERNAL_ENGINE_H
 
 #include "converter.h"
 #include "graph.h"
@@ -237,108 +240,9 @@ private:
 private:
   static engine* gp_engine_;
 };
+} // internal
+} // dataflow
 
-inline engine::allocator_type engine::get_allocator() const
-{
-  return allocator_;
-}
+#include "engine.inl"
 
-inline engine& engine::instance()
-{
-  assert(gp_engine_ != nullptr);
-
-  return *gp_engine_;
-}
-
-inline const dependency_graph& engine::graph() const
-{
-  return graph_;
-}
-
-inline const topological_list& engine::order() const
-{
-  return order_;
-}
-
-inline bool engine::base(edge_descriptor e) const
-{
-  assert(e != edge_descriptor());
-
-  const auto u = source(e, graph_);
-
-  if (active(u))
-  {
-    return *(out_edges(u, graph_).second - 1) == e;
-  }
-
-  return false;
-}
-
-inline bool engine::primary(edge_descriptor e) const
-{
-  assert(e != edge_descriptor());
-
-  const auto u = source(e, graph_);
-
-  return !base(e) &&
-         (!graph_[u].conditional || *out_edges(u, graph_).first == e);
-}
-
-inline bool engine::secondary(edge_descriptor e) const
-{
-  assert(e != edge_descriptor());
-
-  const auto u = source(e, graph_);
-
-  return !base(e) && graph_[u].conditional && *out_edges(u, graph_).first != e;
-}
-
-inline bool engine::enabled(edge_descriptor e) const
-{
-  assert(e != edge_descriptor());
-
-  return graph_[e] != active_edge_ticket();
-}
-
-inline bool engine::active(edge_descriptor e) const
-{
-  return enabled(e) || base(e);
-}
-
-inline bool engine::active(vertex_descriptor v) const
-{
-  assert(v != vertex_descriptor());
-
-  return graph_[v].position != topological_position();
-}
-
-inline bool engine::conditional(vertex_descriptor v) const
-{
-  assert(v != vertex_descriptor());
-
-  return graph_[v].conditional;
-}
-
-inline bool engine::ordered(vertex_descriptor v) const
-{
-  assert(v != vertex_descriptor());
-
-  const auto pos = graph_[v].position;
-
-  return pos != topological_position() && *pos == v;
-}
-
-inline void engine::add_ref(vertex_descriptor v)
-{
-  graph_[v].add_ref();
-}
-
-inline void engine::release(vertex_descriptor v)
-{
-  if (graph_[v].release())
-  {
-    remove_subgraph_(v);
-  }
-}
-}
-}
+#endif // DATAFLOW___INTERNAL_ENGINE_H

@@ -51,6 +51,7 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/converter.h
   src/internal/engine.cpp
   src/internal/engine.h
+  src/internal/engine.inl
   src/internal/graph.h
   src/internal/node_main_activator.h
   src/internal/node_activator.cpp
