@@ -149,13 +149,17 @@ private:
   dependency_graph(const dependency_graph&) = delete;
 };
 
+using out_edge_range = std::pair<dependency_graph::out_edge_iterator,
+                                 dependency_graph::out_edge_iterator>;
+
+using vertex_range = std::pair<dependency_graph::vertex_iterator,
+                               dependency_graph::vertex_iterator>;
+
 DATAFLOW___EXPORT const dependency_graph& graph();
 
 // IncidenceGraph
-DATAFLOW___EXPORT std::pair<dependency_graph::out_edge_iterator,
-                            dependency_graph::out_edge_iterator>
-out_edges(dependency_graph::vertex_descriptor v,
-          const dependency_graph& g = graph());
+DATAFLOW___EXPORT out_edge_range out_edges(
+  dependency_graph::vertex_descriptor v, const dependency_graph& g = graph());
 
 DATAFLOW___EXPORT dependency_graph::degree_size_type
 out_degree(dependency_graph::vertex_descriptor v,
@@ -163,8 +167,7 @@ out_degree(dependency_graph::vertex_descriptor v,
 
 // VertexListGraph
 DATAFLOW___EXPORT
-std::pair<dependency_graph::vertex_iterator, dependency_graph::vertex_iterator>
-vertices(const dependency_graph& g = graph());
+vertex_range vertices(const dependency_graph& g = graph());
 
 DATAFLOW___EXPORT dependency_graph::vertices_size_type
 num_vertices(const dependency_graph& g = graph());
@@ -178,8 +181,7 @@ target(dependency_graph::edge_descriptor e, const dependency_graph& g);
 
 // Graph properties
 DATAFLOW___EXPORT
-std::pair<dependency_graph::vertex_iterator, dependency_graph::vertex_iterator>
-topological_order();
+vertex_range topological_order();
 
 DATAFLOW___EXPORT dependency_graph::vertices_size_type num_ordered_vertices();
 
@@ -193,8 +195,7 @@ DATAFLOW___EXPORT bool conditional(dependency_graph::vertex_descriptor v);
 DATAFLOW___EXPORT bool constant(dependency_graph::vertex_descriptor v);
 
 DATAFLOW___EXPORT
-std::pair<dependency_graph::vertex_iterator, dependency_graph::vertex_iterator>
-consumers(dependency_graph::vertex_descriptor v);
+vertex_range consumers(dependency_graph::vertex_descriptor v);
 
 DATAFLOW___EXPORT std::string label(dependency_graph::vertex_descriptor v);
 

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -141,8 +141,7 @@ const introspect::dependency_graph& introspect::graph()
 
 // IncidenceGraph
 
-std::pair<introspect::dependency_graph::out_edge_iterator,
-          introspect::dependency_graph::out_edge_iterator>
+introspect::out_edge_range
 introspect::out_edges(dependency_graph::vertex_descriptor v,
                       const dependency_graph& g)
 {
@@ -186,9 +185,7 @@ introspect::out_degree(dependency_graph::vertex_descriptor v,
 
 // VertexListGraph
 
-std::pair<introspect::dependency_graph::vertex_iterator,
-          introspect::dependency_graph::vertex_iterator>
-introspect::vertices(const dependency_graph& g)
+introspect::vertex_range introspect::vertices(const dependency_graph& g)
 {
   const auto vs = vertices(internal::engine::instance().graph());
 
@@ -258,9 +255,7 @@ introspect::target(dependency_graph::edge_descriptor e,
 
 // Graph properties
 
-std::pair<introspect::dependency_graph::vertex_iterator,
-          introspect::dependency_graph::vertex_iterator>
-introspect::topological_order()
+introspect::vertex_range introspect::topological_order()
 {
   using iterator_delegate =
     iterator_delegate<internal::topological_list::const_iterator,
@@ -312,8 +307,7 @@ bool introspect::constant(dependency_graph::vertex_descriptor v)
   return internal::engine::instance().graph()[converter::convert(v)].constant;
 }
 
-std::pair<introspect::dependency_graph::vertex_iterator,
-          introspect::dependency_graph::vertex_iterator>
+introspect::vertex_range
 introspect::consumers(dependency_graph::vertex_descriptor v)
 {
   using iterator_delegate =
