@@ -33,7 +33,7 @@ inline engine::allocator_type engine::get_allocator() const
 
 inline engine& engine::instance()
 {
-  assert(gp_engine_ != nullptr);
+  CHECK_PRECONDITION(gp_engine_ != nullptr);
 
   return *gp_engine_;
 }
@@ -50,7 +50,7 @@ inline const topological_list& engine::order() const
 
 inline bool engine::base(edge_descriptor e) const
 {
-  assert(e != edge_descriptor());
+  CHECK_PRECONDITION(e != edge_descriptor());
 
   const auto u = source(e, graph_);
 
@@ -64,7 +64,7 @@ inline bool engine::base(edge_descriptor e) const
 
 inline bool engine::primary(edge_descriptor e) const
 {
-  assert(e != edge_descriptor());
+  CHECK_PRECONDITION(e != edge_descriptor());
 
   const auto u = source(e, graph_);
 
@@ -74,7 +74,7 @@ inline bool engine::primary(edge_descriptor e) const
 
 inline bool engine::secondary(edge_descriptor e) const
 {
-  assert(e != edge_descriptor());
+  CHECK_PRECONDITION(e != edge_descriptor());
 
   const auto u = source(e, graph_);
 
@@ -83,7 +83,7 @@ inline bool engine::secondary(edge_descriptor e) const
 
 inline bool engine::enabled(edge_descriptor e) const
 {
-  assert(e != edge_descriptor());
+  CHECK_PRECONDITION(e != edge_descriptor());
 
   return graph_[e] != active_edge_ticket();
 }
@@ -95,21 +95,21 @@ inline bool engine::active(edge_descriptor e) const
 
 inline bool engine::active(vertex_descriptor v) const
 {
-  assert(v != vertex_descriptor());
+  CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].position != topological_position();
 }
 
 inline bool engine::conditional(vertex_descriptor v) const
 {
-  assert(v != vertex_descriptor());
+  CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].conditional;
 }
 
 inline bool engine::ordered(vertex_descriptor v) const
 {
-  assert(v != vertex_descriptor());
+  CHECK_PRECONDITION(v != vertex_descriptor());
 
   const auto pos = graph_[v].position;
 
