@@ -31,13 +31,6 @@ inline engine::allocator_type engine::get_allocator() const
   return allocator_;
 }
 
-inline engine& engine::instance()
-{
-  CHECK_PRECONDITION(gp_engine_ != nullptr);
-
-  return *gp_engine_;
-}
-
 inline const dependency_graph& engine::graph() const
 {
   return graph_;
@@ -48,85 +41,150 @@ inline const topological_list& engine::order() const
   return order_;
 }
 
-inline bool engine::base(edge_descriptor e) const
+inline const tick_count& engine::ticks() const
+{
+  return ticks_;
+}
+
+inline const node* engine::get_node(node_id id) const
+{
+  return graph_[converter::convert(id)].p_node;
+}
+
+inline engine& engine::instance()
+{
+  CHECK_PRECONDITION(gp_engine_ != nullptr);
+
+  return *gp_engine_;
+}
+
+inline bool engine::is_logical_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
   const auto u = source(e, graph_);
 
-  if (active(u))
+  if (is_active_node(u))
   {
-    return *(out_edges(u, graph_).second - 1) == e;
+    return last_out_edge_(u) == e;
   }
 
   return false;
 }
 
-inline bool engine::primary(edge_descriptor e) const
+inline bool engine::is_primary_data_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
   const auto u = source(e, graph_);
 
-  return !base(e) &&
-         (!graph_[u].conditional || *out_edges(u, graph_).first == e);
+  return !is_logical_dependency(e) &&
+         (!is_conditional_node(u) || first_out_edge_(u) == e);
 }
 
-inline bool engine::secondary(edge_descriptor e) const
+inline bool engine::is_secondary_data_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
   const auto u = source(e, graph_);
 
-  return !base(e) && graph_[u].conditional && *out_edges(u, graph_).first != e;
+  return !is_logical_dependency(e) && is_conditional_node(u) &&
+         first_out_edge_(u) != e;
 }
 
-inline bool engine::enabled(edge_descriptor e) const
+inline bool engine::is_active_data_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
   return graph_[e] != active_edge_ticket();
 }
 
-inline bool engine::active(edge_descriptor e) const
-{
-  return enabled(e) || base(e);
-}
-
-inline bool engine::active(vertex_descriptor v) const
+inline bool engine::is_active_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
-  return graph_[v].position != topological_position();
+  const auto position = graph_[v].position;
+
+  return position != topological_position() && *position == v;
 }
 
-inline bool engine::conditional(vertex_descriptor v) const
+inline bool engine::is_conditional_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].conditional;
 }
 
-inline bool engine::ordered(vertex_descriptor v) const
+inline bool engine::is_eager_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
-  const auto pos = graph_[v].position;
+  return graph_[v].eager;
+}
 
-  return pos != topological_position() && *pos == v;
+inline bool engine::is_persistent_node(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
+  return graph_[v].constant;
+}
+
+inline bool engine::requires_activation(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
+  return graph_[v].position == topological_position() && !graph_[v].constant;
 }
 
 inline void engine::add_ref(vertex_descriptor v)
 {
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
   graph_[v].add_ref();
 }
 
 inline void engine::release(vertex_descriptor v)
 {
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
   if (graph_[v].release())
   {
     remove_subgraph_(v);
   }
 }
+
+inline edge_descriptor engine::first_out_edge_(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
+
+  auto ei = out_edges(v, graph_).first;
+
+  return *ei;
+}
+
+inline edge_descriptor engine::second_out_edge_(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(out_degree(v, graph_) >= 2);
+
+  auto ei = out_edges(v, graph_).first;
+  std::advance(ei, 1);
+
+  return *ei;
+}
+
+inline edge_descriptor engine::last_out_edge_(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
+
+  return *(out_edges(v, graph_).second - 1);
+}
+
+inline vertex_descriptor engine::activator_(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(is_active_node(v));
+
+  return target(last_out_edge_(v), graph_);
+}
+
 } // internal
 } // dataflow

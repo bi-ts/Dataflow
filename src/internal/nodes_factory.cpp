@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -65,7 +65,8 @@ ref nodes_factory::add_conditional_(node* p_node,
 
 ref nodes_factory::add_constant_(node* p_node)
 {
-  return ref(converter::convert(engine::instance().add_constant_node(p_node)));
+  return ref(
+    converter::convert(engine::instance().add_persistent_node(p_node)));
 }
 
 } // internal

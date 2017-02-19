@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -49,7 +49,7 @@ const node* ref::get_() const
 
 void ref::schedule_() const
 {
-  engine::instance().schedule(converter::convert(id_));
+  engine::instance().pump(converter::convert(id_));
 }
 }
 }

@@ -294,12 +294,13 @@ std::size_t introspect::memory_consumption()
 
 bool introspect::is_node_active(dependency_graph::vertex_descriptor v)
 {
-  return internal::engine::instance().active(converter::convert(v));
+  return internal::engine::instance().is_active_node(converter::convert(v));
 }
 
 bool introspect::conditional(dependency_graph::vertex_descriptor v)
 {
-  return internal::engine::instance().conditional(converter::convert(v));
+  return internal::engine::instance().is_conditional_node(
+    converter::convert(v));
 }
 
 bool introspect::constant(dependency_graph::vertex_descriptor v)
@@ -380,21 +381,26 @@ std::string introspect::value(dependency_graph::vertex_descriptor v)
 
 bool introspect::is_dependency_active(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().active(converter::convert(e));
+  return internal::engine::instance().is_active_data_dependency(
+           converter::convert(e)) ||
+         is_dependency_logical(e);
 }
 
 bool introspect::is_dependency_logical(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().base(converter::convert(e));
+  return internal::engine::instance().is_logical_dependency(
+    converter::convert(e));
 }
 
 bool introspect::is_dependency_primary(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().primary(converter::convert(e));
+  return internal::engine::instance().is_primary_data_dependency(
+    converter::convert(e));
 }
 
 bool introspect::is_dependency_secondary(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().secondary(converter::convert(e));
+  return internal::engine::instance().is_secondary_data_dependency(
+    converter::convert(e));
 }
 } // dataflow
