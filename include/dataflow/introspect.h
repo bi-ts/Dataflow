@@ -183,48 +183,55 @@ target(dependency_graph::edge_descriptor e, const dependency_graph& g);
 DATAFLOW___EXPORT
 vertex_range topological_order();
 
-DATAFLOW___EXPORT dependency_graph::vertices_size_type num_ordered_vertices();
+DATAFLOW___EXPORT dependency_graph::vertices_size_type num_active_nodes();
 
 DATAFLOW___EXPORT std::size_t memory_consumption();
 
-// Vertex properties
-DATAFLOW___EXPORT bool is_node_active(dependency_graph::vertex_descriptor v);
+/// \name Data nodes properties
+/// \{
 
-DATAFLOW___EXPORT bool conditional(dependency_graph::vertex_descriptor v);
+/// \note `null_vertex()` is considered inactive.
+DATAFLOW___EXPORT bool active_node(dependency_graph::vertex_descriptor v);
 
-DATAFLOW___EXPORT bool constant(dependency_graph::vertex_descriptor v);
+DATAFLOW___EXPORT bool activator_node(dependency_graph::vertex_descriptor v);
+
+DATAFLOW___EXPORT bool conditional_node(dependency_graph::vertex_descriptor v);
+
+DATAFLOW___EXPORT bool eager_node(dependency_graph::vertex_descriptor v);
+
+DATAFLOW___EXPORT bool persistent_node(dependency_graph::vertex_descriptor v);
+
+DATAFLOW___EXPORT int update_order(dependency_graph::vertex_descriptor u,
+                                   dependency_graph::vertex_descriptor v);
 
 DATAFLOW___EXPORT
 vertex_range consumers(dependency_graph::vertex_descriptor v);
 
 DATAFLOW___EXPORT std::string label(dependency_graph::vertex_descriptor v);
 
-DATAFLOW___EXPORT bool varying(dependency_graph::vertex_descriptor v);
-
-DATAFLOW___EXPORT bool preceedes(dependency_graph::vertex_descriptor u,
-                                 dependency_graph::vertex_descriptor v);
-
 DATAFLOW___EXPORT std::size_t ref_count(dependency_graph::vertex_descriptor v);
-
-DATAFLOW___EXPORT bool activator(dependency_graph::vertex_descriptor v);
 
 DATAFLOW___EXPORT std::string value(dependency_graph::vertex_descriptor v);
 
-// Edge properties
-DATAFLOW___EXPORT bool
-is_dependency_active(dependency_graph::edge_descriptor e);
+/// \}
+
+/// \name Dependencies properties
+/// \{
+
+DATAFLOW___EXPORT bool active_dependency(dependency_graph::edge_descriptor e);
 
 /// Checks if the given edge represents a _logical_ dependency.
 ///
 /// A logical dependency links an active node with its activator.
-DATAFLOW___EXPORT bool
-is_dependency_logical(dependency_graph::edge_descriptor e);
+///
+DATAFLOW___EXPORT bool logical_dependency(dependency_graph::edge_descriptor e);
+
+DATAFLOW___EXPORT bool data_dependency(dependency_graph::edge_descriptor e);
+
+DATAFLOW___EXPORT bool primary_dependency(dependency_graph::edge_descriptor e);
 
 DATAFLOW___EXPORT bool
-is_dependency_primary(dependency_graph::edge_descriptor e);
-
-DATAFLOW___EXPORT bool
-is_dependency_secondary(dependency_graph::edge_descriptor e);
+secondary_dependency(dependency_graph::edge_descriptor e);
 
 /// \}
 

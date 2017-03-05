@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -70,7 +70,7 @@ private:
   BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept<dependency_graph>));
 
 private:
-  dataflow::Engine engine_;
+  Engine engine_;
 };
 
 BOOST_AUTO_TEST_SUITE(test_introspect)
@@ -125,8 +125,9 @@ BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
 
   const auto z = *y;
 
-  const auto g = boost::make_filtered_graph(
-    introspect::graph(), introspect::is_dependency_active, introspect::varying);
+  const auto g = boost::make_filtered_graph(introspect::graph(),
+                                            introspect::active_dependency,
+                                            introspect::active_node);
 
   std::map<vertex_descriptor, boost::default_color_type> cm;
 
@@ -218,6 +219,34 @@ BOOST_FIXTURE_TEST_CASE(test_nodes_traversal, test_introspect_fixture)
   std::tie(it, it_end) = introspect::vertices();
 
   BOOST_CHECK_EQUAL(0, std::distance(it, it_end));
+}
+
+BOOST_FIXTURE_TEST_CASE(test_update_order, test_introspect_fixture)
+{
+  const auto null_vertex = boost::graph_traits<dependency_graph>::null_vertex();
+
+  const auto c = Const<int>(0);
+  const auto x = Var<int>(-42);
+  const auto y = If(x < 0, -x, x + c);
+
+  BOOST_CHECK_EQUAL(0, introspect::update_order(x, null_vertex));
+  BOOST_CHECK_EQUAL(0, introspect::update_order(null_vertex, x));
+  BOOST_CHECK_EQUAL(0, introspect::update_order(null_vertex, null_vertex));
+
+  BOOST_CHECK_EQUAL(0, introspect::update_order(x, y));
+  BOOST_CHECK_EQUAL(0, introspect::update_order(x, x));
+  BOOST_CHECK_EQUAL(0, introspect::update_order(y, x));
+
+  const auto z = Curr(y);
+
+  BOOST_CHECK_EQUAL(1, introspect::update_order(x, y));
+  BOOST_CHECK_EQUAL(0, introspect::update_order(x, x));
+  BOOST_CHECK_EQUAL(-1, introspect::update_order(y, x));
+
+  BOOST_CHECK_EQUAL(1, introspect::update_order(null_vertex, x));
+  BOOST_CHECK_EQUAL(-1, introspect::update_order(x, null_vertex));
+  BOOST_CHECK_EQUAL(1, introspect::update_order(c, x));
+  BOOST_CHECK_EQUAL(-1, introspect::update_order(x, c));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

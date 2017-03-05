@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -33,14 +33,15 @@ using vertex_descriptor =
 using edge_descriptor =
   boost::graph_traits<introspect::dependency_graph>::edge_descriptor;
 
-vertex_descriptor find_base(vertex_descriptor v)
+vertex_descriptor find_activator(vertex_descriptor v,
+                                 const introspect::dependency_graph& g)
 {
-  const auto& g = introspect::graph();
+  assert(introspect::active_node(v));
 
   const auto es = out_edges(v, g);
 
   const auto ei =
-    std::find_if(es.first, es.second, introspect::is_dependency_logical);
+    std::find_if(es.first, es.second, introspect::logical_dependency);
 
   if (ei == es.second)
     return vertex_descriptor();
@@ -48,24 +49,26 @@ vertex_descriptor find_base(vertex_descriptor v)
   return target(*ei, g);
 }
 
-vertex_descriptor inherit_base_for(vertex_descriptor u, vertex_descriptor v)
+vertex_descriptor implied_activator(vertex_descriptor u,
+                                    vertex_descriptor v,
+                                    const introspect::dependency_graph& g)
 {
-  assert(u != vertex_descriptor());
-  assert(v != vertex_descriptor());
+  assert(introspect::active_node(u));
+  assert(introspect::active_node(v));
 
-  if (introspect::conditional(u) && !introspect::activator(v))
+  if (introspect::conditional_node(u) && !introspect::activator_node(v))
   {
     const auto es = out_edges(u, introspect::graph());
 
     const auto ei =
-      std::find_if(es.first, es.second, introspect::is_dependency_primary);
+      std::find_if(es.first, es.second, introspect::primary_dependency);
 
     assert(ei != es.second);
 
     return target(*ei, introspect::graph());
   }
 
-  return find_base(u);
+  return find_activator(u, g);
 }
 
 class validation_dfs_visitor : public boost::default_dfs_visitor
@@ -78,44 +81,51 @@ public:
   {
   }
 
-  template <typename G> void discover_vertex(vertex_descriptor v, const G& g)
+  template <typename G> void discover_vertex(vertex_descriptor v, const G&)
   {
-    assert(introspect::varying(v));
+    assert(introspect::active_node(v));
 
-    auto vs = introspect::consumers(v);
+    const auto vs = introspect::consumers(v);
 
     if (vs.first != vs.second)
     {
+      std::vector<vertex_descriptor> potential_activators;
+
+      std::transform(vs.first,
+                     vs.second,
+                     std::back_inserter(potential_activators),
+                     [v](vertex_descriptor u)
+                     {
+                       return implied_activator(u, v, introspect::graph());
+                     });
+
       const auto vi =
-        std::min_element(vs.first,
-                         vs.second,
-                         [v](vertex_descriptor u, vertex_descriptor w)
+        std::min_element(potential_activators.begin(),
+                         potential_activators.end(),
+                         [](vertex_descriptor u, vertex_descriptor w)
                          {
-                           return introspect::preceedes(inherit_base_for(u, v),
-                                                        inherit_base_for(w, v));
+                           return introspect::update_order(u, w) > 0;
                          });
 
-      assert(vi != vs.second);
+      assert(vi != potential_activators.end());
 
-      if (find_base(v) != inherit_base_for(*vi, v))
+      if (find_activator(v, introspect::graph()) != *vi)
       {
         bad_vertices_.push_back(v);
       }
     }
     else
     {
-      // TODO: assert(eager);
+      if (!introspect::eager_node(v))
+        bad_vertices_.push_back(v);
     }
   }
 
   template <typename G> void tree_edge(edge_descriptor e, const G& g)
   {
-    assert(introspect::is_dependency_active(e));
+    assert(introspect::active_dependency(e));
 
-    const auto u = source(e, g);
-    const auto v = target(e, g);
-
-    if (!introspect::preceedes(v, u))
+    if (introspect::update_order(source(e, g), target(e, g)) >= 0)
     {
       bad_edges_.push_back(e);
     }
@@ -123,7 +133,7 @@ public:
 
   template <typename G> void back_edge(edge_descriptor e, const G& g)
   {
-    assert(introspect::is_dependency_active(e));
+    assert(introspect::active_dependency(e));
 
     bad_edges_.push_back(e);
   }
@@ -144,7 +154,7 @@ bool dataflow_test::graph_invariant_holds(const introspect::dependency_graph& g)
 
   boost::depth_first_search(
     boost::make_filtered_graph(
-      g, introspect::is_dependency_active, introspect::varying),
+      g, introspect::active_dependency, introspect::active_node),
     validation_dfs_visitor(bad_edges, bad_vertices),
     boost::make_assoc_property_map(color_map));
 

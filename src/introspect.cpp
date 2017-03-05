@@ -279,8 +279,7 @@ introspect::vertex_range introspect::topological_order()
       new iterator_delegate(order.end(), fn))));
 }
 
-introspect::dependency_graph::vertices_size_type
-introspect::num_ordered_vertices()
+introspect::dependency_graph::vertices_size_type introspect::num_active_nodes()
 {
   return internal::engine::instance().order().size() - 1;
 }
@@ -292,20 +291,63 @@ std::size_t introspect::memory_consumption()
 
 // Vertex properties
 
-bool introspect::is_node_active(dependency_graph::vertex_descriptor v)
+bool introspect::active_node(dependency_graph::vertex_descriptor v)
 {
+  if (v == boost::graph_traits<dependency_graph>::null_vertex())
+    return false;
+
   return internal::engine::instance().is_active_node(converter::convert(v));
 }
 
-bool introspect::conditional(dependency_graph::vertex_descriptor v)
+bool introspect::conditional_node(dependency_graph::vertex_descriptor v)
 {
   return internal::engine::instance().is_conditional_node(
     converter::convert(v));
 }
 
-bool introspect::constant(dependency_graph::vertex_descriptor v)
+bool introspect::eager_node(dependency_graph::vertex_descriptor v)
 {
-  return internal::engine::instance().graph()[converter::convert(v)].constant;
+  return internal::engine::instance().is_eager_node(converter::convert(v));
+}
+
+bool introspect::persistent_node(dependency_graph::vertex_descriptor v)
+{
+  return internal::engine::instance().is_persistent_node(converter::convert(v));
+}
+
+int introspect::update_order(dependency_graph::vertex_descriptor u,
+                             dependency_graph::vertex_descriptor v)
+{
+  if (u == v)
+    return 0;
+
+  if (!active_node(u) && !active_node(v))
+    return 0;
+
+  if (!active_node(u))
+  {
+    assert(active_node(v));
+    return 1;
+  }
+
+  if (!active_node(v))
+  {
+    assert(active_node(u));
+    return -1;
+  }
+
+  assert(active_node(u) && active_node(v));
+
+  const auto& g = internal::engine::instance().graph();
+
+  const auto u_pos = g[converter::convert(u)].position;
+  const auto v_pos = g[converter::convert(v)].position;
+
+  assert(u_pos != v_pos);
+
+  const int order = internal::engine::instance().order().order(u_pos, v_pos);
+
+  return (order << 1) - 1;
 }
 
 introspect::vertex_range
@@ -333,38 +375,19 @@ introspect::consumers(dependency_graph::vertex_descriptor v)
 
 std::string introspect::label(dependency_graph::vertex_descriptor v)
 {
+  if (v == dependency_graph::vertex_descriptor())
+    return "";
+
   return internal::engine::instance()
     .graph()[converter::convert(v)]
     .p_node->label();
 }
 
-bool introspect::varying(dependency_graph::vertex_descriptor v)
-{
-  return !constant(v) && is_node_active(v);
-}
-
-bool introspect::preceedes(dependency_graph::vertex_descriptor u,
-                           dependency_graph::vertex_descriptor v)
-{
-  const auto null_vertex = dependency_graph::vertex_descriptor();
-
-  if (u == v || v == null_vertex)
-    return false;
-
-  if (u == null_vertex)
-    return true;
-
-  assert(u != null_vertex);
-  assert(v != null_vertex);
-
-  const auto& g = internal::engine::instance().graph();
-
-  return internal::engine::instance().order().order(
-    g[converter::convert(u)].position, g[converter::convert(v)].position);
-}
-
 std::size_t introspect::ref_count(dependency_graph::vertex_descriptor v)
 {
+  if (v == dependency_graph::vertex_descriptor())
+    return 0;
+
   return internal::engine::instance()
     .graph()[converter::convert(v)]
     .ref_count();
@@ -372,6 +395,9 @@ std::size_t introspect::ref_count(dependency_graph::vertex_descriptor v)
 
 std::string introspect::value(dependency_graph::vertex_descriptor v)
 {
+  if (v == dependency_graph::vertex_descriptor())
+    return "";
+
   return internal::engine::instance()
     .graph()[converter::convert(v)]
     .p_node->to_string();
@@ -379,26 +405,28 @@ std::string introspect::value(dependency_graph::vertex_descriptor v)
 
 // Edge properties
 
-bool introspect::is_dependency_active(dependency_graph::edge_descriptor e)
+bool introspect::active_dependency(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().is_active_data_dependency(
-           converter::convert(e)) ||
-         is_dependency_logical(e);
+  const auto& engine = internal::engine::instance();
+  const auto ie = converter::convert(e);
+
+  return engine.is_active_data_dependency(ie) ||
+         engine.is_logical_dependency(ie);
 }
 
-bool introspect::is_dependency_logical(dependency_graph::edge_descriptor e)
+bool introspect::logical_dependency(dependency_graph::edge_descriptor e)
 {
   return internal::engine::instance().is_logical_dependency(
     converter::convert(e));
 }
 
-bool introspect::is_dependency_primary(dependency_graph::edge_descriptor e)
+bool introspect::primary_dependency(dependency_graph::edge_descriptor e)
 {
   return internal::engine::instance().is_primary_data_dependency(
     converter::convert(e));
 }
 
-bool introspect::is_dependency_secondary(dependency_graph::edge_descriptor e)
+bool introspect::secondary_dependency(dependency_graph::edge_descriptor e)
 {
   return internal::engine::instance().is_secondary_data_dependency(
     converter::convert(e));

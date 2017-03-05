@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -691,29 +691,29 @@ BOOST_FIXTURE_TEST_CASE(test_And, test_prelude_logical)
 
   BOOST_CHECK(!a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 
   x = true;
 
   BOOST_CHECK(!a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   y = true;
 
   BOOST_CHECK(a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   x = false;
 
   BOOST_CHECK(!a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 }
 
 BOOST_FIXTURE_TEST_CASE(test_And_operator, test_prelude_logical)
@@ -729,8 +729,8 @@ BOOST_FIXTURE_TEST_CASE(test_And_operator, test_prelude_logical)
   BOOST_CHECK(!b());
   BOOST_CHECK(!c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 
   x = true;
 
@@ -738,8 +738,8 @@ BOOST_FIXTURE_TEST_CASE(test_And_operator, test_prelude_logical)
   BOOST_CHECK(!b());
   BOOST_CHECK(c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   y = true;
 
@@ -747,8 +747,8 @@ BOOST_FIXTURE_TEST_CASE(test_And_operator, test_prelude_logical)
   BOOST_CHECK(!b());
   BOOST_CHECK(c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   x = false;
 
@@ -756,8 +756,8 @@ BOOST_FIXTURE_TEST_CASE(test_And_operator, test_prelude_logical)
   BOOST_CHECK(!b());
   BOOST_CHECK(!c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Or, test_prelude_logical)
@@ -774,29 +774,29 @@ BOOST_FIXTURE_TEST_CASE(test_Or, test_prelude_logical)
 
   BOOST_CHECK(!a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
   BOOST_CHECK(a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 
   y = true;
 
   BOOST_CHECK(a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 
   x = false;
 
   BOOST_CHECK(a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Or_operator, test_prelude_logical)
@@ -812,8 +812,8 @@ BOOST_FIXTURE_TEST_CASE(test_Or_operator, test_prelude_logical)
   BOOST_CHECK(b());
   BOOST_CHECK(!c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
@@ -821,8 +821,8 @@ BOOST_FIXTURE_TEST_CASE(test_Or_operator, test_prelude_logical)
   BOOST_CHECK(b());
   BOOST_CHECK(c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 
   y = true;
 
@@ -830,8 +830,8 @@ BOOST_FIXTURE_TEST_CASE(test_Or_operator, test_prelude_logical)
   BOOST_CHECK(b());
   BOOST_CHECK(c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(!introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(!introspect::active_node(y));
 
   x = false;
 
@@ -839,8 +839,8 @@ BOOST_FIXTURE_TEST_CASE(test_Or_operator, test_prelude_logical)
   BOOST_CHECK(b());
   BOOST_CHECK(!c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 }
 
 BOOST_FIXTURE_TEST_CASE(test_AndE, test_prelude_logical)
@@ -852,8 +852,8 @@ BOOST_FIXTURE_TEST_CASE(test_AndE, test_prelude_logical)
 
   BOOST_CHECK(!a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
@@ -881,8 +881,8 @@ BOOST_FIXTURE_TEST_CASE(test_AndE_operator, test_prelude_logical)
   BOOST_CHECK(!b());
   BOOST_CHECK(!c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
@@ -912,8 +912,8 @@ BOOST_FIXTURE_TEST_CASE(test_OrE, test_prelude_logical)
 
   BOOST_CHECK(a());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   y = true;
 
@@ -941,8 +941,8 @@ BOOST_FIXTURE_TEST_CASE(test_OrE_operator, test_prelude_logical)
   BOOST_CHECK(b());
   BOOST_CHECK(c());
 
-  BOOST_CHECK(introspect::is_node_active(x));
-  BOOST_CHECK(introspect::is_node_active(y));
+  BOOST_CHECK(introspect::active_node(x));
+  BOOST_CHECK(introspect::active_node(y));
 
   y = true;
 

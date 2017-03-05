@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -173,8 +173,13 @@ operator!=(const dependency_graph::edge_descriptor& other) const
   return !(*this == other);
 }
 
-inline bool introspect::activator(dependency_graph::vertex_descriptor v)
+inline bool introspect::activator_node(dependency_graph::vertex_descriptor v)
 {
   return label(v) == "activator";
+}
+
+inline bool introspect::data_dependency(dependency_graph::edge_descriptor e)
+{
+  return !logical_dependency(e);
 }
 } // dataflow
