@@ -1019,5 +1019,31 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_prelude_basic)
   BOOST_CHECK_EQUAL(20, f());
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Switch, test_prelude_basic)
+{
+  auto x = Var<std::string>("ten");
+
+  // TODO: fix operator == for string literals
+  auto f = *Switch(Case(x == Const("one"), 1),
+                   Case(x == Const("three"), 3),
+                   Case(x == Const("five"), 5),
+                   Case(x == Const("ten"), 10),
+                   Default(0));
+
+  BOOST_CHECK_EQUAL(10, f());
+
+  x = "one";
+
+  BOOST_CHECK_EQUAL(1, f());
+
+  x = "five";
+
+  BOOST_CHECK_EQUAL(5, f());
+
+  x = "three";
+
+  BOOST_CHECK_EQUAL(3, f());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

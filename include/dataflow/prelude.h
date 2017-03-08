@@ -250,8 +250,24 @@ ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
 template <typename T, typename = detail::enable_if_not_ref_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
 
-/// \}
+template <typename T>
+ref<T> Switch(const std::pair<ref<bool>, ref<T>>& first_case,
+              const ref<T>& default_case);
 
+template <typename T, typename... Cases>
+ref<T> Switch(const std::pair<ref<bool>, ref<T>>& first_case,
+              const Cases&... other_cases);
+
+template <typename T>
+std::pair<ref<bool>, ref<T>> Case(const ref<bool>& x, const ref<T>& y);
+
+template <typename T>
+std::pair<ref<bool>, ref<T>> Case(const ref<bool>& x, const T& v);
+
+template <typename T> ref<T> Default(const ref<T>& x);
+template <typename T> ref<T> Default(const T& v);
+
+/// \}
 }
 
 #include "prelude.inl"

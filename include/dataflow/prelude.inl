@@ -408,3 +408,44 @@ dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
 {
   return If(x, Const<T>(y), Const<T>(z));
 }
+
+template <typename T>
+dataflow::ref<T>
+dataflow::Switch(const std::pair<ref<bool>, ref<T>>& first_case,
+                 const ref<T>& default_case)
+{
+  return If(first_case.first, first_case.second, default_case);
+}
+
+template <typename T, typename... Cases>
+dataflow::ref<T>
+dataflow::Switch(const std::pair<ref<bool>, ref<T>>& first_case,
+                 const Cases&... other_cases)
+{
+  return If(first_case.first, first_case.second, Switch(other_cases...));
+}
+
+template <typename T>
+std::pair<dataflow::ref<bool>, dataflow::ref<T>>
+dataflow::Case(const ref<bool>& x, const ref<T>& y)
+{
+  return std::make_pair(x, y);
+}
+
+template <typename T>
+std::pair<dataflow::ref<bool>, dataflow::ref<T>>
+dataflow::Case(const ref<bool>& x, const T& v)
+{
+  return std::make_pair(x, Const(v));
+}
+
+template <typename T> dataflow::ref<T> dataflow::Default(const ref<T>& x)
+{
+  return x;
+}
+
+template <typename T> dataflow::ref<T> dataflow::Default(const T& v)
+{
+  return Const(v);
+}
+
