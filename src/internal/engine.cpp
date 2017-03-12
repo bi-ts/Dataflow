@@ -371,7 +371,7 @@ void engine::disable_edge(edge_descriptor e)
     const auto w = stack.top();
     stack.pop();
 
-    if (graph_[w].constant || graph_[w].position == topological_position())
+    if (graph_[w].eager || !is_active_node(w))
       continue;
 
     if (graph_[w].consumers.size() == 0)

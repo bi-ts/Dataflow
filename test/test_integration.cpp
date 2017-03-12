@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -67,6 +67,40 @@ BOOST_AUTO_TEST_CASE(test_hat_function)
       BOOST_TEST(graph_invariant_holds());
     }
   }
+}
+
+BOOST_AUTO_TEST_CASE(regression_test_eager_node_deactivation)
+{
+  Engine engine;
+
+  const var<int> x = Var<int>(6);
+  const ref<int> y = ++x;
+
+  BOOST_CHECK(introspect::active_node(y) == false);
+
+  const auto a = Curr(y);
+
+  BOOST_CHECK(introspect::active_node(y) == true);
+
+  BOOST_CHECK_EQUAL(7, a());
+
+  {
+    const auto b = Curr(a * 2);
+
+    BOOST_CHECK_EQUAL(14, b());
+  }
+
+  BOOST_CHECK(introspect::active_node(y) == true);
+}
+
+BOOST_AUTO_TEST_CASE(regression_test_diamond_deactivation)
+{
+  Engine engine;
+
+  const auto x = Var<int>(6);
+  const auto y = Curr(x * x);
+
+  BOOST_CHECK_EQUAL(36, y());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
