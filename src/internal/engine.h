@@ -45,7 +45,7 @@ public:
 
   const tick_count& ticks() const;
 
-  const node* get_node(node_id id) const;
+  const node* get_node(vertex_descriptor v) const;
 
 public:
   engine(const engine&) = delete;
@@ -84,72 +84,10 @@ public:
 
   void pump(vertex_descriptor v);
 
-  // MARKER
-public:
-  void enable_edge(edge_descriptor e);
-
-  void disable_edge(edge_descriptor e);
-
-  void enable_edge_(edge_descriptor e);
-  void disable_edge_(edge_descriptor e);
-
-  void delete_node(vertex_descriptor v)
-  {
-    assert(graph_[v].p_node);
-
-    const auto p_node = graph_[v].p_node;
-
-    const auto info = p_node->mem_info();
-
-    p_node->~node();
-
-    dst::memory::deallocate_aligned(
-      get_allocator(), p_node, info.first, info.second);
-
-    remove_vertex(v, graph_);
-  }
-
-  bool update_node_selector(node_id id,
-                            bool initialized,
-                            std::size_t new_value,
-                            std::size_t old_value)
-  {
-    const auto v = converter::convert(id);
-
-    assert(graph_[v].consumers.size() == 1);
-
-    const auto w = graph_[v].consumers.front();
-
-    assert(w != vertex_descriptor());
-    assert(graph_[w].conditional);
-
-    if (!initialized)
-    {
-      const auto e = *(out_edges(w, graph_).first + 1 + new_value);
-
-      enable_edge(e);
-
-      return true;
-    }
-    else
-    {
-      if (new_value != old_value)
-      {
-        const auto e_prev = *(out_edges(w, graph_).first + 1 + old_value);
-        const auto e_curr = *(out_edges(w, graph_).first + 1 + new_value);
-
-        disable_edge(e_prev);
-
-        enable_edge(e_curr);
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  void remove_subgraph_(vertex_descriptor v);
+  bool update_node_activator(vertex_descriptor v,
+                             bool initialized,
+                             std::size_t new_value,
+                             std::size_t old_value);
 
 private:
   explicit engine();
@@ -164,6 +102,8 @@ private:
   vertex_descriptor implied_activator_(vertex_descriptor u,
                                        vertex_descriptor v) const;
 
+  void delete_node_(vertex_descriptor v);
+
   void activate_vertex_(vertex_descriptor v,
                         topological_position pos,
                         vertex_descriptor w);
@@ -172,7 +112,16 @@ private:
 
   void reset_activator_(vertex_descriptor v, vertex_descriptor w);
 
-private:
+  void activate_edge_(edge_descriptor e);
+
+  void deactivate_edge_(edge_descriptor e);
+
+  void activate_subgraph_(edge_descriptor e);
+
+  void deactivate_subgraph_(edge_descriptor e);
+
+  void remove_subgraph_(vertex_descriptor v);
+
   void pump_();
 
 private:

@@ -28,7 +28,7 @@ namespace internal
 ref::ref(node_id id)
 : id_(id)
 {
-  engine::instance().add_ref(converter::convert(id));
+  engine::instance().add_ref(converter::convert(id_));
 }
 
 ref::ref(const ref& other)
@@ -44,7 +44,7 @@ ref::~ref()
 
 const node* ref::get_() const
 {
-  return engine::instance().get_node(id_);
+  return engine::instance().get_node(converter::convert(id_));
 }
 
 void ref::schedule_() const

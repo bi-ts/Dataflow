@@ -46,9 +46,9 @@ inline const tick_count& engine::ticks() const
   return ticks_;
 }
 
-inline const node* engine::get_node(node_id id) const
+inline const node* engine::get_node(vertex_descriptor v) const
 {
-  return graph_[converter::convert(id)].p_node;
+  return graph_[v].p_node;
 }
 
 inline engine& engine::instance()

@@ -46,8 +46,10 @@ bool node_activator::update_(node_id id,
 
   const auto new_value = extract_node_value<bool>(p_deps[0]);
 
-  if (engine::instance().update_node_selector(
-        id, init, std::size_t(new_value), std::size_t(this->value())))
+  if (engine::instance().update_node_activator(converter::convert(id),
+                                               init,
+                                               std::size_t(new_value),
+                                               std::size_t(this->value())))
   {
     this->set_value_(new_value);
 
