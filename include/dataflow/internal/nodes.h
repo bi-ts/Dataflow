@@ -51,7 +51,7 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    DATAFLOW___CHECK_NOT_CALLED();
+    DATAFLOW___CHECK_NOT_REACHABLE();
 
     return false;
   }

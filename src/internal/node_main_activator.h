@@ -39,7 +39,7 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    CHECK_NOT_CALLED();
+    CHECK_NOT_REACHABLE();
 
     return false;
   }

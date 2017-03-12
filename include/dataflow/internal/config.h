@@ -22,7 +22,7 @@
 
 #define DATAFLOW___CHECK_ARGUMENT(x) assert(x)
 
-#define DATAFLOW___CHECK_NOT_CALLED()                                          \
+#define DATAFLOW___CHECK_NOT_REACHABLE()                                       \
   assert(!"The function is not supposed to be called")
 
 #define DATAFLOW___CHECK_PRECONDITION(x) assert(x)
