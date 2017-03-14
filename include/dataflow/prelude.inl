@@ -113,6 +113,18 @@
     return func(Const<T>(x), y);                                               \
   }
 
+#define DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(op, U)           \
+  inline dataflow::ref<U> dataflow::operator op(const ref<std::string>& x,     \
+                                                const char* y)                 \
+  {                                                                            \
+    return x op Const(y);                                                      \
+  }                                                                            \
+  inline dataflow::ref<U> dataflow::operator op(const char* x,                 \
+                                                const ref<std::string>& y)     \
+  {                                                                            \
+    return Const(x) op y;                                                      \
+  }
+
 #define DATAFLOW___DEFINE_BINARY_OPERATOR(op, func)                            \
   DATAFLOW___DEFINE_BINARY_OPERATOR_T(op, func, T)
 
@@ -308,6 +320,7 @@ DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(Decr, (-1) +, "decr");
 // Operators
 
 DATAFLOW___DEFINE_BINARY_OPERATOR(+, Add);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(+, std::string);
 DATAFLOW___DEFINE_BINARY_OPERATOR(-, Sub);
 DATAFLOW___DEFINE_PREFIX_OPERATOR(+, Plus);
 DATAFLOW___DEFINE_PREFIX_OPERATOR(-, Inv);
@@ -331,11 +344,17 @@ DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(LessEq, <=, "<=", bool);
 // Operators
 
 DATAFLOW___DEFINE_BINARY_OPERATOR_T(==, Eq, bool);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(==, bool);
 DATAFLOW___DEFINE_BINARY_OPERATOR_T(!=, NotEq, bool);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(!=, bool);
 DATAFLOW___DEFINE_BINARY_OPERATOR_T(>, Gr, bool);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(>, bool);
 DATAFLOW___DEFINE_BINARY_OPERATOR_T(<, Less, bool);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(<, bool);
 DATAFLOW___DEFINE_BINARY_OPERATOR_T(>=, GrEq, bool);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(>=, bool);
 DATAFLOW___DEFINE_BINARY_OPERATOR_T(<=, LessEq, bool);
+DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(<=, bool);
 
 // Logical functions
 
@@ -439,6 +458,12 @@ dataflow::Case(const ref<bool>& x, const T& v)
   return std::make_pair(x, Const(v));
 }
 
+inline std::pair<dataflow::ref<bool>, dataflow::ref<std::string>>
+dataflow::Case(const ref<bool>& x, const char* v)
+{
+  return Case<std::string>(x, v);
+}
+
 template <typename T> dataflow::ref<T> dataflow::Default(const ref<T>& x)
 {
   return x;
@@ -449,3 +474,7 @@ template <typename T> dataflow::ref<T> dataflow::Default(const T& v)
   return Const(v);
 }
 
+inline dataflow::ref<std::string> dataflow::Default(const char* v)
+{
+  return Default<std::string>(v);
+}

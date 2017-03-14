@@ -115,6 +115,55 @@ protected:
     BOOST_CHECK_EQUAL((2 op 3), c());                                          \
   }
 
+#define TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(name, op)                    \
+  BOOST_FIXTURE_TEST_CASE(test_operator_##name##_string, test_prelude_basic)   \
+  {                                                                            \
+    const auto x = Var<std::string>("str1");                                   \
+    const auto y = Var<std::string>("str1");                                   \
+                                                                               \
+    const auto a = *(x op y);                                                  \
+    const auto b = *(x op "str2");                                             \
+    const auto c = *("str2" op y);                                             \
+                                                                               \
+    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str1")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), c());      \
+    y = "str2";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), c());      \
+    y = "str3";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str3")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), c());      \
+    x = "str2";                                                                \
+    y = "str1";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), c());      \
+    y = "str2";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), c());      \
+    y = "str3";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), c());      \
+    x = "str3";                                                                \
+    y = "str1";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str1")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), c());      \
+    y = "str2";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), c());      \
+    y = "str3";                                                                \
+    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str3")), a());      \
+    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), b());      \
+    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), c());      \
+  }
+
 #define TEST_BINARY_FUNCTION(fn, op)                                           \
   BOOST_FIXTURE_TEST_CASE(test_##fn, test_prelude_binary)                      \
   {                                                                            \
@@ -447,6 +496,7 @@ BOOST_FIXTURE_TEST_CASE(test_Abs, test_prelude_basic)
 
 TEST_BINARY_FUNCTION(Add, +);
 TEST_BINARY_OPERATOR(Add, +);
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(Add, +);
 
 TEST_BINARY_FUNCTION(Sub, -);
 TEST_BINARY_OPERATOR(Sub, -);
@@ -629,21 +679,27 @@ BOOST_FIXTURE_TEST_CASE(test_Decr_operator, test_prelude_basic)
 
 TEST_BINARY_FUNCTION(Eq, == );
 TEST_BINARY_OPERATOR(Eq, == );
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(Eq, == );
 
 TEST_BINARY_FUNCTION(NotEq, != );
 TEST_BINARY_OPERATOR(NotEq, != );
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(NotEq, != );
 
 TEST_BINARY_FUNCTION(Gr, > );
 TEST_BINARY_OPERATOR(Gr, > );
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(Gr, > );
 
 TEST_BINARY_FUNCTION(Less, < );
 TEST_BINARY_OPERATOR(Less, < );
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(Less, < );
 
 TEST_BINARY_FUNCTION(GrEq, >= );
 TEST_BINARY_OPERATOR(GrEq, >= );
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(GrEq, >= );
 
 TEST_BINARY_FUNCTION(LessEq, <= );
 TEST_BINARY_OPERATOR(LessEq, <= );
+TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(LessEq, <= );
 
 // Logical
 
@@ -1023,11 +1079,10 @@ BOOST_FIXTURE_TEST_CASE(test_Switch, test_prelude_basic)
 {
   auto x = Var<std::string>("ten");
 
-  // TODO: fix operator == for string literals
-  auto f = *Switch(Case(x == Const("one"), 1),
-                   Case(x == Const("three"), 3),
-                   Case(x == Const("five"), 5),
-                   Case(x == Const("ten"), 10),
+  auto f = *Switch(Case(x == "one", 1),
+                   Case(x == "three", 3),
+                   Case(x == "five", 5),
+                   Case(x == "ten", 10),
                    Default(0));
 
   BOOST_CHECK_EQUAL(10, f());
@@ -1043,6 +1098,35 @@ BOOST_FIXTURE_TEST_CASE(test_Switch, test_prelude_basic)
   x = "three";
 
   BOOST_CHECK_EQUAL(3, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Switch_string, test_prelude_basic)
+{
+  auto x = Var<int>(1);
+
+  auto f = *Switch(Case(x == 1, "one"),
+                   Case(x == 2, "two"),
+                   Case(x == 3, "three"),
+                   Case(x == 4, "four"),
+                   Default("error"));
+
+  BOOST_CHECK_EQUAL("one", f());
+
+  x = 2;
+
+  BOOST_CHECK_EQUAL("two", f());
+
+  x = 3;
+
+  BOOST_CHECK_EQUAL("three", f());
+
+  x = 4;
+
+  BOOST_CHECK_EQUAL("four", f());
+
+  x = 5;
+
+  BOOST_CHECK_EQUAL("error", f());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

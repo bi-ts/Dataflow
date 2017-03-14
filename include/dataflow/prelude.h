@@ -130,6 +130,8 @@ template <typename T> ref<T> Decr(const ref<T>& x);
 template <typename T> ref<T> operator+(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<T> operator+(const ref<T>& x, const T& y);
 template <typename T> ref<T> operator+(const T& x, const ref<T>& y);
+ref<std::string> operator+(const ref<std::string>& x, const char* y);
+ref<std::string> operator+(const char* x, const ref<std::string>& y);
 
 // Subtraction
 template <typename T> ref<T> operator-(const ref<T>& x, const ref<T>& y);
@@ -180,31 +182,43 @@ template <typename T> ref<bool> LessEq(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator==(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator==(const ref<T>& x, const T& y);
 template <typename T> ref<bool> operator==(const T& x, const ref<T>& y);
+ref<bool> operator==(const ref<std::string>& x, const char* y);
+ref<bool> operator==(const char* x, const ref<std::string>& y);
 
 // Not equal to
 template <typename T> ref<bool> operator!=(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator!=(const ref<T>& x, const T& y);
 template <typename T> ref<bool> operator!=(const T& x, const ref<T>& y);
+ref<bool> operator!=(const ref<std::string>& x, const char* y);
+ref<bool> operator!=(const char* x, const ref<std::string>& y);
 
 // Greater than
 template <typename T> ref<bool> operator>(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator>(const ref<T>& x, const T& y);
 template <typename T> ref<bool> operator>(const T& x, const ref<T>& y);
+ref<bool> operator>(const ref<std::string>& x, const char* y);
+ref<bool> operator>(const char* x, const ref<std::string>& y);
 
 // Less than
 template <typename T> ref<bool> operator<(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator<(const ref<T>& x, const T& y);
 template <typename T> ref<bool> operator<(const T& x, const ref<T>& y);
+ref<bool> operator<(const ref<std::string>& x, const char* y);
+ref<bool> operator<(const char* x, const ref<std::string>& y);
 
 // Greater than or equal to
 template <typename T> ref<bool> operator>=(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator>=(const ref<T>& x, const T& y);
 template <typename T> ref<bool> operator>=(const T& x, const ref<T>& y);
+ref<bool> operator>=(const ref<std::string>& x, const char* y);
+ref<bool> operator>=(const char* x, const ref<std::string>& y);
 
 // Less than or equal to
 template <typename T> ref<bool> operator<=(const ref<T>& x, const ref<T>& y);
 template <typename T> ref<bool> operator<=(const ref<T>& x, const T& y);
 template <typename T> ref<bool> operator<=(const T& x, const ref<T>& y);
+ref<bool> operator<=(const ref<std::string>& x, const char* y);
+ref<bool> operator<=(const char* x, const ref<std::string>& y);
 
 // Logical functions
 
@@ -264,8 +278,11 @@ std::pair<ref<bool>, ref<T>> Case(const ref<bool>& x, const ref<T>& y);
 template <typename T>
 std::pair<ref<bool>, ref<T>> Case(const ref<bool>& x, const T& v);
 
+std::pair<ref<bool>, ref<std::string>> Case(const ref<bool>& x, const char* v);
+
 template <typename T> ref<T> Default(const ref<T>& x);
 template <typename T> ref<T> Default(const T& v);
+ref<std::string> Default(const char* v);
 
 /// \}
 }
