@@ -25,6 +25,7 @@
 #include "internal/nodes.h"
 
 #include <cstdlib> // std::abs
+#include <sstream>
 #include <string>
 
 #define DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(func, op, name)   \
@@ -477,4 +478,47 @@ template <typename T> dataflow::ref<T> dataflow::Default(const T& v)
 inline dataflow::ref<std::string> dataflow::Default(const char* v)
 {
   return Default<std::string>(v);
+}
+
+// String functions
+
+template <typename X>
+dataflow::ref<std::string> dataflow::ToString(const ref<X>& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "ToString";
+    }
+    static std::string calculate(const X& v)
+    {
+      std::stringstream out;
+      out << v;
+      return out.str();
+    }
+  };
+
+  return Lift<policy>(x);
+}
+
+template <>
+inline dataflow::ref<std::string> dataflow::ToString(const ref<std::string>& x)
+{
+  return x;
+}
+
+template <typename T, typename>
+dataflow::ref<std::string> dataflow::ToString(const T& v)
+{
+  std::stringstream out;
+  out << v;
+  return Const(out.str());
+}
+
+template <typename A, typename B, typename... Args>
+dataflow::ref<std::string>
+dataflow::ToString(const A& a, const B& b, const Args&... args)
+{
+  return ToString(a) + ToString(b, args...);
 }

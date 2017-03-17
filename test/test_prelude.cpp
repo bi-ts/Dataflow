@@ -1129,5 +1129,69 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string, test_prelude_basic)
   BOOST_CHECK_EQUAL("error", f());
 }
 
+BOOST_FIXTURE_TEST_CASE(test_ToString_int, test_prelude_basic)
+{
+  auto x = Var<int>(42);
+  auto y = ToString(x);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("ToString", introspect::label(y));
+
+  BOOST_CHECK_EQUAL("42", f());
+
+  x = 53;
+
+  BOOST_CHECK_EQUAL("53", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_prelude_basic)
+{
+  auto x = Var<std::string>("str");
+  auto y = ToString(x);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("var", introspect::label(y));
+
+  BOOST_CHECK_EQUAL("str", f());
+
+  x = "long string";
+
+  BOOST_CHECK_EQUAL("long string", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_prelude_basic)
+{
+  auto y = ToString(5);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("const", introspect::label(y));
+
+  BOOST_CHECK_EQUAL("5", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_prelude_basic)
+{
+  auto y = ToString("string literal");
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("const", introspect::label(y));
+
+  BOOST_CHECK_EQUAL("string literal", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_prelude_basic)
+{
+  auto x = Var<int>(42);
+  auto y = Var<float>(42.5);
+  auto z = ToString(x, " != ", y);
+  auto f = *z;
+
+  BOOST_CHECK_EQUAL("42 != 42.5", f());
+
+  x = 43;
+
+  BOOST_CHECK_EQUAL("43 != 42.5", f());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

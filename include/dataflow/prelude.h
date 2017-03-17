@@ -284,6 +284,18 @@ template <typename T> ref<T> Default(const ref<T>& x);
 template <typename T> ref<T> Default(const T& v);
 ref<std::string> Default(const char* v);
 
+// String functions
+
+template <typename X> ref<std::string> ToString(const ref<X>& x);
+
+template <> ref<std::string> ToString(const ref<std::string>& x);
+
+template <typename T, typename = detail::enable_if_not_ref_t<T>>
+ref<std::string> ToString(const T& v);
+
+template <typename A, typename B, typename... Args>
+ref<std::string> ToString(const A& a, const B& b, const Args&... args);
+
 /// \}
 }
 
