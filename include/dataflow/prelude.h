@@ -296,6 +296,15 @@ ref<std::string> ToString(const T& v);
 template <typename A, typename B, typename... Args>
 ref<std::string> ToString(const A& a, const B& b, const Args&... args);
 
+template <typename T>
+dataflow::ref<T> FromString(const ref<std::string>& str, const T& d = T());
+
+template <>
+ref<std::string> FromString(const ref<std::string>& x, const std::string&);
+
+template <typename T>
+dataflow::ref<T> FromString(const char* str, const T& d = T());
+
 /// \}
 }
 

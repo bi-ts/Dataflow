@@ -1193,5 +1193,117 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_prelude_basic)
   BOOST_CHECK_EQUAL("43 != 42.5", f());
 }
 
+BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_prelude_basic)
+{
+  auto x = Var<std::string>("42");
+  auto y = FromString<int>(x);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("FromString", introspect::label(y));
+
+  BOOST_CHECK_EQUAL(42, f());
+
+  x = "55";
+
+  BOOST_CHECK_EQUAL(55, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_prelude_basic)
+{
+  auto x = Var<std::string>("NAN");
+  auto y = FromString<int>(x, 5);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("FromString", introspect::label(y));
+
+  BOOST_CHECK_EQUAL(5, f());
+
+  x = "55";
+
+  BOOST_CHECK_EQUAL(55, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
+                        test_prelude_basic)
+{
+  auto x = Var<std::string>("");
+  auto y = FromString<int>(x, 5);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("FromString", introspect::label(y));
+
+  BOOST_CHECK_EQUAL(5, f());
+
+  x = "55";
+
+  BOOST_CHECK_EQUAL(55, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_prelude_basic)
+{
+  auto x = Var<std::string>("str");
+  auto y = FromString<std::string>(x);
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("var", introspect::label(y));
+
+  BOOST_CHECK_EQUAL("str", f());
+
+  x = "long string";
+
+  BOOST_CHECK_EQUAL("long string", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_prelude_basic)
+{
+  auto x = Var<std::string>("str");
+  auto y = FromString<std::string>(x, "never used");
+  auto f = *y;
+
+  BOOST_CHECK_EQUAL("var", introspect::label(y));
+
+  BOOST_CHECK_EQUAL("str", f());
+
+  x = "long string";
+
+  BOOST_CHECK_EQUAL("long string", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal, test_prelude_basic)
+{
+  auto x = FromString<int>("54");
+  auto f = *x;
+
+  BOOST_CHECK_EQUAL("const", introspect::label(x));
+
+  BOOST_CHECK_EQUAL(54, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal_default,
+                        test_prelude_basic)
+{
+  auto x = FromString<int>("NAN", 3);
+  auto y = FromString<int>("39", 10);
+  auto f = *(x + y);
+
+  BOOST_CHECK_EQUAL("const", introspect::label(x));
+  BOOST_CHECK_EQUAL("const", introspect::label(y));
+
+  BOOST_CHECK_EQUAL(42, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
+                        test_prelude_basic)
+{
+  auto x = FromString<int>("", 13);
+  auto y = FromString<int>("29", 10);
+  auto f = *(x + y);
+
+  BOOST_CHECK_EQUAL("const", introspect::label(x));
+  BOOST_CHECK_EQUAL("const", introspect::label(y));
+
+  BOOST_CHECK_EQUAL(42, f());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

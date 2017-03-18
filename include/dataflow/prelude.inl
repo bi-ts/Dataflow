@@ -522,3 +522,53 @@ dataflow::ToString(const A& a, const B& b, const Args&... args)
 {
   return ToString(a) + ToString(b, args...);
 }
+
+template <typename T>
+dataflow::ref<T> dataflow::FromString(const ref<std::string>& str, const T& d)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "FromString";
+    }
+    T calculate(const std::string& str) const
+    {
+      std::stringstream ss(str);
+
+      T v = d;
+
+      ss >> v;
+
+      if (!ss.eof())
+        return d;
+
+      return v;
+    };
+    const T d;
+  };
+
+  return Lift<policy>(str, {d});
+}
+
+template <>
+inline dataflow::ref<std::string>
+dataflow::FromString(const ref<std::string>& x, const std::string&)
+{
+  return x;
+}
+
+template <typename T>
+dataflow::ref<T> dataflow::FromString(const char* str, const T& d)
+{
+  std::stringstream ss(str);
+
+  T v = d;
+
+  ss >> v;
+
+  if (!ss.eof())
+    return Const(d);
+
+  return Const(v);
+}
