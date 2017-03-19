@@ -53,8 +53,9 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/engine.h
   src/internal/engine.inl
   src/internal/graph.h
-  src/internal/node_main_activator.h
+  src/internal/node.cpp
   src/internal/node_activator.cpp
+  src/internal/node_main_activator.h
   src/internal/nodes_factory.cpp
   src/internal/ref.cpp
   src/internal/tick_count.h

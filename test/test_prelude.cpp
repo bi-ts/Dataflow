@@ -260,6 +260,27 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_prelude_basic)
   BOOST_CHECK_EQUAL(6, y());
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Main, test_prelude_basic)
+{
+  const var<int> x = Var<int>(6);
+  const var<int> y = Var<int>(25);
+
+  const auto z = Main([=](const Time& t)
+                      {
+                        return x + y;
+                      });
+
+  BOOST_CHECK_EQUAL(31, z());
+
+  x = 25;
+
+  BOOST_CHECK_EQUAL(50, z());
+
+  y = 7;
+
+  BOOST_CHECK_EQUAL(32, z());
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_prelude_basic)
 {
   const var<int> x = Var<int>('A');

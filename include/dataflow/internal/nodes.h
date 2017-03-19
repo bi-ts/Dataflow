@@ -206,9 +206,11 @@ template <typename T> class node_current final : public node_t<T>
   friend class nodes_factory;
 
 public:
-  static ref create(ref x)
+  template <typename F> static ref create(F f)
   {
-    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
+    const ref x = f(node::ticks_());
+
+    DATAFLOW___CHECK_CONDITION(x.template is_of_type<T>());
 
     return nodes_factory::create_active<node_current<T>>(x.id());
   }

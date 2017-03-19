@@ -16,36 +16,19 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <dataflow/internal/node.h>
 
-#include <cstddef>
+#include "engine.h"
 
 namespace dataflow
 {
 namespace internal
 {
-class tick_count
+
+const tick_count& node::ticks_()
 {
-public:
-  tick_count()
-  : ticks_(0)
-  {
-  }
-
-  tick_count& operator++()
-  {
-    ++ticks_;
-    return *this;
-  }
-
-private:
-  tick_count(const tick_count&) = delete;
-  tick_count& operator=(const tick_count&) = delete;
-  tick_count operator++(int) = delete;
-
-private:
-  std::size_t ticks_;
-};
+  return engine::instance().ticks();
+}
 
 } // internal
 } // dataflow

@@ -70,6 +70,36 @@ public:
   const var& operator=(const T& v) const;
 };
 
+using Time = internal::tick_count;
+
+namespace detail
+{
+template <typename> struct value_type
+{
+};
+
+template <typename T> struct value_type<ref<T>>
+{
+  using type = T;
+};
+
+template <typename T> struct value_type<var<T>>
+{
+  using type = T;
+};
+
+template <typename T> struct value_type<eager<T>>
+{
+  using type = T;
+};
+
+template <typename F> using value_type_t = typename value_type<F>::type;
+
+template <typename F>
+using time_func_result_t =
+  value_type_t<typename std::result_of<F(const Time&)>::type>;
+}
+
 // Basic functions
 
 template <typename T> ref<T> Const(const T& v = T());
@@ -78,6 +108,9 @@ DATAFLOW___EXPORT ref<std::string> Const(const char* v);
 template <typename T> var<T> Var(const T& v);
 
 template <typename T> eager<T> Curr(ref<T> x);
+
+template <typename F, typename T = detail::time_func_result_t<F>>
+eager<T> Main(F f);
 
 // Operators
 

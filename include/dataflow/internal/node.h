@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -30,6 +30,8 @@ namespace dataflow
 namespace internal
 {
 
+class tick_count;
+
 using node_id = std::intptr_t;
 
 class DATAFLOW___EXPORT node
@@ -57,6 +59,9 @@ public:
   }
 
   virtual ~node(){};
+
+protected:
+  static const tick_count& ticks_();
 
 private:
   virtual bool update_(node_id id,
