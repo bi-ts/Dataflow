@@ -212,7 +212,9 @@ public:
 
     DATAFLOW___CHECK_CONDITION(x.template is_of_type<T>());
 
-    return nodes_factory::create_active<node_current<T>>(x.id());
+    const auto id = x.id();
+
+    return nodes_factory::create_eager<node_current<T>>(&id, 1);
   }
 
 private:

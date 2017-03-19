@@ -71,10 +71,10 @@ public:
   void add_ref(vertex_descriptor v);
   void release(vertex_descriptor v);
 
-  vertex_descriptor
-  add_node(node* p_node, const node_id* p_args, std::size_t args_count);
-
-  vertex_descriptor add_active_node(node* p_node, vertex_descriptor w);
+  vertex_descriptor add_node(node* p_node,
+                             const node_id* p_args,
+                             std::size_t args_count,
+                             bool eager);
 
   vertex_descriptor add_conditional_node(node* p_node,
                                          const node_id* p_args,

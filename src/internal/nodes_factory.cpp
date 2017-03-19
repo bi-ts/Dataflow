@@ -43,16 +43,11 @@ void nodes_factory::deallocate_(void* p_object,
 
 ref nodes_factory::add_(node* p_node,
                         const node_id* p_args,
-                        std::size_t args_count)
+                        std::size_t args_count,
+                        bool eager)
 {
   return ref(converter::convert(
-    engine::instance().add_node(p_node, p_args, args_count)));
-}
-
-ref nodes_factory::add_active_(node* p_node, node_id arg)
-{
-  return ref(converter::convert(
-    engine::instance().add_active_node(p_node, converter::convert(arg))));
+    engine::instance().add_node(p_node, p_args, args_count, eager)));
 }
 
 ref nodes_factory::add_conditional_(node* p_node,

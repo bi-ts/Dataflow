@@ -62,8 +62,10 @@ void engine::stop()
   gp_engine_ = nullptr;
 }
 
-vertex_descriptor
-engine::add_node(node* p_node, const node_id* p_args, std::size_t args_count)
+vertex_descriptor engine::add_node(node* p_node,
+                                   const node_id* p_args,
+                                   std::size_t args_count,
+                                   bool eager)
 {
   CHECK_PRECONDITION(p_node != nullptr);
 
@@ -72,53 +74,44 @@ engine::add_node(node* p_node, const node_id* p_args, std::size_t args_count)
   for (std::size_t i = 0; i < args_count; ++i)
   {
     const auto w = converter::convert(p_args[i]);
-    add_edge(v, w, graph_);
+
+    edge_descriptor data_e = edge_descriptor();
+    bool data_edge_added = false;
+
+    std::tie(data_e, data_edge_added) = add_edge(v, w, graph_);
+
+    CHECK_CONDITION(data_edge_added);
+
     graph_[w].add_ref();
   }
 
-  CHECK_POSTCONDITION(!is_active_node(v));
-  CHECK_POSTCONDITION(out_degree(v, graph_) == args_count);
+  if (eager)
+  {
+    graph_[v].eager = true;
+    graph_[v].position = order_.insert(order_.end(), v);
 
-  return v;
-}
+    edge_descriptor logical_e = edge_descriptor();
+    bool logical_edge_added = false;
+    std::tie(logical_e, logical_edge_added) =
+      add_edge(v, order_.front(), graph_);
 
-vertex_descriptor engine::add_active_node(node* p_node, vertex_descriptor w)
-{
-  CHECK_PRECONDITION(p_node != nullptr);
+    CHECK_CONDITION(logical_edge_added);
 
-  const auto v = add_vertex(vertex(p_node), graph_);
+    auto es = out_edges(v, graph_);
 
-  edge_descriptor data_e = edge_descriptor();
-  edge_descriptor logical_e = edge_descriptor();
-  bool data_edge_added = false;
-  bool logical_edge_added = false;
+    CHECK_CONDITION(es.first != es.second);
 
-  std::tie(data_e, data_edge_added) = add_edge(v, w, graph_);
+    --es.second;
 
-  CHECK_CONDITION(data_edge_added);
+    for (; es.first != es.second; ++es.first)
+    {
+      activate_subgraph_(*es.first);
+    }
 
-  graph_[w].add_ref();
+    pump(v);
+  }
 
-  graph_[v].eager = true;
-  graph_[v].position = order_.insert(order_.end(), v);
-
-  std::tie(logical_e, logical_edge_added) = add_edge(v, order_.front(), graph_);
-
-  CHECK_CONDITION(logical_edge_added);
-
-  activate_subgraph_(data_e);
-
-  pump(v);
-
-  CHECK_POSTCONDITION(is_active_node(v));
-
-  CHECK_POSTCONDITION(out_degree(v, graph_) == 2);
-
-  CHECK_POSTCONDITION(first_out_edge_(v) == data_e);
-  CHECK_POSTCONDITION(second_out_edge_(v) == logical_e);
-
-  CHECK_POSTCONDITION(is_active_data_dependency(data_e));
-  CHECK_POSTCONDITION(is_logical_dependency(logical_e));
+  CHECK_POSTCONDITION(is_active_node(v) == eager);
 
   return v;
 }
@@ -127,7 +120,7 @@ vertex_descriptor engine::add_conditional_node(node* p_node,
                                                const node_id* p_args,
                                                std::size_t args_count)
 {
-  const auto v = add_node(p_node, p_args, args_count);
+  const auto v = add_node(p_node, p_args, args_count, false);
 
   graph_[v].conditional = true;
 
@@ -138,6 +131,8 @@ vertex_descriptor engine::add_conditional_node(node* p_node,
 
 vertex_descriptor engine::add_persistent_node(node* p_node)
 {
+  CHECK_PRECONDITION(p_node != nullptr);
+
   const auto v = add_vertex(vertex(p_node), graph_);
 
   graph_[v].constant = true;

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -40,13 +40,15 @@ public:
   create(const node_id* p_args, std::size_t args_count, Args&&... args)
   {
     return add_(
-      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count);
+      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, false);
   }
 
   template <typename Node, typename... Args>
-  static ref create_active(node_id arg, Args&&... args)
+  static ref
+  create_eager(const node_id* p_args, std::size_t args_count, Args&&... args)
   {
-    return add_active_(new_node_<Node>(std::forward<Args>(args)...), arg);
+    return add_(
+      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, true);
   }
 
   template <typename Node, typename... Args>
@@ -87,8 +89,8 @@ private:
   static void* allocate_(std::size_t size, std::size_t allignment);
   static void deallocate_(void*, std::size_t size, std::size_t alignment);
 
-  static ref add_(node* p_node, const node_id* p_args, std::size_t args_count);
-  static ref add_active_(node* p_node, node_id arg);
+  static ref
+  add_(node* p_node, const node_id* p_args, std::size_t args_count, bool eager);
   static ref
   add_conditional_(node* p_node, const node_id* p_args, std::size_t args_count);
   static ref add_constant_(node* p_node);
