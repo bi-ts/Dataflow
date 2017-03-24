@@ -44,19 +44,22 @@ BOOST_AUTO_TEST_SUITE(test_integration)
 
 BOOST_AUTO_TEST_CASE(test_hat_function)
 {
-  Engine engine;
-
   for (int i = -4; i <= 4; ++i)
   {
     for (int j = -4; j <= 4; ++j)
     {
+      Engine engine;
+
       auto x = Var<int>(i);
 
-      auto abs = If(x >= 0, x, -x);
+      auto f = Main([x](const Time& t)
+                    {
+                      auto abs = If(x >= 0, x, -x);
 
-      auto g = 4 - If(x >= 0, x * x, 2 * abs);
+                      auto g = 4 - If(x >= 0, x * x, 2 * abs);
 
-      auto f = *If(g >= 0, g, 2 - abs);
+                      return If(g >= 0, g, 2 - abs);
+                    });
 
       BOOST_TEST(f() == reference_f(i));
       BOOST_TEST(graph_invariant_holds());
