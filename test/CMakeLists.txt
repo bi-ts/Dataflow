@@ -8,11 +8,14 @@ find_package(Boost 1.61.0 REQUIRED EXACT QUIET)
 add_executable(${PROJECT_NAME}
   main.cpp
 
-  tools/graph_invariant.h
   tools/graph_invariant.cpp
+  tools/graph_invariant.h
+  tools/io_fixture.cpp
+  tools/io_fixture.h
 
   test_integration.cpp
   test_introspect.cpp
+  test_io.cpp
   test_prelude.cpp
 )
 
