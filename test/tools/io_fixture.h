@@ -24,13 +24,6 @@
 namespace dataflow_test
 {
 
-enum class StreamIndex
-{
-  StdErr,
-  StdLog,
-  StdOut
-};
-
 class io_fixture
 {
 protected:
@@ -48,7 +41,12 @@ protected:
 
   void reset();
 
-  std::string str(StreamIndex idx);
+  std::string err_string();
+  std::string log_string();
+  std::string out_string();
+
+private:
+  std::string concat_lines_(std::string str);
 
 private:
   std::streambuf* const p_original_cin_buffer_;

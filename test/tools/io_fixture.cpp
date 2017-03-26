@@ -70,16 +70,25 @@ void io_fixture::reset()
   reset_output();
 }
 
-std::string io_fixture::str(StreamIndex idx)
+std::string io_fixture::err_string()
 {
-  auto s =
-    (idx == StreamIndex::StdErr
-       ? cerr_string_stream
-       : idx == StreamIndex::StdLog ? clog_string_stream : cout_string_stream)
-      .str();
+  return concat_lines_(cerr_string_stream.str());
+}
 
-  std::replace(s.begin(), s.end(), '\n', ';');
+std::string io_fixture::log_string()
+{
+  return concat_lines_(clog_string_stream.str());
+}
 
-  return s;
+std::string io_fixture::out_string()
+{
+  return concat_lines_(cout_string_stream.str());
+}
+
+std::string io_fixture::concat_lines_(std::string str)
+{
+  std::replace(str.begin(), str.end(), '\n', ';');
+
+  return str;
 }
 }

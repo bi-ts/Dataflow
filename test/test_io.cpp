@@ -62,7 +62,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Error, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "(1, 1);");
+  BOOST_CHECK_EQUAL(err_string(), "(1, 1);");
 
   capture_output();
 
@@ -70,7 +70,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Error, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "(1, 1);(2, 1);");
+  BOOST_CHECK_EQUAL(err_string(), "(1, 1);(2, 1);");
 
   capture_output();
 
@@ -78,7 +78,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Error, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "(1, 1);(2, 1);(2, 3);");
+  BOOST_CHECK_EQUAL(err_string(), "(1, 1);(2, 1);(2, 3);");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Message_Log, test_io_fixture)
@@ -92,7 +92,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Log, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "Point(1, 1);");
+  BOOST_CHECK_EQUAL(log_string(), "Point(1, 1);");
 
   capture_output();
 
@@ -100,7 +100,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Log, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "Point(1, 1);Point(2, 1);");
+  BOOST_CHECK_EQUAL(log_string(), "Point(1, 1);Point(2, 1);");
 
   capture_output();
 
@@ -108,8 +108,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Log, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog),
-                    "Point(1, 1);Point(2, 1);Point(2, 3);");
+  BOOST_CHECK_EQUAL(log_string(), "Point(1, 1);Point(2, 1);Point(2, 3);");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Message_Output, test_io_fixture)
@@ -123,7 +122,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Output, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "1 + 1 = 2;");
+  BOOST_CHECK_EQUAL(out_string(), "1 + 1 = 2;");
 
   capture_output();
 
@@ -131,7 +130,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Output, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "1 + 1 = 2;2 + 1 = 3;");
+  BOOST_CHECK_EQUAL(out_string(), "1 + 1 = 2;2 + 1 = 3;");
 
   capture_output();
 
@@ -139,7 +138,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Output, test_io_fixture)
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "1 + 1 = 2;2 + 1 = 3;2 + 3 = 5;");
+  BOOST_CHECK_EQUAL(out_string(), "1 + 1 = 2;2 + 1 = 3;2 + 3 = 5;");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Input, test_io_fixture)
@@ -156,7 +155,7 @@ BOOST_FIXTURE_TEST_CASE(test_Input, test_io_fixture)
 
   reset();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "Hello, world!;");
+  BOOST_CHECK_EQUAL(log_string(), "Hello, world!;");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Input_int, test_io_fixture)
@@ -174,8 +173,8 @@ BOOST_FIXTURE_TEST_CASE(test_Input_int, test_io_fixture)
 
   reset();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "x = y = ");
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "10 - 20 = -10;");
+  BOOST_CHECK_EQUAL(out_string(), "x = y = ");
+  BOOST_CHECK_EQUAL(log_string(), "10 - 20 = -10;");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
