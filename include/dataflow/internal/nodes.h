@@ -73,11 +73,18 @@ class node_unary final : public node_t<T>, public Policy
   friend class nodes_factory;
 
 public:
-  static ref create(const ref& x, const Policy& policy = Policy())
+  static ref
+  create(const ref& x, const Policy& policy = Policy(), bool eager = false)
   {
     DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<X>());
 
     const auto id = x.id();
+
+    if (eager)
+    {
+      return nodes_factory::create_eager<node_unary<T, X, Policy>>(
+        &id, 1, policy);
+    }
 
     return nodes_factory::create<node_unary<T, X, Policy>>(&id, 1, policy);
   }

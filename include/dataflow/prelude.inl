@@ -222,9 +222,10 @@ template <typename T> dataflow::eager<T> dataflow::operator*(ref<T> x)
 // Utility functions
 
 template <typename Policy, typename X, typename T>
-dataflow::ref<T> dataflow::Lift(const ref<X>& x, const Policy& policy)
+dataflow::ref<T>
+dataflow::Lift(const ref<X>& x, const Policy& policy, bool eager)
 {
-  return ref<T>(internal::node_unary<T, X, Policy>::create(x, policy));
+  return ref<T>(internal::node_unary<T, X, Policy>::create(x, policy, eager));
 }
 
 template <typename F, typename X, typename T>

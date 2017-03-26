@@ -33,6 +33,8 @@ endif()
 add_library(${PROJECT_NAME} SHARED
   include/dataflow/introspect.h
   include/dataflow/introspect.inl
+  include/dataflow/io.h
+  include/dataflow/io.inl
   include/dataflow/prelude.h
   include/dataflow/prelude.inl
 
@@ -45,6 +47,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/ref.h
 
   src/introspect.cpp
+  src/io.cpp
   src/prelude.cpp
 
   src/internal/config.h

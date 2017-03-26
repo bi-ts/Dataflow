@@ -18,7 +18,11 @@
 
 #include "tools/io_fixture.h"
 
+#include <dataflow/io.h>
+
 #include <boost/test/unit_test.hpp>
+
+using namespace dataflow;
 
 namespace dataflow_test
 {
@@ -27,42 +31,151 @@ class test_io_fixture : public io_fixture
 {
 protected:
   test_io_fixture()
+  : engine_()
+  , x(Var<int>(1))
+  , y(Var<int>(1))
   {
   }
 
   ~test_io_fixture()
   {
   }
+
+private:
+  Engine engine_;
+
+protected:
+  var<int> x;
+  var<int> y;
 };
 
 BOOST_AUTO_TEST_SUITE(test_io)
 
-BOOST_FIXTURE_TEST_CASE(test_dummy, test_io_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Message_Error, test_io_fixture)
 {
   capture_output();
 
-  std::cerr << "text to cerr" << std::endl << "more text to cerr";
+  const auto z = Main([=](const Time& t)
+                      {
+                        return console::Error(t, "(", x, ", ", y, ")");
+                      });
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "text to cerr;more text to cerr");
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "(1, 1);");
 
   capture_output();
 
-  std::clog << "text to clog" << std::endl << "second line to clog";
+  x = 2;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "(1, 1);(2, 1);");
+
+  capture_output();
+
+  y = 3;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdErr), "(1, 1);(2, 1);(2, 3);");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Message_Log, test_io_fixture)
+{
+  capture_output();
+
+  const auto z = Main([=](const Time& t)
+                      {
+                        return console::Log(t, "Point(", x, ", ", y, ")");
+                      });
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "Point(1, 1);");
+
+  capture_output();
+
+  x = 2;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "Point(1, 1);Point(2, 1);");
+
+  capture_output();
+
+  y = 3;
 
   reset_output();
 
   BOOST_CHECK_EQUAL(str(StreamIndex::StdLog),
-                    "text to clog;second line to clog");
+                    "Point(1, 1);Point(2, 1);Point(2, 3);");
+}
 
+BOOST_FIXTURE_TEST_CASE(test_Message_Output, test_io_fixture)
+{
   capture_output();
 
-  std::cout << "text to cout";
+  const auto z = Main([=](const Time& t)
+                      {
+                        return console::Output(t, x, " + ", y, " = ", x + y);
+                      });
 
   reset_output();
 
-  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "text to cout");
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "1 + 1 = 2;");
+
+  capture_output();
+
+  x = 2;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "1 + 1 = 2;2 + 1 = 3;");
+
+  capture_output();
+
+  y = 3;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "1 + 1 = 2;2 + 1 = 3;2 + 3 = 5;");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Input, test_io_fixture)
+{
+  set_input("world\n");
+  capture_output();
+
+  const auto x = Main([](const Time& t)
+                      {
+                        const auto name =
+                          console::Input(t, Const("What's your name?: "));
+                        return console::Log(t, "Hello, ", name, "!");
+                      });
+
+  reset();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "Hello, world!;");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Input_int, test_io_fixture)
+{
+  set_input("10\n20\n");
+  capture_output();
+
+  const auto y = Main([](const Time& t)
+                      {
+                        const auto x = console::Input<int>(t, Const("x = "));
+                        const auto y = console::Input<int>(t, Const("y = "));
+
+                        return console::Log(t, x, " - ", y, " = ", x - y);
+                      });
+
+  reset();
+
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdOut), "x = y = ");
+  BOOST_CHECK_EQUAL(str(StreamIndex::StdLog), "10 - 20 = -10;");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

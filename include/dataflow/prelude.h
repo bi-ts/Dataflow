@@ -123,7 +123,8 @@ template <
   typename X,
   typename T = typename std::remove_cv<typename std::remove_reference<
     decltype(std::declval<Policy>().calculate(std::declval<X>()))>::type>::type>
-ref<T> Lift(const ref<X>& x, const Policy& policy = Policy());
+ref<T>
+Lift(const ref<X>& x, const Policy& policy = Policy(), bool eager = false);
 
 template <typename F,
           typename X,
