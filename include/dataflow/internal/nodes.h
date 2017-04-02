@@ -208,7 +208,7 @@ private:
   mutable T next_value_;
 };
 
-template <typename T> class node_current final : public node_t<T>
+template <typename T> class node_main final : public node_t<T>
 {
   friend class nodes_factory;
 
@@ -221,11 +221,11 @@ public:
 
     const auto id = x.id();
 
-    return nodes_factory::create_eager<node_current<T>>(&id, 1);
+    return nodes_factory::create_eager<node_main<T>>(&id, 1);
   }
 
 private:
-  explicit node_current()
+  explicit node_main()
   {
   }
 
@@ -242,7 +242,7 @@ private:
 
   virtual std::string label_() const override
   {
-    return "curr";
+    return "main";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final

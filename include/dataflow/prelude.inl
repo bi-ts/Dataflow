@@ -201,15 +201,15 @@ template <typename T> dataflow::var<T> dataflow::Var(const T& v)
 
 template <typename T> dataflow::eager<T> dataflow::Curr(ref<T> x)
 {
-  return eager<T>(internal::node_current<T>::create([x](const Time&)
-                                                    {
-                                                      return x;
-                                                    }));
+  return eager<T>(internal::node_main<T>::create([x](const Time&)
+                                                 {
+                                                   return x;
+                                                 }));
 }
 
 template <typename F, typename T> dataflow::eager<T> dataflow::Main(F f)
 {
-  return eager<T>(internal::node_current<T>::create(f));
+  return eager<T>(internal::node_main<T>::create(f));
 }
 
 // Operators

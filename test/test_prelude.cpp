@@ -256,7 +256,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_prelude_basic)
 
   BOOST_CHECK_EQUAL(2, introspect::ref_count(x));
 
-  BOOST_CHECK_EQUAL("curr", introspect::label(y));
+  BOOST_CHECK_EQUAL("main", introspect::label(y));
   BOOST_CHECK_EQUAL(6, y());
 }
 
@@ -492,7 +492,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_prelude_basic)
 {
   const eager<int> x = *Var<int>(15);
 
-  BOOST_CHECK_EQUAL("curr", introspect::label(x));
+  BOOST_CHECK_EQUAL("main", introspect::label(x));
   BOOST_CHECK_EQUAL(15, x());
 }
 

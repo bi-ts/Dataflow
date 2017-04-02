@@ -139,7 +139,7 @@ BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
   const auto labels = vertex_labels(order.begin(), order.end());
 
   std::vector<std::string> expected_labels(
-    {"var", "<", "activator", "*", "+", "if", "curr"});
+    {"var", "<", "activator", "*", "+", "if", "main"});
 
   BOOST_CHECK_EQUAL_COLLECTIONS(labels.begin(),
                                 labels.end(),
@@ -168,7 +168,7 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
     BOOST_TEST(vertex_labels(introspect::topological_order()) ==
                  std::vector<std::string>(
-                   {"var", "<", "activator", "(-)", "if", "curr"}),
+                   {"var", "<", "activator", "(-)", "if", "main"}),
                boost::test_tools::per_element());
 
     BOOST_TEST(graph_invariant_holds());
@@ -181,7 +181,7 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
     BOOST_TEST(vertex_labels(introspect::topological_order()) ==
                  std::vector<std::string>(
-                   {"var", "<", "activator", "*", "+", "if", "curr"}),
+                   {"var", "<", "activator", "*", "+", "if", "main"}),
                boost::test_tools::per_element());
 
     BOOST_TEST(graph_invariant_holds());
