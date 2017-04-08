@@ -1096,7 +1096,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_prelude_basic)
   BOOST_CHECK_EQUAL(20, f());
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Switch, test_prelude_basic)
+BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_prelude_basic)
 {
   auto x = Var<std::string>("ten");
 
@@ -1121,14 +1121,105 @@ BOOST_FIXTURE_TEST_CASE(test_Switch, test_prelude_basic)
   BOOST_CHECK_EQUAL(3, f());
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Switch_string, test_prelude_basic)
+BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_prelude_basic)
+{
+  auto x = Var<std::string>("ten");
+  auto y1 = Var(1);
+  auto y3 = Var(3);
+  auto y5 = Var(5);
+
+  auto f = *Switch(x,
+                   Case(Const("one"), y1),
+                   Case(Const("two"), 2),
+                   Case(std::string("three"), y3),
+                   Case(std::string("four"), 4),
+                   Case("five", y5),
+                   Case("ten", 10),
+                   Default(0));
+
+  BOOST_CHECK_EQUAL(10, f());
+
+  x = "one";
+
+  BOOST_CHECK_EQUAL(1, f());
+
+  x = "five";
+
+  BOOST_CHECK_EQUAL(5, f());
+
+  x = "two";
+
+  BOOST_CHECK_EQUAL(2, f());
+
+  x = "four";
+
+  BOOST_CHECK_EQUAL(4, f());
+
+  x = "three";
+
+  BOOST_CHECK_EQUAL(3, f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_prelude_basic)
+{
+  auto x = Var<std::string>("yes");
+
+  auto f = *Switch(x,
+                   Case(Const("yes"), "ja"),
+                   Case(std::string("no"), "nee"),
+                   Case("maybe", "misschien"),
+                   Default(""));
+
+  BOOST_CHECK_EQUAL("ja", f());
+
+  x = "maybe";
+
+  BOOST_CHECK_EQUAL("misschien", f());
+
+  x = "no";
+
+  BOOST_CHECK_EQUAL("nee", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_prelude_basic)
 {
   auto x = Var<int>(1);
+  auto y = Var<std::string>("one");
 
-  auto f = *Switch(Case(x == 1, "one"),
-                   Case(x == 2, "two"),
-                   Case(x == 3, "three"),
+  auto f = *Switch(Case(x == 1, y),
+                   Case(x == 2, Const("two")),
+                   Case(x == 3, std::string("three")),
                    Case(x == 4, "four"),
+                   Default("error"));
+
+  BOOST_CHECK_EQUAL("one", f());
+
+  x = 2;
+
+  BOOST_CHECK_EQUAL("two", f());
+
+  x = 3;
+
+  BOOST_CHECK_EQUAL("three", f());
+
+  x = 4;
+
+  BOOST_CHECK_EQUAL("four", f());
+
+  x = 5;
+
+  BOOST_CHECK_EQUAL("error", f());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_prelude_basic)
+{
+  auto x = Var<int>(1);
+  auto y = Var<std::string>("three");
+
+  auto f = *Switch(x == 1 >>= "one",
+                   x == 2 >>= std::string("two"),
+                   x == 3 >>= y,
+                   x == 4 >>= Const("four"),
                    Default("error"));
 
   BOOST_CHECK_EQUAL("one", f());
