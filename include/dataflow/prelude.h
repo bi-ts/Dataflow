@@ -106,6 +106,7 @@ template <typename T> ref<T> Const(const T& v = T());
 DATAFLOW___EXPORT ref<std::string> Const(const char* v);
 
 template <typename T> var<T> Var(const T& v);
+DATAFLOW___EXPORT var<std::string> Var(const char* v);
 
 template <typename T> eager<T> Curr(ref<T> x);
 

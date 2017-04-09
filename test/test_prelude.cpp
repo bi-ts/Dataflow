@@ -118,8 +118,8 @@ protected:
 #define TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(name, op)                    \
   BOOST_FIXTURE_TEST_CASE(test_operator_##name##_string, test_prelude_basic)   \
   {                                                                            \
-    const auto x = Var<std::string>("str1");                                   \
-    const auto y = Var<std::string>("str1");                                   \
+    const auto x = Var("str1");                                                \
+    const auto y = Var("str1");                                                \
                                                                                \
     const auto a = *(x op y);                                                  \
     const auto b = *(x op "str2");                                             \
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_SUITE(test_prelude)
 
 BOOST_FIXTURE_TEST_CASE(test_Const, test_prelude_basic)
 {
-  const ref<int> x = Const<int>(17);
+  const ref<int> x = Const(17);
 
   BOOST_CHECK_EQUAL("const", introspect::label(x));
 
@@ -233,7 +233,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_Var, test_prelude_basic)
 {
-  const var<int> x = Var<int>(17);
+  const var<int> x = Var(17);
 
   BOOST_CHECK_EQUAL("var", introspect::label(x));
 
@@ -244,6 +244,21 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_prelude_basic)
   x = 6;
 
   BOOST_CHECK_EQUAL(6, y());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_prelude_basic)
+{
+  const var<std::string> x = Var("some text");
+
+  BOOST_CHECK_EQUAL("var", introspect::label(x));
+
+  auto y = Curr(x);
+
+  BOOST_CHECK_EQUAL("some text", y());
+
+  x = "other text";
+
+  BOOST_CHECK_EQUAL("other text", y());
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Curr, test_prelude_basic)
@@ -600,7 +615,7 @@ BOOST_FIXTURE_TEST_CASE(test_Mod, test_prelude_binary)
 {
   y = 1;
 
-  auto z = Mod(Const<int>(60), y);
+  auto z = Mod(Const(60), y);
 
   BOOST_CHECK_EQUAL("mod", introspect::label(z));
 
@@ -1098,7 +1113,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_prelude_basic)
 {
-  auto x = Var<std::string>("ten");
+  auto x = Var("ten");
 
   auto f = *Switch(Case(x == "one", 1),
                    Case(x == "three", 3),
@@ -1123,7 +1138,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_prelude_basic)
 {
-  auto x = Var<std::string>("ten");
+  auto x = Var("ten");
   auto y1 = Var(1);
   auto y3 = Var(3);
   auto y5 = Var(5);
@@ -1162,7 +1177,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_prelude_basic)
 {
-  auto x = Var<std::string>("yes");
+  auto x = Var("yes");
 
   auto f = *Switch(x,
                    Case(Const("yes"), "ja"),
@@ -1184,7 +1199,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_prelude_basic)
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_prelude_basic)
 {
   auto x = Var<int>(1);
-  auto y = Var<std::string>("one");
+  auto y = Var("one");
 
   auto f = *Switch(Case(x == 1, y),
                    Case(x == 2, Const("two")),
@@ -1214,7 +1229,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_prelude_basic)
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_prelude_basic)
 {
   auto x = Var<int>(1);
-  auto y = Var<std::string>("three");
+  auto y = Var("three");
 
   auto f = *Switch(x == 1 >>= "one",
                    x == 2 >>= std::string("two"),
@@ -1258,7 +1273,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_prelude_basic)
 {
-  auto x = Var<std::string>("str");
+  auto x = Var("str");
   auto y = ToString(x);
   auto f = *y;
 
@@ -1307,7 +1322,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_prelude_basic)
 {
-  auto x = Var<std::string>("42");
+  auto x = Var("42");
   auto y = FromString<int>(x);
   auto f = *y;
 
@@ -1322,7 +1337,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_prelude_basic)
 {
-  auto x = Var<std::string>("NAN");
+  auto x = Var("NAN");
   auto y = FromString<int>(x, 5);
   auto f = *y;
 
@@ -1338,7 +1353,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_prelude_basic)
 BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
                         test_prelude_basic)
 {
-  auto x = Var<std::string>("");
+  auto x = Var("");
   auto y = FromString<int>(x, 5);
   auto f = *y;
 
@@ -1353,7 +1368,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_prelude_basic)
 {
-  auto x = Var<std::string>("str");
+  auto x = Var("str");
   auto y = FromString<std::string>(x);
   auto f = *y;
 
@@ -1368,7 +1383,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_prelude_basic)
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_prelude_basic)
 {
-  auto x = Var<std::string>("str");
+  auto x = Var("str");
   auto y = FromString<std::string>(x, "never used");
   auto f = *y;
 
