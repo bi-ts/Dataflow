@@ -76,43 +76,43 @@ protected:
                                                                                \
     x = 1;                                                                     \
     y = 1;                                                                     \
-    BOOST_CHECK_EQUAL((1 op 1), a());                                          \
-    BOOST_CHECK_EQUAL((1 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 1), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (1 op 1));                                          \
+    BOOST_CHECK_EQUAL(b(), (1 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 1));                                          \
     y = 2;                                                                     \
-    BOOST_CHECK_EQUAL((1 op 2), a());                                          \
-    BOOST_CHECK_EQUAL((1 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 2), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (1 op 2));                                          \
+    BOOST_CHECK_EQUAL(b(), (1 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 2));                                          \
     y = 3;                                                                     \
-    BOOST_CHECK_EQUAL((1 op 3), a());                                          \
-    BOOST_CHECK_EQUAL((1 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 3), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (1 op 3));                                          \
+    BOOST_CHECK_EQUAL(b(), (1 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 3));                                          \
     x = 2;                                                                     \
     y = 1;                                                                     \
-    BOOST_CHECK_EQUAL((2 op 1), a());                                          \
-    BOOST_CHECK_EQUAL((2 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 1), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (2 op 1));                                          \
+    BOOST_CHECK_EQUAL(b(), (2 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 1));                                          \
     y = 2;                                                                     \
-    BOOST_CHECK_EQUAL((2 op 2), a());                                          \
-    BOOST_CHECK_EQUAL((2 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 2), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (2 op 2));                                          \
+    BOOST_CHECK_EQUAL(b(), (2 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 2));                                          \
     y = 3;                                                                     \
-    BOOST_CHECK_EQUAL((2 op 3), a());                                          \
-    BOOST_CHECK_EQUAL((2 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 3), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (2 op 3));                                          \
+    BOOST_CHECK_EQUAL(b(), (2 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 3));                                          \
     x = 3;                                                                     \
     y = 1;                                                                     \
-    BOOST_CHECK_EQUAL((3 op 1), a());                                          \
-    BOOST_CHECK_EQUAL((3 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 1), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (3 op 1));                                          \
+    BOOST_CHECK_EQUAL(b(), (3 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 1));                                          \
     y = 2;                                                                     \
-    BOOST_CHECK_EQUAL((3 op 2), a());                                          \
-    BOOST_CHECK_EQUAL((3 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 2), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (3 op 2));                                          \
+    BOOST_CHECK_EQUAL(b(), (3 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 2));                                          \
     y = 3;                                                                     \
-    BOOST_CHECK_EQUAL((3 op 3), a());                                          \
-    BOOST_CHECK_EQUAL((3 op 2), b());                                          \
-    BOOST_CHECK_EQUAL((2 op 3), c());                                          \
+    BOOST_CHECK_EQUAL(a(), (3 op 3));                                          \
+    BOOST_CHECK_EQUAL(b(), (3 op 2));                                          \
+    BOOST_CHECK_EQUAL(c(), (2 op 3));                                          \
   }
 
 #define TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(name, op)                    \
@@ -125,43 +125,43 @@ protected:
     const auto b = *(x op "str2");                                             \
     const auto c = *("str2" op y);                                             \
                                                                                \
-    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str1")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str1") op std::string("str1")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str1") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str1")));      \
     y = "str2";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str1") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str1") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str2")));      \
     y = "str3";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str3")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str1") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str1") op std::string("str3")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str1") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str3")));      \
     x = "str2";                                                                \
     y = "str1";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str2") op std::string("str1")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str2") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str1")));      \
     y = "str2";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str2") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str2") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str2")));      \
     y = "str3";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str2") op std::string("str3")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str2") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str3")));      \
     x = "str3";                                                                \
     y = "str1";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str1")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str1")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str3") op std::string("str1")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str3") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str1")));      \
     y = "str2";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str2")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str3") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str3") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str2")));      \
     y = "str3";                                                                \
-    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str3")), a());      \
-    BOOST_CHECK_EQUAL((std::string("str3") op std::string("str2")), b());      \
-    BOOST_CHECK_EQUAL((std::string("str2") op std::string("str3")), c());      \
+    BOOST_CHECK_EQUAL(a(), (std::string("str3") op std::string("str3")));      \
+    BOOST_CHECK_EQUAL(b(), (std::string("str3") op std::string("str2")));      \
+    BOOST_CHECK_EQUAL(c(), (std::string("str2") op std::string("str3")));      \
   }
 
 #define TEST_BINARY_FUNCTION(fn, op)                                           \
@@ -169,29 +169,29 @@ protected:
   {                                                                            \
     const auto z = fn(x, y);                                                   \
     const auto a = *z;                                                         \
-    BOOST_CHECK_EQUAL(#op, introspect::label(z));                              \
+    BOOST_CHECK_EQUAL(introspect::label(z), #op);                              \
                                                                                \
     x = 1;                                                                     \
     y = 1;                                                                     \
-    BOOST_CHECK_EQUAL((1 op 1), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (1 op 1));                                          \
     y = 2;                                                                     \
-    BOOST_CHECK_EQUAL((1 op 2), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (1 op 2));                                          \
     y = 3;                                                                     \
-    BOOST_CHECK_EQUAL((1 op 3), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (1 op 3));                                          \
     x = 2;                                                                     \
     y = 1;                                                                     \
-    BOOST_CHECK_EQUAL((2 op 1), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (2 op 1));                                          \
     y = 2;                                                                     \
-    BOOST_CHECK_EQUAL((2 op 2), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (2 op 2));                                          \
     y = 3;                                                                     \
-    BOOST_CHECK_EQUAL((2 op 3), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (2 op 3));                                          \
     x = 3;                                                                     \
     y = 1;                                                                     \
-    BOOST_CHECK_EQUAL((3 op 1), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (3 op 1));                                          \
     y = 2;                                                                     \
-    BOOST_CHECK_EQUAL((3 op 2), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (3 op 2));                                          \
     y = 3;                                                                     \
-    BOOST_CHECK_EQUAL((3 op 3), a());                                          \
+    BOOST_CHECK_EQUAL(a(), (3 op 3));                                          \
   }
 
 // Basic
@@ -202,63 +202,63 @@ BOOST_FIXTURE_TEST_CASE(test_Const, test_prelude_basic)
 {
   const ref<int> x = Const(17);
 
-  BOOST_CHECK_EQUAL("const", introspect::label(x));
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
 
   const auto y = Curr(x);
 
-  BOOST_CHECK_EQUAL(17, y());
+  BOOST_CHECK_EQUAL(y(), 17);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_no_params, test_prelude_basic)
 {
   const ref<int> x = Const<int>();
 
-  BOOST_CHECK_EQUAL("const", introspect::label(x));
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
 
   auto y = Curr(x);
 
-  BOOST_CHECK_EQUAL(0, y());
+  BOOST_CHECK_EQUAL(y(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_prelude_basic)
 {
   const ref<std::string> x = Const("some text");
 
-  BOOST_CHECK_EQUAL("const", introspect::label(x));
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
 
   auto y = Curr(x);
 
-  BOOST_CHECK_EQUAL("some text", y());
+  BOOST_CHECK_EQUAL(y(), "some text");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var, test_prelude_basic)
 {
   const var<int> x = Var(17);
 
-  BOOST_CHECK_EQUAL("var", introspect::label(x));
+  BOOST_CHECK_EQUAL(introspect::label(x), "var");
 
   auto y = Curr(x);
 
-  BOOST_CHECK_EQUAL(17, y());
+  BOOST_CHECK_EQUAL(y(), 17);
 
   x = 6;
 
-  BOOST_CHECK_EQUAL(6, y());
+  BOOST_CHECK_EQUAL(y(), 6);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_prelude_basic)
 {
   const var<std::string> x = Var("some text");
 
-  BOOST_CHECK_EQUAL("var", introspect::label(x));
+  BOOST_CHECK_EQUAL(introspect::label(x), "var");
 
   auto y = Curr(x);
 
-  BOOST_CHECK_EQUAL("some text", y());
+  BOOST_CHECK_EQUAL(y(), "some text");
 
   x = "other text";
 
-  BOOST_CHECK_EQUAL("other text", y());
+  BOOST_CHECK_EQUAL(y(), "other text");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Curr, test_prelude_basic)
