@@ -265,14 +265,14 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_prelude_basic)
 {
   const var<int> x = Var<int>(6);
 
-  BOOST_CHECK_EQUAL(1, introspect::ref_count(x));
+  BOOST_CHECK_EQUAL(introspect::ref_count(x), 1);
 
   const auto y = Curr(x);
 
-  BOOST_CHECK_EQUAL(2, introspect::ref_count(x));
+  BOOST_CHECK_EQUAL(introspect::ref_count(x), 2);
 
-  BOOST_CHECK_EQUAL("main", introspect::label(y));
-  BOOST_CHECK_EQUAL(6, y());
+  BOOST_CHECK_EQUAL(introspect::label(y), "main");
+  BOOST_CHECK_EQUAL(y(), 6);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Main, test_prelude_basic)
@@ -285,15 +285,15 @@ BOOST_FIXTURE_TEST_CASE(test_Main, test_prelude_basic)
                         return x + y;
                       });
 
-  BOOST_CHECK_EQUAL(31, z());
+  BOOST_CHECK_EQUAL(z(), 31);
 
   x = 25;
 
-  BOOST_CHECK_EQUAL(50, z());
+  BOOST_CHECK_EQUAL(z(), 50);
 
   y = 7;
 
-  BOOST_CHECK_EQUAL(32, z());
+  BOOST_CHECK_EQUAL(z(), 32);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_prelude_basic)
@@ -315,9 +315,9 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_prelude_basic)
   const auto y = Lift(x, policy());
   const auto z = Curr(y);
 
-  BOOST_CHECK_EQUAL("shift", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "shift");
 
-  BOOST_CHECK_EQUAL('C', z());
+  BOOST_CHECK_EQUAL(z(), 'C');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_prelude_basic)
@@ -343,9 +343,9 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_prelude_basic)
   const auto y = Lift(x, policy());
   const auto z = Curr(y);
 
-  BOOST_CHECK_EQUAL("lowercase", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "lowercase");
 
-  BOOST_CHECK_EQUAL('c', z());
+  BOOST_CHECK_EQUAL(z(), 'c');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_prelude_basic)
@@ -361,9 +361,9 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_prelude_basic)
 
   const auto z = Curr(y);
 
-  BOOST_CHECK_EQUAL("trinity", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "trinity");
 
-  BOOST_CHECK_EQUAL("BBB", z());
+  BOOST_CHECK_EQUAL(z(), "BBB");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_prelude_basic)
@@ -382,9 +382,9 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_prelude_basic)
 
   const auto z = Curr(y);
 
-  BOOST_CHECK_EQUAL("duplicate", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "duplicate");
 
-  BOOST_CHECK_EQUAL("CC", z());
+  BOOST_CHECK_EQUAL(z(), "CC");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_prelude_basic)
@@ -407,9 +407,9 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_prelude_basic)
   const auto z = Lift(x, y, policy());
   const auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL("shift", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "shift");
 
-  BOOST_CHECK_EQUAL('E', a());
+  BOOST_CHECK_EQUAL(a(), 'E');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_prelude_basic)
@@ -436,13 +436,13 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_prelude_basic)
   const auto z = Lift(x, y, policy());
   const auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL("lowercase", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "lowercase");
 
-  BOOST_CHECK_EQUAL('c', a());
+  BOOST_CHECK_EQUAL(a(), 'c');
 
   y = false;
 
-  BOOST_CHECK_EQUAL('C', a());
+  BOOST_CHECK_EQUAL(a(), 'C');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_prelude_basic)
@@ -460,17 +460,17 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_prelude_basic)
 
   const auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL("multiply", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "multiply");
 
-  BOOST_CHECK_EQUAL("BBBB", a());
+  BOOST_CHECK_EQUAL(a(), "BBBB");
 
   y = 2;
 
-  BOOST_CHECK_EQUAL("BB", a());
+  BOOST_CHECK_EQUAL(a(), "BB");
 
   x = 'A';
 
-  BOOST_CHECK_EQUAL("AA", a());
+  BOOST_CHECK_EQUAL(a(), "AA");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_prelude_basic)
@@ -490,25 +490,25 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_prelude_basic)
 
   const auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL("multiply", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "multiply");
 
-  BOOST_CHECK_EQUAL("CCC", a());
+  BOOST_CHECK_EQUAL(a(), "CCC");
 
   y = 2;
 
-  BOOST_CHECK_EQUAL("CC", a());
+  BOOST_CHECK_EQUAL(a(), "CC");
 
   x = 'A';
 
-  BOOST_CHECK_EQUAL("AA", a());
+  BOOST_CHECK_EQUAL(a(), "AA");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_prelude_basic)
 {
   const eager<int> x = *Var<int>(15);
 
-  BOOST_CHECK_EQUAL("main", introspect::label(x));
-  BOOST_CHECK_EQUAL(15, x());
+  BOOST_CHECK_EQUAL(introspect::label(x), "main");
+  BOOST_CHECK_EQUAL(x(), 15);
 }
 
 // Arithmetic
@@ -519,15 +519,15 @@ BOOST_FIXTURE_TEST_CASE(test_Abs, test_prelude_basic)
 
   const auto z = Abs(x);
 
-  BOOST_CHECK_EQUAL("abs", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "abs");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(13, a());
+  BOOST_CHECK_EQUAL(a(), 13);
 
   x = 5;
 
-  BOOST_CHECK_EQUAL(5, a());
+  BOOST_CHECK_EQUAL(a(), 5);
 }
 
 TEST_BINARY_FUNCTION(Add, +);
@@ -543,15 +543,15 @@ BOOST_FIXTURE_TEST_CASE(test_Plus, test_prelude_basic)
 
   const auto z = Plus(x);
 
-  BOOST_CHECK_EQUAL("(+)", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "(+)");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(13, a());
+  BOOST_CHECK_EQUAL(a(), 13);
 
   x = -5;
 
-  BOOST_CHECK_EQUAL(-5, a());
+  BOOST_CHECK_EQUAL(a(), -5);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Plus_operator, test_prelude_basic)
@@ -560,15 +560,15 @@ BOOST_FIXTURE_TEST_CASE(test_Plus_operator, test_prelude_basic)
 
   const auto z = +x;
 
-  BOOST_CHECK_EQUAL("(+)", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "(+)");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(13, a());
+  BOOST_CHECK_EQUAL(a(), 13);
 
   x = -5;
 
-  BOOST_CHECK_EQUAL(-5, a());
+  BOOST_CHECK_EQUAL(a(), -5);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Inv, test_prelude_basic)
@@ -577,15 +577,15 @@ BOOST_FIXTURE_TEST_CASE(test_Inv, test_prelude_basic)
 
   const auto z = Inv(x);
 
-  BOOST_CHECK_EQUAL("(-)", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "(-)");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(-13, a());
+  BOOST_CHECK_EQUAL(a(), -13);
 
   x = -5;
 
-  BOOST_CHECK_EQUAL(5, a());
+  BOOST_CHECK_EQUAL(a(), 5);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Inv_operator, test_prelude_basic)
@@ -594,15 +594,15 @@ BOOST_FIXTURE_TEST_CASE(test_Inv_operator, test_prelude_basic)
 
   const auto z = -x;
 
-  BOOST_CHECK_EQUAL("(-)", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "(-)");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(-13, a());
+  BOOST_CHECK_EQUAL(a(), -13);
 
   x = -5;
 
-  BOOST_CHECK_EQUAL(5, a());
+  BOOST_CHECK_EQUAL(a(), 5);
 }
 
 TEST_BINARY_FUNCTION(Mult, *);
@@ -617,7 +617,7 @@ BOOST_FIXTURE_TEST_CASE(test_Mod, test_prelude_binary)
 
   auto z = Mod(Const(60), y);
 
-  BOOST_CHECK_EQUAL("mod", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "mod");
 
   auto a = Curr(z);
 
@@ -641,15 +641,15 @@ BOOST_FIXTURE_TEST_CASE(test_Incr, test_prelude_basic)
 
   const auto z = Incr(x);
 
-  BOOST_CHECK_EQUAL("incr", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "incr");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(14, a());
+  BOOST_CHECK_EQUAL(a(), 14);
 
   x = 42;
 
-  BOOST_CHECK_EQUAL(43, a());
+  BOOST_CHECK_EQUAL(a(), 43);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Incr_operator, test_prelude_basic)
@@ -658,19 +658,19 @@ BOOST_FIXTURE_TEST_CASE(test_Incr_operator, test_prelude_basic)
 
   const auto y = ++x;
 
-  BOOST_CHECK_EQUAL("incr", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "incr");
 
   const auto z = y++;
 
-  BOOST_CHECK_EQUAL("incr", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "incr");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(15, a());
+  BOOST_CHECK_EQUAL(a(), 15);
 
   x = -42;
 
-  BOOST_CHECK_EQUAL(-40, a());
+  BOOST_CHECK_EQUAL(a(), -40);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Decr, test_prelude_basic)
@@ -679,15 +679,15 @@ BOOST_FIXTURE_TEST_CASE(test_Decr, test_prelude_basic)
 
   const auto z = Decr(x);
 
-  BOOST_CHECK_EQUAL("decr", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "decr");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(12, a());
+  BOOST_CHECK_EQUAL(a(), 12);
 
   x = 42;
 
-  BOOST_CHECK_EQUAL(41, a());
+  BOOST_CHECK_EQUAL(a(), 41);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Decr_operator, test_prelude_basic)
@@ -696,19 +696,19 @@ BOOST_FIXTURE_TEST_CASE(test_Decr_operator, test_prelude_basic)
 
   const auto y = --x;
 
-  BOOST_CHECK_EQUAL("decr", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "decr");
 
   const auto z = y--;
 
-  BOOST_CHECK_EQUAL("decr", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "decr");
 
   auto a = Curr(z);
 
-  BOOST_CHECK_EQUAL(11, a());
+  BOOST_CHECK_EQUAL(a(), 11);
 
   x = -42;
 
-  BOOST_CHECK_EQUAL(-44, a());
+  BOOST_CHECK_EQUAL(a(), -44);
 }
 
 // Comparison
@@ -745,7 +745,7 @@ BOOST_FIXTURE_TEST_CASE(test_Not, test_prelude_logical)
 
   const auto z = Not(x);
 
-  BOOST_CHECK_EQUAL("not", introspect::label(z));
+  BOOST_CHECK_EQUAL(introspect::label(z), "not");
 
   const auto a = Curr(z);
 
@@ -1063,11 +1063,11 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_prelude_basic)
 
   auto f = *If(x, y, z);
 
-  BOOST_CHECK_EQUAL(10, f());
+  BOOST_CHECK_EQUAL(f(), 10);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(20, f());
+  BOOST_CHECK_EQUAL(f(), 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_prelude_basic)
@@ -1077,11 +1077,11 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_prelude_basic)
 
   auto f = *If(x, 10, z);
 
-  BOOST_CHECK_EQUAL(10, f());
+  BOOST_CHECK_EQUAL(f(), 10);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(20, f());
+  BOOST_CHECK_EQUAL(f(), 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_prelude_basic)
@@ -1091,11 +1091,11 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_prelude_basic)
 
   auto f = *If(x, y, 20);
 
-  BOOST_CHECK_EQUAL(10, f());
+  BOOST_CHECK_EQUAL(f(), 10);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(20, f());
+  BOOST_CHECK_EQUAL(f(), 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_prelude_basic)
@@ -1104,11 +1104,11 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_prelude_basic)
 
   auto f = *If(x, 10, 20);
 
-  BOOST_CHECK_EQUAL(10, f());
+  BOOST_CHECK_EQUAL(f(), 10);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(20, f());
+  BOOST_CHECK_EQUAL(f(), 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_prelude_basic)
@@ -1121,19 +1121,19 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_prelude_basic)
                    Case(x == "ten", 10),
                    Default(0));
 
-  BOOST_CHECK_EQUAL(10, f());
+  BOOST_CHECK_EQUAL(f(), 10);
 
   x = "one";
 
-  BOOST_CHECK_EQUAL(1, f());
+  BOOST_CHECK_EQUAL(f(), 1);
 
   x = "five";
 
-  BOOST_CHECK_EQUAL(5, f());
+  BOOST_CHECK_EQUAL(f(), 5);
 
   x = "three";
 
-  BOOST_CHECK_EQUAL(3, f());
+  BOOST_CHECK_EQUAL(f(), 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_prelude_basic)
@@ -1152,27 +1152,27 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_prelude_basic)
                    Case("ten", 10),
                    Default(0));
 
-  BOOST_CHECK_EQUAL(10, f());
+  BOOST_CHECK_EQUAL(f(), 10);
 
   x = "one";
 
-  BOOST_CHECK_EQUAL(1, f());
+  BOOST_CHECK_EQUAL(f(), 1);
 
   x = "five";
 
-  BOOST_CHECK_EQUAL(5, f());
+  BOOST_CHECK_EQUAL(f(), 5);
 
   x = "two";
 
-  BOOST_CHECK_EQUAL(2, f());
+  BOOST_CHECK_EQUAL(f(), 2);
 
   x = "four";
 
-  BOOST_CHECK_EQUAL(4, f());
+  BOOST_CHECK_EQUAL(f(), 4);
 
   x = "three";
 
-  BOOST_CHECK_EQUAL(3, f());
+  BOOST_CHECK_EQUAL(f(), 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_prelude_basic)
@@ -1185,15 +1185,15 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_prelude_basic)
                    Case("maybe", "misschien"),
                    Default(""));
 
-  BOOST_CHECK_EQUAL("ja", f());
+  BOOST_CHECK_EQUAL(f(), "ja");
 
   x = "maybe";
 
-  BOOST_CHECK_EQUAL("misschien", f());
+  BOOST_CHECK_EQUAL(f(), "misschien");
 
   x = "no";
 
-  BOOST_CHECK_EQUAL("nee", f());
+  BOOST_CHECK_EQUAL(f(), "nee");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_prelude_basic)
@@ -1207,23 +1207,23 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_prelude_basic)
                    Case(x == 4, "four"),
                    Default("error"));
 
-  BOOST_CHECK_EQUAL("one", f());
+  BOOST_CHECK_EQUAL(f(), "one");
 
   x = 2;
 
-  BOOST_CHECK_EQUAL("two", f());
+  BOOST_CHECK_EQUAL(f(), "two");
 
   x = 3;
 
-  BOOST_CHECK_EQUAL("three", f());
+  BOOST_CHECK_EQUAL(f(), "three");
 
   x = 4;
 
-  BOOST_CHECK_EQUAL("four", f());
+  BOOST_CHECK_EQUAL(f(), "four");
 
   x = 5;
 
-  BOOST_CHECK_EQUAL("error", f());
+  BOOST_CHECK_EQUAL(f(), "error");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_prelude_basic)
@@ -1237,23 +1237,23 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_prelude_basic)
                    x == 4 >>= Const("four"),
                    Default("error"));
 
-  BOOST_CHECK_EQUAL("one", f());
+  BOOST_CHECK_EQUAL(f(), "one");
 
   x = 2;
 
-  BOOST_CHECK_EQUAL("two", f());
+  BOOST_CHECK_EQUAL(f(), "two");
 
   x = 3;
 
-  BOOST_CHECK_EQUAL("three", f());
+  BOOST_CHECK_EQUAL(f(), "three");
 
   x = 4;
 
-  BOOST_CHECK_EQUAL("four", f());
+  BOOST_CHECK_EQUAL(f(), "four");
 
   x = 5;
 
-  BOOST_CHECK_EQUAL("error", f());
+  BOOST_CHECK_EQUAL(f(), "error");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_int, test_prelude_basic)
@@ -1262,13 +1262,13 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int, test_prelude_basic)
   auto y = ToString(x);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("ToString", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "ToString");
 
-  BOOST_CHECK_EQUAL("42", f());
+  BOOST_CHECK_EQUAL(f(), "42");
 
   x = 53;
 
-  BOOST_CHECK_EQUAL("53", f());
+  BOOST_CHECK_EQUAL(f(), "53");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_prelude_basic)
@@ -1277,13 +1277,13 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_prelude_basic)
   auto y = ToString(x);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("var", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
-  BOOST_CHECK_EQUAL("str", f());
+  BOOST_CHECK_EQUAL(f(), "str");
 
   x = "long string";
 
-  BOOST_CHECK_EQUAL("long string", f());
+  BOOST_CHECK_EQUAL(f(), "long string");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_prelude_basic)
@@ -1291,9 +1291,9 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_prelude_basic)
   auto y = ToString(5);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("const", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL("5", f());
+  BOOST_CHECK_EQUAL(f(), "5");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_prelude_basic)
@@ -1301,9 +1301,9 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_prelude_basic)
   auto y = ToString("string literal");
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("const", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL("string literal", f());
+  BOOST_CHECK_EQUAL(f(), "string literal");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_prelude_basic)
@@ -1313,11 +1313,11 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_prelude_basic)
   auto z = ToString(x, " != ", y);
   auto f = *z;
 
-  BOOST_CHECK_EQUAL("42 != 42.5", f());
+  BOOST_CHECK_EQUAL(f(), "42 != 42.5");
 
   x = 43;
 
-  BOOST_CHECK_EQUAL("43 != 42.5", f());
+  BOOST_CHECK_EQUAL(f(), "43 != 42.5");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_prelude_basic)
@@ -1326,13 +1326,13 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_prelude_basic)
   auto y = FromString<int>(x);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("FromString", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
-  BOOST_CHECK_EQUAL(42, f());
+  BOOST_CHECK_EQUAL(f(), 42);
 
   x = "55";
 
-  BOOST_CHECK_EQUAL(55, f());
+  BOOST_CHECK_EQUAL(f(), 55);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_prelude_basic)
@@ -1341,13 +1341,13 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_prelude_basic)
   auto y = FromString<int>(x, 5);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("FromString", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
-  BOOST_CHECK_EQUAL(5, f());
+  BOOST_CHECK_EQUAL(f(), 5);
 
   x = "55";
 
-  BOOST_CHECK_EQUAL(55, f());
+  BOOST_CHECK_EQUAL(f(), 55);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
@@ -1357,13 +1357,13 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
   auto y = FromString<int>(x, 5);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("FromString", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
-  BOOST_CHECK_EQUAL(5, f());
+  BOOST_CHECK_EQUAL(f(), 5);
 
   x = "55";
 
-  BOOST_CHECK_EQUAL(55, f());
+  BOOST_CHECK_EQUAL(f(), 55);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_prelude_basic)
@@ -1372,13 +1372,13 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_prelude_basic)
   auto y = FromString<std::string>(x);
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("var", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
-  BOOST_CHECK_EQUAL("str", f());
+  BOOST_CHECK_EQUAL(f(), "str");
 
   x = "long string";
 
-  BOOST_CHECK_EQUAL("long string", f());
+  BOOST_CHECK_EQUAL(f(), "long string");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_prelude_basic)
@@ -1387,13 +1387,13 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_prelude_basic)
   auto y = FromString<std::string>(x, "never used");
   auto f = *y;
 
-  BOOST_CHECK_EQUAL("var", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
-  BOOST_CHECK_EQUAL("str", f());
+  BOOST_CHECK_EQUAL(f(), "str");
 
   x = "long string";
 
-  BOOST_CHECK_EQUAL("long string", f());
+  BOOST_CHECK_EQUAL(f(), "long string");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal, test_prelude_basic)
@@ -1401,9 +1401,9 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal, test_prelude_basic)
   auto x = FromString<int>("54");
   auto f = *x;
 
-  BOOST_CHECK_EQUAL("const", introspect::label(x));
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
 
-  BOOST_CHECK_EQUAL(54, f());
+  BOOST_CHECK_EQUAL(f(), 54);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal_default,
@@ -1413,10 +1413,10 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal_default,
   auto y = FromString<int>("39", 10);
   auto f = *(x + y);
 
-  BOOST_CHECK_EQUAL("const", introspect::label(x));
-  BOOST_CHECK_EQUAL("const", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+  BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL(42, f());
+  BOOST_CHECK_EQUAL(f(), 42);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
@@ -1426,10 +1426,10 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
   auto y = FromString<int>("29", 10);
   auto f = *(x + y);
 
-  BOOST_CHECK_EQUAL("const", introspect::label(x));
-  BOOST_CHECK_EQUAL("const", introspect::label(y));
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+  BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL(42, f());
+  BOOST_CHECK_EQUAL(f(), 42);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

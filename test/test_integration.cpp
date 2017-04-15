@@ -85,12 +85,12 @@ BOOST_AUTO_TEST_CASE(regression_test_eager_node_deactivation)
 
   BOOST_CHECK(introspect::active_node(y) == true);
 
-  BOOST_CHECK_EQUAL(7, a());
+  BOOST_CHECK_EQUAL(a(), 7);
 
   {
     const auto b = Curr(a * 2);
 
-    BOOST_CHECK_EQUAL(14, b());
+    BOOST_CHECK_EQUAL(b(), 14);
   }
 
   BOOST_CHECK(introspect::active_node(y) == true);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(regression_test_diamond_deactivation)
   const auto x = Var<int>(6);
   const auto y = Curr(x * x);
 
-  BOOST_CHECK_EQUAL(36, y());
+  BOOST_CHECK_EQUAL(y(), 36);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
