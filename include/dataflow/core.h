@@ -120,6 +120,8 @@ template <typename T> eager<T> operator*(ref<T> x);
 
 // Utility functions
 
+namespace core
+{
 template <
   typename Policy,
   typename X,
@@ -147,8 +149,6 @@ template <typename F,
           typename T = typename std::result_of<F(const X&, const Y&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
 
-namespace core
-{
 template <typename T>
 ref<T> Conditional(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
 }

@@ -155,7 +155,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
     };
   };
 
-  const auto y = Lift(x, policy());
+  const auto y = core::Lift(x, policy());
   const auto z = Curr(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "shift");
@@ -183,7 +183,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
     char cache_;
   };
 
-  const auto y = Lift(x, policy());
+  const auto y = core::Lift(x, policy());
   const auto z = Curr(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "lowercase");
@@ -195,12 +195,12 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
 {
   const auto x = Var<char>('B');
 
-  const auto y = Lift("trinity",
-                      x,
-                      [](char c)
-                      {
-                        return std::string(3, c);
-                      });
+  const auto y = core::Lift("trinity",
+                            x,
+                            [](char c)
+                            {
+                              return std::string(3, c);
+                            });
 
   const auto z = Curr(y);
 
@@ -221,7 +221,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_core_fixture)
     };
   };
 
-  const auto y = Lift("duplicate", x, tool::duplicate);
+  const auto y = core::Lift("duplicate", x, tool::duplicate);
 
   const auto z = Curr(y);
 
@@ -247,7 +247,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
     };
   };
 
-  const auto z = Lift(x, y, policy());
+  const auto z = core::Lift(x, y, policy());
   const auto a = Curr(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "shift");
@@ -276,7 +276,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
     char cache_;
   };
 
-  const auto z = Lift(x, y, policy());
+  const auto z = core::Lift(x, y, policy());
   const auto a = Curr(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "lowercase");
@@ -293,13 +293,13 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
   const auto x = Var<char>('B');
   const auto y = Var<int>(4);
 
-  const auto z = Lift("multiply",
-                      x,
-                      y,
-                      [](char c, int n)
-                      {
-                        return std::string(n, c);
-                      });
+  const auto z = core::Lift("multiply",
+                            x,
+                            y,
+                            [](char c, int n)
+                            {
+                              return std::string(n, c);
+                            });
 
   const auto a = Curr(z);
 
@@ -329,7 +329,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
     };
   };
 
-  const auto z = Lift("multiply", x, y, tool::multiply);
+  const auto z = core::Lift("multiply", x, y, tool::multiply);
 
   const auto a = Curr(z);
 

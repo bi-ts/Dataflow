@@ -37,7 +37,7 @@
         return op v;                                                           \
       };                                                                       \
     };                                                                         \
-    return Lift<policy>(x);                                                    \
+    return core::Lift<policy>(x);                                              \
   }
 
 #define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(func, op, name, U)    \
@@ -55,7 +55,7 @@
         return lhs op rhs;                                                     \
       };                                                                       \
     };                                                                         \
-    return Lift<policy>(x, y);                                                 \
+    return core::Lift<policy>(x, y);                                           \
   }
 
 #define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_INL(func, op, name, T)  \
@@ -72,7 +72,7 @@
         return lhs op rhs;                                                     \
       };                                                                       \
     };                                                                         \
-    return Lift<policy>(x, y);                                                 \
+    return core::Lift<policy>(x, y);                                           \
   }
 
 #define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(func, op, name)         \
@@ -154,7 +154,7 @@ template <typename T> dataflow::ref<T> dataflow::Abs(const ref<T>& x)
       return std::abs(v);
     };
   };
-  return Lift<policy>(x);
+  return core::Lift<policy>(x);
 }
 
 DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(Add, +, "+");
@@ -222,7 +222,7 @@ inline dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
     };
   };
 
-  return Lift<policy>(x);
+  return core::Lift<policy>(x);
 }
 
 inline dataflow::ref<bool> dataflow::And(const ref<bool>& x, const ref<bool>& y)
@@ -426,7 +426,7 @@ dataflow::ref<std::string> dataflow::ToString(const ref<X>& x)
     }
   };
 
-  return Lift<policy>(x);
+  return core::Lift<policy>(x);
 }
 
 template <>
@@ -475,7 +475,7 @@ dataflow::ref<T> dataflow::FromString(const ref<std::string>& str, const T& d)
     const T d;
   };
 
-  return Lift<policy>(str, {d});
+  return core::Lift<policy>(str, {d});
 }
 
 template <>

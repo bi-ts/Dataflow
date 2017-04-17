@@ -103,14 +103,14 @@ template <typename T> dataflow::eager<T> dataflow::operator*(ref<T> x)
 
 template <typename Policy, typename X, typename T>
 dataflow::ref<T>
-dataflow::Lift(const ref<X>& x, const Policy& policy, bool eager)
+dataflow::core::Lift(const ref<X>& x, const Policy& policy, bool eager)
 {
   return ref<T>(internal::node_unary<T, X, Policy>::create(x, policy, eager));
 }
 
 template <typename F, typename X, typename T>
 dataflow::ref<T>
-dataflow::Lift(const std::string& label, const ref<X>& x, F func)
+dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)
 {
   class policy
   {
@@ -141,16 +141,16 @@ dataflow::Lift(const std::string& label, const ref<X>& x, F func)
 
 template <typename Policy, typename X, typename Y, typename T>
 dataflow::ref<T>
-dataflow::Lift(const ref<X>& x, const ref<Y>& y, const Policy& policy)
+dataflow::core::Lift(const ref<X>& x, const ref<Y>& y, const Policy& policy)
 {
   return ref<T>(internal::node_binary<T, X, Y, Policy>::create(x, y, policy));
 }
 
 template <typename F, typename X, typename Y, typename T>
-dataflow::ref<T> dataflow::Lift(const std::string& label,
-                                const ref<X>& x,
-                                const ref<Y>& y,
-                                F func)
+dataflow::ref<T> dataflow::core::Lift(const std::string& label,
+                                      const ref<X>& x,
+                                      const ref<Y>& y,
+                                      F func)
 {
   class policy
   {
