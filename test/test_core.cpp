@@ -87,6 +87,13 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), 6);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Var_default, test_core_fixture)
+{
+  auto y = Curr(Var<int>());
+
+  BOOST_CHECK_EQUAL(y(), 0);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
 {
   const var<std::string> x = Var("some text");
