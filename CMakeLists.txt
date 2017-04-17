@@ -31,6 +31,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 endif()
 
 add_library(${PROJECT_NAME} SHARED
+  include/dataflow/core.h
+  include/dataflow/core.inl
   include/dataflow/introspect.h
   include/dataflow/introspect.inl
   include/dataflow/io.h
