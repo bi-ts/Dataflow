@@ -32,6 +32,7 @@ namespace dataflow
 {
 
 /// \defgroup core
+/// \ingroup prelude
 /// \{
 
 namespace detail
