@@ -16,41 +16,41 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/internal/ref.h>
+#include <dataflow/internal/node_snapshot_activator.h>
+#include <dataflow/internal/nodes_factory.h>
 
 #include "engine.h"
 
 namespace dataflow
 {
-
 namespace internal
 {
-ref::ref(node_id id)
-: id_(id)
+ref node_snapshot_activator::create()
 {
-  engine::instance().add_ref(converter::convert(id_));
+  return nodes_factory::create<node_snapshot_activator>(nullptr, 0, false);
 }
 
-ref::ref(const ref& other)
-: id_(other.id_)
+node_snapshot_activator::node_snapshot_activator()
+: node_t<bool>(false)
 {
-  engine::instance().add_ref(converter::convert(id_));
 }
 
-ref::~ref()
+bool node_snapshot_activator::update_(node_id id,
+                                      bool initialized,
+                                      const node** p_deps,
+                                      std::size_t deps_count)
 {
-  engine::instance().release(converter::convert(id_));
+  CHECK_PRECONDITION(deps_count == 0);
+
+  engine::instance().update_node_snapshot_activator(converter::convert(id),
+                                                    initialized);
+
+  return true;
 }
 
-const node* ref::get_() const
+std::string node_snapshot_activator::label_() const
 {
-  return engine::instance().get_node(converter::convert(id_));
+  return "snapshot_activator";
 }
-
-void ref::schedule_() const
-{
-  engine::instance().schedule(converter::convert(id_));
-  engine::instance().pump();
-}
-}
-}
+} // internal
+} // dataflow

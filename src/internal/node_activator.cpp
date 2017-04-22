@@ -19,6 +19,7 @@
 #include <dataflow/internal/node_activator.h>
 #include <dataflow/internal/nodes_factory.h>
 
+#include "config.h"
 #include "engine.h"
 
 namespace dataflow
@@ -29,7 +30,7 @@ ref node_activator::create(const ref& condition)
 {
   const auto id = condition.id();
 
-  return nodes_factory::create<node_activator>(&id, 1);
+  return nodes_factory::create<node_activator>(&id, 1, false);
 }
 
 node_activator::node_activator()
@@ -42,7 +43,7 @@ bool node_activator::update_(node_id id,
                              const node** p_deps,
                              std::size_t deps_count)
 {
-  assert(p_deps != nullptr && deps_count == 1);
+  CHECK_PRECONDITION(p_deps != nullptr && deps_count == 1);
 
   const auto new_value = extract_node_value<bool>(p_deps[0]);
 

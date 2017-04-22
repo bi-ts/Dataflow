@@ -30,5 +30,16 @@ const tick_count& node::ticks_()
   return engine::instance().ticks();
 }
 
+void node::pump(node_id id)
+{
+  engine::instance().schedule(converter::convert(id));
+  engine::instance().pump();
+}
+
+void node::next_value_updated(node_id id)
+{
+  engine::instance().schedule_for_next_update(converter::convert(id));
+}
+
 } // internal
 } // dataflow

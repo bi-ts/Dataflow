@@ -22,26 +22,37 @@
 
 #include "internal/config.h"
 #include "internal/node_activator.h"
+#include "internal/node_snapshot.h"
+#include "internal/node_snapshot_activator.h"
 #include "internal/nodes.h"
+
+namespace dataflow
+{
 
 // ref
 
 template <typename T>
-dataflow::ref<T>::ref(const internal::ref& r)
+ref<T>::ref(const internal::ref& r)
 : internal::ref(r)
 {
   DATAFLOW___CHECK_PRECONDITION(r.is_of_type<T>());
 }
 
+template <typename T> ref<T> ref<T>::operator()(const Time& t) const
+{
+  return ref<T>(internal::node_snapshot<T>::create(
+    internal::node_snapshot_activator::create(), *this));
+}
+
 // eager
 
 template <typename T>
-dataflow::eager<T>::eager(const internal::ref& r)
+eager<T>::eager(const internal::ref& r)
 : ref<T>(r)
 {
 }
 
-template <typename T> const T& dataflow::eager<T>::operator()() const
+template <typename T> const T& eager<T>::operator()() const
 {
   return this->template value<T>();
 }
@@ -49,13 +60,12 @@ template <typename T> const T& dataflow::eager<T>::operator()() const
 // var
 
 template <typename T>
-dataflow::var<T>::var(const internal::ref& r)
+var<T>::var(const internal::ref& r)
 : ref<T>(r)
 {
 }
 
-template <typename T>
-const dataflow::var<T>& dataflow::var<T>::operator=(const T& v) const
+template <typename T> const var<T>& var<T>::operator=(const T& v) const
 {
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
@@ -65,6 +75,7 @@ const dataflow::var<T>& dataflow::var<T>::operator=(const T& v) const
   this->schedule_();
 
   return *this;
+}
 }
 
 // Basic functions

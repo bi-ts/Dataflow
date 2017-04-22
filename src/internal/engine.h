@@ -74,20 +74,23 @@ public:
   vertex_descriptor add_node(node* p_node,
                              const node_id* p_args,
                              std::size_t args_count,
-                             bool eager);
-
-  vertex_descriptor add_conditional_node(node* p_node,
-                                         const node_id* p_args,
-                                         std::size_t args_count);
+                             bool eager,
+                             bool conditional = false);
 
   vertex_descriptor add_persistent_node(node* p_node);
 
-  void pump(vertex_descriptor v);
+  void schedule(vertex_descriptor v);
+
+  void schedule_for_next_update(vertex_descriptor v);
+
+  void pump();
 
   bool update_node_activator(vertex_descriptor v,
                              bool initialized,
                              std::size_t new_value,
                              std::size_t old_value);
+
+  bool update_node_snapshot_activator(vertex_descriptor v, bool initialized);
 
 private:
   explicit engine();
@@ -128,6 +131,8 @@ private:
   allocator_type allocator_;
   dependency_graph graph_;
   topological_list order_;
+  std::vector<topological_position, memory_allocator<topological_position>>
+    next_update_;
   bool pumping_started_;
   std::vector<const node*, memory_allocator<const node*>> args_buffer_;
   tick_count ticks_;

@@ -36,28 +36,23 @@ class DATAFLOW___EXPORT nodes_factory
 {
 public:
   template <typename Node, typename... Args>
-  static ref
-  create(const node_id* p_args, std::size_t args_count, Args&&... args)
+  static ref create(const node_id* p_args,
+                    std::size_t args_count,
+                    bool eager,
+                    Args&&... args)
   {
     return add_(
-      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, false);
-  }
-
-  template <typename Node, typename... Args>
-  static ref
-  create_eager(const node_id* p_args, std::size_t args_count, Args&&... args)
-  {
-    return add_(
-      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, true);
+      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, eager);
   }
 
   template <typename Node, typename... Args>
   static ref create_conditional(const node_id* p_args,
                                 std::size_t args_count,
+                                bool eager,
                                 Args&&... args)
   {
     return add_conditional_(
-      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count);
+      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, eager);
   }
 
   template <typename Node, typename... Args>
@@ -91,8 +86,10 @@ private:
 
   static ref
   add_(node* p_node, const node_id* p_args, std::size_t args_count, bool eager);
-  static ref
-  add_conditional_(node* p_node, const node_id* p_args, std::size_t args_count);
+  static ref add_conditional_(node* p_node,
+                              const node_id* p_args,
+                              std::size_t args_count,
+                              bool eager);
   static ref add_constant_(node* p_node);
 };
 }

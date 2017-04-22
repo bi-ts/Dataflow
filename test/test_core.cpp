@@ -72,6 +72,28 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), "some text");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
+{
+  const var<int> x = Var<int>(3);
+
+  const auto y = Main([=](const Time& t0)
+                      {
+                        return x(t0);
+                      });
+
+  BOOST_CHECK(!introspect::active_node(x));
+
+  BOOST_CHECK_EQUAL(y(), 3);
+
+  x = 4;
+
+  BOOST_CHECK_EQUAL(y(), 3);
+
+  x = 6;
+
+  BOOST_CHECK_EQUAL(y(), 3);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
 {
   const var<int> x = Var(17);

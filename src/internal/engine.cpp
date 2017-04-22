@@ -65,7 +65,8 @@ void engine::stop()
 vertex_descriptor engine::add_node(node* p_node,
                                    const node_id* p_args,
                                    std::size_t args_count,
-                                   bool eager)
+                                   bool eager,
+                                   bool conditional)
 {
   CHECK_PRECONDITION(p_node != nullptr);
 
@@ -85,10 +86,14 @@ vertex_descriptor engine::add_node(node* p_node,
     graph_[w].add_ref();
   }
 
+  graph_[v].conditional = conditional;
+
   if (eager)
   {
     graph_[v].eager = true;
     graph_[v].position = order_.insert(order_.end(), v);
+
+    schedule(v);
 
     edge_descriptor logical_e = edge_descriptor();
     bool logical_edge_added = false;
@@ -106,25 +111,14 @@ vertex_descriptor engine::add_node(node* p_node,
     for (; es.first != es.second; ++es.first)
     {
       activate_subgraph_(*es.first);
-    }
 
-    pump(v);
+      if (conditional)
+        break;
+    }
   }
 
   CHECK_POSTCONDITION(is_active_node(v) == eager);
-
-  return v;
-}
-
-vertex_descriptor engine::add_conditional_node(node* p_node,
-                                               const node_id* p_args,
-                                               std::size_t args_count)
-{
-  const auto v = add_node(p_node, p_args, args_count, false);
-
-  graph_[v].conditional = true;
-
-  CHECK_POSTCONDITION(is_conditional_node(v));
+  CHECK_POSTCONDITION(is_conditional_node(v) == conditional);
 
   return v;
 }
@@ -144,18 +138,40 @@ vertex_descriptor engine::add_persistent_node(node* p_node)
   return v;
 }
 
-void engine::pump(vertex_descriptor v)
+void engine::schedule(vertex_descriptor v)
+{
+  if (graph_[v].position != topological_position())
+    order_.mark(graph_[v].position);
+}
+
+void engine::schedule_for_next_update(vertex_descriptor v)
+{
+  CHECK_PRECONDITION(pumping_started_);
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
+  if (graph_[v].position != topological_position())
+    next_update_.push_back(graph_[v].position);
+}
+
+void engine::pump()
 {
   CHECK_PRECONDITION(!pumping_started_);
 
   pumping_started_ = true;
 
-  if (graph_[v].position != topological_position())
-    order_.mark(graph_[v].position);
-
   try
   {
     pump_();
+
+    while (!next_update_.empty())
+    {
+      for (auto pos : next_update_)
+        order_.mark(pos);
+
+      next_update_.clear();
+
+      pump_();
+    }
   }
   catch (...)
   {
@@ -199,6 +215,30 @@ bool engine::update_node_activator(vertex_descriptor v,
       return true;
     }
   }
+
+  return false;
+}
+
+bool engine::update_node_snapshot_activator(vertex_descriptor v,
+                                            bool initialized)
+{
+  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
+  CHECK_PRECONDITION(is_conditional_node(graph_[v].consumers.front()));
+
+  const auto w = graph_[v].consumers.front();
+
+  const auto e = *(out_edges(w, graph_).first + 1);
+
+  if (!initialized)
+  {
+    activate_subgraph_(e);
+
+    schedule_for_next_update(v);
+
+    return true;
+  }
+
+  deactivate_subgraph_(e);
 
   return false;
 }

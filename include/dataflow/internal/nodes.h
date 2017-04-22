@@ -80,13 +80,8 @@ public:
 
     const auto id = x.id();
 
-    if (eager)
-    {
-      return nodes_factory::create_eager<node_unary<T, X, Policy>>(
-        &id, 1, policy);
-    }
-
-    return nodes_factory::create<node_unary<T, X, Policy>>(&id, 1, policy);
+    return nodes_factory::create<node_unary<T, X, Policy>>(
+      &id, 1, eager, policy);
   }
 
 private:
@@ -132,7 +127,7 @@ public:
     const std::array<node_id, 2> args = {{x.id(), y.id()}};
 
     return nodes_factory::create<node_binary<T, X, Y, Policy>>(
-      &args[0], args.size(), policy);
+      &args[0], args.size(), false, policy);
   }
 
 private:
@@ -171,7 +166,7 @@ template <typename T> class node_var final : public node_t<T>
 public:
   static ref create(const T& v)
   {
-    return nodes_factory::create<node_var<T>>(nullptr, 0, v);
+    return nodes_factory::create<node_var<T>>(nullptr, 0, false, v);
   }
 
   void set_next_value(const T& v) const
@@ -221,7 +216,11 @@ public:
 
     const auto id = x.id();
 
-    return nodes_factory::create_eager<node_main<T>>(&id, 1);
+    const ref y = nodes_factory::create<node_main<T>>(&id, 1, true);
+
+    node::pump(y.id());
+
+    return y;
   }
 
 private:
@@ -266,7 +265,8 @@ public:
     const std::array<node_id, 3> args = {
       {basis.id(), alternative.id(), consequence.id()}};
 
-    return nodes_factory::create_conditional<node_if<T>>(&args[0], args.size());
+    return nodes_factory::create_conditional<node_if<T>>(
+      &args[0], args.size(), false);
   }
 
 private:

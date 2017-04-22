@@ -42,6 +42,8 @@ using enable_if_not_ref_t =
   typename std::enable_if<!std::is_base_of<internal::ref, T>::value>::type;
 }
 
+using Time = internal::tick_count;
+
 class DATAFLOW___EXPORT Engine
 {
 public:
@@ -53,6 +55,8 @@ template <typename T> class ref : public internal::ref
 {
 public:
   explicit ref(const internal::ref& r);
+
+  ref<T> operator()(const Time& t) const;
 };
 
 template <typename T> class eager final : public ref<T>
@@ -70,8 +74,6 @@ public:
 
   const var& operator=(const T& v) const;
 };
-
-using Time = internal::tick_count;
 
 namespace detail
 {

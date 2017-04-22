@@ -20,62 +20,34 @@
 
 #include "dataflow++_export.h"
 
-#include <cstdint>
-#include <string>
-#include <utility>
+#include "node_t.h"
+#include "ref.h"
 
 namespace dataflow
 {
-
 namespace internal
 {
-
-class tick_count;
-
-using node_id = std::intptr_t;
-
-class DATAFLOW___EXPORT node
+class DATAFLOW___EXPORT node_snapshot_activator final : public node_t<bool>
 {
+  friend class nodes_factory;
+
 public:
-  bool
-  update(node_id id, bool init, const node** p_args, std::size_t args_count)
-  {
-    return update_(id, init, p_args, args_count);
-  }
-
-  std::string label() const
-  {
-    return label_();
-  }
-
-  std::string to_string() const
-  {
-    return to_string_();
-  }
-
-  std::pair<std::size_t, std::size_t> mem_info() const
-  {
-    return mem_info_();
-  }
-
-  virtual ~node(){};
-
-protected:
-  static const tick_count& ticks_();
-  static void pump(node_id id);
-  static void next_value_updated(node_id id);
+  static ref create();
 
 private:
+  explicit node_snapshot_activator();
+
   virtual bool update_(node_id id,
-                       bool init,
+                       bool initialized,
                        const node** p_args,
-                       std::size_t args_count) = 0;
+                       std::size_t args_count) override;
 
-  virtual std::string label_() const = 0;
+  virtual std::string label_() const override;
 
-  virtual std::string to_string_() const = 0;
-
-  virtual std::pair<std::size_t, std::size_t> mem_info_() const = 0;
+  virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
+  {
+    return std::make_pair(sizeof(*this), alignof(decltype(*this)));
+  }
 };
-}
-}
+} // internal
+} // dataflow

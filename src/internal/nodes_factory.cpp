@@ -52,10 +52,11 @@ ref nodes_factory::add_(node* p_node,
 
 ref nodes_factory::add_conditional_(node* p_node,
                                     const node_id* p_args,
-                                    std::size_t args_count)
+                                    std::size_t args_count,
+                                    bool eager)
 {
   return ref(converter::convert(
-    engine::instance().add_conditional_node(p_node, p_args, args_count)));
+    engine::instance().add_node(p_node, p_args, args_count, eager, true)));
 }
 
 ref nodes_factory::add_constant_(node* p_node)
