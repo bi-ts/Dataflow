@@ -16,8 +16,10 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/introspect.h>
+#include "tools/io_fixture.h"
+
 #include <dataflow/core.h>
+#include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>
 
@@ -26,7 +28,7 @@ using namespace dataflow;
 namespace dataflow_test
 {
 
-class test_core_fixture
+class test_core_fixture : public io_fixture
 {
 protected:
   test_core_fixture()
@@ -374,6 +376,52 @@ BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 
   BOOST_CHECK_EQUAL(introspect::label(x), "main");
   BOOST_CHECK_EQUAL(x(), 15);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
+{
+  const var<int> x = Var<int>(3);
+
+  struct tool
+  {
+    static ref<int> WriteInt(ref<int> x)
+    {
+      return core::Lift("output",
+                        x,
+                        [](int v)
+                        {
+                          std::cout << v << std::endl;
+                          return v;
+                        });
+    }
+  };
+
+  capture_output();
+
+  const auto y = Main([=](const Time& t)
+                      {
+                        return tool::WriteInt(Prev(t, Const(1), x));
+                      });
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "1;3;");
+
+  capture_output();
+
+  x = 5;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "1;3;5;");
+
+  capture_output();
+
+  x = 9;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "1;3;5;9;");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

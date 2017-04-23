@@ -155,6 +155,9 @@ template <typename T>
 ref<T> Conditional(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
 }
 
+template <typename T>
+ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
+
 /// \}
 }
 

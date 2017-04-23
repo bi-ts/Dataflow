@@ -22,6 +22,7 @@
 
 #include "internal/config.h"
 #include "internal/node_activator.h"
+#include "internal/node_previous.h"
 #include "internal/node_snapshot.h"
 #include "internal/node_snapshot_activator.h"
 #include "internal/nodes.h"
@@ -197,5 +198,12 @@ dataflow::ref<T> dataflow::core::Conditional(const ref<bool>& x,
 {
   return ref<T>(
     internal::node_if<T>::create(internal::node_activator::create(x), y, z));
+}
+
+template <typename T>
+dataflow::ref<T>
+dataflow::Prev(const Time& t0, const ref<T>& v0, const ref<T>& x)
+{
+  return ref<T>(internal::node_previous<T>::create(v0, x));
 }
 

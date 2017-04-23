@@ -1,0 +1,89 @@
+
+//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//
+//  This file is part of Dataflow++.
+//
+//  Dataflow++ is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Dataflow++ is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
+
+#pragma once
+
+#include "config.h"
+#include "node_t.h"
+#include "nodes_factory.h"
+#include "ref.h"
+
+#include <array>
+#include <utility>
+
+namespace dataflow
+{
+namespace internal
+{
+template <typename T> class node_previous final : public node_t<T>
+{
+  friend class nodes_factory;
+
+public:
+  static ref create(const ref& x, const ref& y)
+  {
+    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
+    DATAFLOW___CHECK_PRECONDITION(y.template is_of_type<T>());
+
+    const std::array<node_id, 2> args = {{x.id(), y.id()}};
+
+    return nodes_factory::create<node_previous<T>>(
+      &args[0], args.size(), false);
+  }
+
+private:
+  explicit node_previous()
+  : next_()
+  {
+  }
+
+  virtual bool update_(node_id id,
+                       bool initialized,
+                       const node** p_args,
+                       std::size_t args_count) override
+  {
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
+
+    const auto val = initialized ? next_ : extract_node_value<T>(p_args[0]);
+
+    next_ = extract_node_value<T>(p_args[1]);
+
+    const auto status = this->set_value_(val);
+
+    if (next_ != val)
+      node::next_value_updated(id);
+
+    return status;
+  }
+
+  virtual std::string label_() const override
+  {
+    return "previous";
+  }
+
+  virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
+  {
+    return std::make_pair(sizeof(*this), alignof(decltype(*this)));
+  }
+
+private:
+  T next_;
+};
+} // internal
+} // dataflow
