@@ -23,6 +23,7 @@
 
 #include "dataflow++_export.h"
 
+#include "arithmetic.h"
 #include "core.h"
 
 namespace dataflow
@@ -30,62 +31,6 @@ namespace dataflow
 
 /// \defgroup prelude
 /// \{
-
-// Arithmetic functions
-
-template <typename T> ref<T> Abs(const ref<T>& x);
-template <typename T> ref<T> Add(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Sub(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Plus(const ref<T>& x);
-template <typename T> ref<T> Inv(const ref<T>& x);
-template <typename T> ref<T> Mult(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Div(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Mod(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Incr(const ref<T>& x);
-template <typename T> ref<T> Decr(const ref<T>& x);
-
-// Operators
-
-// Addition
-template <typename T> ref<T> operator+(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator+(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator+(const T& x, const ref<T>& y);
-ref<std::string> operator+(const ref<std::string>& x, const char* y);
-ref<std::string> operator+(const char* x, const ref<std::string>& y);
-
-// Subtraction
-template <typename T> ref<T> operator-(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator-(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator-(const T& x, const ref<T>& y);
-
-// Unary plus
-template <typename T> ref<T> operator+(const ref<T>& x);
-
-// Unary minus (additive inverse)
-template <typename T> ref<T> operator-(const ref<T>& x);
-
-// Multiplication
-template <typename T> ref<T> operator*(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator*(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator*(const T& x, const ref<T>& y);
-
-// Division
-template <typename T> ref<T> operator/(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator/(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator/(const T& x, const ref<T>& y);
-
-// Modulo (integer remainder)
-template <typename T> ref<T> operator%(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator%(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator%(const T& x, const ref<T>& y);
-
-// Increment
-template <typename T> ref<T> operator++(const ref<T>& x);
-template <typename T> ref<T> operator++(const ref<T>& x, int);
-
-// Decrement
-template <typename T> ref<T> operator--(const ref<T>& x);
-template <typename T> ref<T> operator--(const ref<T>& x, int);
 
 // Comparison functions
 

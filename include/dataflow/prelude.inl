@@ -20,25 +20,7 @@
 #error '.inl' file can't be included directly. Use 'prelude.h' instead
 #endif
 
-#include <cstdlib> // std::abs
 #include <sstream>
-
-#define DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(func, op, name)   \
-  template <typename T> dataflow::ref<T> dataflow::func(const ref<T>& x)       \
-  {                                                                            \
-    struct policy                                                              \
-    {                                                                          \
-      static std::string label()                                               \
-      {                                                                        \
-        return name;                                                           \
-      }                                                                        \
-      static T calculate(const T& v)                                           \
-      {                                                                        \
-        return op v;                                                           \
-      };                                                                       \
-    };                                                                         \
-    return core::Lift<policy>(x);                                              \
-  }
 
 #define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(func, op, name, U)    \
   template <typename T>                                                        \
@@ -78,20 +60,6 @@
 #define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(func, op, name)         \
   DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(func, op, name, T)
 
-#define DATAFLOW___DEFINE_PREFIX_OPERATOR(op, func)                            \
-  template <typename T>                                                        \
-  dataflow::ref<T> dataflow::operator op(const ref<T>& x)                      \
-  {                                                                            \
-    return func(x);                                                            \
-  }
-
-#define DATAFLOW___DEFINE_POSTFIX_OPERATOR(op, func)                           \
-  template <typename T>                                                        \
-  dataflow::ref<T> dataflow::operator op(const ref<T>& x, int)                 \
-  {                                                                            \
-    return func(x);                                                            \
-  }
-
 #define DATAFLOW___DEFINE_BINARY_OPERATOR_T(op, func, U)                       \
   template <typename T>                                                        \
   dataflow::ref<U> dataflow::operator op(const ref<T>& x, const ref<T>& y)     \
@@ -121,9 +89,6 @@
     return Const(x) op y;                                                      \
   }
 
-#define DATAFLOW___DEFINE_BINARY_OPERATOR(op, func)                            \
-  DATAFLOW___DEFINE_BINARY_OPERATOR_T(op, func, T)
-
 #define DATAFLOW___DEFINE_BINARY_OPERATOR_INL(op, func, T)                     \
   inline dataflow::ref<T> dataflow::operator op(const ref<T>& x,               \
                                                 const ref<T>& y)               \
@@ -138,49 +103,6 @@
   {                                                                            \
     return func(Const<T>(x), y);                                               \
   }
-
-// Arithmetic functions
-
-template <typename T> dataflow::ref<T> dataflow::Abs(const ref<T>& x)
-{
-  struct policy
-  {
-    static std::string label()
-    {
-      return "abs";
-    }
-    T calculate(const T& v)
-    {
-      return std::abs(v);
-    };
-  };
-  return core::Lift<policy>(x);
-}
-
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(Add, +, "+");
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(Sub, -, "-");
-DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(Plus, +, "(+)");
-DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(Inv, -, "(-)");
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(Mult, *, "*");
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(Div, /, "/");
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(Mod, %, "mod");
-DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(Incr, 1 +, "incr");
-DATAFLOW___DEFINE_UNARY_FUNCTION_VIA_PREFIX_OPERATOR(Decr, (-1) +, "decr");
-
-// Operators
-
-DATAFLOW___DEFINE_BINARY_OPERATOR(+, Add);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(+, std::string);
-DATAFLOW___DEFINE_BINARY_OPERATOR(-, Sub);
-DATAFLOW___DEFINE_PREFIX_OPERATOR(+, Plus);
-DATAFLOW___DEFINE_PREFIX_OPERATOR(-, Inv);
-DATAFLOW___DEFINE_BINARY_OPERATOR(*, Mult);
-DATAFLOW___DEFINE_BINARY_OPERATOR(/, Div);
-DATAFLOW___DEFINE_BINARY_OPERATOR(%, Mod);
-DATAFLOW___DEFINE_PREFIX_OPERATOR(++, Incr);
-DATAFLOW___DEFINE_POSTFIX_OPERATOR(++, Incr);
-DATAFLOW___DEFINE_PREFIX_OPERATOR(--, Decr);
-DATAFLOW___DEFINE_POSTFIX_OPERATOR(--, Decr);
 
 // Comparison functions
 
