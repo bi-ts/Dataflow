@@ -22,24 +22,6 @@
 
 #include <sstream>
 
-#define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(func, op, name, U)    \
-  template <typename T>                                                        \
-  dataflow::ref<U> dataflow::func(const ref<T>& x, const ref<T>& y)            \
-  {                                                                            \
-    struct policy                                                              \
-    {                                                                          \
-      static std::string label()                                               \
-      {                                                                        \
-        return name;                                                           \
-      }                                                                        \
-      static U calculate(const T& lhs, const T& rhs)                           \
-      {                                                                        \
-        return lhs op rhs;                                                     \
-      };                                                                       \
-    };                                                                         \
-    return core::Lift<policy>(x, y);                                           \
-  }
-
 #define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_INL(func, op, name, T)  \
   inline dataflow::ref<T> dataflow::func(const ref<T>& x, const ref<T>& y)     \
   {                                                                            \
@@ -57,38 +39,6 @@
     return core::Lift<policy>(x, y);                                           \
   }
 
-#define DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR(func, op, name)         \
-  DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(func, op, name, T)
-
-#define DATAFLOW___DEFINE_BINARY_OPERATOR_T(op, func, U)                       \
-  template <typename T>                                                        \
-  dataflow::ref<U> dataflow::operator op(const ref<T>& x, const ref<T>& y)     \
-  {                                                                            \
-    return func(x, y);                                                         \
-  }                                                                            \
-  template <typename T>                                                        \
-  dataflow::ref<U> dataflow::operator op(const ref<T>& x, const T& y)          \
-  {                                                                            \
-    return func(x, Const<T>(y));                                               \
-  }                                                                            \
-  template <typename T>                                                        \
-  dataflow::ref<U> dataflow::operator op(const T& x, const ref<T>& y)          \
-  {                                                                            \
-    return func(Const<T>(x), y);                                               \
-  }
-
-#define DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(op, U)           \
-  inline dataflow::ref<U> dataflow::operator op(const ref<std::string>& x,     \
-                                                const char* y)                 \
-  {                                                                            \
-    return x op Const(y);                                                      \
-  }                                                                            \
-  inline dataflow::ref<U> dataflow::operator op(const char* x,                 \
-                                                const ref<std::string>& y)     \
-  {                                                                            \
-    return Const(x) op y;                                                      \
-  }
-
 #define DATAFLOW___DEFINE_BINARY_OPERATOR_INL(op, func, T)                     \
   inline dataflow::ref<T> dataflow::operator op(const ref<T>& x,               \
                                                 const ref<T>& y)               \
@@ -103,30 +53,6 @@
   {                                                                            \
     return func(Const<T>(x), y);                                               \
   }
-
-// Comparison functions
-
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(Eq, ==, "==", bool);
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(NotEq, !=, "!=", bool);
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(Gr, >, ">", bool);
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(Less, <, "<", bool);
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(GrEq, >=, ">=", bool);
-DATAFLOW___DEFINE_BINARY_FUNCTION_VIA_OPERATOR_T(LessEq, <=, "<=", bool);
-
-// Operators
-
-DATAFLOW___DEFINE_BINARY_OPERATOR_T(==, Eq, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(==, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_T(!=, NotEq, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(!=, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_T(>, Gr, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(>, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_T(<, Less, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(<, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_T(>=, GrEq, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(>=, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_T(<=, LessEq, bool);
-DATAFLOW___DEFINE_BINARY_OPERATOR_OVERLOAD_FOR_STRING(<=, bool);
 
 // Logical functions
 

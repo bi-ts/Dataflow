@@ -24,6 +24,7 @@
 #include "dataflow++_export.h"
 
 #include "arithmetic.h"
+#include "comparison.h"
 #include "core.h"
 
 namespace dataflow
@@ -31,59 +32,6 @@ namespace dataflow
 
 /// \defgroup prelude
 /// \{
-
-// Comparison functions
-
-template <typename T> ref<bool> Eq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> NotEq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> Gr(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> Less(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> GrEq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> LessEq(const ref<T>& x, const ref<T>& y);
-
-// Operators
-
-// Equal to
-template <typename T> ref<bool> operator==(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator==(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator==(const T& x, const ref<T>& y);
-ref<bool> operator==(const ref<std::string>& x, const char* y);
-ref<bool> operator==(const char* x, const ref<std::string>& y);
-
-// Not equal to
-template <typename T> ref<bool> operator!=(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator!=(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator!=(const T& x, const ref<T>& y);
-ref<bool> operator!=(const ref<std::string>& x, const char* y);
-ref<bool> operator!=(const char* x, const ref<std::string>& y);
-
-// Greater than
-template <typename T> ref<bool> operator>(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator>(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator>(const T& x, const ref<T>& y);
-ref<bool> operator>(const ref<std::string>& x, const char* y);
-ref<bool> operator>(const char* x, const ref<std::string>& y);
-
-// Less than
-template <typename T> ref<bool> operator<(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator<(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator<(const T& x, const ref<T>& y);
-ref<bool> operator<(const ref<std::string>& x, const char* y);
-ref<bool> operator<(const char* x, const ref<std::string>& y);
-
-// Greater than or equal to
-template <typename T> ref<bool> operator>=(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator>=(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator>=(const T& x, const ref<T>& y);
-ref<bool> operator>=(const ref<std::string>& x, const char* y);
-ref<bool> operator>=(const char* x, const ref<std::string>& y);
-
-// Less than or equal to
-template <typename T> ref<bool> operator<=(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator<=(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator<=(const T& x, const ref<T>& y);
-ref<bool> operator<=(const ref<std::string>& x, const char* y);
-ref<bool> operator<=(const char* x, const ref<std::string>& y);
 
 // Logical functions
 
