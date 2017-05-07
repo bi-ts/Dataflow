@@ -187,6 +187,8 @@ template <typename T> dataflow::ref<T> dataflow::Decr(const ref<T>& x)
   return core::Lift<policy>(x);
 }
 
+// Addition
+
 template <typename T>
 dataflow::ref<T> dataflow::operator+(const ref<T>& x, const ref<T>& y)
 {
@@ -204,6 +206,8 @@ dataflow::ref<T> dataflow::operator+(const T& x, const ref<T>& y)
 {
   return Const<T>(x) + y;
 }
+
+// Subtraction
 
 template <typename T>
 dataflow::ref<T> dataflow::operator-(const ref<T>& x, const ref<T>& y)
@@ -223,15 +227,21 @@ dataflow::ref<T> dataflow::operator-(const T& x, const ref<T>& y)
   return Const<T>(x) - y;
 }
 
+// Unary plus
+
 template <typename T> dataflow::ref<T> dataflow::operator+(const ref<T>& x)
 {
   return Plus(x);
 }
 
+// Unary minus (additive inverse)
+
 template <typename T> dataflow::ref<T> dataflow::operator-(const ref<T>& x)
 {
   return Inv(x);
 }
+
+// Multiplication
 
 template <typename T>
 dataflow::ref<T> dataflow::operator*(const ref<T>& x, const ref<T>& y)
@@ -251,6 +261,8 @@ dataflow::ref<T> dataflow::operator*(const T& x, const ref<T>& y)
   return Const<T>(x) * y;
 }
 
+// Division
+
 template <typename T>
 dataflow::ref<T> dataflow::operator/(const ref<T>& x, const ref<T>& y)
 {
@@ -268,6 +280,8 @@ dataflow::ref<T> dataflow::operator/(const T& x, const ref<T>& y)
 {
   return Const<T>(x) / y;
 }
+
+// Modulo (integer remainder)
 
 template <typename T>
 dataflow::ref<T> dataflow::operator%(const ref<T>& x, const ref<T>& y)
@@ -287,20 +301,26 @@ dataflow::ref<T> dataflow::operator%(const T& x, const ref<T>& y)
   return Const<T>(x) % y;
 }
 
+// Increment
+
 template <typename T> dataflow::ref<T> dataflow::operator++(const ref<T>& x)
 {
   return Incr(x);
 }
+
 template <typename T>
 dataflow::ref<T> dataflow::operator++(const ref<T>& x, int)
 {
   return Incr(x);
 }
 
+// Decrement
+
 template <typename T> dataflow::ref<T> dataflow::operator--(const ref<T>& x)
 {
   return Decr(x);
 }
+
 template <typename T>
 dataflow::ref<T> dataflow::operator--(const ref<T>& x, int)
 {
