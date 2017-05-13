@@ -26,45 +26,13 @@
 #include "arithmetic.h"
 #include "comparison.h"
 #include "core.h"
+#include "logical.h"
 
 namespace dataflow
 {
 
 /// \defgroup prelude
 /// \{
-
-// Logical functions
-
-ref<bool> Not(const ref<bool>& x);
-ref<bool> And(const ref<bool>& x, const ref<bool>& y);
-ref<bool> Or(const ref<bool>& x, const ref<bool>& y);
-ref<bool> AndE(const ref<bool>& x, const ref<bool>& y);
-ref<bool> OrE(const ref<bool>& x, const ref<bool>& y);
-
-// Operators
-
-// Logical negation (`not`)
-ref<bool> operator!(const ref<bool>& x);
-
-// Logical `and` (lazy)
-ref<bool> operator&&(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator&&(const ref<bool>& x, const bool& y);
-ref<bool> operator&&(const bool& x, const ref<bool>& y);
-
-// Logical `or` (lazy)
-ref<bool> operator||(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator||(const ref<bool>& x, const bool& y);
-ref<bool> operator||(const bool& x, const ref<bool>& y);
-
-// Logical `and` (eager)
-ref<bool> operator&(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator&(const ref<bool>& x, const bool& y);
-ref<bool> operator&(const bool& x, const ref<bool>& y);
-
-// Logical `or` (eager)
-ref<bool> operator|(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator|(const ref<bool>& x, const bool& y);
-ref<bool> operator|(const bool& x, const ref<bool>& y);
 
 // Conditional expressions
 
