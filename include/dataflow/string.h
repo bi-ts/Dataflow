@@ -34,6 +34,7 @@ namespace dataflow
 
 template <typename X> ref<std::string> ToString(const ref<X>& x);
 
+template <>
 DATAFLOW___EXPORT ref<std::string> ToString(const ref<std::string>& x);
 
 template <typename T, typename = detail::enable_if_not_ref_t<T>>
@@ -46,7 +47,8 @@ template <typename T>
 dataflow::ref<T> FromString(const ref<std::string>& str, const T& d = T());
 
 template <>
-ref<std::string> FromString(const ref<std::string>& x, const std::string&);
+DATAFLOW___EXPORT ref<std::string> FromString(const ref<std::string>& x,
+                                              const std::string&);
 
 template <typename T>
 dataflow::ref<T> FromString(const char* str, const T& d = T());

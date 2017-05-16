@@ -18,7 +18,15 @@
 
 #include <dataflow/string.h>
 
+template <>
 dataflow::ref<std::string> dataflow::ToString(const ref<std::string>& x)
+{
+  return x;
+}
+
+template <>
+dataflow::ref<std::string> dataflow::FromString(const ref<std::string>& x,
+                                                const std::string&)
 {
   return x;
 }
