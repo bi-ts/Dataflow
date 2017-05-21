@@ -20,8 +20,6 @@
 #error '.inl' file can't be included directly. Use 'prelude.h' instead
 #endif
 
-#include <sstream>
-
 // Conditional expressions
 
 template <typename T>

@@ -20,6 +20,8 @@
 #error '.inl' file can't be included directly. Use 'string.h' instead
 #endif
 
+#include <sstream>
+
 // String functions
 
 template <typename X>
