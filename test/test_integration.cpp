@@ -106,5 +106,23 @@ BOOST_AUTO_TEST_CASE(regression_test_diamond_deactivation)
   BOOST_CHECK_EQUAL(y(), 36);
 }
 
+BOOST_AUTO_TEST_CASE(regression_test_And_num_vertices)
+{
+  Engine engine;
+
+  const auto a = And(Var(true), Var(true));
+
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 5);
+}
+
+BOOST_AUTO_TEST_CASE(regression_test_Or_num_vertices)
+{
+  Engine engine;
+
+  const auto a = Or(Var(true), Var(true));
+
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 5);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

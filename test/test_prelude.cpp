@@ -459,11 +459,6 @@ BOOST_FIXTURE_TEST_CASE(test_And, test_prelude_logical)
 
   const auto a = Curr(And(x, y));
 
-  // Check that we have less than 6 vertices:
-  // - x, y, curr;
-  // - `And` shouldn't add more than 3 vertices.
-  BOOST_CHECK_GE(6, introspect::num_vertices());
-
   BOOST_CHECK(!a());
 
   BOOST_CHECK(introspect::active_node(x));
@@ -541,11 +536,6 @@ BOOST_FIXTURE_TEST_CASE(test_Or, test_prelude_logical)
   y = false;
 
   const auto a = Curr(Or(x, y));
-
-  // Check that we have less than 6 vertices:
-  // - x, y, curr;
-  // - `Or` shouldn't add more than 3 vertices.
-  BOOST_CHECK_GE(6, introspect::num_vertices());
 
   BOOST_CHECK(!a());
 
