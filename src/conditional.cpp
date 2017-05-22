@@ -16,11 +16,5 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <dataflow/conditional.h>
 
-#include "arithmetic.h"
-#include "comparison.h"
-#include "conditional.h"
-#include "core.h"
-#include "logical.h"
-#include "string.h"

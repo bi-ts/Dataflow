@@ -16,11 +16,11 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(DATAFLOW___PRELUDE_H)
-#error '.inl' file can't be included directly. Use 'prelude.h' instead
+#if !defined(DATAFLOW___CONDITIONAL_H)
+#error '.inl' file can't be included directly. Use 'conditional.h' instead
 #endif
 
-// Conditional expressions
+#include "comparison.h"
 
 template <typename T>
 dataflow::ref<T>
@@ -176,4 +176,3 @@ operator>>=(const ref<bool>& x, const char* y)
 {
   return Case(x, y);
 }
-
