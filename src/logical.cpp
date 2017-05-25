@@ -18,6 +18,8 @@
 
 #include <dataflow/logical.h>
 
+#include <dataflow/conditional.h>
+
 dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
 {
   struct policy
@@ -36,12 +38,12 @@ dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
 
 dataflow::ref<bool> dataflow::And(const ref<bool>& x, const ref<bool>& y)
 {
-  return core::Conditional(x, y, Const<bool>(false));
+  return If(x, y, false);
 }
 
 dataflow::ref<bool> dataflow::Or(const ref<bool>& x, const ref<bool>& y)
 {
-  return core::Conditional(x, Const<bool>(true), y);
+  return If(x, true, y);
 }
 
 dataflow::ref<bool> dataflow::AndE(const ref<bool>& x, const ref<bool>& y)
