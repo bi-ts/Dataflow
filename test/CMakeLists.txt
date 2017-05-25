@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   tools/io_fixture.cpp
   tools/io_fixture.h
 
+  test_conditional.cpp
   test_core.cpp
   test_integration.cpp
   test_introspect.cpp
