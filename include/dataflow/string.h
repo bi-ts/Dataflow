@@ -23,6 +23,7 @@
 
 #include "dataflow++_export.h"
 
+#include "arithmetic.h"
 #include "core.h"
 
 namespace dataflow

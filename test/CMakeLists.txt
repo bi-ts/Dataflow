@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
   test_introspect.cpp
   test_io.cpp
   test_prelude.cpp
+  test_string.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${Boost_INCLUDE_DIRS}")
