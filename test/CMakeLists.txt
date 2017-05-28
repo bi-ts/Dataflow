@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
   test_integration.cpp
   test_introspect.cpp
   test_io.cpp
+  test_logical.cpp
   test_prelude.cpp
   test_string.cpp
 )
