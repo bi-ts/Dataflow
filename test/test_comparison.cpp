@@ -426,13 +426,11 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>();
+  const auto y = Var<int>(-3);
 
   const auto a = 2 == y;
 
   const auto f = Curr(a);
-
-  y = -3;
 
   BOOST_CHECK_EQUAL(f(), (2 == -3));
 
@@ -528,13 +526,11 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>();
+  const auto y = Var<int>(-3);
 
   const auto a = 2 != y;
 
   const auto f = Curr(a);
-
-  y = -3;
 
   BOOST_CHECK_EQUAL(f(), (2 != -3));
 
@@ -630,13 +626,11 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>();
+  const auto y = Var<int>(-3);
 
   const auto a = 2 > y;
 
   const auto f = Curr(a);
-
-  y = -3;
 
   BOOST_CHECK_EQUAL(f(), (2 > -3));
 
@@ -732,13 +726,11 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>();
+  const auto y = Var<int>(-3);
 
   const auto a = 2 < y;
 
   const auto f = Curr(a);
-
-  y = -3;
 
   BOOST_CHECK_EQUAL(f(), (2 < -3));
 
@@ -834,13 +826,11 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>();
+  const auto y = Var<int>(-3);
 
   const auto a = 2 >= y;
 
   const auto f = Curr(a);
-
-  y = -3;
 
   BOOST_CHECK_EQUAL(f(), (2 >= -3));
 
@@ -936,13 +926,11 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>();
+  const auto y = Var<int>(-3);
 
   const auto a = 2 <= y;
 
   const auto f = Curr(a);
-
-  y = -3;
 
   BOOST_CHECK_EQUAL(f(), (2 <= -3));
 
