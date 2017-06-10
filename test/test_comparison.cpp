@@ -426,16 +426,12 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x == y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa1bb")));
 
@@ -622,16 +618,12 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x != y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa1bb")));
 
@@ -818,16 +810,12 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x > y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa1bb")));
 
@@ -1014,16 +1002,12 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x < y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa1bb")));
 
@@ -1210,16 +1194,12 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x >= y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa1bb")));
 
@@ -1406,16 +1386,12 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x <= y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa1bb")));
 

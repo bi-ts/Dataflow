@@ -495,16 +495,12 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>();
-  const auto y = Var<std::string>();
+  const auto x = Var<std::string>("aa1bb");
+  const auto y = Var<std::string>("aa1bb");
 
   const auto a = x + y;
 
   const auto f = Curr(a);
-
-  x = "aa1bb";
-
-  y = "aa1bb";
 
   BOOST_CHECK_EQUAL(f(), "aa1bbaa1bb");
 
