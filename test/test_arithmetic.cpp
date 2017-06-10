@@ -491,6 +491,60 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_int)
   BOOST_CHECK_EQUAL(f(), 10);
 }
 
+BOOST_AUTO_TEST_CASE(test_Add_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x + y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa1bbaa1bb");
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa1bbaa2bb");
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa1bbaa3bb");
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa1bb");
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa2bb");
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa3bb");
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa3bbaa1bb");
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa3bbaa2bb");
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa3bbaa3bb");
+}
+
 BOOST_AUTO_TEST_CASE(test_Add_operator_lhs_literal_int)
 {
   Engine engine;
@@ -533,6 +587,48 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), 7);
+}
+
+BOOST_AUTO_TEST_CASE(test_Add_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" + y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa1bb");
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa2bb");
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa3bb");
+}
+
+BOOST_AUTO_TEST_CASE(test_Add_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x + "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), "aa1bbaa2bb");
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa2bbaa2bb");
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), "aa3bbaa2bb");
 }
 
 // Subtraction

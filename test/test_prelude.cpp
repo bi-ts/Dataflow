@@ -118,8 +118,6 @@ BOOST_AUTO_TEST_SUITE(test_prelude)
 
 // Arithmetic
 
-TEST_BINARY_OPERATOR_OVERLOAD_FOR_STRINGS(Add, +);
-
 BOOST_FIXTURE_TEST_CASE(test_Mod, test_prelude_binary)
 {
   y = 1;
