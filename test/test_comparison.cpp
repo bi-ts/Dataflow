@@ -422,6 +422,60 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_int)
   BOOST_CHECK_EQUAL(f(), (5 == 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_Eq_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x == y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa3bb")));
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa3bb")));
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") == std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") == std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") == std::string("aa3bb")));
+}
+
 BOOST_AUTO_TEST_CASE(test_Eq_operator_lhs_literal_int)
 {
   Engine engine;
@@ -464,6 +518,48 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), (5 == 2));
+}
+
+BOOST_AUTO_TEST_CASE(test_Eq_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" == y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa3bb")));
+}
+
+BOOST_AUTO_TEST_CASE(test_Eq_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x == "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa2bb")));
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa2bb")));
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") == std::string("aa2bb")));
 }
 
 // Not equal to
@@ -522,6 +618,60 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_int)
   BOOST_CHECK_EQUAL(f(), (5 != 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_NotEq_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x != y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa3bb")));
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa3bb")));
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") != std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") != std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") != std::string("aa3bb")));
+}
+
 BOOST_AUTO_TEST_CASE(test_NotEq_operator_lhs_literal_int)
 {
   Engine engine;
@@ -564,6 +714,48 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), (5 != 2));
+}
+
+BOOST_AUTO_TEST_CASE(test_NotEq_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" != y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa3bb")));
+}
+
+BOOST_AUTO_TEST_CASE(test_NotEq_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x != "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa2bb")));
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa2bb")));
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") != std::string("aa2bb")));
 }
 
 // Greater than
@@ -622,6 +814,60 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_int)
   BOOST_CHECK_EQUAL(f(), (5 > 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_Gr_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x > y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa3bb")));
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa3bb")));
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") > std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") > std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") > std::string("aa3bb")));
+}
+
 BOOST_AUTO_TEST_CASE(test_Gr_operator_lhs_literal_int)
 {
   Engine engine;
@@ -664,6 +910,48 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), (5 > 2));
+}
+
+BOOST_AUTO_TEST_CASE(test_Gr_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" > y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa3bb")));
+}
+
+BOOST_AUTO_TEST_CASE(test_Gr_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x > "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa2bb")));
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa2bb")));
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") > std::string("aa2bb")));
 }
 
 // Less than
@@ -722,6 +1010,60 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_int)
   BOOST_CHECK_EQUAL(f(), (5 < 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_Less_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x < y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa3bb")));
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa3bb")));
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") < std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") < std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") < std::string("aa3bb")));
+}
+
 BOOST_AUTO_TEST_CASE(test_Less_operator_lhs_literal_int)
 {
   Engine engine;
@@ -764,6 +1106,48 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), (5 < 2));
+}
+
+BOOST_AUTO_TEST_CASE(test_Less_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" < y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa3bb")));
+}
+
+BOOST_AUTO_TEST_CASE(test_Less_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x < "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa2bb")));
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa2bb")));
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") < std::string("aa2bb")));
 }
 
 // Greater than or equal to
@@ -822,6 +1206,60 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_int)
   BOOST_CHECK_EQUAL(f(), (5 >= 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_GrEq_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x >= y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa3bb")));
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa3bb")));
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") >= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") >= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") >= std::string("aa3bb")));
+}
+
 BOOST_AUTO_TEST_CASE(test_GrEq_operator_lhs_literal_int)
 {
   Engine engine;
@@ -864,6 +1302,48 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), (5 >= 2));
+}
+
+BOOST_AUTO_TEST_CASE(test_GrEq_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" >= y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa3bb")));
+}
+
+BOOST_AUTO_TEST_CASE(test_GrEq_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x >= "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa2bb")));
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa2bb")));
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") >= std::string("aa2bb")));
 }
 
 // Less than or equal to
@@ -922,6 +1402,60 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_int)
   BOOST_CHECK_EQUAL(f(), (5 <= 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_LessEq_operator_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>();
+  const auto y = Var<std::string>();
+
+  const auto a = x <= y;
+
+  const auto f = Curr(a);
+
+  x = "aa1bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa3bb")));
+
+  x = "aa2bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa3bb")));
+
+  x = "aa3bb";
+
+  y = "aa1bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") <= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") <= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") <= std::string("aa3bb")));
+}
+
 BOOST_AUTO_TEST_CASE(test_LessEq_operator_lhs_literal_int)
 {
   Engine engine;
@@ -964,6 +1498,48 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_rhs_literal_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(f(), (5 <= 2));
+}
+
+BOOST_AUTO_TEST_CASE(test_LessEq_operator_lhs_literal_string)
+{
+  Engine engine;
+
+  const auto y = Var<std::string>("aa1bb");
+
+  const auto a = "aa2bb" <= y;
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa1bb")));
+
+  y = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa2bb")));
+
+  y = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa3bb")));
+}
+
+BOOST_AUTO_TEST_CASE(test_LessEq_operator_rhs_literal_string)
+{
+  Engine engine;
+
+  const auto x = Var<std::string>("aa1bb");
+
+  const auto a = x <= "aa2bb";
+
+  const auto f = Curr(a);
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa2bb")));
+
+  x = "aa2bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa2bb")));
+
+  x = "aa3bb";
+
+  BOOST_CHECK_EQUAL(f(), (std::string("aa3bb") <= std::string("aa2bb")));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

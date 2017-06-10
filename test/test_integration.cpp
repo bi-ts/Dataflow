@@ -72,6 +72,30 @@ BOOST_AUTO_TEST_CASE(test_hat_function)
   }
 }
 
+BOOST_AUTO_TEST_CASE(test_Mod)
+{
+  Engine engine;
+
+  const var<int> y = Var<int>(1);
+
+  auto z = Mod(Const(60), y);
+
+  BOOST_CHECK_EQUAL(introspect::label(z), "mod");
+
+  auto a = Curr(z);
+
+  std::vector<int> mods(1, a());
+
+  for (int i = 2; i < 10; ++i)
+  {
+    y = i;
+    mods.push_back(a());
+  }
+
+  BOOST_TEST(mods == std::vector<int>({0, 0, 0, 0, 0, 0, 4, 4, 6}),
+             boost::test_tools::per_element());
+}
+
 BOOST_AUTO_TEST_CASE(regression_test_eager_node_deactivation)
 {
   Engine engine;
