@@ -13,14 +13,14 @@ add_executable(${PROJECT_NAME}
   tools/io_fixture.cpp
   tools/io_fixture.h
 
-  test_arithmetic.cpp
-  test_comparison.cpp
-  test_conditional.cpp
-  test_core.cpp
+  prelude/test_arithmetic.cpp
+  prelude/test_comparison.cpp
+  prelude/test_conditional.cpp
+  prelude/test_core.cpp
+  prelude/test_logical.cpp
   test_integration.cpp
   test_introspect.cpp
   test_io.cpp
-  test_logical.cpp
   test_string.cpp
 )
 
