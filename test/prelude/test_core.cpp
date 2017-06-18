@@ -18,7 +18,7 @@
 
 #include "../tools/io_fixture.h"
 
-#include <dataflow/core.h>
+#include <dataflow/prelude/core.h>
 #include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>

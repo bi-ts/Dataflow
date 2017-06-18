@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/arithmetic.h>
+#include <dataflow/prelude/arithmetic.h>
 #include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>

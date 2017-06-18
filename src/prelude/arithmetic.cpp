@@ -16,31 +16,18 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/core.h>
+#include <dataflow/prelude/arithmetic.h>
 
-#include "internal/engine.h"
+// Addition
 
-namespace dataflow
+dataflow::ref<std::string> dataflow::operator+(const ref<std::string>& x,
+                                               const char* y)
 {
-Engine::Engine()
-{
-  internal::engine::start();
+  return x + Const<std::string>(y);
 }
 
-Engine::~Engine()
+dataflow::ref<std::string> dataflow::operator+(const char* x,
+                                               const ref<std::string>& y)
 {
-  internal::engine::stop();
+  return Const<std::string>(x) + y;
 }
-} // dataflow
-
-dataflow::ref<std::string> dataflow::Const(const char* v)
-{
-  return ref<std::string>(
-    internal::node_const<std::string>::create(std::string(v)));
-}
-
-dataflow::var<std::string> dataflow::Var(const char* v)
-{
-  return Var(std::string(v));
-}
-

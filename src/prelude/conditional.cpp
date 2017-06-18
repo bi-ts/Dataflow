@@ -16,18 +16,4 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/arithmetic.h>
-
-// Addition
-
-dataflow::ref<std::string> dataflow::operator+(const ref<std::string>& x,
-                                               const char* y)
-{
-  return x + Const<std::string>(y);
-}
-
-dataflow::ref<std::string> dataflow::operator+(const char* x,
-                                               const ref<std::string>& y)
-{
-  return Const<std::string>(x) + y;
-}
+#include <dataflow/prelude/conditional.h>

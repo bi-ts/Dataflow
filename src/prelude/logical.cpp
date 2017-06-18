@@ -16,9 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/logical.h>
-
-#include <dataflow/conditional.h>
+#include <dataflow/prelude/logical.h>
 
 dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
 {

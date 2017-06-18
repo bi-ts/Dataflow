@@ -23,7 +23,7 @@
 
 #include "dataflow++_export.h"
 
-#include "internal/ref.h"
+#include "../internal/ref.h"
 
 #include <string>
 #include <type_traits>

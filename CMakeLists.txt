@@ -31,21 +31,21 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 endif()
 
 add_library(${PROJECT_NAME} SHARED
-  include/dataflow/arithmetic.h
-  include/dataflow/arithmetic.inl
-  include/dataflow/comparison.h
-  include/dataflow/comparison.inl
-  include/dataflow/conditional.h
-  include/dataflow/conditional.inl
-  include/dataflow/core.h
-  include/dataflow/core.inl
   include/dataflow/introspect.h
   include/dataflow/introspect.inl
   include/dataflow/io.h
   include/dataflow/io.inl
-  include/dataflow/logical.h
-  include/dataflow/logical.inl
   include/dataflow/prelude.h
+  include/dataflow/prelude/arithmetic.h
+  include/dataflow/prelude/arithmetic.inl
+  include/dataflow/prelude/comparison.h
+  include/dataflow/prelude/comparison.inl
+  include/dataflow/prelude/conditional.h
+  include/dataflow/prelude/conditional.inl
+  include/dataflow/prelude/core.h
+  include/dataflow/prelude/core.inl
+  include/dataflow/prelude/logical.h
+  include/dataflow/prelude/logical.inl
   include/dataflow/string.h
   include/dataflow/string.inl
 
@@ -59,13 +59,13 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/nodes_factory.h
   include/dataflow/internal/ref.h
 
-  src/arithmetic.cpp
-  src/comparison.cpp
-  src/conditional.cpp
-  src/core.cpp
   src/introspect.cpp
   src/io.cpp
-  src/logical.cpp
+  src/prelude/arithmetic.cpp
+  src/prelude/comparison.cpp
+  src/prelude/conditional.cpp
+  src/prelude/logical.cpp
+  src/prelude/core.cpp
   src/string.cpp
 
   src/internal/config.h

@@ -20,12 +20,12 @@
 #error '.inl' file can't be included directly. Use 'core.h' instead
 #endif
 
-#include "internal/config.h"
-#include "internal/node_activator.h"
-#include "internal/node_previous.h"
-#include "internal/node_snapshot.h"
-#include "internal/node_snapshot_activator.h"
-#include "internal/nodes.h"
+#include "../internal/config.h"
+#include "../internal/node_activator.h"
+#include "../internal/node_previous.h"
+#include "../internal/node_snapshot.h"
+#include "../internal/node_snapshot_activator.h"
+#include "../internal/nodes.h"
 
 namespace dataflow
 {

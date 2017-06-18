@@ -16,11 +16,21 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <dataflow/prelude.h>
 
-#include "prelude/arithmetic.h"
-#include "prelude/comparison.h"
-#include "prelude/conditional.h"
-#include "prelude/core.h"
-#include "prelude/logical.h"
-#include "string.h"
+#include <boost/test/unit_test.hpp>
+
+using namespace dataflow;
+
+namespace dataflow_test
+{
+
+BOOST_AUTO_TEST_SUITE(test_prelude_header)
+
+BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
+{
+  Engine engine;
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+}

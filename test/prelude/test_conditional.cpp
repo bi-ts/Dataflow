@@ -1,5 +1,6 @@
 
-#include <dataflow/conditional.h>
+#include <dataflow/prelude/conditional.h>
+
 #include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>

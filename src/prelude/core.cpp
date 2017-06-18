@@ -16,5 +16,30 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/conditional.h>
+#include <dataflow/prelude/core.h>
 
+#include "../internal/engine.h"
+
+namespace dataflow
+{
+Engine::Engine()
+{
+  internal::engine::start();
+}
+
+Engine::~Engine()
+{
+  internal::engine::stop();
+}
+} // dataflow
+
+dataflow::ref<std::string> dataflow::Const(const char* v)
+{
+  return ref<std::string>(
+    internal::node_const<std::string>::create(std::string(v)));
+}
+
+dataflow::var<std::string> dataflow::Var(const char* v)
+{
+  return Var(std::string(v));
+}
