@@ -35,7 +35,7 @@ namespace dataflow
 /// \ingroup prelude
 /// \{
 
-namespace detail
+namespace core
 {
 template <typename T, typename U = void>
 using enable_if_not_ref_t =
@@ -128,7 +128,7 @@ template <typename T>
 ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
 template <typename T>
 ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
-template <typename T, typename = detail::enable_if_not_ref_t<T>>
+template <typename T, typename = core::enable_if_not_ref_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
 
 // Conditional functions
