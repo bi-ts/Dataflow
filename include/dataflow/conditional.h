@@ -29,15 +29,6 @@ namespace dataflow
 /// \{
 
 template <typename T>
-ref<T> If(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
-template <typename T>
-ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
-template <typename T>
-ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
-template <typename T, typename = detail::enable_if_not_ref_t<T>>
-ref<T> If(const ref<bool>& x, const T& y, const T& z);
-
-template <typename T>
 ref<T> Switch(const std::pair<ref<bool>, ref<T>>& first_case,
               const ref<T>& default_case);
 

@@ -24,31 +24,6 @@
 
 template <typename T>
 dataflow::ref<T>
-dataflow::If(const ref<bool>& x, const ref<T>& y, const ref<T>& z)
-{
-  return core::Conditional(x, y, z);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const ref<T>& z)
-{
-  return If(x, Const<T>(y), z);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const ref<T>& y, const T& z)
-{
-  return If(x, y, Const<T>(z));
-}
-
-template <typename T, typename>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
-{
-  return If(x, Const<T>(y), Const<T>(z));
-}
-
-template <typename T>
-dataflow::ref<T>
 dataflow::Switch(const std::pair<ref<bool>, ref<T>>& first_case,
                  const ref<T>& default_case)
 {

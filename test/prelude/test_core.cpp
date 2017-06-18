@@ -163,6 +163,62 @@ BOOST_FIXTURE_TEST_CASE(test_Main, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), 25);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto y = Var<int>(10);
+  auto z = Var<int>(20);
+
+  auto f = *If(x, y, z);
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), 20);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto z = Var<int>(20);
+
+  auto f = *If(x, 10, z);
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), 20);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto y = Var<int>(10);
+
+  auto f = *If(x, y, 20);
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), 20);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+
+  auto f = *If(x, 10, 20);
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), 20);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
 {
   const var<int> x = Var<int>('A');

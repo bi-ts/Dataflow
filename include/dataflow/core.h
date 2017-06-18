@@ -120,6 +120,22 @@ eager<T> Main(F f);
 
 template <typename T> eager<T> operator*(ref<T> x);
 
+// Conditional functions
+
+template <typename T>
+ref<T> If(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
+template <typename T>
+ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
+template <typename T>
+ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
+template <typename T, typename = detail::enable_if_not_ref_t<T>>
+ref<T> If(const ref<bool>& x, const T& y, const T& z);
+
+// Conditional functions
+
+template <typename T>
+ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
+
 // Utility functions
 
 namespace core
@@ -150,13 +166,7 @@ template <typename F,
           typename Y,
           typename T = typename std::result_of<F(const X&, const Y&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
-
-template <typename T>
-ref<T> Conditional(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
 }
-
-template <typename T>
-ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
 
 /// \}
 }
