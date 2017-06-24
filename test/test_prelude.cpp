@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
   BOOST_CHECK_EQUAL(b(), true);
 
   // Includes conditional
-  const auto c = *Switch(Case(b, y), Default(x));
+  const auto c = *Switch(Case(b, y), Default(0));
 
   BOOST_CHECK_EQUAL(c(), 2);
 
