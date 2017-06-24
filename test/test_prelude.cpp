@@ -30,6 +30,34 @@ BOOST_AUTO_TEST_SUITE(test_prelude_header)
 BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
 {
   Engine engine;
+
+  const auto x = Var<int>(1);
+  const auto y = Var<int>(2);
+
+  // Includes arithmetic
+  const auto a = *(x + y);
+
+  BOOST_CHECK_EQUAL(a(), 3);
+
+  // Includes comparison
+  const auto b = *(x < y);
+
+  BOOST_CHECK_EQUAL(b(), true);
+
+  // Includes conditional
+  const auto c = *Switch(Case(b, y), Default(x));
+
+  BOOST_CHECK_EQUAL(c(), 2);
+
+  // Includes core
+  const auto d = *Const(3);
+
+  BOOST_CHECK_EQUAL(d(), 3);
+
+  // Includes logical
+  const auto e = *(b && false);
+
+  BOOST_CHECK_EQUAL(e(), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
