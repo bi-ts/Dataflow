@@ -78,7 +78,8 @@ std::pair<ref<std::string>, ref<std::string>> Case(const char* x,
 
 template <typename T> ref<T> Default(const ref<T>& x);
 
-template <typename T> ref<T> Default(const T& v);
+template <typename T, typename = core::enable_if_not_ref_t<T>>
+ref<T> Default(const T& v);
 ref<std::string> Default(const char* v);
 
 template <typename T>

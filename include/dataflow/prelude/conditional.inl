@@ -122,7 +122,7 @@ template <typename T> dataflow::ref<T> dataflow::Default(const ref<T>& x)
   return x;
 }
 
-template <typename T> dataflow::ref<T> dataflow::Default(const T& v)
+template <typename T, typename> dataflow::ref<T> dataflow::Default(const T& v)
 {
   return Const(v);
 }

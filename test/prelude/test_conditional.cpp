@@ -29,12 +29,13 @@ BOOST_AUTO_TEST_SUITE(test_conditional)
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_fixture)
 {
   auto x = Var("ten");
+  auto y = Var(0);
 
   auto f = *Switch(Case(x == "one", 1),
                    Case(x == "three", 3),
                    Case(x == "five", 5),
                    Case(x == "ten", 10),
-                   Default(0));
+                   Default(y));
 
   BOOST_CHECK_EQUAL(f(), 10);
 
@@ -49,6 +50,14 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_fixture)
   x = "three";
 
   BOOST_CHECK_EQUAL(f(), 3);
+
+  x = "ten";
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = "NAN";
+
+  BOOST_CHECK_EQUAL(f(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_fixture)
