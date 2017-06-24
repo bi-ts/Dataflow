@@ -20,6 +20,8 @@
 #error '.inl' file can't be included directly. Use 'io.h' instead
 #endif
 
+#include "string.h"
+
 #include <sstream>
 
 template <typename T>

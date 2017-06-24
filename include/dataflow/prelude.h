@@ -23,4 +23,3 @@
 #include "prelude/conditional.h"
 #include "prelude/core.h"
 #include "prelude/logical.h"
-#include "string.h"
