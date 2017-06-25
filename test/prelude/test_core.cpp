@@ -436,6 +436,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 {
+  const ref<int> v0 = Var<int>(1);
   const var<int> x = Var<int>(3);
 
   struct tool
@@ -454,12 +455,15 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   capture_output();
 
-  const auto y = Main([=](const Time& t)
+  const auto z = Main([=](const Time& t)
                       {
-                        return tool::WriteInt(Prev(t, Const(1), x));
+                        return tool::WriteInt(Prev(t, v0, x));
                       });
 
   reset_output();
+
+  BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
   BOOST_CHECK_EQUAL(out_string(), "1;3;");
 
