@@ -37,10 +37,12 @@ using node_id = std::intptr_t;
 class DATAFLOW___EXPORT node
 {
 public:
-  bool
-  update(node_id id, bool init, const node** p_args, std::size_t args_count)
+  bool update(node_id id,
+              bool initialized,
+              const node** p_args,
+              std::size_t args_count)
   {
-    return update_(id, init, p_args, args_count);
+    return update_(id, initialized, p_args, args_count);
   }
 
   std::string label() const
@@ -67,7 +69,7 @@ protected:
 
 private:
   virtual bool update_(node_id id,
-                       bool init,
+                       bool initialized,
                        const node** p_args,
                        std::size_t args_count) = 0;
 

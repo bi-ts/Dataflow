@@ -35,7 +35,7 @@ public:
 
 private:
   virtual bool update_(node_id id,
-                       bool init,
+                       bool initialized,
                        const node** p_args,
                        std::size_t args_count) override
   {
