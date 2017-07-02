@@ -42,8 +42,7 @@ public:
 
     const std::array<node_id, 2> args = {{x.id(), y.id()}};
 
-    return nodes_factory::create<node_previous<T>>(
-      &args[0], args.size(), false);
+    return nodes_factory::create<node_previous<T>>(&args[0], args.size(), true);
   }
 
 private:

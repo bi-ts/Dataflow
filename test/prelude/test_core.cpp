@@ -28,6 +28,23 @@ using namespace dataflow;
 namespace dataflow_test
 {
 
+namespace
+{
+struct tool
+{
+  static ref<int> WriteInt(ref<int> x)
+  {
+    return core::Lift("output",
+                      x,
+                      [](int v)
+                      {
+                        std::cout << v << std::endl;
+                        return v;
+                      });
+  }
+};
+}
+
 class test_core_fixture : public io_fixture
 {
 protected:
@@ -439,20 +456,6 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
   const ref<int> v0 = Var<int>(1);
   const var<int> x = Var<int>(3);
 
-  struct tool
-  {
-    static ref<int> WriteInt(ref<int> x)
-    {
-      return core::Lift("output",
-                        x,
-                        [](int v)
-                        {
-                          std::cout << v << std::endl;
-                          return v;
-                        });
-    }
-  };
-
   capture_output();
 
   const auto z = Main([=](const Time& t)
@@ -482,6 +485,57 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
   reset_output();
 
   BOOST_CHECK_EQUAL(out_string(), "1;3;5;9;");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
+{
+  const ref<int> v0 = Var<int>(1);
+  const var<int> x = Var<int>(3);
+  const var<bool> b = Var<bool>(false);
+
+  capture_output();
+
+  const auto z = Main([=](const Time& t)
+                      {
+                        return If(b, tool::WriteInt(Prev(t, v0, x)), 0);
+                      });
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+
+  capture_output();
+
+  x = 7;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "");
+
+  capture_output();
+
+  b = true;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "7;");
+
+  capture_output();
+
+  x = 5;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "7;5;");
+
+  capture_output();
+
+  x = 9;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "7;5;9;");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
