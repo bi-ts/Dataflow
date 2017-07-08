@@ -27,6 +27,14 @@ namespace dataflow
 {
 namespace internal
 {
+namespace detail
+{
+template <typename T, typename = decltype(std::declval<T>().to_string())>
+std::ostream& operator<<(std::ostream& out, const T& value)
+{
+  out << value.to_string();
+  return out;
+}
 
 template <typename T> std::string node_value_to_string(const T& value)
 {
@@ -54,6 +62,7 @@ inline std::string node_value_to_string<std::string>(const std::string& value)
   out << "\"" << value << "\"";
 
   return out.str();
+}
 }
 
 template <typename T> class node_t : public node
@@ -83,7 +92,7 @@ protected:
 private:
   virtual std::string to_string_() const override final
   {
-    return node_value_to_string(value_);
+    return detail::node_value_to_string(value_);
   }
 
 private:

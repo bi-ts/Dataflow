@@ -75,6 +75,44 @@ private:
 
 BOOST_AUTO_TEST_SUITE(test_introspect)
 
+BOOST_FIXTURE_TEST_CASE(test_value_int, test_introspect_fixture)
+{
+  auto x = Const<int>(42);
+
+  BOOST_CHECK_EQUAL(introspect::value(x), "42");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_value_bool, test_introspect_fixture)
+{
+  auto x = Const<bool>(false);
+  auto y = Const<bool>(true);
+
+  BOOST_CHECK_EQUAL(introspect::value(x), "false");
+  BOOST_CHECK_EQUAL(introspect::value(y), "true");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_value_string, test_introspect_fixture)
+{
+  auto x = Const<std::string>("hello");
+
+  BOOST_CHECK_EQUAL(introspect::value(x), "\"hello\"");
+}
+
+BOOST_FIXTURE_TEST_CASE(test_value_custom_type, test_introspect_fixture)
+{
+  struct custom_type
+  {
+    std::string to_string() const
+    {
+      return "custom_type";
+    }
+  };
+
+  auto x = Const<custom_type>();
+
+  BOOST_CHECK_EQUAL(introspect::value(x), "custom_type");
+}
+
 BOOST_FIXTURE_TEST_CASE(test_incidence, test_introspect_fixture)
 {
   const auto x = Var<int>(42);
