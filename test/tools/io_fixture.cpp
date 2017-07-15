@@ -38,8 +38,15 @@ io_fixture::~io_fixture()
   reset_output();
 }
 
-void io_fixture::capture_output()
+void io_fixture::capture_output(bool clear_buffers)
 {
+  if (clear_buffers)
+  {
+    cerr_string_stream.str("");
+    clog_string_stream.str("");
+    cout_string_stream.str("");
+  }
+
   std::cerr.rdbuf(cerr_string_stream.rdbuf());
   std::clog.rdbuf(clog_string_stream.rdbuf());
   std::cout.rdbuf(cout_string_stream.rdbuf());

@@ -31,7 +31,7 @@ public:
 
   ~io_fixture();
 
-  void capture_output();
+  void capture_output(bool clear_buffers = false);
 
   void reset_output();
 
