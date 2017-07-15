@@ -26,7 +26,7 @@ namespace dataflow_test
 
 class io_fixture
 {
-protected:
+public:
   io_fixture();
 
   ~io_fixture();
