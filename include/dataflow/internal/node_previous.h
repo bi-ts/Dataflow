@@ -73,7 +73,7 @@ private:
 
   virtual std::string label_() const override
   {
-    return "previous";
+    return "prev";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
