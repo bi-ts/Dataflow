@@ -17,6 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include "tools/graph_invariant.h"
+#include "tools/io_fixture.h"
 
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
@@ -285,6 +286,55 @@ BOOST_FIXTURE_TEST_CASE(test_update_order, test_introspect_fixture)
   BOOST_CHECK_EQUAL(-1, introspect::update_order(x, null_vertex));
   BOOST_CHECK_EQUAL(1, introspect::update_order(c, x));
   BOOST_CHECK_EQUAL(-1, introspect::update_order(x, c));
+}
+
+BOOST_AUTO_TEST_CASE(test_introspect_Log)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  auto x = Var<int>(11);
+  auto y = introspect::Log(x + 12, "x + 12");
+  auto z = y * 2;
+
+  BOOST_CHECK_EQUAL(introspect::label(y), "introspect-log");
+
+  io.capture_output();
+
+  auto a = *z;
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "x + 12 = 23;");
+  BOOST_CHECK_EQUAL(a(), 46);
+
+  io.capture_output(true);
+
+  x = 22;
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "x + 12 = 34;");
+  BOOST_CHECK_EQUAL(a(), 68);
+}
+
+BOOST_AUTO_TEST_CASE(test_introspect_Log_default_label)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  auto x = Var<int>(256);
+
+  io.capture_output();
+
+  auto a = *introspect::Log(x);
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "var = 256;");
+  BOOST_CHECK_EQUAL(a(), 256);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

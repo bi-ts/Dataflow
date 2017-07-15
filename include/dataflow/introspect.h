@@ -23,7 +23,7 @@
 
 #include "dataflow++_export.h"
 
-#include <dataflow/internal/ref.h>
+#include <dataflow/prelude/core.h>
 
 #ifndef DATAFLOW___NO_BOOST
 #include <boost/graph/graph_traits.hpp>
@@ -234,6 +234,9 @@ DATAFLOW___EXPORT bool
 secondary_dependency(dependency_graph::edge_descriptor e);
 
 /// \}
+
+template <typename T>
+ref<T> Log(const ref<T>& x, const std::string& label = "");
 
 } // introspect
 } // dataflow

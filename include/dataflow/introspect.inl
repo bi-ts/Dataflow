@@ -21,6 +21,7 @@
 #endif
 
 #include <cassert>
+#include <iostream>
 
 namespace dataflow
 {
@@ -181,5 +182,26 @@ inline bool introspect::activator_node(dependency_graph::vertex_descriptor v)
 inline bool introspect::data_dependency(dependency_graph::edge_descriptor e)
 {
   return !logical_dependency(e);
+}
+
+template <typename T>
+ref<T> introspect::Log(const ref<T>& x, const std::string& l)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "introspect-log";
+    }
+    T calculate(const T& v)
+    {
+      std::clog << prefix_ << " = " << value(x_) << std::endl;
+      return v;
+    }
+
+    const dependency_graph::vertex_descriptor x_;
+    const std::string prefix_;
+  };
+  return core::Lift<policy>(x, policy{x, (l != "" ? l : label(x))});
 }
 } // dataflow
