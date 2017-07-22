@@ -86,12 +86,27 @@ template <typename T> struct value_type<ref<T>>
   using type = T;
 };
 
+template <typename T> struct value_type<const ref<T>&>
+{
+  using type = T;
+};
+
 template <typename T> struct value_type<var<T>>
 {
   using type = T;
 };
 
+template <typename T> struct value_type<const var<T>&>
+{
+  using type = T;
+};
+
 template <typename T> struct value_type<eager<T>>
+{
+  using type = T;
+};
+
+template <typename T> struct value_type<const eager<T>&>
 {
   using type = T;
 };
@@ -166,6 +181,14 @@ template <typename F,
           typename Y,
           typename T = typename std::result_of<F(const X&, const Y&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
+
+template <typename Policy,
+          typename X,
+          typename T = detail::value_type_t<
+            decltype(std::declval<Policy>().calculate(std::declval<X>()))>>
+ref<T> LiftSelector(const ref<X>& x,
+                    const Policy& policy = Policy(),
+                    bool eager = false);
 }
 
 /// \}

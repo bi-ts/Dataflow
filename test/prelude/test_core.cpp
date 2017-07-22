@@ -27,6 +27,69 @@ using namespace dataflow;
 
 namespace dataflow_test
 {
+
+template <typename T> class box final
+{
+private:
+  struct box_impl
+  {
+    ref<T> boxed;
+  };
+
+public:
+  box() = default;
+
+  explicit box(const ref<T>& value)
+  : p_impl_(std::make_shared<box_impl>(box_impl{value}))
+  {
+  }
+
+  bool operator==(const box& other) const
+  {
+    return p_impl_ == other.p_impl_;
+  }
+
+  bool operator!=(const box& other) const
+  {
+    return !(*this == other);
+  }
+
+  std::string to_string() const
+  {
+    return "box";
+  }
+
+  friend ref<T> Boxed(const ref<box>& x)
+  {
+    struct policy
+    {
+      static std::string label()
+      {
+        return "boxed";
+      }
+      static const ref<T>& calculate(const box& v)
+      {
+        return v.p_impl_->boxed;
+      }
+    };
+
+    return core::LiftSelector<policy>(x);
+  }
+
+private:
+  std::shared_ptr<box_impl> p_impl_;
+};
+
+template <typename T> box<T> make_box(const ref<T>& value)
+{
+  return box<T>(value);
+}
+
+template <typename T> ref<box<T>> Box(const ref<T>& value)
+{
+  return Const(box<T>(value));
+}
+
 class test_core_fixture : public io_fixture
 {
 protected:
@@ -39,6 +102,79 @@ private:
 };
 
 BOOST_AUTO_TEST_SUITE(test_core)
+
+BOOST_AUTO_TEST_CASE(test_Box)
+{
+  Engine engine;
+
+  auto x = Const<int>(13);
+  auto y = Var<int>(22);
+  auto z = Var<box<int>>(make_box(x));
+
+  auto a = Boxed(z);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "boxed");
+
+  auto b = Curr(a);
+
+  BOOST_CHECK_EQUAL(b(), 13);
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+
+  z = make_box(y);
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+
+  BOOST_CHECK_EQUAL(b(), 22);
+
+  y = 32;
+
+  BOOST_CHECK_EQUAL(b(), 32);
+}
+
+BOOST_AUTO_TEST_CASE(test_Box_activation)
+{
+  Engine engine;
+
+  auto x = Var(0);
+  auto y = Var(make_box(x));
+
+  auto a = Curr(y);
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+}
+
+BOOST_AUTO_TEST_CASE(test_Box_conditional)
+{
+  Engine engine;
+
+  auto x = Var(true);
+  auto y = Var(22);
+  auto z = If(x, Box(y), Box(Const(1)));
+
+  auto a = Boxed(z);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "boxed");
+
+  auto b = Curr(a);
+
+  BOOST_CHECK_EQUAL(b(), 22);
+
+  y = 33;
+
+  BOOST_CHECK_EQUAL(b(), 33);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(b(), 1);
+
+  y = 44;
+
+  BOOST_CHECK_EQUAL(b(), 1);
+}
 
 BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
 {

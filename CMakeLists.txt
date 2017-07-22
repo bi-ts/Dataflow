@@ -53,6 +53,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/node.h
   include/dataflow/internal/node_activator.h
   include/dataflow/internal/node_previous.h
+  include/dataflow/internal/node_selector.h
+  include/dataflow/internal/node_selector_activator.h
   include/dataflow/internal/node_snapshot.h
   include/dataflow/internal/node_snapshot_activator.h
   include/dataflow/internal/node_t.h
@@ -78,6 +80,7 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/node.cpp
   src/internal/node_activator.cpp
   src/internal/node_main_activator.h
+  src/internal/node_selector_activator.cpp
   src/internal/node_snapshot_activator.cpp
   src/internal/nodes_factory.cpp
   src/internal/ref.cpp

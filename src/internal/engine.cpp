@@ -207,6 +207,65 @@ bool engine::update_node_activator(vertex_descriptor v,
   return false;
 }
 
+bool engine::update_node_selector_activator(vertex_descriptor v,
+                                            vertex_descriptor x,
+                                            bool initialized)
+{
+  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
+  CHECK_PRECONDITION(is_conditional_node(graph_[v].consumers.front()));
+
+  const auto w = graph_[v].consumers.front();
+
+  if (initialized)
+  {
+    CHECK_CONDITION(out_degree(w, graph_) == 3);
+
+    const auto old_e = second_out_edge_(w);
+    const auto old_x = target(old_e, graph_);
+
+    if (old_x == x)
+      return false;
+
+    const auto activator_e = last_out_edge_(w);
+    const auto activator = target(activator_e, graph_);
+
+    remove_edge(activator_e, graph_);
+
+    const auto new_e = add_data_edge_(w, x);
+
+    add_logical_edge_(w, activator);
+
+    CHECK_CONDITION(out_degree(w, graph_) == 4);
+
+    activate_subgraph_(new_e);
+
+    deactivate_subgraph_(old_e);
+    release(old_x);
+    remove_edge(old_e, graph_);
+
+    CHECK_CONDITION(out_degree(w, graph_) == 3);
+  }
+  else
+  {
+    CHECK_CONDITION(out_degree(w, graph_) == 2);
+
+    const auto activator_e = last_out_edge_(w);
+    const auto activator = target(activator_e, graph_);
+
+    remove_edge(activator_e, graph_);
+
+    const auto new_e = add_data_edge_(w, x);
+
+    add_logical_edge_(w, activator);
+
+    CHECK_CONDITION(out_degree(w, graph_) == 3);
+
+    activate_subgraph_(new_e);
+  }
+
+  return true;
+}
+
 bool engine::update_node_snapshot_activator(vertex_descriptor v,
                                             bool initialized)
 {

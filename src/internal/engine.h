@@ -90,6 +90,10 @@ public:
                              std::size_t new_value,
                              std::size_t old_value);
 
+  bool update_node_selector_activator(vertex_descriptor v,
+                                      vertex_descriptor x,
+                                      bool initialized);
+
   bool update_node_snapshot_activator(vertex_descriptor v, bool initialized);
 
 private:
