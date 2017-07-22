@@ -76,14 +76,7 @@ vertex_descriptor engine::add_node(node* p_node,
   {
     const auto w = converter::convert(p_args[i]);
 
-    edge_descriptor data_e = edge_descriptor();
-    bool data_edge_added = false;
-
-    std::tie(data_e, data_edge_added) = add_edge(v, w, graph_);
-
-    CHECK_CONDITION(data_edge_added);
-
-    graph_[w].add_ref();
+    add_data_edge_(v, w);
   }
 
   graph_[v].conditional = conditional;
@@ -95,12 +88,7 @@ vertex_descriptor engine::add_node(node* p_node,
 
     schedule(v);
 
-    edge_descriptor logical_e = edge_descriptor();
-    bool logical_edge_added = false;
-    std::tie(logical_e, logical_edge_added) =
-      add_edge(v, order_.front(), graph_);
-
-    CHECK_CONDITION(logical_edge_added);
+    add_logical_edge_(v, order_.front());
 
     auto es = out_edges(v, graph_);
 
@@ -276,6 +264,33 @@ vertex_descriptor engine::implied_activator_(vertex_descriptor u,
   return target(last_out_edge_(u), graph_);
 }
 
+edge_descriptor engine::add_logical_edge_(vertex_descriptor u,
+                                          vertex_descriptor v)
+{
+  edge_descriptor new_e = edge_descriptor();
+  bool new_edge_added = false;
+
+  std::tie(new_e, new_edge_added) = add_edge(u, v, graph_);
+
+  CHECK_CONDITION(new_edge_added);
+
+  return new_e;
+}
+
+edge_descriptor engine::add_data_edge_(vertex_descriptor u, vertex_descriptor v)
+{
+  edge_descriptor new_e = edge_descriptor();
+  bool new_edge_added = false;
+
+  std::tie(new_e, new_edge_added) = add_edge(u, v, graph_);
+
+  CHECK_CONDITION(new_edge_added);
+
+  graph_[v].add_ref();
+
+  return new_e;
+}
+
 void engine::delete_node_(vertex_descriptor v)
 {
   CHECK_PRECONDITION(graph_[v].p_node);
@@ -301,7 +316,7 @@ void engine::activate_vertex_(vertex_descriptor v,
 
   graph_[v].position = pos;
 
-  add_edge(v, w, graph_);
+  add_logical_edge_(v, w);
 
   CHECK_POSTCONDITION(!graph_[v].initialized);
   CHECK_POSTCONDITION(is_active_node(v));
@@ -331,7 +346,7 @@ void engine::reset_activator_(vertex_descriptor v, vertex_descriptor w)
 
   remove_edge(last_out_edge_(v), graph_);
 
-  add_edge(v, w, graph_);
+  add_logical_edge_(v, w);
 }
 
 void engine::activate_edge_(edge_descriptor e)
