@@ -31,7 +31,7 @@ namespace dataflow_test
 template <typename T> class box final
 {
 private:
-  struct box_impl
+  struct impl
   {
     ref<T> boxed;
   };
@@ -40,7 +40,7 @@ public:
   box() = default;
 
   explicit box(const ref<T>& value)
-  : p_impl_(std::make_shared<box_impl>(box_impl{value}))
+  : p_impl_(std::make_shared<impl>(impl{value}))
   {
   }
 
@@ -77,7 +77,7 @@ public:
   }
 
 private:
-  std::shared_ptr<box_impl> p_impl_;
+  std::shared_ptr<impl> p_impl_;
 };
 
 template <typename T> box<T> make_box(const ref<T>& value)
@@ -87,7 +87,7 @@ template <typename T> box<T> make_box(const ref<T>& value)
 
 template <typename T> ref<box<T>> Box(const ref<T>& value)
 {
-  return Const(box<T>(value));
+  return Const(make_box(value));
 }
 
 class test_core_fixture : public io_fixture
