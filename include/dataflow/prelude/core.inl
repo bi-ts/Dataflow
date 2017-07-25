@@ -83,12 +83,12 @@ template <typename T> const var<T>& var<T>::operator=(const T& v) const
 
 // Basic functions
 
-template <typename T> dataflow::ref<T> dataflow::Const(const T& v)
+template <typename T, typename> dataflow::ref<T> dataflow::Const(const T& v)
 {
   return ref<T>(internal::node_const<T>::create(v));
 }
 
-template <typename T> dataflow::var<T> dataflow::Var(const T& v)
+template <typename T, typename> dataflow::var<T> dataflow::Var(const T& v)
 {
   return var<T>(internal::node_var<T>::create(v));
 }

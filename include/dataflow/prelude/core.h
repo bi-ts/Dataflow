@@ -37,6 +37,18 @@ namespace dataflow
 
 namespace core
 {
+template <typename T>
+struct is_flowable
+  : std::integral_constant<bool,
+                           std::is_copy_constructible<T>::value &&
+                             std::is_copy_assignable<T>::value &&
+                             std::is_default_constructible<T>::value &&
+                             !std::is_pointer<T>::value &&
+                             !std::is_reference<T>::value &&
+                             !std::is_base_of<internal::ref, T>::value>
+{
+};
+
 template <typename T, typename U = void>
 using enable_if_not_ref_t =
   typename std::enable_if<!std::is_base_of<internal::ref, T>::value>::type;
@@ -120,10 +132,14 @@ using time_func_result_t =
 
 // Basic functions
 
-template <typename T> ref<T> Const(const T& v = T());
+template <typename T,
+          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
+ref<T> Const(const T& v = T());
 DATAFLOW___EXPORT ref<std::string> Const(const char* v);
 
-template <typename T> var<T> Var(const T& v = T());
+template <typename T,
+          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
+var<T> Var(const T& v = T());
 DATAFLOW___EXPORT var<std::string> Var(const char* v);
 
 template <typename T> eager<T> Curr(ref<T> x);
