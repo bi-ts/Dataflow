@@ -32,27 +32,27 @@ private:
   template <typename U>
   static decltype(std::declval<std::ostream&>() << std::declval<U>(),
                   std::true_type())
-  test(int);
+  test_(int);
 
-  template <typename> static std::false_type test(...);
+  template <typename> static std::false_type test_(...);
 
 public:
-  static const bool value = decltype(test<T>(0))::value;
+  static const bool value = decltype(test_<T>(0))::value;
 };
 
 template <typename T> struct is_equality_comparable
 {
 private:
   template <typename U>
-  static auto test(const U& v)
+  static auto test_(const U& v)
     -> decltype(std::is_same<bool, decltype(v == v)>::value,
                 std::is_same<bool, decltype(v != v)>::value,
                 std::true_type());
 
-  template <typename> static std::false_type test(...);
+  template <typename> static std::false_type test_(...);
 
 public:
-  static const bool value = decltype(test<T>(std::declval<T>()))::value;
+  static const bool value = decltype(test_<T>(std::declval<T>()))::value;
 };
 }
 }
