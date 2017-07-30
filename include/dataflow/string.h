@@ -38,7 +38,7 @@ template <typename X> ref<std::string> ToString(const ref<X>& x);
 template <>
 DATAFLOW___EXPORT ref<std::string> ToString(const ref<std::string>& x);
 
-template <typename T, typename = core::enable_if_not_ref_t<T>>
+template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
 ref<std::string> ToString(const T& v);
 
 template <typename A, typename B, typename... Args>

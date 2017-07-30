@@ -49,28 +49,32 @@ ref<U> Switch(const ref<T>& x,
 template <typename T, typename U>
 std::pair<ref<T>, ref<U>> Case(const ref<T>& x, const ref<U>& y);
 
-template <typename T, typename U, typename = core::enable_if_not_ref_t<U>>
+template <typename T,
+          typename U,
+          typename = core::enable_if_convertible_to_flowable_t<U>>
 std::pair<ref<T>, ref<U>> Case(const ref<T>& x, const U& y);
 
 template <typename T>
 std::pair<ref<T>, ref<std::string>> Case(const ref<T>& x, const char* y);
 
-template <typename T, typename U, typename = core::enable_if_not_ref_t<T>>
+template <typename T,
+          typename U,
+          typename = core::enable_if_convertible_to_flowable_t<T>>
 std::pair<ref<T>, ref<U>> Case(const T& x, const ref<U>& y);
 
 template <typename T,
           typename U,
-          typename = core::enable_if_not_ref_t<T>,
-          typename = core::enable_if_not_ref_t<U>>
+          typename = core::enable_if_convertible_to_flowable_t<T>,
+          typename = core::enable_if_convertible_to_flowable_t<U>>
 std::pair<ref<T>, ref<U>> Case(const T& x, const U& y);
 
-template <typename T, typename = core::enable_if_not_ref_t<T>>
+template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
 std::pair<ref<T>, ref<std::string>> Case(const T& x, const char* y);
 
 template <typename U>
 std::pair<ref<std::string>, ref<U>> Case(const char* x, const ref<U>& y);
 
-template <typename U, typename = core::enable_if_not_ref_t<U>>
+template <typename U, typename = core::enable_if_convertible_to_flowable_t<U>>
 std::pair<ref<std::string>, ref<U>> Case(const char* x, const U& y);
 
 std::pair<ref<std::string>, ref<std::string>> Case(const char* x,
@@ -78,14 +82,14 @@ std::pair<ref<std::string>, ref<std::string>> Case(const char* x,
 
 template <typename T> ref<T> Default(const ref<T>& x);
 
-template <typename T, typename = core::enable_if_not_ref_t<T>>
+template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
 ref<T> Default(const T& v);
 ref<std::string> Default(const char* v);
 
 template <typename T>
 std::pair<ref<bool>, ref<T>> operator>>=(const ref<bool>& x, const ref<T>& y);
 
-template <typename T, typename = core::enable_if_not_ref_t<T>>
+template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
 std::pair<ref<bool>, ref<T>> operator>>=(const ref<bool>& x, const T& y);
 
 std::pair<ref<bool>, ref<std::string>> operator>>=(const ref<bool>& x,

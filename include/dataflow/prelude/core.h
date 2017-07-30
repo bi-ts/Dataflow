@@ -51,9 +51,28 @@ struct is_flowable
 {
 };
 
+template <typename T> struct is_convertible_to_flowable
+{
+private:
+  template <typename U,
+            typename = typename std::enable_if<is_flowable<U>::value>::type>
+  static std::true_type test_(const U&);
+
+  static std::true_type test_(const char*);
+
+  static std::false_type test_(...);
+
+public:
+  static const bool value = decltype(test_(std::declval<T>()))::value;
+};
+
 template <typename T, typename U = void>
-using enable_if_not_ref_t =
-  typename std::enable_if<!std::is_base_of<internal::ref, T>::value>::type;
+using enable_if_convertible_to_flowable =
+  std::enable_if<is_convertible_to_flowable<T>::value, U>;
+
+template <typename T, typename U = void>
+using enable_if_convertible_to_flowable_t =
+  typename enable_if_convertible_to_flowable<T, U>::type;
 }
 
 using Time = internal::tick_count;
@@ -161,7 +180,7 @@ template <typename T>
 ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
 template <typename T>
 ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
-template <typename T, typename = core::enable_if_not_ref_t<T>>
+template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
 
 // Conditional functions
