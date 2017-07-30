@@ -130,6 +130,12 @@ struct is_flowable
 {
 };
 
+template <typename T, typename U = void>
+using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
+
+template <typename T, typename U = void>
+using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
+
 template <typename T> struct is_convertible_to_flowable
 {
 private:
@@ -193,13 +199,11 @@ ref<T> LiftSelector(const ref<X>& x,
 
 // Basic functions
 
-template <typename T,
-          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
+template <typename T, typename = core::enable_if_flowable_t<T>>
 ref<T> Const(const T& v = T());
 DATAFLOW___EXPORT ref<std::string> Const(const char* v);
 
-template <typename T,
-          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
+template <typename T, typename = core::enable_if_flowable_t<T>>
 var<T> Var(const T& v = T());
 DATAFLOW___EXPORT var<std::string> Var(const char* v);
 
