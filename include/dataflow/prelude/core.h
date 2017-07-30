@@ -40,12 +40,14 @@ namespace core
 template <typename T>
 struct is_flowable
   : std::integral_constant<bool,
-                           std::is_copy_constructible<T>::value &&
+                           std::is_default_constructible<T>::value &&
+                             std::is_copy_constructible<T>::value &&
                              std::is_copy_assignable<T>::value &&
-                             std::is_default_constructible<T>::value &&
+                             internal::is_streamable<T>::value &&
+                             internal::is_equality_comparable<T>::value &&
+                             !std::is_base_of<internal::ref, T>::value &&
                              !std::is_pointer<T>::value &&
-                             !std::is_reference<T>::value &&
-                             !std::is_base_of<internal::ref, T>::value>
+                             !std::is_reference<T>::value>
 {
 };
 

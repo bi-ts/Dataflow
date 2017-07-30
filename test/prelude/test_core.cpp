@@ -54,9 +54,10 @@ public:
     return !(*this == other);
   }
 
-  std::string to_string() const
+  friend std::ostream& operator<<(std::ostream& out, const box&)
   {
-    return "box";
+    out << "box";
+    return out;
   }
 
   friend ref<T> Boxed(const ref<box>& x)

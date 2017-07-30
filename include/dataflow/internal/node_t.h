@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "node.h"
+#include "type_traits.h"
 
 #include <sstream>
 
@@ -29,13 +30,6 @@ namespace internal
 {
 namespace detail
 {
-template <typename T, typename = decltype(std::declval<T>().to_string())>
-std::ostream& operator<<(std::ostream& out, const T& value)
-{
-  out << value.to_string();
-  return out;
-}
-
 template <typename T> std::string node_value_to_string(const T& value)
 {
   std::stringstream out;
@@ -45,7 +39,7 @@ template <typename T> std::string node_value_to_string(const T& value)
   return out.str();
 }
 
-template <> inline std::string node_value_to_string<bool>(const bool& value)
+inline std::string node_value_to_string(const bool& value)
 {
   std::stringstream out;
 
@@ -54,8 +48,7 @@ template <> inline std::string node_value_to_string<bool>(const bool& value)
   return out.str();
 }
 
-template <>
-inline std::string node_value_to_string<std::string>(const std::string& value)
+inline std::string node_value_to_string(const std::string& value)
 {
   std::stringstream out;
 
@@ -67,6 +60,21 @@ inline std::string node_value_to_string<std::string>(const std::string& value)
 
 template <typename T> class node_t : public node
 {
+public:
+  static_assert(std::is_default_constructible<T>::value,
+                "`T` must be default constructible");
+
+  static_assert(std::is_copy_constructible<T>::value,
+                "`T` must be copy constructible");
+
+  static_assert(std::is_copy_assignable<T>::value,
+                "`T` must be copy assignable");
+
+  static_assert(is_streamable<T>::value, "`T` must be streamable");
+
+  static_assert(is_equality_comparable<T>::value,
+                "`T` must be equality comparable");
+
 public:
   const T& value() const
   {
