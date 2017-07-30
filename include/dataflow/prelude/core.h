@@ -35,46 +35,6 @@ namespace dataflow
 /// \ingroup prelude
 /// \{
 
-namespace core
-{
-template <typename T>
-struct is_flowable
-  : std::integral_constant<bool,
-                           std::is_default_constructible<T>::value &&
-                             std::is_copy_constructible<T>::value &&
-                             std::is_copy_assignable<T>::value &&
-                             internal::is_streamable<T>::value &&
-                             internal::is_equality_comparable<T>::value &&
-                             !std::is_base_of<internal::ref, T>::value &&
-                             !std::is_pointer<T>::value &&
-                             !std::is_reference<T>::value>
-{
-};
-
-template <typename T> struct is_convertible_to_flowable
-{
-private:
-  template <typename U,
-            typename = typename std::enable_if<is_flowable<U>::value>::type>
-  static std::true_type test_(const U&);
-
-  static std::true_type test_(const char*);
-
-  static std::false_type test_(...);
-
-public:
-  static const bool value = decltype(test_(std::declval<T>()))::value;
-};
-
-template <typename T, typename U = void>
-using enable_if_convertible_to_flowable =
-  std::enable_if<is_convertible_to_flowable<T>::value, U>;
-
-template <typename T, typename U = void>
-using enable_if_convertible_to_flowable_t =
-  typename enable_if_convertible_to_flowable<T, U>::type;
-}
-
 using Time = internal::tick_count;
 
 class DATAFLOW___EXPORT Engine
@@ -151,47 +111,50 @@ using time_func_result_t =
   value_type_t<typename std::result_of<F(const Time&)>::type>;
 }
 
-// Basic functions
+namespace core
+{
 
-template <typename T,
-          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
-ref<T> Const(const T& v = T());
-DATAFLOW___EXPORT ref<std::string> Const(const char* v);
-
-template <typename T,
-          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
-var<T> Var(const T& v = T());
-DATAFLOW___EXPORT var<std::string> Var(const char* v);
-
-template <typename T> eager<T> Curr(ref<T> x);
-
-template <typename F, typename T = detail::time_func_result_t<F>>
-eager<T> Main(F f);
-
-// Operators
-
-template <typename T> eager<T> operator*(ref<T> x);
-
-// Conditional functions
+// Type traits
 
 template <typename T>
-ref<T> If(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
-template <typename T>
-ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
-template <typename T>
-ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
-template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
-ref<T> If(const ref<bool>& x, const T& y, const T& z);
+struct is_flowable
+  : std::integral_constant<bool,
+                           std::is_default_constructible<T>::value &&
+                             std::is_copy_constructible<T>::value &&
+                             std::is_copy_assignable<T>::value &&
+                             internal::is_streamable<T>::value &&
+                             internal::is_equality_comparable<T>::value &&
+                             !std::is_base_of<internal::ref, T>::value &&
+                             !std::is_pointer<T>::value &&
+                             !std::is_reference<T>::value>
+{
+};
 
-// Conditional functions
+template <typename T> struct is_convertible_to_flowable
+{
+private:
+  template <typename U,
+            typename = typename std::enable_if<is_flowable<U>::value>::type>
+  static std::true_type test_(const U&);
 
-template <typename T>
-ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
+  static std::true_type test_(const char*);
+
+  static std::false_type test_(...);
+
+public:
+  static const bool value = decltype(test_(std::declval<T>()))::value;
+};
+
+template <typename T, typename U = void>
+using enable_if_convertible_to_flowable =
+  std::enable_if<is_convertible_to_flowable<T>::value, U>;
+
+template <typename T, typename U = void>
+using enable_if_convertible_to_flowable_t =
+  typename enable_if_convertible_to_flowable<T, U>::type;
 
 // Utility functions
 
-namespace core
-{
 template <
   typename Policy,
   typename X,
@@ -228,6 +191,42 @@ ref<T> LiftSelector(const ref<X>& x,
                     bool eager = false);
 }
 
+// Basic functions
+
+template <typename T,
+          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
+ref<T> Const(const T& v = T());
+DATAFLOW___EXPORT ref<std::string> Const(const char* v);
+
+template <typename T,
+          typename = typename std::enable_if<core::is_flowable<T>::value>::type>
+var<T> Var(const T& v = T());
+DATAFLOW___EXPORT var<std::string> Var(const char* v);
+
+template <typename T> eager<T> Curr(ref<T> x);
+
+template <typename F, typename T = detail::time_func_result_t<F>>
+eager<T> Main(F f);
+
+// Operators
+
+template <typename T> eager<T> operator*(ref<T> x);
+
+// Conditional functions
+
+template <typename T>
+ref<T> If(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
+template <typename T>
+ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
+template <typename T>
+ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
+template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
+ref<T> If(const ref<bool>& x, const T& y, const T& z);
+
+// Conditional functions
+
+template <typename T>
+ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
 /// \}
 }
 
