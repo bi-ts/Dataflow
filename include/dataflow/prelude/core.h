@@ -68,49 +68,6 @@ public:
   const var& operator=(const T& v) const;
 };
 
-namespace detail
-{
-template <typename> struct value_type
-{
-};
-
-template <typename T> struct value_type<ref<T>>
-{
-  using type = T;
-};
-
-template <typename T> struct value_type<const ref<T>&>
-{
-  using type = T;
-};
-
-template <typename T> struct value_type<var<T>>
-{
-  using type = T;
-};
-
-template <typename T> struct value_type<const var<T>&>
-{
-  using type = T;
-};
-
-template <typename T> struct value_type<eager<T>>
-{
-  using type = T;
-};
-
-template <typename T> struct value_type<const eager<T>&>
-{
-  using type = T;
-};
-
-template <typename F> using value_type_t = typename value_type<F>::type;
-
-template <typename F>
-using time_func_result_t =
-  value_type_t<typename std::result_of<F(const Time&)>::type>;
-}
-
 namespace core
 {
 
@@ -159,6 +116,25 @@ template <typename T, typename U = void>
 using enable_if_convertible_to_flowable_t =
   typename enable_if_convertible_to_flowable<T, U>::type;
 
+template <typename T> struct value_type
+{
+private:
+  template <typename U>
+  static U test_(const ref<U>&);
+
+public:
+  using type = decltype(test_(std::declval<T>()));
+};
+
+template <typename T> using value_type_t = typename value_type<T>::type;
+
+template <typename F>
+using time_func_result =
+  value_type<typename std::result_of<F(const Time&)>::type>;
+
+template <typename F>
+using time_func_result_t = typename time_func_result<F>::type;
+
 // Utility functions
 
 template <
@@ -190,7 +166,7 @@ ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
 
 template <typename Policy,
           typename X,
-          typename T = detail::value_type_t<
+          typename T = core::value_type_t<
             decltype(std::declval<Policy>().calculate(std::declval<X>()))>>
 ref<T> LiftSelector(const ref<X>& x,
                     const Policy& policy = Policy(),
@@ -209,7 +185,7 @@ DATAFLOW___EXPORT var<std::string> Var(const char* v);
 
 template <typename T> eager<T> Curr(ref<T> x);
 
-template <typename F, typename T = detail::time_func_result_t<F>>
+template <typename F, typename T = core::time_func_result_t<F>>
 eager<T> Main(F f);
 
 // Operators
