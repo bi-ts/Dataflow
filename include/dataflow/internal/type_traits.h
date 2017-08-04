@@ -37,22 +37,26 @@ private:
   template <typename> static std::false_type test_(...);
 
 public:
-  static const bool value = decltype(test_<T>(0))::value;
+  static constexpr const bool value = decltype(test_<T>(0))::value;
 };
+
+template <typename T> constexpr const bool is_streamable<T>::value;
 
 template <typename T> struct is_equality_comparable
 {
 private:
   template <typename U>
-  static auto test_(const U& v)
-    -> decltype(std::is_same<bool, decltype(v == v)>::value,
-                std::is_same<bool, decltype(v != v)>::value,
-                std::true_type());
+  static auto test_(int) -> decltype(
+    std::is_same<bool, decltype(std::declval<U>() == std::declval<U>())>::value,
+    std::is_same<bool, decltype(std::declval<U>() != std::declval<U>())>::value,
+    std::true_type());
 
   template <typename> static std::false_type test_(...);
 
 public:
-  static const bool value = decltype(test_<T>(std::declval<T>()))::value;
+  static constexpr const bool value = decltype(test_<T>(0))::value;
 };
+
+template <typename T> constexpr const bool is_equality_comparable<T>::value;
 }
 }
