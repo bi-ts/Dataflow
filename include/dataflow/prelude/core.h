@@ -87,40 +87,42 @@ struct is_flowable
 {
 };
 
-template <typename T, typename U = void>
+template <typename T, typename U = T>
 using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
 
-template <typename T, typename U = void>
+template <typename T, typename U = T>
 using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
 
-template <typename T> struct is_convertible_to_flowable
+namespace detail
+{
+template <typename T> struct convert_to_flowable
 {
 private:
-  template <typename U,
-            typename = typename std::enable_if<is_flowable<U>::value>::type>
-  static std::true_type test_(const U&);
+  template <typename U, typename = enable_if_flowable_t<U>>
+  static U test_(const U&);
 
-  static std::true_type test_(const char*);
+  static std::string test_(const char*);
 
-  static std::false_type test_(...);
+  static void test_(...);
 
 public:
-  static const bool value = decltype(test_(std::declval<T>()))::value;
+  using type = decltype(test_(std::declval<T>()));
+};
+}
+
+template <typename T>
+struct convert_to_flowable
+  : enable_if_flowable<typename detail::convert_to_flowable<T>::type>
+{
 };
 
-template <typename T, typename U = void>
-using enable_if_convertible_to_flowable =
-  std::enable_if<is_convertible_to_flowable<T>::value, U>;
-
-template <typename T, typename U = void>
-using enable_if_convertible_to_flowable_t =
-  typename enable_if_convertible_to_flowable<T, U>::type;
+template <typename T>
+using convert_to_flowable_t = typename convert_to_flowable<T>::type;
 
 template <typename T> struct value_type
 {
 private:
-  template <typename U>
-  static U test_(const ref<U>&);
+  template <typename U> static U test_(const ref<U>&);
 
 public:
   using type = decltype(test_(std::declval<T>()));
@@ -200,7 +202,7 @@ template <typename T>
 ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
 template <typename T>
 ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
-template <typename T, typename = core::enable_if_convertible_to_flowable_t<T>>
+template <typename T, typename = core::convert_to_flowable_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
 
 // Conditional functions
