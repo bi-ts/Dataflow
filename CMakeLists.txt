@@ -35,6 +35,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/introspect.inl
   include/dataflow/io.h
   include/dataflow/io.inl
+  include/dataflow/pair.h
+  include/dataflow/pair.inl
   include/dataflow/prelude.h
   include/dataflow/prelude/arithmetic.h
   include/dataflow/prelude/arithmetic.inl
@@ -65,11 +67,12 @@ add_library(${PROJECT_NAME} SHARED
 
   src/introspect.cpp
   src/io.cpp
+  src/pair.cpp
   src/prelude/arithmetic.cpp
   src/prelude/comparison.cpp
   src/prelude/conditional.cpp
-  src/prelude/logical.cpp
   src/prelude/core.cpp
+  src/prelude/logical.cpp
   src/string.cpp
 
   src/internal/config.h

@@ -19,10 +19,11 @@ add_executable(${PROJECT_NAME}
   prelude/test_core.cpp
   prelude/test_core.type_traits.cpp
   prelude/test_logical.cpp
-  test_prelude.cpp
   test_integration.cpp
   test_introspect.cpp
   test_io.cpp
+  test_pair.cpp
+  test_prelude.cpp
   test_string.cpp
 )
 
