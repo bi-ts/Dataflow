@@ -81,73 +81,6 @@ template <typename T> const var<T>& var<T>::operator=(const T& v) const
 }
 }
 
-// Basic functions
-
-template <typename T, typename> dataflow::ref<T> dataflow::Const(const T& v)
-{
-  return ref<T>(internal::node_const<T>::create(v));
-}
-
-template <typename T, typename> dataflow::var<T> dataflow::Var(const T& v)
-{
-  return var<T>(internal::node_var<T>::create(v));
-}
-
-template <typename T> dataflow::eager<T> dataflow::Curr(ref<T> x)
-{
-  return eager<T>(internal::node_main<T>::create([x](const Time&)
-                                                 {
-                                                   return x;
-                                                 }));
-}
-
-template <typename F, typename T> dataflow::eager<T> dataflow::Main(F f)
-{
-  return eager<T>(internal::node_main<T>::create(f));
-}
-
-// Operators
-
-template <typename T> dataflow::eager<T> dataflow::operator*(ref<T> x)
-{
-  return Curr(x);
-}
-
-template <typename T>
-dataflow::ref<T>
-dataflow::If(const ref<bool>& x, const ref<T>& y, const ref<T>& z)
-{
-  return ref<T>(
-    internal::node_if<T>::create(internal::node_activator::create(x), y, z));
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const ref<T>& z)
-{
-  return If(x, Const<T>(y), z);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const ref<T>& y, const T& z)
-{
-  return If(x, y, Const<T>(z));
-}
-
-template <typename T, typename>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
-{
-  return If(x, Const<T>(y), Const<T>(z));
-}
-
-// Stateful functions
-
-template <typename T>
-dataflow::ref<T>
-dataflow::Prev(const Time& t0, const ref<T>& v0, const ref<T>& x)
-{
-  return ref<T>(internal::node_previous<T>::create(v0(t0), x));
-}
-
 // Utility functions
 
 template <typename Policy, typename X, typename T>
@@ -235,3 +168,71 @@ dataflow::core::LiftSelector(const ref<X>& x, const Policy& policy, bool eager)
   return ref<T>(internal::node_selector<T, X, Policy>::create(
     internal::node_selector_activator<X, Policy>::create(x), eager));
 }
+
+// Basic functions
+
+template <typename T, typename> dataflow::ref<T> dataflow::Const(const T& v)
+{
+  return ref<T>(internal::node_const<T>::create(v));
+}
+
+template <typename T, typename> dataflow::var<T> dataflow::Var(const T& v)
+{
+  return var<T>(internal::node_var<T>::create(v));
+}
+
+template <typename T> dataflow::eager<T> dataflow::Curr(ref<T> x)
+{
+  return eager<T>(internal::node_main<T>::create([x](const Time&)
+                                                 {
+                                                   return x;
+                                                 }));
+}
+
+template <typename F, typename T> dataflow::eager<T> dataflow::Main(F f)
+{
+  return eager<T>(internal::node_main<T>::create(f));
+}
+
+// Operators
+
+template <typename T> dataflow::eager<T> dataflow::operator*(ref<T> x)
+{
+  return Curr(x);
+}
+
+template <typename T>
+dataflow::ref<T>
+dataflow::If(const ref<bool>& x, const ref<T>& y, const ref<T>& z)
+{
+  return ref<T>(
+    internal::node_if<T>::create(internal::node_activator::create(x), y, z));
+}
+
+template <typename T>
+dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const ref<T>& z)
+{
+  return If(x, Const<T>(y), z);
+}
+
+template <typename T>
+dataflow::ref<T> dataflow::If(const ref<bool>& x, const ref<T>& y, const T& z)
+{
+  return If(x, y, Const<T>(z));
+}
+
+template <typename T, typename>
+dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
+{
+  return If(x, Const<T>(y), Const<T>(z));
+}
+
+// Stateful functions
+
+template <typename T>
+dataflow::ref<T>
+dataflow::Prev(const Time& t0, const ref<T>& v0, const ref<T>& x)
+{
+  return ref<T>(internal::node_previous<T>::create(v0(t0), x));
+}
+
