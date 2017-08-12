@@ -31,6 +31,11 @@
 namespace dataflow
 {
 
+namespace core
+{
+template <typename T> struct is_flowable;
+}
+
 /// \defgroup core
 /// \ingroup prelude
 /// \{
@@ -46,6 +51,8 @@ public:
 
 template <typename T> class ref : public internal::ref
 {
+  static_assert(core::is_flowable<T>::value, "`T` must be flowable");
+
 public:
   explicit ref(const internal::ref& r);
 
