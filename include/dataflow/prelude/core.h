@@ -212,7 +212,7 @@ ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
 template <typename T, typename = core::convert_to_flowable_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
 
-// Conditional functions
+// Stateful functions
 
 template <typename T>
 ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
