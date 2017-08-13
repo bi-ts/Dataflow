@@ -62,57 +62,23 @@ std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const ref<T>& x,
   return std::make_pair(x, y);
 }
 
-template <typename T, typename U, typename>
-std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const ref<T>& x,
-                                                             const U& y)
+template <typename T, typename U, typename FwU>
+std::pair<dataflow::ref<T>, dataflow::ref<FwU>> dataflow::Case(const ref<T>& x,
+                                                               const U& y)
 {
   return std::make_pair(x, Const(y));
 }
 
-template <typename T>
-std::pair<dataflow::ref<T>, dataflow::ref<std::string>>
-dataflow::Case(const ref<T>& x, const char* y)
-{
-  return Case(x, Const(y));
-}
-
-template <typename T, typename U, typename>
-std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const T& x,
-                                                             const ref<U>& y)
+template <typename T, typename U, typename FwT>
+std::pair<dataflow::ref<FwT>, dataflow::ref<U>> dataflow::Case(const T& x,
+                                                               const ref<U>& y)
 {
   return Case(Const(x), y);
 }
 
-template <typename T, typename U, typename, typename>
-std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const T& x,
-                                                             const U& y)
-{
-  return Case(Const(x), Const(y));
-}
-
-template <typename T, typename>
-std::pair<dataflow::ref<T>, dataflow::ref<std::string>>
-dataflow::Case(const T& x, const char* y)
-{
-  return Case(Const(x), y);
-}
-
-template <typename U>
-std::pair<dataflow::ref<std::string>, dataflow::ref<U>>
-dataflow::Case(const char* x, const ref<U>& y)
-{
-  return Case(Const(x), y);
-}
-
-template <typename U, typename>
-std::pair<dataflow::ref<std::string>, dataflow::ref<U>>
-dataflow::Case(const char* x, const U& y)
-{
-  return Case(x, Const(y));
-}
-
-inline std::pair<dataflow::ref<std::string>, dataflow::ref<std::string>>
-dataflow::Case(const char* x, const char* y)
+template <typename T, typename U, typename FwT, typename FwU>
+std::pair<dataflow::ref<FwT>, dataflow::ref<FwU>> dataflow::Case(const T& x,
+                                                                 const U& y)
 {
   return Case(Const(x), Const(y));
 }
@@ -122,14 +88,10 @@ template <typename T> dataflow::ref<T> dataflow::Default(const ref<T>& x)
   return x;
 }
 
-template <typename T, typename> dataflow::ref<T> dataflow::Default(const T& v)
+template <typename T, typename FwT>
+dataflow::ref<FwT> dataflow::Default(const T& v)
 {
   return Const(v);
-}
-
-inline dataflow::ref<std::string> dataflow::Default(const char* v)
-{
-  return Default<std::string>(v);
 }
 
 template <typename T>
@@ -139,15 +101,9 @@ operator>>=(const ref<bool>& x, const ref<T>& y)
   return Case(x, y);
 }
 
-template <typename T, typename>
-std::pair<dataflow::ref<bool>, dataflow::ref<T>> dataflow::
+template <typename T, typename FwT>
+std::pair<dataflow::ref<bool>, dataflow::ref<FwT>> dataflow::
 operator>>=(const ref<bool>& x, const T& y)
-{
-  return Case(x, y);
-}
-
-inline std::pair<dataflow::ref<bool>, dataflow::ref<std::string>> dataflow::
-operator>>=(const ref<bool>& x, const char* y)
 {
   return Case(x, y);
 }
