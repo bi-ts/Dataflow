@@ -564,7 +564,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 {
-  const eager<int> x = *Var<int>(15);
+  const val<int> x = *Var<int>(15);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "main");
   BOOST_CHECK_EQUAL(x(), 15);

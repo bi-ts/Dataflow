@@ -47,15 +47,15 @@ template <typename T> ref<T> ref<T>::operator()(const Time& t) const
     internal::node_snapshot_activator::create(), *this));
 }
 
-// eager
+// val
 
 template <typename T>
-eager<T>::eager(const internal::ref& r)
+val<T>::val(const internal::ref& r)
 : ref<T>(r)
 {
 }
 
-template <typename T> const T& eager<T>::operator()() const
+template <typename T> const T& val<T>::operator()() const
 {
   return this->template value<T>();
 }
@@ -181,22 +181,22 @@ template <typename T, typename> dataflow::var<T> dataflow::Var(const T& v)
   return var<T>(internal::node_var<T>::create(v));
 }
 
-template <typename T> dataflow::eager<T> dataflow::Curr(ref<T> x)
+template <typename T> dataflow::val<T> dataflow::Curr(ref<T> x)
 {
-  return eager<T>(internal::node_main<T>::create([x](const Time&)
-                                                 {
-                                                   return x;
-                                                 }));
+  return val<T>(internal::node_main<T>::create([x](const Time&)
+                                               {
+                                                 return x;
+                                               }));
 }
 
-template <typename F, typename T> dataflow::eager<T> dataflow::Main(F f)
+template <typename F, typename T> dataflow::val<T> dataflow::Main(F f)
 {
-  return eager<T>(internal::node_main<T>::create(f));
+  return val<T>(internal::node_main<T>::create(f));
 }
 
 // Operators
 
-template <typename T> dataflow::eager<T> dataflow::operator*(ref<T> x)
+template <typename T> dataflow::val<T> dataflow::operator*(ref<T> x)
 {
   return Curr(x);
 }

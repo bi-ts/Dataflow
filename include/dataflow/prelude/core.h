@@ -59,10 +59,10 @@ public:
   ref<T> operator()(const Time& t) const;
 };
 
-template <typename T> class eager final : public ref<T>
+template <typename T> class val final : public ref<T>
 {
 public:
-  explicit eager(const internal::ref& r);
+  explicit val(const internal::ref& r);
 
   const T& operator()() const;
 };
@@ -192,14 +192,14 @@ template <typename T, typename = core::enable_if_flowable_t<T>>
 var<T> Var(const T& v = T());
 DATAFLOW___EXPORT var<std::string> Var(const char* v);
 
-template <typename T> eager<T> Curr(ref<T> x);
+template <typename T> val<T> Curr(ref<T> x);
 
 template <typename F, typename T = core::time_func_result_t<F>>
-eager<T> Main(F f);
+val<T> Main(F f);
 
 // Operators
 
-template <typename T> eager<T> operator*(ref<T> x);
+template <typename T> val<T> operator*(ref<T> x);
 
 // Conditional functions
 
