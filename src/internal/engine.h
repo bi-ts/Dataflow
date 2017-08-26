@@ -104,6 +104,8 @@ private:
   edge_descriptor second_out_edge_(vertex_descriptor v) const;
   edge_descriptor last_out_edge_(vertex_descriptor v) const;
 
+  vertex_descriptor main_consumer_(vertex_descriptor v) const;
+
   vertex_descriptor activator_(vertex_descriptor v) const;
 
   vertex_descriptor implied_activator_(vertex_descriptor u,

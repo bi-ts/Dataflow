@@ -179,6 +179,18 @@ inline edge_descriptor engine::last_out_edge_(vertex_descriptor v) const
   return *(out_edges(v, graph_).second - 1);
 }
 
+inline vertex_descriptor engine::main_consumer_(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(is_active_node(v));
+  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
+
+  const auto u = graph_[v].consumers.front();
+
+  CHECK_POSTCONDITION(is_conditional_node(u));
+
+  return u;
+}
+
 inline vertex_descriptor engine::activator_(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(is_active_node(v));

@@ -176,10 +176,7 @@ bool engine::update_node_activator(vertex_descriptor v,
                                    std::size_t new_value,
                                    std::size_t old_value)
 {
-  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
-  CHECK_PRECONDITION(is_conditional_node(graph_[v].consumers.front()));
-
-  const auto w = graph_[v].consumers.front();
+  const auto w = main_consumer_(v);
 
   if (!initialized)
   {
@@ -211,10 +208,7 @@ bool engine::update_node_selector_activator(vertex_descriptor v,
                                             vertex_descriptor x,
                                             bool initialized)
 {
-  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
-  CHECK_PRECONDITION(is_conditional_node(graph_[v].consumers.front()));
-
-  const auto w = graph_[v].consumers.front();
+  const auto w = main_consumer_(v);
 
   if (initialized)
   {
@@ -269,10 +263,7 @@ bool engine::update_node_selector_activator(vertex_descriptor v,
 bool engine::update_node_snapshot_activator(vertex_descriptor v,
                                             bool initialized)
 {
-  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
-  CHECK_PRECONDITION(is_conditional_node(graph_[v].consumers.front()));
-
-  const auto w = graph_[v].consumers.front();
+  const auto w = main_consumer_(v);
 
   const auto e = *(out_edges(w, graph_).first + 1);
 
