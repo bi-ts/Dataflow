@@ -79,7 +79,7 @@ inline bool engine::is_primary_data_dependency(edge_descriptor e) const
   const auto u = source(e, graph_);
 
   return !is_logical_dependency(e) &&
-         (!is_conditional_node(u) || first_out_edge_(u) == e);
+         (!is_conditional_node(u) || out_edge_at_(u, 0) == e);
 }
 
 inline bool engine::is_secondary_data_dependency(edge_descriptor e) const
@@ -89,7 +89,7 @@ inline bool engine::is_secondary_data_dependency(edge_descriptor e) const
   const auto u = source(e, graph_);
 
   return !is_logical_dependency(e) && is_conditional_node(u) &&
-         first_out_edge_(u) != e;
+         out_edge_at_(u, 0) != e;
 }
 
 inline bool engine::is_active_data_dependency(edge_descriptor e) const
@@ -153,21 +153,14 @@ inline void engine::release(vertex_descriptor v)
   }
 }
 
-inline edge_descriptor engine::first_out_edge_(vertex_descriptor v) const
+inline edge_descriptor engine::out_edge_at_(vertex_descriptor v,
+                                            std::size_t idx) const
 {
-  CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
+  CHECK_PRECONDITION(out_degree(v, graph_) > idx);
 
   auto ei = out_edges(v, graph_).first;
 
-  return *ei;
-}
-
-inline edge_descriptor engine::second_out_edge_(vertex_descriptor v) const
-{
-  CHECK_PRECONDITION(out_degree(v, graph_) >= 2);
-
-  auto ei = out_edges(v, graph_).first;
-  std::advance(ei, 1);
+  std::advance(ei, idx);
 
   return *ei;
 }

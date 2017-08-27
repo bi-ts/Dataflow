@@ -190,8 +190,8 @@ bool engine::update_node_activator(vertex_descriptor v,
   {
     if (new_value != old_value)
     {
-      const auto e_prev = *(out_edges(w, graph_).first + 1 + old_value);
-      const auto e_curr = *(out_edges(w, graph_).first + 1 + new_value);
+      const auto e_prev = out_edge_at_(w, 1 + old_value);
+      const auto e_curr = out_edge_at_(w, 1 + new_value);
 
       deactivate_subgraph_(e_prev);
 
@@ -214,7 +214,7 @@ bool engine::update_node_selector_activator(vertex_descriptor v,
   {
     CHECK_CONDITION(out_degree(w, graph_) == 3);
 
-    const auto old_e = second_out_edge_(w);
+    const auto old_e = out_edge_at_(w, 1);
     const auto old_x = target(old_e, graph_);
 
     if (old_x == x)
@@ -305,7 +305,7 @@ vertex_descriptor engine::implied_activator_(vertex_descriptor u,
 
   if (is_conditional_node(u))
   {
-    const auto w = target(first_out_edge_(u), graph_);
+    const auto w = target(out_edge_at_(u, 0), graph_);
 
     if (v != w)
       return w;
