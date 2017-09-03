@@ -126,13 +126,28 @@ struct convert_to_flowable
 template <typename T>
 using convert_to_flowable_t = typename convert_to_flowable<T>::type;
 
+namespace detail
+{
 template <typename T> struct value_type
 {
 private:
-  template <typename U> static U test_(const ref<U>&);
+  template <typename U> static U test_(const ref<U>*);
+  static void test_(...);
 
 public:
-  using type = decltype(test_(std::declval<T>()));
+  using type =
+    decltype(test_(std::declval<typename std::remove_reference<T>::type*>()));
+};
+}
+
+template <typename T>
+struct is_ref : is_flowable<typename detail::value_type<T>::type>
+{
+};
+
+template <typename T>
+struct value_type : enable_if_flowable<typename detail::value_type<T>::type>
+{
 };
 
 template <typename T> using value_type_t = typename value_type<T>::type;

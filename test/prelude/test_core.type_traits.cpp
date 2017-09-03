@@ -197,5 +197,22 @@ BOOST_AUTO_TEST_CASE(test_is_flowable)
   BOOST_CHECK_EQUAL(core::is_flowable<void>::value, false);
 }
 
+BOOST_AUTO_TEST_CASE(test_is_ref)
+{
+  BOOST_CHECK_EQUAL(core::is_ref<ref<int>>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<ref<int>&>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<const ref<int>&>::value, true);
+
+  BOOST_CHECK_EQUAL(core::is_ref<val<int>>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<val<int>&>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<const val<int>&>::value, true);
+
+  BOOST_CHECK_EQUAL(core::is_ref<var<int>>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<var<int>&>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<const var<int>&>::value, true);
+
+  BOOST_CHECK_EQUAL(core::is_ref<int>::value, false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
