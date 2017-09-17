@@ -128,7 +128,7 @@ using convert_to_flowable_t = typename convert_to_flowable<T>::type;
 
 namespace detail
 {
-template <typename T> struct value_type
+template <typename T> struct data_type
 {
 private:
   template <typename U> static U test_(const ref<U>*);
@@ -141,20 +141,21 @@ public:
 }
 
 template <typename T>
-struct is_ref : is_flowable<typename detail::value_type<T>::type>
+struct is_ref : is_flowable<typename detail::data_type<T>::type>
 {
 };
 
 template <typename T>
-struct value_type : enable_if_flowable<typename detail::value_type<T>::type>
+struct data_type
+  : std::enable_if<is_ref<T>::value, typename detail::data_type<T>::type>
 {
 };
 
-template <typename T> using value_type_t = typename value_type<T>::type;
+template <typename T> using data_type_t = typename data_type<T>::type;
 
 template <typename F>
 using time_func_result =
-  value_type<typename std::result_of<F(const Time&)>::type>;
+  data_type<typename std::result_of<F(const Time&)>::type>;
 
 template <typename F>
 using time_func_result_t = typename time_func_result<F>::type;
@@ -190,7 +191,7 @@ ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
 
 template <typename Policy,
           typename X,
-          typename T = core::value_type_t<
+          typename T = core::data_type_t<
             decltype(std::declval<Policy>().calculate(std::declval<X>()))>>
 ref<T> LiftSelector(const ref<X>& x,
                     const Policy& policy = Policy(),
