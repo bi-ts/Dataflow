@@ -68,7 +68,7 @@ public:
       {
         return "second";
       }
-      static const ref<T>& calculate(const pair& v)
+      static const ref<U>& calculate(const pair& v)
       {
         return v.p_impl_->second;
       }

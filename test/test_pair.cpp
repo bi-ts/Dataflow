@@ -60,6 +60,28 @@ BOOST_AUTO_TEST_CASE(test_pair)
   BOOST_CHECK_EQUAL(d(), 2);
 }
 
+BOOST_AUTO_TEST_CASE(test_pair_First)
+{
+  Engine engine;
+
+  const auto a = Pair(std::string("1st"), 2);
+
+  const auto b = *First(a);
+
+  BOOST_CHECK_EQUAL(b(), std::string("1st"));
+}
+
+BOOST_AUTO_TEST_CASE(test_pair_Second)
+{
+  Engine engine;
+
+  const auto a = Pair(1, std::string("2nd"));
+
+  const auto b = *Second(a);
+
+  BOOST_CHECK_EQUAL(b(), std::string("2nd"));
+}
+
 BOOST_AUTO_TEST_CASE(test_pair_Pair_overloads)
 {
   Engine engine;
