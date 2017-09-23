@@ -154,11 +154,11 @@ struct data_type
 template <typename T> using data_type_t = typename data_type<T>::type;
 
 template <typename F>
-using time_func_result =
+using function_of_time_type =
   data_type<typename std::result_of<F(const Time&)>::type>;
 
 template <typename F>
-using time_func_result_t = typename time_func_result<F>::type;
+using function_of_time_type_t = typename function_of_time_type<F>::type;
 
 // Utility functions
 
@@ -210,7 +210,7 @@ DATAFLOW___EXPORT var<std::string> Var(const char* v);
 
 template <typename T> val<T> Curr(ref<T> x);
 
-template <typename F, typename T = core::time_func_result_t<F>>
+template <typename F, typename T = core::function_of_time_type_t<F>>
 val<T> Main(F f);
 
 // Operators
