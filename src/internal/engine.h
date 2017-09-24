@@ -119,6 +119,8 @@ private:
                         topological_position pos,
                         vertex_descriptor w);
 
+  void deactivate_vertex_partially_(vertex_descriptor v);
+
   void deactivate_vertex_(vertex_descriptor v);
 
   void reset_activator_(vertex_descriptor v, vertex_descriptor w);

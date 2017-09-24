@@ -48,6 +48,7 @@ void engine::start()
   const auto v = add_vertex(vertex(p_node), gp_engine_->graph_);
 
   gp_engine_->graph_[v].hidden = true;
+  gp_engine_->graph_[v].initialized = true;
 
   gp_engine_->graph_[v].position =
     gp_engine_->order_.insert(gp_engine_->order_.end(), v);
@@ -295,7 +296,18 @@ engine::~engine() noexcept
 {
   assert(num_vertices(graph_) == 1);
 
-  delete_node_(*vertices(graph_).first);
+  try
+  {
+    const auto v = *vertices(graph_).first;
+
+    deactivate_vertex_partially_(v);
+
+    delete_node_(v);
+  }
+  catch (const std::exception& ex)
+  {
+    assert(false);
+  }
 }
 
 vertex_descriptor engine::implied_activator_(vertex_descriptor u,
@@ -343,6 +355,7 @@ edge_descriptor engine::add_data_edge_(vertex_descriptor u, vertex_descriptor v)
 
 void engine::delete_node_(vertex_descriptor v)
 {
+  CHECK_PRECONDITION(!is_active_node(v));
   CHECK_PRECONDITION(graph_[v].p_node);
 
   const auto p_node = graph_[v].p_node;
@@ -372,7 +385,7 @@ void engine::activate_vertex_(vertex_descriptor v,
   CHECK_POSTCONDITION(is_active_node(v));
 }
 
-void engine::deactivate_vertex_(vertex_descriptor v)
+void engine::deactivate_vertex_partially_(vertex_descriptor v)
 {
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(graph_[v].initialized);
@@ -381,12 +394,19 @@ void engine::deactivate_vertex_(vertex_descriptor v)
   order_.erase(graph_[v].position);
   graph_[v].position = topological_position();
 
-  remove_edge(last_out_edge_(v), graph_);
-
   graph_[v].initialized = false;
 
   CHECK_POSTCONDITION(!graph_[v].initialized);
   CHECK_POSTCONDITION(requires_activation(v));
+}
+
+void engine::deactivate_vertex_(vertex_descriptor v)
+{
+  CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
+
+  deactivate_vertex_partially_(v);
+
+  remove_edge(last_out_edge_(v), graph_);
 }
 
 void engine::reset_activator_(vertex_descriptor v, vertex_descriptor w)
@@ -589,6 +609,8 @@ void engine::activate_subgraph_(edge_descriptor e)
 
 void engine::deactivate_subgraph_(edge_descriptor e)
 {
+  CHECK_PRECONDITION(is_active_node(source(e, graph_)));
+
   const auto v = target(e, graph_);
 
   deactivate_edge_(e);
@@ -679,10 +701,21 @@ void engine::remove_subgraph_(vertex_descriptor v)
     {
       assert(graph_[v].ref_count() == 0);
 
-      for (auto es = out_edges(v, graph_);
-           es.first !=
-           (es.second - (engine::instance().is_active_node(v) ? 1 : 0));
-           ++es.first)
+      if (engine::instance().is_active_node(v))
+      {
+        for (auto es = out_edges(v, graph_); es.first != es.second; ++es.first)
+        {
+          const auto e = *es.first;
+          if (engine::instance().is_active_data_dependency(e))
+            engine::instance().deactivate_subgraph_(e);
+        }
+
+        engine::instance().deactivate_vertex_(v);
+      }
+
+      CHECK_CONDITION(!engine::instance().is_active_node(v));
+
+      for (auto es = out_edges(v, graph_); es.first != es.second; ++es.first)
       {
         const auto u = target(*es.first, graph_);
         if (graph_[u].release())
@@ -703,15 +736,6 @@ void engine::remove_subgraph_(vertex_descriptor v)
   private:
     dependency_graph& graph_;
   };
-
-  if (graph_[v].eager)
-  {
-    assert(out_degree(v, graph_) == 2);
-    remove_edge(--out_edges(v, graph_).second, graph_);
-    deactivate_subgraph_(*(out_edges(v, graph_).first));
-    order_.erase(graph_[v].position);
-    graph_[v].position = topological_position();
-  }
 
   graph_[v].vertex_color = vertex::color::white;
 
