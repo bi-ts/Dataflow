@@ -365,7 +365,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
     {
       return "shift";
     }
-    char calculate(int v)
+    static char calculate(int v)
     {
       return static_cast<char>(v + 2);
     };
@@ -457,7 +457,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
     {
       return "shift";
     }
-    char calculate(char v, int offset)
+    static char calculate(char v, int offset)
     {
       return static_cast<char>(v + offset);
     };
