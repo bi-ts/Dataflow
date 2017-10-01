@@ -22,6 +22,7 @@
 
 #include "../internal/config.h"
 #include "../internal/node_activator.h"
+#include "../internal/node_n_ary.h"
 #include "../internal/node_previous.h"
 #include "../internal/node_selector.h"
 #include "../internal/node_selector_activator.h"
@@ -161,6 +162,21 @@ dataflow::ref<T> dataflow::core::Lift(const std::string& label,
   return Lift(x, y, policy(label, func));
 }
 
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::Lift(const Policy& policy,
+                                      const ref<X>& x,
+                                      const ref<Xs>&... xs)
+{
+  return ref<T>(
+    internal::node_n_ary<Policy, T, X, Xs...>::create(policy, x, xs...));
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::Lift(const ref<X>& x, const ref<Xs>&... xs)
+{
+  return Lift<Policy>(Policy(), x, xs...);
+}
+
 template <typename Policy, typename X, typename T>
 dataflow::ref<T>
 dataflow::core::LiftSelector(const ref<X>& x, const Policy& policy, bool eager)
@@ -235,4 +251,3 @@ dataflow::Prev(const Time& t0, const ref<T>& v0, const ref<T>& x)
 {
   return ref<T>(internal::node_previous<T>::create(v0(t0), x));
 }
-

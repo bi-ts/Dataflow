@@ -562,6 +562,50 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
   BOOST_CHECK_EQUAL(a(), "AA");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
+{
+  const var<std::string> a = Var("text");
+  const var<char> b = Var('A');
+  const var<int> c = Var(4);
+  const var<double> d = Var(3.14);
+
+  struct policy
+  {
+    static std::string label()
+    {
+      return "4-ary";
+    }
+    static std::string calculate(std::string s, char c, int count, double v)
+    {
+      return s + "/" + std::string(count, c) + "/" +
+             std::to_string(static_cast<int>(v * 100)) + "%";
+    };
+  };
+
+  const auto e = core::Lift<policy>(a, b, c, d);
+  const auto f = Curr(e);
+
+  BOOST_CHECK_EQUAL(introspect::label(e), "4-ary");
+
+  BOOST_CHECK_EQUAL(f(), "text/AAAA/314%");
+
+  b = 'B';
+
+  BOOST_CHECK_EQUAL(f(), "text/BBBB/314%");
+
+  c = 6;
+
+  BOOST_CHECK_EQUAL(f(), "text/BBBBBB/314%");
+
+  d = 1.11;
+
+  BOOST_CHECK_EQUAL(f(), "text/BBBBBB/111%");
+
+  a = "other-text";
+
+  BOOST_CHECK_EQUAL(f(), "other-text/BBBBBB/111%");
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 {
   const val<int> x = *Var<int>(15);
