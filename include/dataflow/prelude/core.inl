@@ -122,13 +122,6 @@ dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)
   return Lift<policy>(x, policy(label, func));
 }
 
-template <typename Policy, typename X, typename Y, typename T>
-dataflow::ref<T>
-dataflow::core::Lift(const ref<X>& x, const ref<Y>& y, const Policy& policy)
-{
-  return ref<T>(internal::node_binary<T, X, Y, Policy>::create(x, y, policy));
-}
-
 template <typename F, typename X, typename Y, typename T>
 dataflow::ref<T> dataflow::core::Lift(const std::string& label,
                                       const ref<X>& x,
@@ -159,7 +152,7 @@ dataflow::ref<T> dataflow::core::Lift(const std::string& label,
     F func_;
   };
 
-  return Lift(x, y, policy(label, func));
+  return Lift(policy(label, func), x, y);
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>

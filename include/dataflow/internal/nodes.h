@@ -113,52 +113,6 @@ private:
   }
 };
 
-template <typename T, typename X, typename Y, typename Policy>
-class node_binary final : public node_t<T>, public Policy
-{
-  friend class nodes_factory;
-
-public:
-  static ref create(const ref& x, const ref& y, const Policy& policy = Policy())
-  {
-    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<X>());
-    DATAFLOW___CHECK_PRECONDITION(y.template is_of_type<Y>());
-
-    const std::array<node_id, 2> args = {{x.id(), y.id()}};
-
-    return nodes_factory::create<node_binary<T, X, Y, Policy>>(
-      &args[0], args.size(), false, policy);
-  }
-
-private:
-  explicit node_binary(const Policy& policy)
-  : Policy(policy)
-  {
-  }
-
-  virtual bool update_(node_id id,
-                       bool initialized,
-                       const node** p_args,
-                       std::size_t args_count) override
-  {
-    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
-    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
-
-    return this->set_value_(Policy::calculate(
-      extract_node_value<X>(p_args[0]), extract_node_value<Y>(p_args[1])));
-  }
-
-  virtual std::string label_() const override
-  {
-    return Policy::label();
-  }
-
-  virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
-  {
-    return std::make_pair(sizeof(*this), alignof(decltype(*this)));
-  }
-};
-
 template <typename T> class node_var final : public node_t<T>
 {
   friend class nodes_factory;

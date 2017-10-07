@@ -463,7 +463,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
     };
   };
 
-  const auto z = core::Lift(x, y, policy());
+  const auto z = core::Lift(policy(), x, y);
   const auto a = Curr(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "shift");
@@ -492,7 +492,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
     char cache_;
   };
 
-  const auto z = core::Lift(x, y, policy());
+  const auto z = core::Lift(policy(), x, y);
   const auto a = Curr(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "lowercase");

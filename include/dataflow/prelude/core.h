@@ -175,14 +175,6 @@ template <typename F,
           typename T = typename std::result_of<F(const X&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, F func);
 
-template <typename Policy,
-          typename X,
-          typename Y,
-          typename T = typename std::remove_cv<typename std::remove_reference<
-            decltype(std::declval<Policy>().calculate(
-              std::declval<X>(), std::declval<Y>()))>::type>::type>
-ref<T> Lift(const ref<X>& x, const ref<Y>& y, const Policy& policy = Policy());
-
 template <typename F,
           typename X,
           typename Y,
