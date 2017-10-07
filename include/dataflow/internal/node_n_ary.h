@@ -54,11 +54,25 @@ private:
     using type = index_list<Is...>;
   };
 
+  struct helper
+  {
+    static bool check_all(bool b)
+    {
+      return b;
+    }
+
+    template <typename B1, typename B2, typename... Bs>
+    static bool check_all(B1 b1, B2 b2, Bs... bs)
+    {
+      return b1 && check_all(b2, bs...);
+    }
+  };
+
 public:
   static ref create(const Policy& policy, ref_t<Xs>... xs)
   {
-    // DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<X>());
-    // DATAFLOW___CHECK_PRECONDITION(y.template is_of_type<Y>());
+    DATAFLOW___CHECK_PRECONDITION(
+      helper::check_all(xs.template is_of_type<Xs>()...));
 
     const std::array<node_id, sizeof...(Xs)> args = {{xs.id()...}};
 
