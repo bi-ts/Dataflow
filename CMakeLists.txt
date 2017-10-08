@@ -64,6 +64,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/nodes.h
   include/dataflow/internal/nodes_factory.h
   include/dataflow/internal/ref.h
+  include/dataflow/internal/std_future.h
   include/dataflow/internal/type_traits.h
 
   src/introspect.cpp

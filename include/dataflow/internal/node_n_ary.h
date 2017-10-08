@@ -22,6 +22,7 @@
 #include "node_t.h"
 #include "nodes_factory.h"
 #include "ref.h"
+#include "std_future.h"
 
 #include <array>
 #include <utility>
@@ -38,21 +39,6 @@ class node_n_ary final : public node_t<T>, public Policy
 
 private:
   template <typename> using ref_t = ref;
-
-  template <std::size_t... Is> struct index_list
-  {
-  };
-
-  template <std::size_t Min, std::size_t Max, std::size_t... Is>
-  struct index_list_builder : index_list_builder<Min, Max - 1, Max - 1, Is...>
-  {
-  };
-
-  template <std::size_t Min, std::size_t... Is>
-  struct index_list_builder<Min, Min, Is...>
-  {
-    using type = index_list<Is...>;
-  };
 
   struct helper
   {
@@ -87,7 +73,7 @@ private:
   }
 
   template <typename... Args, std::size_t... Is>
-  T calculate_(const node** p_args, const index_list<Is...>&)
+  T calculate_(const node** p_args, const std14::index_sequence<Is...>&)
   {
     return Policy::calculate(extract_node_value<Args>(p_args[Is])...);
   }
@@ -100,8 +86,8 @@ private:
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
     DATAFLOW___CHECK_PRECONDITION(args_count == sizeof...(Xs));
 
-    return this->set_value_(calculate_<Xs...>(
-      p_args, typename index_list_builder<0, sizeof...(Xs)>::type()));
+    return this->set_value_(
+      calculate_<Xs...>(p_args, std14::make_index_sequence<sizeof...(Xs)>()));
 
     return false;
   }
