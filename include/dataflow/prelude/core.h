@@ -162,14 +162,6 @@ using function_of_time_type_t = typename function_of_time_type<F>::type;
 
 // Utility functions
 
-template <
-  typename Policy,
-  typename X,
-  typename T = typename std::remove_cv<typename std::remove_reference<
-    decltype(std::declval<Policy>().calculate(std::declval<X>()))>::type>::type>
-ref<T>
-Lift(const ref<X>& x, const Policy& policy = Policy(), bool eager = false);
-
 template <typename F,
           typename X,
           typename T = typename std::result_of<F(const X&)>::type>

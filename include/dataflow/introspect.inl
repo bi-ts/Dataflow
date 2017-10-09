@@ -202,6 +202,6 @@ ref<T> introspect::Log(const ref<T>& x, const std::string& l)
     const dependency_graph::vertex_descriptor x_;
     const std::string prefix_;
   };
-  return core::Lift<policy>(x, policy{x, (l != "" ? l : label(x))});
+  return core::Lift(policy{x, (l != "" ? l : label(x))}, x);
 }
 } // dataflow

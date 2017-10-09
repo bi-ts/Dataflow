@@ -41,7 +41,7 @@ dataflow::console::Input(const Time& t0, const ref<std::string>& prompt)
     };
   };
 
-  return core::Lift<policy>(prompt, policy(), true);
+  return core::LiftPuller<policy>(prompt);
 }
 
 dataflow::ref<std::string>
@@ -60,7 +60,7 @@ dataflow::console::Error(const Time& t0, const ref<std::string>& message)
     };
   };
 
-  return core::Lift<policy>(message, policy(), true);
+  return core::LiftPuller<policy>(message);
 }
 
 dataflow::ref<std::string>
@@ -79,7 +79,7 @@ dataflow::console::Log(const Time& t0, const ref<std::string>& message)
     };
   };
 
-  return core::Lift<policy>(message, policy(), true);
+  return core::LiftPuller<policy>(message);
 }
 
 dataflow::ref<std::string>
@@ -98,5 +98,5 @@ dataflow::console::Output(const Time& t0, const ref<std::string>& message)
     };
   };
 
-  return core::Lift<policy>(message, policy(), true);
+  return core::LiftPuller<policy>(message);
 }

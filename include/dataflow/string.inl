@@ -84,7 +84,7 @@ dataflow::ref<T> dataflow::FromString(const ref<std::string>& str, const T& d)
     const T d;
   };
 
-  return core::Lift<policy>(str, {d});
+  return core::Lift(policy{d}, str);
 }
 
 template <typename T>

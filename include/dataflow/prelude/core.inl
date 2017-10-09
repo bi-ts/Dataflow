@@ -84,13 +84,6 @@ template <typename T> const var<T>& var<T>::operator=(const T& v) const
 
 // Utility functions
 
-template <typename Policy, typename X, typename T>
-dataflow::ref<T>
-dataflow::core::Lift(const ref<X>& x, const Policy& policy, bool eager)
-{
-  return ref<T>(internal::node_unary<T, X, Policy>::create(x, policy, eager));
-}
-
 template <typename F, typename X, typename T>
 dataflow::ref<T>
 dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)
@@ -119,7 +112,7 @@ dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)
     F func_;
   };
 
-  return Lift<policy>(x, policy(label, func));
+  return Lift(policy(label, func), x);
 }
 
 template <typename F, typename X, typename Y, typename T>
