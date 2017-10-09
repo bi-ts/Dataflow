@@ -55,7 +55,7 @@ private:
   };
 
 public:
-  static ref create(const Policy& policy, ref_t<Xs>... xs)
+  static ref create(const Policy& policy, bool eager, ref_t<Xs>... xs)
   {
     DATAFLOW___CHECK_PRECONDITION(
       helper::check_all(xs.template is_of_type<Xs>()...));
@@ -63,7 +63,7 @@ public:
     const std::array<node_id, sizeof...(Xs)> args = {{xs.id()...}};
 
     return nodes_factory::create<node_n_ary<Policy, T, Xs...>>(
-      &args[0], args.size(), false, policy);
+      &args[0], args.size(), eager, policy);
   }
 
 private:

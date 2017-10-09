@@ -606,6 +606,43 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(f(), "other-text/BBBBBB/111%");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
+                        test_core_fixture)
+{
+  const auto a = Var(33);
+  const auto b = Var(44);
+  const auto c = Var(55);
+
+  struct policy
+  {
+    static std::string label()
+    {
+      return "test-sum-3";
+    }
+    static int calculate(int x, int y, int z)
+    {
+      return x + y + z;
+    };
+  };
+
+  BOOST_CHECK_EQUAL(introspect::active_node(a), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(b), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(c), false);
+
+  const auto d = core::LiftPuller<policy>(a, b, c);
+
+  BOOST_CHECK_EQUAL(introspect::active_node(a), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(b), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(c), true);
+
+  const auto e = Main([d](const Time&)
+                      {
+                        return d;
+                      });
+
+  BOOST_CHECK_EQUAL(e(), 132);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 {
   const val<int> x = *Var<int>(15);

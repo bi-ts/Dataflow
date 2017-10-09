@@ -161,13 +161,29 @@ dataflow::ref<T> dataflow::core::Lift(const Policy& policy,
                                       const ref<Xs>&... xs)
 {
   return ref<T>(
-    internal::node_n_ary<Policy, T, X, Xs...>::create(policy, x, xs...));
+    internal::node_n_ary<Policy, T, X, Xs...>::create(policy, false, x, xs...));
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
 dataflow::ref<T> dataflow::core::Lift(const ref<X>& x, const ref<Xs>&... xs)
 {
   return Lift<Policy>(Policy(), x, xs...);
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftPuller(const Policy& policy,
+                                            const ref<X>& x,
+                                            const ref<Xs>&... xs)
+{
+  return ref<T>(
+    internal::node_n_ary<Policy, T, X, Xs...>::create(policy, true, x, xs...));
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftPuller(const ref<X>& x,
+                                            const ref<Xs>&... xs)
+{
+  return LiftPuller<Policy>(Policy(), x, xs...);
 }
 
 template <typename Policy, typename X, typename T>

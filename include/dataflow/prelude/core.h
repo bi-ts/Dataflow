@@ -199,6 +199,22 @@ ref<T> Lift(const ref<X>& x, const ref<Xs>&... xs);
 
 template <typename Policy,
           typename X,
+          typename... Xs,
+          typename T = typename std::remove_cv<typename std::remove_reference<
+            decltype(std::declval<Policy>().calculate(
+              std::declval<X>(), std::declval<Xs>()...))>::type>::type>
+ref<T> LiftPuller(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+
+template <typename Policy,
+          typename X,
+          typename... Xs,
+          typename T = typename std::remove_cv<typename std::remove_reference<
+            decltype(std::declval<Policy>().calculate(
+              std::declval<X>(), std::declval<Xs>()...))>::type>::type>
+ref<T> LiftPuller(const ref<X>& x, const ref<Xs>&... xs);
+
+template <typename Policy,
+          typename X,
           typename T = core::data_type_t<
             decltype(std::declval<Policy>().calculate(std::declval<X>()))>>
 ref<T> LiftSelector(const ref<X>& x,
