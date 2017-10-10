@@ -21,9 +21,9 @@
 #endif
 
 #include "../internal/config.h"
-#include "../internal/node_activator.h"
 #include "../internal/node_const.h"
 #include "../internal/node_if.h"
+#include "../internal/node_if_activator.h"
 #include "../internal/node_main.h"
 #include "../internal/node_n_ary.h"
 #include "../internal/node_previous.h"
@@ -227,7 +227,7 @@ dataflow::ref<T>
 dataflow::If(const ref<bool>& x, const ref<T>& y, const ref<T>& z)
 {
   return ref<T>(
-    internal::node_if<T>::create(internal::node_activator::create(x), y, z));
+    internal::node_if<T>::create(internal::node_if_activator::create(x), y, z));
 }
 
 template <typename T>

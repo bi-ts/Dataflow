@@ -85,10 +85,10 @@ public:
 
   void pump();
 
-  bool update_node_activator(vertex_descriptor v,
-                             bool initialized,
-                             std::size_t new_value,
-                             std::size_t old_value);
+  bool update_node_if_activator(vertex_descriptor v,
+                                bool initialized,
+                                std::size_t new_value,
+                                std::size_t old_value);
 
   bool update_node_selector_activator(vertex_descriptor v,
                                       vertex_descriptor x,

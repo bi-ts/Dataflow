@@ -172,10 +172,10 @@ void engine::pump()
   pumping_started_ = false;
 }
 
-bool engine::update_node_activator(vertex_descriptor v,
-                                   bool initialized,
-                                   std::size_t new_value,
-                                   std::size_t old_value)
+bool engine::update_node_if_activator(vertex_descriptor v,
+                                      bool initialized,
+                                      std::size_t new_value,
+                                      std::size_t old_value)
 {
   const auto w = main_consumer_(v);
 

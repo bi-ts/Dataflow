@@ -27,7 +27,7 @@ namespace dataflow
 {
 namespace internal
 {
-class DATAFLOW___EXPORT node_activator final : public node_t<bool>
+class DATAFLOW___EXPORT node_if_activator final : public node_t<bool>
 {
   friend class nodes_factory;
 
@@ -35,7 +35,7 @@ public:
   static ref create(const ref& condition);
 
 private:
-  explicit node_activator();
+  explicit node_if_activator();
 
   virtual bool update_(node_id id,
                        bool initialized,

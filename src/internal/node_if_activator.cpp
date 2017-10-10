@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/internal/node_activator.h>
+#include <dataflow/internal/node_if_activator.h>
 #include <dataflow/internal/nodes_factory.h>
 
 #include "config.h"
@@ -26,31 +26,31 @@ namespace dataflow
 {
 namespace internal
 {
-ref node_activator::create(const ref& condition)
+ref node_if_activator::create(const ref& condition)
 {
   const auto id = condition.id();
 
-  return nodes_factory::create<node_activator>(&id, 1, false);
+  return nodes_factory::create<node_if_activator>(&id, 1, false);
 }
 
-node_activator::node_activator()
+node_if_activator::node_if_activator()
 : node_t<bool>(false)
 {
 }
 
-bool node_activator::update_(node_id id,
-                             bool initialized,
-                             const node** p_deps,
-                             std::size_t deps_count)
+bool node_if_activator::update_(node_id id,
+                                bool initialized,
+                                const node** p_deps,
+                                std::size_t deps_count)
 {
   CHECK_PRECONDITION(p_deps != nullptr && deps_count == 1);
 
   const auto new_value = extract_node_value<bool>(p_deps[0]);
 
-  if (engine::instance().update_node_activator(converter::convert(id),
-                                               initialized,
-                                               std::size_t(new_value),
-                                               std::size_t(this->value())))
+  if (engine::instance().update_node_if_activator(converter::convert(id),
+                                                  initialized,
+                                                  std::size_t(new_value),
+                                                  std::size_t(this->value())))
   {
     this->set_value_(new_value);
 
@@ -60,9 +60,9 @@ bool node_activator::update_(node_id id,
   return false;
 }
 
-std::string node_activator::label_() const
+std::string node_if_activator::label_() const
 {
-  return "activator";
+  return "if-activator";
 }
 } // internal
 } // dataflow
