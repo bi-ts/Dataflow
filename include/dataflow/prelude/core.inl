@@ -22,13 +22,16 @@
 
 #include "../internal/config.h"
 #include "../internal/node_activator.h"
+#include "../internal/node_const.h"
+#include "../internal/node_if.h"
+#include "../internal/node_main.h"
 #include "../internal/node_n_ary.h"
 #include "../internal/node_previous.h"
 #include "../internal/node_selector.h"
 #include "../internal/node_selector_activator.h"
 #include "../internal/node_snapshot.h"
 #include "../internal/node_snapshot_activator.h"
-#include "../internal/nodes.h"
+#include "../internal/node_var.h"
 
 namespace dataflow
 {

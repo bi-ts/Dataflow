@@ -54,6 +54,9 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/config.h
   include/dataflow/internal/node.h
   include/dataflow/internal/node_activator.h
+  include/dataflow/internal/node_const.h
+  include/dataflow/internal/node_if.h
+  include/dataflow/internal/node_main.h
   include/dataflow/internal/node_n_ary.h
   include/dataflow/internal/node_previous.h
   include/dataflow/internal/node_selector.h
@@ -61,7 +64,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/node_snapshot.h
   include/dataflow/internal/node_snapshot_activator.h
   include/dataflow/internal/node_t.h
-  include/dataflow/internal/nodes.h
+  include/dataflow/internal/node_var.h
   include/dataflow/internal/nodes_factory.h
   include/dataflow/internal/ref.h
   include/dataflow/internal/std_future.h
