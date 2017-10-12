@@ -25,6 +25,7 @@ add_executable(${PROJECT_NAME}
   test_pair.cpp
   test_prelude.cpp
   test_string.cpp
+  test_tuple.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${Boost_INCLUDE_DIRS}")
