@@ -87,6 +87,18 @@ template <typename T> const var<T>& var<T>::operator=(const T& v) const
 
 // Utility functions
 
+template <typename T, typename FwT>
+dataflow::ref<FwT> dataflow::core::make_argument(const T& v)
+{
+  return Const(v);
+}
+
+template <typename T>
+dataflow::ref<T> dataflow::core::make_argument(const ref<T>& x)
+{
+  return x;
+}
+
 template <typename F, typename X, typename T>
 dataflow::ref<T>
 dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)

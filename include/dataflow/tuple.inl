@@ -78,13 +78,6 @@ bool tupleE<T, Ts...>::operator!=(const tupleE& other) const
 
 } // dataflow
 
-template <std::size_t I, typename... Us>
-const typename std::tuple_element<I, std::tuple<Us...>>::type&
-dataflow::get(const tupleE<Us...>& t)
-{
-  return std::get<I>(*t.p_data_);
-}
-
 template <typename... Ts>
 std::ostream& dataflow::operator<<(std::ostream& out,
                                    const tupleE<Ts...>& value)
@@ -96,6 +89,7 @@ std::ostream& dataflow::operator<<(std::ostream& out,
     out, value, internal::std14::make_index_sequence<sizeof...(Ts)>());
 
   out << ")";
+
   return out;
 }
 
@@ -106,4 +100,51 @@ dataflow::make_tupleE(const T& t, const Ts&... ts)
 {
   return tupleE<core::convert_to_flowable_t<T>,
                 core::convert_to_flowable_t<Ts>...>(t, ts...);
+}
+
+template <std::size_t I, typename... Us>
+const typename std::tuple_element<I, std::tuple<Us...>>::type&
+dataflow::get(const tupleE<Us...>& t)
+{
+  return std::get<I>(*t.p_data_);
+}
+
+template <typename... Arg>
+dataflow::ref<dataflow::tupleE<dataflow::core::argument_data_type_t<Arg>...>>
+dataflow::TupleE(const Arg&... arguments)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "tupleE";
+    }
+    static tupleE<core::argument_data_type_t<Arg>...>
+    calculate(const core::argument_data_type_t<Arg>&... vs)
+    {
+      return make_tupleE(vs...);
+    };
+  };
+
+  return core::Lift<policy>(core::make_argument(arguments)...);
+}
+
+template <std::size_t I, typename... Us, typename T>
+dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      std::stringstream ss;
+      ss << "get<" << I << ">";
+      return ss.str();
+    }
+    static const T& calculate(const tupleE<Us...>& v)
+    {
+      return get<I>(v);
+    };
+  };
+
+  return core::Lift<policy>(x);
 }

@@ -41,5 +41,27 @@ BOOST_AUTO_TEST_CASE(test_tupleE)
   BOOST_CHECK_EQUAL(ss.str(), "tupleE(text; 1; 3.14)");
 }
 
+BOOST_AUTO_TEST_CASE(test_TupleE)
+{
+  Engine engine;
+
+  auto a = Var(2.017);
+  auto b = Var("text");
+
+  auto c = TupleE("Friday", 13, a, b, "other text");
+
+  auto d = Get<3>(c);
+
+  BOOST_CHECK_EQUAL(introspect::label(d), "get<3>");
+
+  auto e = *d;
+
+  BOOST_CHECK_EQUAL(e(), "text");
+
+  b = "abc";
+
+  BOOST_CHECK_EQUAL(e(), "abc");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test

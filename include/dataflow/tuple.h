@@ -52,16 +52,25 @@ private:
   std::shared_ptr<data> p_data_;
 };
 
-template <std::size_t I, typename... Us>
-const typename std::tuple_element<I, std::tuple<Us...>>::type&
-get(const tupleE<Us...>& t);
-
 template <typename... Ts>
 std::ostream& operator<<(std::ostream& out, const tupleE<Ts...>& value);
 
 template <typename T, typename... Ts>
 tupleE<core::convert_to_flowable_t<T>, core::convert_to_flowable_t<Ts>...>
 make_tupleE(const T& t, const Ts&... ts);
+
+template <std::size_t I, typename... Us>
+const typename std::tuple_element<I, std::tuple<Us...>>::type&
+get(const tupleE<Us...>& t);
+
+template <typename... Arg>
+ref<tupleE<core::argument_data_type_t<Arg>...>> TupleE(const Arg&... arguments);
+
+template <std::size_t I,
+          typename... Us,
+          typename T = core::convert_to_flowable_t<
+            decltype(get<I>(std::declval<tupleE<Us...>>()))>>
+ref<T> Get(const ref<tupleE<Us...>>& x);
 
 /// \}
 } // dataflow

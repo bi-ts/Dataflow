@@ -160,7 +160,21 @@ using function_of_time_type =
 template <typename F>
 using function_of_time_type_t = typename function_of_time_type<F>::type;
 
+template <typename T>
+using argument_data_type =
+  typename std::conditional<is_ref<T>::value,
+                            data_type<T>,
+                            convert_to_flowable<T>>::type;
+
+template <typename T>
+using argument_data_type_t = typename argument_data_type<T>::type;
+
 // Utility functions
+
+template <typename T, typename FwT = convert_to_flowable_t<T>>
+ref<FwT> make_argument(const T& v);
+
+template <typename T> ref<T> make_argument(const ref<T>& x);
 
 template <typename F,
           typename X,
