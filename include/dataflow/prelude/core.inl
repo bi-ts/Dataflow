@@ -32,6 +32,8 @@
 #include "../internal/node_snapshot.h"
 #include "../internal/node_snapshot_activator.h"
 #include "../internal/node_var.h"
+#include "../internal/node_state.h"
+#include "../internal/node_state_prev.h"
 
 namespace dataflow
 {
@@ -267,4 +269,14 @@ dataflow::ref<T>
 dataflow::Prev(const Time& t0, const ref<T>& v0, const ref<T>& x)
 {
   return ref<T>(internal::node_previous<T>::create(v0(t0), x));
+}
+
+template <typename T, typename F>
+dataflow::ref<T> dataflow::StateMachine(const Time& t0, const ref<T>& s0, F tf)
+{
+  const ref<T> sp = ref<T>(internal::node_state_prev<T>::create());
+
+  const ref<T> s = tf(sp);
+
+  return ref<T>(internal::node_state<T>::create(sp, s0, s));
 }

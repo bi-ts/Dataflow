@@ -175,9 +175,9 @@ inline edge_descriptor engine::last_out_edge_(vertex_descriptor v) const
 inline vertex_descriptor engine::main_consumer_(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(is_active_node(v));
-  CHECK_PRECONDITION(graph_[v].consumers.size() == 1);
+  CHECK_PRECONDITION(!graph_[v].consumers.empty());
 
-  const auto u = graph_[v].consumers.front();
+  const auto u = graph_[v].consumers.back();
 
   CHECK_POSTCONDITION(is_conditional_node(u));
 

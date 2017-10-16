@@ -282,6 +282,53 @@ bool engine::update_node_snapshot_activator(vertex_descriptor v,
   return false;
 }
 
+void engine::update_node_state(vertex_descriptor v)
+{
+  CHECK_PRECONDITION(is_active_node(v));
+  CHECK_PRECONDITION(out_degree(v, graph_) == 4);
+
+  engine::instance().schedule_for_next_update(
+    target(out_edge_at_(v, 0), graph_));
+}
+
+const node* engine::update_node_state_prev(vertex_descriptor v,
+                                           bool initialized)
+{
+  const auto u = main_consumer_(v);
+
+  CHECK_PRECONDITION(is_active_node(u));
+  CHECK_PRECONDITION(out_degree(u, graph_) >= 3);
+
+  const auto e_init = out_edge_at_(u, 1);
+  const auto e_regular = out_edge_at_(u, 2);
+
+  if (!initialized)
+  {
+    CHECK_PRECONDITION(!is_active_data_dependency(e_init));
+
+    activate_subgraph_(e_init);
+
+    CHECK_POSTCONDITION(is_active_data_dependency(e_init));
+
+    schedule_for_next_update(v);
+
+    return nullptr;
+  }
+  else
+  {
+    if (!is_active_data_dependency(e_regular))
+    {
+      deactivate_subgraph_(e_init);
+      activate_subgraph_(e_regular);
+    }
+
+    CHECK_POSTCONDITION(!is_active_data_dependency(e_init));
+    CHECK_POSTCONDITION(is_active_data_dependency(e_regular));
+  }
+
+  return graph_[u].p_node;
+}
+
 engine::engine()
 : allocator_()
 , graph_()

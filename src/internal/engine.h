@@ -96,6 +96,10 @@ public:
 
   bool update_node_snapshot_activator(vertex_descriptor v, bool initialized);
 
+  void update_node_state(vertex_descriptor v);
+
+  const node* update_node_state_prev(vertex_descriptor v, bool initialized);
+
 private:
   explicit engine();
   ~engine() noexcept;

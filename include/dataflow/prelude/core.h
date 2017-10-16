@@ -262,6 +262,9 @@ ref<T> If(const ref<bool>& x, const T& y, const T& z);
 
 template <typename T>
 ref<T> Prev(const Time& t0, const ref<T>& v0, const ref<T>& x);
+
+template <typename T, typename F>
+ref<T> StateMachine(const Time& t0, const ref<T>& s0, F tf);
 /// \}
 }
 

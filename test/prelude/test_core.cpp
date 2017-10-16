@@ -738,5 +738,86 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;prev = 9;");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
+{
+  const var<char> x = Var<char>('a');
+  const var<int> y = Var<int>(0);
+
+  capture_output();
+
+  const auto z = Main([=](const Time& t0)
+                      {
+                        const auto s =
+                          StateMachine(t0,
+                                       y,
+                                       [=](ref<int> s)
+                                       {
+                                         struct policy
+                                         {
+                                           static std::string label()
+                                           {
+                                             return "test-state-machine";
+                                           }
+                                           int calculate(int s, char x)
+                                           {
+                                             switch (s)
+                                             {
+                                             case 0:
+                                               return x == 'a' ? 1 : s;
+                                             case 1:
+                                               return x == 'b' ? 2 : s;
+                                             case 2:
+                                               return x == 'c' ? 3 : s;
+                                             case 3:
+                                               return x == 'd' ? 4 : s;
+                                             };
+                                             return s;
+                                           };
+                                         };
+
+                                         return core::Lift<policy>(s, x);
+                                       });
+
+                        return introspect::Log(s);
+                      });
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;");
+
+  capture_output();
+
+  x = 'b';
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;");
+
+  capture_output();
+
+  x = 'd';
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;");
+
+  capture_output();
+
+  x = 'c';
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;state = 3;");
+
+  capture_output();
+
+  x = 'd';
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(log_string(),
+                    "state = 0;state = 1;state = 2;state = 3;state = 4;");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
