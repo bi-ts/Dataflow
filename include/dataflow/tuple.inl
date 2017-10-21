@@ -67,7 +67,7 @@ tupleE<T, Ts...>::tupleE(const T& t, const Ts&... ts)
 template <typename T, typename... Ts>
 bool tupleE<T, Ts...>::operator==(const tupleE& other) const
 {
-  return p_data_ == other.p_data_;
+  return *p_data_ == *other.p_data_;
 }
 
 template <typename T, typename... Ts>
@@ -148,3 +148,39 @@ dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
 
   return core::Lift<policy>(x);
 }
+
+template <typename A, typename... Args>
+dataflow::ref<A> dataflow::First(const ref<tupleE<A, Args...>>& x)
+{
+  return Get<0>(x);
+}
+
+template <typename A, typename B, typename... Args>
+dataflow::ref<B> dataflow::Second(const ref<tupleE<A, B, Args...>>& x)
+{
+  return Get<1>(x);
+}
+
+template <typename A, typename B, typename C, typename... Args>
+dataflow::ref<C> dataflow::Third(const ref<tupleE<A, B, C, Args...>>& x)
+{
+  return Get<2>(x);
+}
+
+template <typename A, typename B, typename C, typename D, typename... Args>
+dataflow::ref<D> dataflow::Fourth(const ref<tupleE<A, B, C, D, Args...>>& x)
+{
+  return Get<3>(x);
+}
+
+template <typename A,
+          typename B,
+          typename C,
+          typename D,
+          typename E,
+          typename... Args>
+dataflow::ref<E> dataflow::Fifth(const ref<tupleE<A, B, C, D, E, Args...>>& x)
+{
+  return Get<4>(x);
+}
+

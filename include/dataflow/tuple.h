@@ -72,6 +72,26 @@ template <std::size_t I,
             decltype(get<I>(std::declval<tupleE<Us...>>()))>>
 ref<T> Get(const ref<tupleE<Us...>>& x);
 
+template <typename A, typename... Args>
+ref<A> First(const ref<tupleE<A, Args...>>& x);
+
+template <typename A, typename B, typename... Args>
+ref<B> Second(const ref<tupleE<A, B, Args...>>& x);
+
+template <typename A, typename B, typename C, typename... Args>
+ref<C> Third(const ref<tupleE<A, B, C, Args...>>& x);
+
+template <typename A, typename B, typename C, typename D, typename... Args>
+ref<D> Fourth(const ref<tupleE<A, B, C, D, Args...>>& x);
+
+template <typename A,
+          typename B,
+          typename C,
+          typename D,
+          typename E,
+          typename... Args>
+ref<E> Fifth(const ref<tupleE<A, B, C, D, E, Args...>>& x);
+
 /// \}
 } // dataflow
 

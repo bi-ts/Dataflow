@@ -34,11 +34,16 @@ BOOST_AUTO_TEST_CASE(test_tupleE)
 
   tupleE<std::string, int, double> x = make_tupleE("text", 1, 3.14);
 
+  // Streaming operator
   std::stringstream ss;
 
   ss << x;
 
   BOOST_CHECK_EQUAL(ss.str(), "tupleE(text; 1; 3.14)");
+
+  // Equality comparison
+  BOOST_CHECK(x == make_tupleE("text", 1, 3.14));
+  BOOST_CHECK(x != (tupleE<std::string, int, double>()));
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleE)
@@ -61,6 +66,17 @@ BOOST_AUTO_TEST_CASE(test_TupleE)
   b = "abc";
 
   BOOST_CHECK_EQUAL(e(), "abc");
+}
+
+BOOST_AUTO_TEST_CASE(test_TupleE_Getters)
+{
+  Engine engine;
+
+  auto a = TupleE("str", 20, 'c', "text", 34, 0, 1, 2);
+
+  auto b = *TupleE(Fifth(a), Fourth(a), Third(a), Second(a), First(a));
+
+  BOOST_CHECK_EQUAL(b(), make_tupleE(34, "text", 'c', 20, "str"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
