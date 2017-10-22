@@ -109,9 +109,9 @@ dataflow::get(const tupleE<Us...>& t)
   return std::get<I>(*t.p_data_);
 }
 
-template <typename... Arg>
-dataflow::ref<dataflow::tupleE<dataflow::core::argument_data_type_t<Arg>...>>
-dataflow::TupleE(const Arg&... arguments)
+template <typename... Args>
+dataflow::ref<dataflow::tupleE<dataflow::core::argument_data_type_t<Args>...>>
+dataflow::TupleE(const Args&... arguments)
 {
   struct policy
   {
@@ -119,8 +119,8 @@ dataflow::TupleE(const Arg&... arguments)
     {
       return "tupleE";
     }
-    static tupleE<core::argument_data_type_t<Arg>...>
-    calculate(const core::argument_data_type_t<Arg>&... vs)
+    static tupleE<core::argument_data_type_t<Args>...>
+    calculate(const core::argument_data_type_t<Args>&... vs)
     {
       return make_tupleE(vs...);
     };

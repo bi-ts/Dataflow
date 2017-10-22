@@ -63,8 +63,9 @@ template <std::size_t I, typename... Us>
 const typename std::tuple_element<I, std::tuple<Us...>>::type&
 get(const tupleE<Us...>& t);
 
-template <typename... Arg>
-ref<tupleE<core::argument_data_type_t<Arg>...>> TupleE(const Arg&... arguments);
+template <typename... Args>
+ref<tupleE<core::argument_data_type_t<Args>...>>
+TupleE(const Args&... arguments);
 
 template <std::size_t I,
           typename... Us,
