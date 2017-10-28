@@ -26,17 +26,16 @@ namespace dataflow
 {
 namespace detail
 {
-template <typename U>
-static void print_tupleE_elements(std::ostream& out, const U& u)
+template <typename U> void print_tupleE_elements(std::ostream& out, const U& u)
 {
   out << u;
 }
 
 template <typename U, typename V, typename... Vs>
-static void print_tupleE_elements(std::ostream& out,
-                                  const U& u,
-                                  const V& v,
-                                  const Vs&... vs)
+void print_tupleE_elements(std::ostream& out,
+                           const U& u,
+                           const V& v,
+                           const Vs&... vs)
 {
   out << u << "; ";
 
@@ -44,9 +43,9 @@ static void print_tupleE_elements(std::ostream& out,
 }
 
 template <typename... Us, std::size_t... Is>
-static void print_tupleE(std::ostream& out,
-                         const tupleE<Us...>& v,
-                         const internal::std14::index_sequence<Is...>&)
+void print_tupleE(std::ostream& out,
+                  const tupleE<Us...>& v,
+                  const internal::std14::index_sequence<Is...>&)
 {
   print_tupleE_elements(out, get<Is>(v)...);
 }
