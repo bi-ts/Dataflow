@@ -403,7 +403,22 @@ std::string introspect::value(dependency_graph::vertex_descriptor v)
     .p_node->to_string();
 }
 
-// Edge properties
+// Data nodes properties
+
+bool introspect::activator_node(dependency_graph::vertex_descriptor v)
+{
+  const auto& l = label(v);
+
+  if (l == "state-prev")
+    return true;
+
+  const auto& ending = std::string("-activator");
+
+  return l.length() >= ending.length() &&
+         l.compare(l.length() - ending.length(), ending.length(), ending) == 0;
+}
+
+// Dependencies properties
 
 bool introspect::active_dependency(dependency_graph::edge_descriptor e)
 {

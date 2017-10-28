@@ -12,7 +12,9 @@ add_executable(${PROJECT_NAME}
   tools/graph_invariant.h
   tools/io_fixture.cpp
   tools/io_fixture.h
-
+  
+  integration/test_state_machine.cpp
+  
   prelude/test_arithmetic.cpp
   prelude/test_comparison.cpp
   prelude/test_conditional.cpp

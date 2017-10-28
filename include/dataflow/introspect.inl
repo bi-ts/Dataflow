@@ -174,11 +174,6 @@ operator!=(const dependency_graph::edge_descriptor& other) const
   return !(*this == other);
 }
 
-inline bool introspect::activator_node(dependency_graph::vertex_descriptor v)
-{
-  return label(v) == "if-activator";
-}
-
 inline bool introspect::data_dependency(dependency_graph::edge_descriptor e)
 {
   return !logical_dependency(e);
