@@ -266,13 +266,13 @@ dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
 
 template <typename T>
 dataflow::ref<T>
-dataflow::Prev(const Time& t0, const ref<T>& v0, const ref<T>& x)
+dataflow::Prev(const ref<T>& v0, const ref<T>& x, const Time& t0)
 {
   return ref<T>(internal::node_previous<T>::create(v0(t0), x));
 }
 
 template <typename T, typename F>
-dataflow::ref<T> dataflow::StateMachine(const Time& t0, const ref<T>& s0, F tf)
+dataflow::ref<T> dataflow::StateMachine(const ref<T>& s0, F tf, const Time& t0)
 {
   const ref<T> sp = ref<T>(internal::node_state_prev<T>::create());
 

@@ -658,9 +658,9 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   capture_output();
 
-  const auto z = Main([=](const Time& t)
+  const auto z = Main([=](const Time& t0)
                       {
-                        return introspect::Log(Prev(t, v0, x));
+                        return introspect::Log(Prev(v0, x, t0));
                       });
 
   reset_output();
@@ -695,9 +695,9 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   capture_output();
 
-  const auto z = Main([=](const Time& t)
+  const auto z = Main([=](const Time& t0)
                       {
-                        return If(b, introspect::Log(Prev(t, v0, x)), 0);
+                        return If(b, introspect::Log(Prev(v0, x, t0)), 0);
                       });
 
   reset_output();
@@ -747,36 +747,35 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   const auto z = Main([=](const Time& t0)
                       {
-                        const auto s =
-                          StateMachine(t0,
-                                       y,
-                                       [=](ref<int> s)
-                                       {
-                                         struct policy
-                                         {
-                                           static std::string label()
-                                           {
-                                             return "test-state-machine";
-                                           }
-                                           int calculate(int s, char x)
-                                           {
-                                             switch (s)
-                                             {
-                                             case 0:
-                                               return x == 'a' ? 1 : s;
-                                             case 1:
-                                               return x == 'b' ? 2 : s;
-                                             case 2:
-                                               return x == 'c' ? 3 : s;
-                                             case 3:
-                                               return x == 'd' ? 4 : s;
-                                             };
-                                             return s;
-                                           };
-                                         };
+                        const auto tf = [=](ref<int> s)
+                        {
+                          struct policy
+                          {
+                            static std::string label()
+                            {
+                              return "test-state-machine";
+                            }
+                            int calculate(int s, char x)
+                            {
+                              switch (s)
+                              {
+                              case 0:
+                                return x == 'a' ? 1 : s;
+                              case 1:
+                                return x == 'b' ? 2 : s;
+                              case 2:
+                                return x == 'c' ? 3 : s;
+                              case 3:
+                                return x == 'd' ? 4 : s;
+                              };
+                              return s;
+                            };
+                          };
 
-                                         return core::Lift<policy>(s, x);
-                                       });
+                          return core::Lift<policy>(s, x);
+                        };
+
+                        const auto s = StateMachine(y, tf, t0);
 
                         return introspect::Log(s);
                       });

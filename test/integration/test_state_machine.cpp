@@ -127,7 +127,7 @@ ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
   };
 
   const auto s = StateMachine(
-    t0, TupleE(state::hovering, initial_circle_pos, point(), point()), tf);
+    TupleE(state::hovering, initial_circle_pos, point(), point()), tf, t0);
 
   return Second(s);
 }
