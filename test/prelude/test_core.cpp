@@ -741,11 +741,10 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 {
   const var<char> x = Var<char>('a');
-  const var<int> y = Var<int>(0);
 
   capture_output();
 
-  const auto z = Main([=](const Time& t0)
+  const auto y = Main([=](const Time& t0)
                       {
                         const auto tf = [=](ref<int> s)
                         {
@@ -775,7 +774,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
                           return core::Lift<policy>(s, x);
                         };
 
-                        const auto s = StateMachine(y, tf, t0);
+                        const auto s = StateMachine(0, tf, t0);
 
                         return introspect::Log(s);
                       });

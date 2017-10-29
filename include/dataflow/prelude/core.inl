@@ -271,12 +271,13 @@ dataflow::Prev(const ref<T>& v0, const ref<T>& x, const Time& t0)
   return ref<T>(internal::node_previous<T>::create(v0(t0), x));
 }
 
-template <typename T, typename F>
-dataflow::ref<T> dataflow::StateMachine(const ref<T>& s0, F tf, const Time& t0)
+template <typename Arg, typename F, typename T>
+dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 {
   const ref<T> sp = ref<T>(internal::node_state_prev<T>::create());
 
   const ref<T> s = tf(sp);
 
-  return ref<T>(internal::node_state<T>::create(sp, s0, s));
+  return ref<T>(
+    internal::node_state<T>::create(sp, core::make_argument(s0), s));
 }

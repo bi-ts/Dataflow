@@ -263,8 +263,10 @@ ref<T> If(const ref<bool>& x, const T& y, const T& z);
 template <typename T>
 ref<T> Prev(const ref<T>& v0, const ref<T>& x, const Time& t0);
 
-template <typename T, typename F>
-ref<T> StateMachine(const ref<T>& s0, F tf, const Time& t0);
+template <typename Arg,
+          typename F,
+          typename T = core::argument_data_type_t<Arg>>
+ref<T> StateMachine(const Arg& s0, F tf, const Time& t0);
 /// \}
 }
 
