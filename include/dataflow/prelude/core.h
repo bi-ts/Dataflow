@@ -160,6 +160,36 @@ using function_of_time_type =
 template <typename F>
 using function_of_time_type_t = typename function_of_time_type<F>::type;
 
+namespace detail
+{
+template <typename F, typename T> struct transform_function_result
+{
+private:
+  template <typename FF,
+            typename = typename std::enable_if<std::is_same<
+              data_type_t<typename std::result_of<FF(const ref<T>&)>::type>,
+              T>::value>::type>
+  static T test_(const FF&);
+
+  static void test_(...);
+
+public:
+  using type = decltype(test_(std::declval<F>()));
+};
+}
+
+template <typename F, typename T>
+using is_transition_function =
+  is_flowable<typename detail::transform_function_result<F, T>::type>;
+
+template <typename F, typename T, typename U = T>
+using enable_if_transition_function =
+  std::enable_if<core::is_transition_function<F, T>::value, U>;
+
+template <typename F, typename T, typename U = T>
+using enable_if_transition_function_t =
+  typename enable_if_transition_function<F, T, U>::type;
+
 template <typename T>
 using argument_data_type =
   typename std::conditional<is_ref<T>::value,
@@ -263,9 +293,11 @@ ref<T> If(const ref<bool>& x, const T& y, const T& z);
 template <typename T>
 ref<T> Prev(const ref<T>& v0, const ref<T>& x, const Time& t0);
 
-template <typename Arg,
-          typename F,
-          typename T = core::argument_data_type_t<Arg>>
+template <
+  typename Arg,
+  typename F,
+  typename T =
+    core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>>
 ref<T> StateMachine(const Arg& s0, F tf, const Time& t0);
 /// \}
 }

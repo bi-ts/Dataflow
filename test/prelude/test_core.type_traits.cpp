@@ -214,5 +214,23 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<int>::value, false);
 }
 
+BOOST_AUTO_TEST_CASE(test_is_transition_function)
+{
+  BOOST_CHECK_EQUAL(
+    (core::is_transition_function<std::function<ref<int>(ref<int>)>,
+                                  int>::value),
+    true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_transition_function<ref<int> (*)(ref<int>), int>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_transition_function<std::function<ref<int>(ref<int>)>,
+                                  char>::value),
+    false);
+
+  BOOST_CHECK_EQUAL((core::is_transition_function<int, int>::value), false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
