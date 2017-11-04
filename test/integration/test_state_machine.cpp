@@ -31,15 +31,15 @@ namespace dataflow_test
 
 namespace
 {
-enum class state
+enum class mode
 {
   hovering,
   dragging
 };
 
-std::ostream& operator<<(std::ostream& out, state value)
+std::ostream& operator<<(std::ostream& out, mode value)
 {
-  out << "state::" << (value == state::hovering ? "hovering" : "dragging");
+  out << "mode::" << (value == mode::hovering ? "hovering" : "dragging");
   return out;
 }
 
@@ -107,27 +107,27 @@ ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
                                     const ref<bool>& mouse_pressed,
                                     const Time& t0)
 {
-  const auto tf = [=](const ref<tupleE<state, point, point, point>>& sp)
+  const auto tf = [=](const ref<tupleE<mode, point, point, point>>& sp)
   {
-    auto prev_state = First(sp);
+    auto prev_mode = First(sp);
     auto circle_pos = Second(sp);
     auto starting_circle_pos = Third(sp);
     auto starting_mouse_pos = Fourth(sp);
 
-    return If(prev_state == state::hovering,
+    return If(prev_mode == mode::hovering,
               If(mouse_pressed && Distance(mouse_pos, circle_pos) < radius,
-                 TupleE(state::dragging, circle_pos, circle_pos, mouse_pos),
+                 TupleE(mode::dragging, circle_pos, circle_pos, mouse_pos),
                  sp),
               If(!mouse_pressed,
-                 TupleE(state::hovering, circle_pos, point(), point()),
-                 TupleE(state::dragging,
+                 TupleE(mode::hovering, circle_pos, point(), point()),
+                 TupleE(mode::dragging,
                         starting_circle_pos + (mouse_pos - starting_mouse_pos),
                         starting_circle_pos,
                         starting_mouse_pos)));
   };
 
   const auto s = StateMachine(
-    TupleE(state::hovering, initial_circle_pos, point(), point()), tf, t0);
+    TupleE(mode::hovering, initial_circle_pos, point(), point()), tf, t0);
 
   return Second(s);
 }
