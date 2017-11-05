@@ -177,6 +177,16 @@ BOOST_AUTO_TEST_CASE(test_Box_conditional)
   BOOST_CHECK_EQUAL(b(), 1);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
+{
+  const auto x = Main([=](const Time& t0)
+                      {
+                        return CurrentTime();
+                      });
+
+  BOOST_CHECK_EQUAL(x(), 0);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
 {
   const ref<int> x = Const(17);

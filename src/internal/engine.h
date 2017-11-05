@@ -71,6 +71,8 @@ public:
   void add_ref(vertex_descriptor v);
   void release(vertex_descriptor v);
 
+  vertex_descriptor get_time_node() const;
+
   vertex_descriptor add_node(node* p_node,
                              const node_id* p_args,
                              std::size_t args_count,
@@ -150,6 +152,7 @@ private:
   bool pumping_started_;
   std::vector<const node*, memory_allocator<const node*>> args_buffer_;
   tick_count ticks_;
+  vertex_descriptor time_node_v_;
 
 private:
   static engine* gp_engine_;

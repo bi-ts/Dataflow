@@ -65,5 +65,10 @@ ref nodes_factory::add_constant_(node* p_node)
     converter::convert(engine::instance().add_persistent_node(p_node)));
 }
 
+ref nodes_factory::get_time_()
+{
+  return ref(converter::convert(engine::instance().get_time_node()));
+}
+
 } // internal
 } // dataflow

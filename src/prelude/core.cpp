@@ -33,6 +33,11 @@ Engine::~Engine()
 }
 } // dataflow
 
+dataflow::ref<std::size_t> dataflow::CurrentTime()
+{
+  return ref<std::size_t>(internal::nodes_factory::get_time());
+}
+
 dataflow::ref<std::string> dataflow::Const(const char* v)
 {
   return ref<std::string>(

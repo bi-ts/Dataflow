@@ -260,6 +260,8 @@ ref<T> LiftSelector(const ref<X>& x,
 
 // Basic functions
 
+DATAFLOW___EXPORT ref<std::size_t> CurrentTime();
+
 template <typename T, typename = core::enable_if_flowable_t<T>>
 ref<T> Const(const T& v = T());
 DATAFLOW___EXPORT ref<std::string> Const(const char* v);

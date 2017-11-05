@@ -61,6 +61,11 @@ public:
     return add_constant_(new_node_<Node>(std::forward<Args>(args)...));
   }
 
+  static ref get_time()
+  {
+    return get_time_();
+  }
+
 private:
   template <typename Node, typename... Args>
   static Node* new_node_(Args&&... args)
@@ -91,6 +96,7 @@ private:
                               std::size_t args_count,
                               bool eager);
   static ref add_constant_(node* p_node);
+  static ref get_time_();
 };
 }
 }

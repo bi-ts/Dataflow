@@ -92,11 +92,11 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/graph.h
   src/internal/node.cpp
   src/internal/node_if_activator.cpp
-  src/internal/node_main_activator.h
   src/internal/node_selector_activator.cpp
   src/internal/node_snapshot_activator.cpp
   src/internal/node_state.cpp
   src/internal/node_state_prev.cpp
+  src/internal/node_time.h
   src/internal/nodes_factory.cpp
   src/internal/ref.cpp
   src/internal/tick_count.h

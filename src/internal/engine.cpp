@@ -18,7 +18,7 @@
 
 #include "engine.h"
 #include "config.h"
-#include "node_main_activator.h"
+#include "node_time.h"
 #include "utility.h"
 
 #include <dst/allocator/utility.h>
@@ -38,20 +38,25 @@ void engine::start()
 
   gp_engine_ = new engine();
 
-  const auto p_node = static_cast<node_main_activator*>(
-    dst::memory::allocate_aligned(gp_engine_->get_allocator(),
-                                  sizeof(node_main_activator),
-                                  alignof(node_main_activator)));
+  const auto p_node = static_cast<node_time*>(dst::memory::allocate_aligned(
+    gp_engine_->get_allocator(), sizeof(node_time), alignof(node_time)));
 
-  new (std::addressof(*p_node)) node_main_activator();
+  new (std::addressof(*p_node)) node_time();
 
   const auto v = add_vertex(vertex(p_node), gp_engine_->graph_);
 
+  gp_engine_->graph_[v].eager = true;
   gp_engine_->graph_[v].hidden = true;
   gp_engine_->graph_[v].initialized = true;
 
+  gp_engine_->add_logical_edge_(v, v);
+
   gp_engine_->graph_[v].position =
     gp_engine_->order_.insert(gp_engine_->order_.end(), v);
+
+  gp_engine_->add_ref(v);
+
+  gp_engine_->time_node_v_ = v;
 }
 
 void engine::stop()
@@ -61,6 +66,11 @@ void engine::stop()
   delete gp_engine_;
 
   gp_engine_ = nullptr;
+}
+
+vertex_descriptor engine::get_time_node() const
+{
+  return time_node_v_;
 }
 
 vertex_descriptor engine::add_node(node* p_node,
@@ -336,6 +346,7 @@ engine::engine()
 , pumping_started_(false)
 , args_buffer_(allocator_)
 , ticks_()
+, time_node_v_()
 {
 }
 
@@ -345,11 +356,7 @@ engine::~engine() noexcept
 
   try
   {
-    const auto v = *vertices(graph_).first;
-
-    deactivate_vertex_partially_(v);
-
-    delete_node_(v);
+    release(time_node_v_);
   }
   catch (const std::exception& ex)
   {
@@ -792,6 +799,16 @@ void engine::remove_subgraph_(vertex_descriptor v)
 
 void engine::pump_()
 {
+  ++ticks_;
+
+  CHECK_CONDITION(dynamic_cast<node_time*>(graph_[time_node_v_].p_node));
+
+  const auto p_node_time = static_cast<node_time*>(graph_[time_node_v_].p_node);
+
+  p_node_time->increment();
+
+  order_.mark(graph_[time_node_v_].position);
+
   const auto to = order_.end_marked();
   for (auto it = order_.begin_marked(); it != to; it = order_.begin_marked())
   {

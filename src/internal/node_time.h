@@ -20,17 +20,24 @@
 
 #include "config.h"
 
-#include <dataflow/internal/node.h>
+#include <dataflow/internal/node_t.h>
 
 namespace dataflow
 {
 namespace internal
 {
-class node_main_activator final : public node
+class node_time final : public node_t<std::size_t>
 {
 public:
-  explicit node_main_activator()
+  explicit node_time()
+  : node_t<std::size_t>(std::numeric_limits<std::size_t>::max())
+  , next_value_(std::numeric_limits<std::size_t>::max())
   {
+  }
+
+  void increment()
+  {
+    ++next_value_;
   }
 
 private:
@@ -39,25 +46,21 @@ private:
                        const node** p_args,
                        std::size_t args_count) override
   {
-    CHECK_NOT_REACHABLE();
-
-    return false;
+    return this->set_value_(next_value_);
   }
 
   virtual std::string label_() const override
   {
-    return "main-activator";
-  }
-
-  virtual std::string to_string_() const override
-  {
-    return label_();
+    return "time";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
   {
     return std::make_pair(sizeof(*this), alignof(decltype(*this)));
   }
+
+private:
+  std::size_t next_value_;
 };
 } // internal
 } // dataflow
