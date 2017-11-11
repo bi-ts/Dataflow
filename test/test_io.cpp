@@ -177,5 +177,36 @@ BOOST_FIXTURE_TEST_CASE(test_Input_int, test_io_fixture)
   BOOST_CHECK_EQUAL(log_string(), "10 - 20 = -10;");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Message_Output_Time, test_io_fixture)
+{
+  capture_output();
+
+  const auto z =
+    Main([=](const Time& t)
+         {
+           return console::Output(t, "x(", CurrentTime(), ") = ", x);
+         });
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "x(0) = 1;");
+
+  capture_output();
+
+  x = 2;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "x(0) = 1;x(1) = 2;");
+
+  capture_output();
+
+  x = 5;
+
+  reset_output();
+
+  BOOST_CHECK_EQUAL(out_string(), "x(0) = 1;x(1) = 2;x(2) = 5;");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
