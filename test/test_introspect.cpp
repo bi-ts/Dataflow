@@ -107,17 +107,17 @@ BOOST_FIXTURE_TEST_CASE(test_incidence, test_introspect_fixture)
 
   const auto& g = introspect::graph();
 
-  BOOST_CHECK_EQUAL(0, introspect::out_degree(x));
-  BOOST_CHECK_EQUAL(2, out_degree(y, g));
-  BOOST_CHECK_EQUAL(1, out_degree(z, g));
+  BOOST_CHECK_EQUAL(introspect::out_degree(x), 0);
+  BOOST_CHECK_EQUAL(out_degree(y, g), 2);
+  BOOST_CHECK_EQUAL(out_degree(z, g), 1);
 
   const auto x_es = out_edges(x, g);
   const auto y_es = introspect::out_edges(y);
   const auto z_es = introspect::out_edges(z);
 
-  BOOST_CHECK_EQUAL(0, std::distance(x_es.first, x_es.second));
-  BOOST_CHECK_EQUAL(2, std::distance(y_es.first, y_es.second));
-  BOOST_CHECK_EQUAL(1, std::distance(z_es.first, z_es.second));
+  BOOST_CHECK_EQUAL(std::distance(x_es.first, x_es.second), 0);
+  BOOST_CHECK_EQUAL(std::distance(y_es.first, y_es.second), 2);
+  BOOST_CHECK_EQUAL(std::distance(z_es.first, z_es.second), 1);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_vertex_list, test_introspect_fixture)
@@ -127,17 +127,17 @@ BOOST_FIXTURE_TEST_CASE(test_vertex_list, test_introspect_fixture)
 
   const auto& g = introspect::graph();
 
-  BOOST_CHECK_EQUAL(4, introspect::num_vertices());
-  BOOST_CHECK_EQUAL(4, num_vertices(g));
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 4);
+  BOOST_CHECK_EQUAL(num_vertices(g), 4);
 
   boost::graph_traits<introspect::dependency_graph>::vertex_iterator from, to;
   std::tie(from, to) = vertices(g);
 
-  BOOST_CHECK_EQUAL(4, std::distance(from, to));
+  BOOST_CHECK_EQUAL(std::distance(from, to), 4);
 
   std::tie(from, to) = introspect::vertices();
 
-  BOOST_CHECK_EQUAL(4, std::distance(from, to));
+  BOOST_CHECK_EQUAL(std::distance(from, to), 4);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
@@ -181,14 +181,14 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
   std::tie(it, it_end) = introspect::topological_order();
 
-  BOOST_CHECK_EQUAL(0, std::distance(it, it_end));
+  BOOST_CHECK_EQUAL(std::distance(it, it_end), 0);
 
   {
     const auto z = *y;
 
     std::tie(it, it_end) = introspect::topological_order();
 
-    BOOST_CHECK_EQUAL(6, std::distance(it, it_end));
+    BOOST_CHECK_EQUAL(std::distance(it, it_end), 6);
 
     BOOST_TEST(vertex_labels(introspect::topological_order()) ==
                  std::vector<std::string>(
@@ -201,7 +201,7 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
     std::tie(it, it_end) = introspect::topological_order();
 
-    BOOST_CHECK_EQUAL(7, std::distance(it, it_end));
+    BOOST_CHECK_EQUAL(std::distance(it, it_end), 7);
 
     BOOST_TEST(vertex_labels(introspect::topological_order()) ==
                  std::vector<std::string>(
@@ -213,36 +213,36 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
   std::tie(it, it_end) = introspect::topological_order();
 
-  BOOST_CHECK_EQUAL(0, std::distance(it, it_end));
+  BOOST_CHECK_EQUAL(std::distance(it, it_end), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_nodes_traversal, test_introspect_fixture)
 {
-  BOOST_CHECK_EQUAL(1, introspect::num_vertices());
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 1);
 
   boost::graph_traits<introspect::dependency_graph>::vertex_iterator it, it_end;
 
   std::tie(it, it_end) = introspect::vertices();
 
-  BOOST_CHECK_EQUAL(1, std::distance(it, it_end));
+  BOOST_CHECK_EQUAL(std::distance(it, it_end), 1);
 
   {
     const auto x = Var<int>(-42);
 
     const auto y = If(x < 0, -x, x);
 
-    BOOST_CHECK_EQUAL(7, introspect::num_vertices());
+    BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
 
     std::tie(it, it_end) = introspect::vertices();
 
-    BOOST_CHECK_EQUAL(7, std::distance(it, it_end));
+    BOOST_CHECK_EQUAL(std::distance(it, it_end), 7);
   }
 
-  BOOST_CHECK_EQUAL(1, introspect::num_vertices());
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 1);
 
   std::tie(it, it_end) = introspect::vertices();
 
-  BOOST_CHECK_EQUAL(1, std::distance(it, it_end));
+  BOOST_CHECK_EQUAL(std::distance(it, it_end), 1);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_update_order, test_introspect_fixture)
@@ -253,24 +253,24 @@ BOOST_FIXTURE_TEST_CASE(test_update_order, test_introspect_fixture)
   const auto x = Var<int>(-42);
   const auto y = If(x < 0, -x, x + c);
 
-  BOOST_CHECK_EQUAL(0, introspect::update_order(x, null_vertex));
-  BOOST_CHECK_EQUAL(0, introspect::update_order(null_vertex, x));
-  BOOST_CHECK_EQUAL(0, introspect::update_order(null_vertex, null_vertex));
+  BOOST_CHECK_EQUAL(introspect::update_order(x, null_vertex), 0);
+  BOOST_CHECK_EQUAL(introspect::update_order(null_vertex, x), 0);
+  BOOST_CHECK_EQUAL(introspect::update_order(null_vertex, null_vertex), 0);
 
-  BOOST_CHECK_EQUAL(0, introspect::update_order(x, y));
-  BOOST_CHECK_EQUAL(0, introspect::update_order(x, x));
-  BOOST_CHECK_EQUAL(0, introspect::update_order(y, x));
+  BOOST_CHECK_EQUAL(introspect::update_order(x, y), 0);
+  BOOST_CHECK_EQUAL(introspect::update_order(x, x), 0);
+  BOOST_CHECK_EQUAL(introspect::update_order(y, x), 0);
 
   const auto z = Curr(y);
 
-  BOOST_CHECK_EQUAL(1, introspect::update_order(x, y));
-  BOOST_CHECK_EQUAL(0, introspect::update_order(x, x));
-  BOOST_CHECK_EQUAL(-1, introspect::update_order(y, x));
+  BOOST_CHECK_EQUAL(introspect::update_order(x, y), 1);
+  BOOST_CHECK_EQUAL(introspect::update_order(x, x), 0);
+  BOOST_CHECK_EQUAL(introspect::update_order(y, x), -1);
 
-  BOOST_CHECK_EQUAL(1, introspect::update_order(null_vertex, x));
-  BOOST_CHECK_EQUAL(-1, introspect::update_order(x, null_vertex));
-  BOOST_CHECK_EQUAL(1, introspect::update_order(c, x));
-  BOOST_CHECK_EQUAL(-1, introspect::update_order(x, c));
+  BOOST_CHECK_EQUAL(introspect::update_order(null_vertex, x), 1);
+  BOOST_CHECK_EQUAL(introspect::update_order(x, null_vertex), -1);
+  BOOST_CHECK_EQUAL(introspect::update_order(c, x), 1);
+  BOOST_CHECK_EQUAL(introspect::update_order(x, c), -1);
 }
 
 BOOST_AUTO_TEST_CASE(test_introspect_Log)
