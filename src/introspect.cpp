@@ -158,7 +158,7 @@ introspect::out_edges(dependency_graph::vertex_descriptor v,
   const auto& dg = internal::engine::instance().graph();
 
   if (out_degree(converter::convert(v), dg) > 0 &&
-      dg[target(*(to - 1), dg)].hidden)
+      target(*(to - 1), dg) == converter::convert(v))
   {
     --to;
   }
@@ -219,7 +219,7 @@ introspect::vertex_range introspect::vertices(const dependency_graph& g)
 introspect::dependency_graph::vertices_size_type
 introspect::num_vertices(const dependency_graph& g)
 {
-  return num_vertices(internal::engine::instance().graph()) - 1;
+  return num_vertices(internal::engine::instance().graph());
 }
 
 // edge_descriptor
@@ -281,7 +281,7 @@ introspect::vertex_range introspect::topological_order()
 
 introspect::dependency_graph::vertices_size_type introspect::num_active_nodes()
 {
-  return internal::engine::instance().order().size() - 1;
+  return internal::engine::instance().order().size();
 }
 
 std::size_t introspect::memory_consumption()

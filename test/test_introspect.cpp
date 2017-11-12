@@ -127,17 +127,17 @@ BOOST_FIXTURE_TEST_CASE(test_vertex_list, test_introspect_fixture)
 
   const auto& g = introspect::graph();
 
-  BOOST_CHECK_EQUAL(3, introspect::num_vertices());
-  BOOST_CHECK_EQUAL(3, num_vertices(g));
+  BOOST_CHECK_EQUAL(4, introspect::num_vertices());
+  BOOST_CHECK_EQUAL(4, num_vertices(g));
 
   boost::graph_traits<introspect::dependency_graph>::vertex_iterator from, to;
   std::tie(from, to) = vertices(g);
 
-  BOOST_CHECK_EQUAL(3, std::distance(from, to));
+  BOOST_CHECK_EQUAL(4, std::distance(from, to));
 
   std::tie(from, to) = introspect::vertices();
 
-  BOOST_CHECK_EQUAL(3, std::distance(from, to));
+  BOOST_CHECK_EQUAL(4, std::distance(from, to));
 }
 
 BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
@@ -163,7 +163,7 @@ BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
   const auto labels = vertex_labels(order.begin(), order.end());
 
   std::vector<std::string> expected_labels(
-    {"var", "<", "if-activator", "*", "+", "if", "main"});
+    {"time", "var", "<", "if-activator", "*", "+", "if", "main"});
 
   BOOST_CHECK_EQUAL_COLLECTIONS(labels.begin(),
                                 labels.end(),
@@ -218,31 +218,31 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_nodes_traversal, test_introspect_fixture)
 {
-  BOOST_CHECK_EQUAL(0, introspect::num_vertices());
+  BOOST_CHECK_EQUAL(1, introspect::num_vertices());
 
   boost::graph_traits<introspect::dependency_graph>::vertex_iterator it, it_end;
 
   std::tie(it, it_end) = introspect::vertices();
 
-  BOOST_CHECK_EQUAL(0, std::distance(it, it_end));
+  BOOST_CHECK_EQUAL(1, std::distance(it, it_end));
 
   {
     const auto x = Var<int>(-42);
 
     const auto y = If(x < 0, -x, x);
 
-    BOOST_CHECK_EQUAL(6, introspect::num_vertices());
+    BOOST_CHECK_EQUAL(7, introspect::num_vertices());
 
     std::tie(it, it_end) = introspect::vertices();
 
-    BOOST_CHECK_EQUAL(6, std::distance(it, it_end));
+    BOOST_CHECK_EQUAL(7, std::distance(it, it_end));
   }
 
-  BOOST_CHECK_EQUAL(0, introspect::num_vertices());
+  BOOST_CHECK_EQUAL(1, introspect::num_vertices());
 
   std::tie(it, it_end) = introspect::vertices();
 
-  BOOST_CHECK_EQUAL(0, std::distance(it, it_end));
+  BOOST_CHECK_EQUAL(1, std::distance(it, it_end));
 }
 
 BOOST_FIXTURE_TEST_CASE(test_update_order, test_introspect_fixture)

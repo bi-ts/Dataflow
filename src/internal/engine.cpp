@@ -46,7 +46,6 @@ void engine::start()
   const auto v = add_vertex(vertex(p_node), gp_engine_->graph_);
 
   gp_engine_->graph_[v].eager = true;
-  gp_engine_->graph_[v].hidden = true;
   gp_engine_->graph_[v].initialized = true;
 
   gp_engine_->add_logical_edge_(v, v);
