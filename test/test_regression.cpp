@@ -28,49 +28,7 @@ using namespace dataflow;
 namespace dataflow_test
 {
 
-namespace
-{
-int reference_f(int x)
-{
-  const auto abs = x >= 0 ? x : -x;
-
-  const auto g = 4 - (x >= 0 ? x * x : 2 * abs);
-
-  return g >= 0 ? g : 2 - abs;
-}
-}
-
-BOOST_AUTO_TEST_SUITE(test_integration)
-
-BOOST_AUTO_TEST_CASE(test_hat_function)
-{
-  for (int i = -4; i <= 4; ++i)
-  {
-    for (int j = -4; j <= 4; ++j)
-    {
-      Engine engine;
-
-      auto x = Var<int>(i);
-
-      auto f = Main([x](const Time& t)
-                    {
-                      auto abs = If(x >= 0, x, -x);
-
-                      auto g = 4 - If(x >= 0, x * x, 2 * abs);
-
-                      return If(g >= 0, g, 2 - abs);
-                    });
-
-      BOOST_TEST(f() == reference_f(i));
-      BOOST_TEST(graph_invariant_holds());
-
-      x = j;
-
-      BOOST_TEST(f() == reference_f(j));
-      BOOST_TEST(graph_invariant_holds());
-    }
-  }
-}
+BOOST_AUTO_TEST_SUITE(test_regression)
 
 BOOST_AUTO_TEST_CASE(test_Mod)
 {
@@ -96,7 +54,7 @@ BOOST_AUTO_TEST_CASE(test_Mod)
              boost::test_tools::per_element());
 }
 
-BOOST_AUTO_TEST_CASE(regression_test_eager_node_deactivation)
+BOOST_AUTO_TEST_CASE(test_regression_eager_node_deactivation)
 {
   Engine engine;
 
@@ -120,7 +78,7 @@ BOOST_AUTO_TEST_CASE(regression_test_eager_node_deactivation)
   BOOST_CHECK(introspect::active_node(y) == true);
 }
 
-BOOST_AUTO_TEST_CASE(regression_test_diamond_deactivation)
+BOOST_AUTO_TEST_CASE(test_regression_diamond_deactivation)
 {
   Engine engine;
 
@@ -130,7 +88,7 @@ BOOST_AUTO_TEST_CASE(regression_test_diamond_deactivation)
   BOOST_CHECK_EQUAL(y(), 36);
 }
 
-BOOST_AUTO_TEST_CASE(regression_test_And_num_vertices)
+BOOST_AUTO_TEST_CASE(test_regression_And_num_vertices)
 {
   Engine engine;
 
@@ -139,7 +97,7 @@ BOOST_AUTO_TEST_CASE(regression_test_And_num_vertices)
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 6);
 }
 
-BOOST_AUTO_TEST_CASE(regression_test_Or_num_vertices)
+BOOST_AUTO_TEST_CASE(test_regression_Or_num_vertices)
 {
   Engine engine;
 

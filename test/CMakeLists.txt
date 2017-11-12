@@ -13,7 +13,8 @@ add_executable(${PROJECT_NAME}
   tools/io_fixture.cpp
   tools/io_fixture.h
   
-  integration/test_state_machine.cpp
+  integration/conditional/test_conditional.cpp
+  integration/state_machine/test_state_machine.cpp
   
   prelude/test_arithmetic.cpp
   prelude/test_comparison.cpp
@@ -21,11 +22,11 @@ add_executable(${PROJECT_NAME}
   prelude/test_core.cpp
   prelude/test_core.type_traits.cpp
   prelude/test_logical.cpp
-  test_integration.cpp
   test_introspect.cpp
   test_io.cpp
   test_pair.cpp
   test_prelude.cpp
+  test_regression.cpp
   test_string.cpp
   test_tuple.cpp
 )
