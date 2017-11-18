@@ -22,6 +22,9 @@
 #include <dataflow/prelude.h>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/test_case.hpp>
+
+namespace bdata = boost::unit_test::data;
 
 using namespace dataflow;
 
@@ -42,34 +45,31 @@ int reference_f(int x)
 
 BOOST_AUTO_TEST_SUITE(test_integration_conditional)
 
-BOOST_AUTO_TEST_CASE(test_hat_function)
+BOOST_DATA_TEST_CASE(test_hat_function,
+                     bdata::xrange(-4, 4) * bdata::xrange(-4, 4),
+                     x0,
+                     x1)
 {
-  for (int i = -4; i <= 4; ++i)
-  {
-    for (int j = -4; j <= 4; ++j)
-    {
-      Engine engine;
+  Engine engine;
 
-      auto x = Var<int>(i);
+  auto x = Var<int>(x0);
 
-      auto f = Main([x](const Time& t)
-                    {
-                      auto abs = If(x >= 0, x, -x);
+  auto f = Main([x](const Time& t0)
+                {
+                  auto abs = If(x >= 0, x, -x);
 
-                      auto g = 4 - If(x >= 0, x * x, 2 * abs);
+                  auto g = 4 - If(x >= 0, x * x, 2 * abs);
 
-                      return If(g >= 0, g, 2 - abs);
-                    });
+                  return If(g >= 0, g, 2 - abs);
+                });
 
-      BOOST_TEST(f() == reference_f(i));
-      BOOST_TEST(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(f(), reference_f(x0));
+  BOOST_CHECK(graph_invariant_holds());
 
-      x = j;
+  x = x1;
 
-      BOOST_TEST(f() == reference_f(j));
-      BOOST_TEST(graph_invariant_holds());
-    }
-  }
+  BOOST_CHECK_EQUAL(f(), reference_f(x1));
+  BOOST_CHECK(graph_invariant_holds());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
