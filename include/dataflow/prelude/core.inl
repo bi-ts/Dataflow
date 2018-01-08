@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -206,14 +206,15 @@ dataflow::core::LiftSelector(const ref<X>& x, const Policy& policy, bool eager)
 
 // Basic functions
 
-template <typename T, typename> dataflow::ref<T> dataflow::Const(const T& v)
+template <typename T, typename FwT>
+dataflow::ref<FwT> dataflow::Const(const T& v)
 {
-  return ref<T>(internal::node_const<T>::create(v));
+  return ref<FwT>(internal::node_const<FwT>::create(v));
 }
 
-template <typename T, typename> dataflow::var<T> dataflow::Var(const T& v)
+template <typename T, typename FwT> dataflow::var<FwT> dataflow::Var(const T& v)
 {
-  return var<T>(internal::node_var<T>::create(v));
+  return var<FwT>(internal::node_var<FwT>::create(v));
 }
 
 template <typename T> dataflow::val<T> dataflow::Curr(ref<T> x)

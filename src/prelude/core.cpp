@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -36,15 +36,4 @@ Engine::~Engine()
 dataflow::ref<std::size_t> dataflow::CurrentTime()
 {
   return ref<std::size_t>(internal::nodes_factory::get_time());
-}
-
-dataflow::ref<std::string> dataflow::Const(const char* v)
-{
-  return ref<std::string>(
-    internal::node_const<std::string>::create(std::string(v)));
-}
-
-dataflow::var<std::string> dataflow::Var(const char* v)
-{
-  return Var(std::string(v));
 }
