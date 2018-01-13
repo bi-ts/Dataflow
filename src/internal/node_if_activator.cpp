@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -38,26 +38,22 @@ node_if_activator::node_if_activator()
 {
 }
 
-bool node_if_activator::update_(node_id id,
-                                bool initialized,
-                                const node** p_deps,
-                                std::size_t deps_count)
+update_status node_if_activator::update_(node_id id,
+                                         bool initialized,
+                                         const node** p_deps,
+                                         std::size_t deps_count)
 {
   CHECK_PRECONDITION(p_deps != nullptr && deps_count == 1);
 
   const auto new_value = extract_node_value<bool>(p_deps[0]);
 
-  if (engine::instance().update_node_if_activator(converter::convert(id),
-                                                  initialized,
-                                                  std::size_t(new_value),
-                                                  std::size_t(this->value())))
-  {
-    this->set_value_(new_value);
+  const auto result =
+    engine::instance().update_node_if_activator(converter::convert(id),
+                                                initialized,
+                                                std::size_t(new_value),
+                                                std::size_t(this->value()));
 
-    return true;
-  }
-
-  return false;
+  return this->set_value_(new_value) | result;
 }
 
 std::string node_if_activator::label_() const

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -87,16 +87,17 @@ public:
 
   void pump();
 
-  bool update_node_if_activator(vertex_descriptor v,
-                                bool initialized,
-                                std::size_t new_value,
-                                std::size_t old_value);
+  update_status update_node_if_activator(vertex_descriptor v,
+                                         bool initialized,
+                                         std::size_t new_value,
+                                         std::size_t old_value);
 
-  bool update_node_selector_activator(vertex_descriptor v,
-                                      vertex_descriptor x,
-                                      bool initialized);
+  update_status update_node_selector_activator(vertex_descriptor v,
+                                               vertex_descriptor x,
+                                               bool initialized);
 
-  bool update_node_snapshot_activator(vertex_descriptor v, bool initialized);
+  update_status update_node_snapshot_activator(vertex_descriptor v,
+                                               bool initialized);
 
   void update_node_state(vertex_descriptor v);
 

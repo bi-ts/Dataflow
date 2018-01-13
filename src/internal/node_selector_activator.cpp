@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -22,12 +22,10 @@
 
 namespace dataflow
 {
-bool internal::update_node_selector_activator(node_id id,
-                                              node_id x,
-                                              bool initialized)
+internal::update_status internal::update_node_selector_activator(
+  node_id id, node_id x, bool initialized)
 {
   return engine::instance().update_node_selector_activator(
     converter::convert(id), converter::convert(x), initialized);
-  return true;
 }
 } // dataflow

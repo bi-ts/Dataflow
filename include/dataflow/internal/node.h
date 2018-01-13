@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -34,13 +34,45 @@ class tick_count;
 
 using node_id = std::intptr_t;
 
+enum class update_status
+{
+  nothing = 0x00,
+  updated = 0x01
+};
+
+inline update_status operator|(update_status lhs, update_status rhs)
+{
+  using type = std::underlying_type<update_status>::type;
+
+  return static_cast<update_status>(static_cast<type>(lhs) |
+                                    static_cast<type>(rhs));
+}
+
+inline update_status& operator|=(update_status& lhs, update_status rhs)
+{
+  return lhs = lhs | rhs;
+}
+
+inline update_status operator&(update_status lhs, update_status rhs)
+{
+  using type = std::underlying_type<update_status>::type;
+
+  return static_cast<update_status>(static_cast<type>(lhs) &
+                                    static_cast<type>(rhs));
+}
+
+inline update_status& operator&=(update_status& lhs, update_status rhs)
+{
+  return lhs = lhs & rhs;
+}
+
 class DATAFLOW___EXPORT node
 {
 public:
-  bool update(node_id id,
-              bool initialized,
-              const node** p_args,
-              std::size_t args_count)
+  update_status update(node_id id,
+                       bool initialized,
+                       const node** p_args,
+                       std::size_t args_count)
   {
     return update_(id, initialized, p_args, args_count);
   }
@@ -68,10 +100,10 @@ protected:
   static void next_value_updated(node_id id);
 
 private:
-  virtual bool update_(node_id id,
-                       bool initialized,
-                       const node** p_args,
-                       std::size_t args_count) = 0;
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) = 0;
 
   virtual std::string label_() const = 0;
 

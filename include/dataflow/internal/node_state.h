@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -54,22 +54,20 @@ private:
   {
   }
 
-  virtual bool update_(node_id id,
-                       bool initialized,
-                       const node** p_args,
-                       std::size_t args_count) override
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) override
   {
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
     DATAFLOW___CHECK_PRECONDITION(args_count == 2);
 
-    if (this->set_value_(extract_node_value<T>(p_args[1])))
-    {
+    const auto status = this->set_value_(extract_node_value<T>(p_args[1]));
+
+    if (status != update_status::nothing)
       update_node_state(id);
 
-      return true;
-    }
-
-    return false;
+    return status;
   }
 
   virtual std::string label_() const override

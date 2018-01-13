@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -87,14 +87,14 @@ protected:
   {
   }
 
-  bool set_value_(const T& v)
+  update_status set_value_(const T& v)
   {
     if (value_ == v)
-      return false;
+      return update_status::nothing;
 
     value_ = v;
 
-    return true;
+    return update_status::updated;
   }
 
 private:

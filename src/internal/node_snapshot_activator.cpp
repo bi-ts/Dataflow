@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -35,17 +35,15 @@ node_snapshot_activator::node_snapshot_activator()
 {
 }
 
-bool node_snapshot_activator::update_(node_id id,
-                                      bool initialized,
-                                      const node** p_deps,
-                                      std::size_t deps_count)
+update_status node_snapshot_activator::update_(node_id id,
+                                               bool initialized,
+                                               const node** p_deps,
+                                               std::size_t deps_count)
 {
   CHECK_PRECONDITION(deps_count == 0);
 
-  engine::instance().update_node_snapshot_activator(converter::convert(id),
-                                                    initialized);
-
-  return true;
+  return engine::instance().update_node_snapshot_activator(
+    converter::convert(id), initialized);
 }
 
 std::string node_snapshot_activator::label_() const

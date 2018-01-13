@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -28,7 +28,7 @@ namespace dataflow
 {
 namespace internal
 {
-DATAFLOW___EXPORT bool
+DATAFLOW___EXPORT update_status
 update_node_selector_activator(node_id id, node_id x, bool initialized);
 
 template <typename T, typename Policy>
@@ -53,18 +53,18 @@ private:
   {
   }
 
-  virtual bool update_(node_id id,
-                       bool initialized,
-                       const node** p_args,
-                       std::size_t args_count) override
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) override
   {
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
     DATAFLOW___CHECK_PRECONDITION(args_count == 1);
 
     const auto& v = extract_node_value<T>(p_args[0]);
 
-    if (!this->set_value_(v))
-      return false;
+    if (this->set_value_(v) == update_status::nothing)
+      return update_status::nothing;
 
     const ref x = Policy::calculate(v);
 

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -181,10 +181,10 @@ void engine::pump()
   pumping_started_ = false;
 }
 
-bool engine::update_node_if_activator(vertex_descriptor v,
-                                      bool initialized,
-                                      std::size_t new_value,
-                                      std::size_t old_value)
+update_status engine::update_node_if_activator(vertex_descriptor v,
+                                               bool initialized,
+                                               std::size_t new_value,
+                                               std::size_t old_value)
 {
   const auto w = main_consumer_(v);
 
@@ -194,7 +194,7 @@ bool engine::update_node_if_activator(vertex_descriptor v,
 
     activate_subgraph_(e);
 
-    return true;
+    return update_status::updated;
   }
   else
   {
@@ -207,16 +207,16 @@ bool engine::update_node_if_activator(vertex_descriptor v,
 
       activate_subgraph_(e_curr);
 
-      return true;
+      return update_status::updated;
     }
   }
 
-  return false;
+  return update_status::nothing;
 }
 
-bool engine::update_node_selector_activator(vertex_descriptor v,
-                                            vertex_descriptor x,
-                                            bool initialized)
+update_status engine::update_node_selector_activator(vertex_descriptor v,
+                                                     vertex_descriptor x,
+                                                     bool initialized)
 {
   const auto w = main_consumer_(v);
 
@@ -228,7 +228,7 @@ bool engine::update_node_selector_activator(vertex_descriptor v,
     const auto old_x = target(old_e, graph_);
 
     if (old_x == x)
-      return false;
+      return update_status::nothing;
 
     const auto activator_e = last_out_edge_(w);
     const auto activator = target(activator_e, graph_);
@@ -267,11 +267,11 @@ bool engine::update_node_selector_activator(vertex_descriptor v,
     activate_subgraph_(new_e);
   }
 
-  return true;
+  return update_status::updated;
 }
 
-bool engine::update_node_snapshot_activator(vertex_descriptor v,
-                                            bool initialized)
+update_status engine::update_node_snapshot_activator(vertex_descriptor v,
+                                                     bool initialized)
 {
   const auto w = main_consumer_(v);
 
@@ -283,12 +283,12 @@ bool engine::update_node_snapshot_activator(vertex_descriptor v,
 
     schedule_for_next_update(v);
 
-    return true;
+    return update_status::updated;
   }
 
   deactivate_subgraph_(e);
 
-  return false;
+  return update_status::nothing;
 }
 
 void engine::update_node_state(vertex_descriptor v)
@@ -829,10 +829,12 @@ void engine::pump_()
         args_buffer_.push_back(graph_[target(e, graph_)].p_node);
     }
 
-    if (p_node->update(converter::convert(v),
-                       graph_[v].initialized,
-                       &args_buffer_.front(),
-                       args_buffer_.size()))
+    const auto status = p_node->update(converter::convert(v),
+                                       graph_[v].initialized,
+                                       &args_buffer_.front(),
+                                       args_buffer_.size());
+
+    if ((status & update_status::updated) != update_status::nothing)
     {
       for (auto v : graph_[v].consumers)
       {

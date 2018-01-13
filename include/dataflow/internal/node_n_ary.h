@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -78,10 +78,10 @@ private:
     return Policy::calculate(extract_node_value<Args>(p_args[Is])...);
   }
 
-  virtual bool update_(node_id id,
-                       bool initialized,
-                       const node** p_args,
-                       std::size_t args_count) override
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) override
   {
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
     DATAFLOW___CHECK_PRECONDITION(args_count == sizeof...(Xs));
@@ -89,7 +89,7 @@ private:
     return this->set_value_(
       calculate_<Xs...>(p_args, std14::make_index_sequence<sizeof...(Xs)>()));
 
-    return false;
+    return update_status::nothing;
   }
 
   virtual std::string label_() const override
