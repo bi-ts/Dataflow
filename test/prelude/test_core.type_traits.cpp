@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -212,6 +212,30 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<const var<int>&>::value, true);
 
   BOOST_CHECK_EQUAL(core::is_ref<int>::value, false);
+}
+
+BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
+{
+  BOOST_CHECK_EQUAL(core::is_function_of_time<int>::value, false);
+  BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
+
+  const auto good_function_of_time = [](const Time&)
+  {
+    return Const<int>();
+  };
+
+  BOOST_CHECK_EQUAL(
+    core::is_function_of_time<decltype(good_function_of_time)>::value, true);
+
+  const auto bad_function_of_time = [](const Time&)
+  {
+    return 0;
+  };
+
+  BOOST_CHECK_EQUAL(
+    core::is_function_of_time<decltype(bad_function_of_time)>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_function_of_time<ref<int>>::value, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_is_transition_function)

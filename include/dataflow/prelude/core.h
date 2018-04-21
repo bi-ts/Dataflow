@@ -153,9 +153,34 @@ struct data_type
 
 template <typename T> using data_type_t = typename data_type<T>::type;
 
+namespace detail
+{
+template <typename T> struct function_of_time_type
+{
+private:
+  template <typename F,
+            typename U = data_type_t<
+              decltype(std::declval<F>()(std::declval<const Time&>()))>>
+  static typename std::enable_if<!is_ref<F>::value, U>::type test_(const F*);
+  static void test_(...);
+
+public:
+  using type = decltype(test_(std::declval<const T*>()));
+};
+}
+
+template <typename T>
+struct is_function_of_time
+  : is_flowable<typename detail::function_of_time_type<T>::type>
+{
+};
+
 template <typename F>
-using function_of_time_type =
-  data_type<typename std::result_of<F(const Time&)>::type>;
+struct function_of_time_type
+  : std::enable_if<is_function_of_time<F>::value,
+                   typename detail::function_of_time_type<F>::type>
+{
+};
 
 template <typename F>
 using function_of_time_type_t = typename function_of_time_type<F>::type;
