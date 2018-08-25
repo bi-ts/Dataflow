@@ -30,7 +30,7 @@ ref node_if_activator::create(const ref& condition)
 {
   const auto id = condition.id();
 
-  return nodes_factory::create<node_if_activator>(&id, 1, false);
+  return nodes_factory::create<node_if_activator>(&id, 1, node_flags::none);
 }
 
 node_if_activator::node_if_activator()

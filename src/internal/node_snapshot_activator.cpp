@@ -27,7 +27,8 @@ namespace internal
 {
 ref node_snapshot_activator::create()
 {
-  return nodes_factory::create<node_snapshot_activator>(nullptr, 0, false);
+  return nodes_factory::create<node_snapshot_activator>(
+    nullptr, 0, node_flags::none);
 }
 
 node_snapshot_activator::node_snapshot_activator()

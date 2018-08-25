@@ -38,7 +38,8 @@ template <typename T> class node_state_prev final : public node_t<T>
 public:
   static ref create()
   {
-    return nodes_factory::create<node_state_prev<T>>(nullptr, 0, false);
+    return nodes_factory::create<node_state_prev<T>>(
+      nullptr, 0, node_flags::none);
   }
 
 private:

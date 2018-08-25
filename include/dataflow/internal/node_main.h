@@ -42,7 +42,8 @@ public:
 
     const auto id = x.id();
 
-    const ref y = nodes_factory::create<node_main<T>>(&id, 1, true);
+    const ref y =
+      nodes_factory::create<node_main<T>>(&id, 1, node_flags::eager);
 
     node::pump(y.id());
 

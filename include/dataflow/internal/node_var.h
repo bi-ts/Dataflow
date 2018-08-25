@@ -36,7 +36,7 @@ template <typename T> class node_var final : public node_t<T>
 public:
   static ref create(const T& v)
   {
-    return nodes_factory::create<node_var<T>>(nullptr, 0, false, v);
+    return nodes_factory::create<node_var<T>>(nullptr, 0, node_flags::none, v);
   }
 
   void set_next_value(const T& v) const

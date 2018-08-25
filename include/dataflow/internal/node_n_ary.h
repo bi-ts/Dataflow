@@ -63,7 +63,10 @@ public:
     const std::array<node_id, sizeof...(Xs)> args = {{xs.id()...}};
 
     return nodes_factory::create<node_n_ary<Policy, T, Xs...>>(
-      &args[0], args.size(), eager, policy);
+      &args[0],
+      args.size(),
+      eager ? node_flags::eager : node_flags::none,
+      policy);
   }
 
 private:

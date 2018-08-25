@@ -44,7 +44,7 @@ public:
     const auto id = x.id();
 
     return nodes_factory::create<node_selector_activator<T, Policy>>(
-      &id, 1, false, policy);
+      &id, 1, node_flags::none, policy);
   }
 
 private:

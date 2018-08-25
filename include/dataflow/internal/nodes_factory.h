@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,17 +32,49 @@ namespace dataflow
 namespace internal
 {
 
+enum class node_flags
+{
+  none = 0x00,
+  eager = 0x01
+};
+
+inline node_flags operator|(node_flags lhs, node_flags rhs)
+{
+  using type = std::underlying_type<node_flags>::type;
+
+  return static_cast<node_flags>(static_cast<type>(lhs) |
+                                 static_cast<type>(rhs));
+}
+
+inline node_flags& operator|=(node_flags& lhs, node_flags rhs)
+{
+  return lhs = lhs | rhs;
+}
+
+inline node_flags operator&(node_flags lhs, node_flags rhs)
+{
+  using type = std::underlying_type<node_flags>::type;
+
+  return static_cast<node_flags>(static_cast<type>(lhs) &
+                                 static_cast<type>(rhs));
+}
+
+inline node_flags& operator&=(node_flags& lhs, node_flags rhs)
+{
+  return lhs = lhs & rhs;
+}
+
 class DATAFLOW___EXPORT nodes_factory
 {
 public:
   template <typename Node, typename... Args>
   static ref create(const node_id* p_args,
                     std::size_t args_count,
-                    bool eager,
+                    node_flags flags,
                     Args&&... args)
   {
     return add_(
-      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, eager);
+      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, flags);
   }
 
   template <typename Node, typename... Args>
@@ -89,8 +121,10 @@ private:
   static void* allocate_(std::size_t size, std::size_t allignment);
   static void deallocate_(void*, std::size_t size, std::size_t alignment);
 
-  static ref
-  add_(node* p_node, const node_id* p_args, std::size_t args_count, bool eager);
+  static ref add_(node* p_node,
+                  const node_id* p_args,
+                  std::size_t args_count,
+                  node_flags flags);
   static ref add_conditional_(node* p_node,
                               const node_id* p_args,
                               std::size_t args_count,
