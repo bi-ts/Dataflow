@@ -39,7 +39,7 @@ public:
   static ref create()
   {
     return nodes_factory::create<node_state_prev<T>>(
-      nullptr, 0, node_flags::none);
+      nullptr, 0, node_flags::prev);
   }
 
 private:

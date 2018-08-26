@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -825,6 +825,25 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   BOOST_CHECK_EQUAL(log_string(),
                     "state = 0;state = 1;state = 2;state = 3;state = 4;");
+}
+
+BOOST_AUTO_TEST_CASE(test_StateMachine_selector_on_prev_throws)
+{
+  Engine engine;
+
+  const auto main_fn = [=](const Time& t0)
+  {
+    const auto s = StateMachine(Box(Const(0)),
+                                [=](const ref<box<int>>& sp)
+                                {
+                                  return Box(Boxed(sp));
+                                },
+                                t0);
+
+    return Boxed(s);
+  };
+
+  BOOST_CHECK_THROW(Main(main_fn), std::logic_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

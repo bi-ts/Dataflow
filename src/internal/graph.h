@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -116,6 +116,7 @@ public:
   , straight(false)
   , initialized(false)
   , hidden(false)
+  , previous(false)
   , vertex_color(color::black)
   , ref_count_(0)
   , position()
@@ -157,6 +158,7 @@ public:
   uint straight : 1;
   uint initialized : 1;
   uint hidden : 1;
+  uint previous : 1;
   color vertex_color : 2;
 
 private:

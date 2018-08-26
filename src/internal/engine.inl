@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -127,6 +127,13 @@ inline bool engine::is_persistent_node(vertex_descriptor v) const
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].constant;
+}
+
+inline bool engine::is_previous_node(vertex_descriptor v) const
+{
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
+  return graph_[v].previous;
 }
 
 inline bool engine::requires_activation(vertex_descriptor v) const

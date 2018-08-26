@@ -35,7 +35,8 @@ namespace internal
 enum class node_flags
 {
   none = 0x00,
-  eager = 0x01
+  eager = 0x01,
+  prev = 0x02
 };
 
 inline node_flags operator|(node_flags lhs, node_flags rhs)

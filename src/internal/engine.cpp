@@ -76,7 +76,8 @@ vertex_descriptor engine::add_node(node* p_node,
                                    const node_id* p_args,
                                    std::size_t args_count,
                                    bool eager,
-                                   bool conditional)
+                                   bool conditional,
+                                   bool previous)
 {
   CHECK_PRECONDITION(p_node != nullptr);
 
@@ -90,6 +91,7 @@ vertex_descriptor engine::add_node(node* p_node,
   }
 
   graph_[v].conditional = conditional;
+  graph_[v].previous = previous;
 
   if (eager)
   {

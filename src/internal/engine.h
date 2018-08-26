@@ -65,6 +65,7 @@ public:
   bool is_conditional_node(vertex_descriptor v) const;
   bool is_eager_node(vertex_descriptor v) const;
   bool is_persistent_node(vertex_descriptor v) const;
+  bool is_previous_node(vertex_descriptor v) const;
 
   bool requires_activation(vertex_descriptor v) const;
 
@@ -77,7 +78,8 @@ public:
                              const node_id* p_args,
                              std::size_t args_count,
                              bool eager,
-                             bool conditional = false);
+                             bool conditional = false,
+                             bool previous = false);
 
   vertex_descriptor add_persistent_node(node* p_node);
 
