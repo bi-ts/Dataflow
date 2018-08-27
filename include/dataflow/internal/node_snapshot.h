@@ -43,7 +43,7 @@ public:
     const std::array<node_id, 2> args = {{activator.id(), x.id()}};
 
     return nodes_factory::create_conditional<node_snapshot<T>>(
-      &args[0], args.size(), true);
+      &args[0], args.size(), node_flags::eager);
   }
 
 private:

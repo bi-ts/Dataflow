@@ -58,10 +58,15 @@ ref nodes_factory::add_(node* p_node,
 ref nodes_factory::add_conditional_(node* p_node,
                                     const node_id* p_args,
                                     std::size_t args_count,
-                                    bool eager)
+                                    node_flags flags)
 {
-  return ref(converter::convert(
-    engine::instance().add_node(p_node, p_args, args_count, eager, true)));
+  return ref(converter::convert(engine::instance().add_node(
+    p_node,
+    p_args,
+    args_count,
+    (flags & node_flags::eager) != node_flags::none,
+    true,
+    (flags & node_flags::prev) != node_flags::none)));
 }
 
 ref nodes_factory::add_constant_(node* p_node)

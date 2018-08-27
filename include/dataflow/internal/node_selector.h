@@ -41,7 +41,7 @@ public:
     const auto id = activator.id();
 
     return nodes_factory::create_conditional<node_selector<T, U, StaticPolicy>>(
-      &id, 1, eager);
+      &id, 1, eager ? node_flags::eager : node_flags::none);
   }
 
 private:

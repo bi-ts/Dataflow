@@ -46,7 +46,7 @@ public:
       {basis.id(), alternative.id(), consequence.id()}};
 
     return nodes_factory::create_conditional<node_if<T>>(
-      &args[0], args.size(), false);
+      &args[0], args.size(), node_flags::none);
   }
 
 private:

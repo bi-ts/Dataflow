@@ -46,7 +46,7 @@ public:
     const std::array<node_id, 3> args = {{sp.id(), s0.id(), s.id()}};
 
     return nodes_factory::create_conditional<node_state<T>>(
-      &args[0], args.size(), true);
+      &args[0], args.size(), node_flags::eager);
   }
 
 private:

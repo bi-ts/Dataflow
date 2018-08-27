@@ -81,11 +81,11 @@ public:
   template <typename Node, typename... Args>
   static ref create_conditional(const node_id* p_args,
                                 std::size_t args_count,
-                                bool eager,
+                                node_flags flags,
                                 Args&&... args)
   {
     return add_conditional_(
-      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, eager);
+      new_node_<Node>(std::forward<Args>(args)...), p_args, args_count, flags);
   }
 
   template <typename Node, typename... Args>
@@ -129,7 +129,7 @@ private:
   static ref add_conditional_(node* p_node,
                               const node_id* p_args,
                               std::size_t args_count,
-                              bool eager);
+                              node_flags flags);
   static ref add_constant_(node* p_node);
   static ref get_time_();
 };
