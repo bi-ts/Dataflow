@@ -11,11 +11,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
-find_package(Boost 1.61.0 EXACT QUIET)
+find_package(Boost 1.68.0 EXACT QUIET)
 
 if(NOT Boost_FOUND)
   include(get_boost)
-  get_boost(1.61.0 015ae4afa6f3e597232bfe1dab949ace)
+  get_boost(1.68.0 f4096c4583947b0eb103c8539f1623a3)
 endif()
 
 if(NOT TARGET dst)
