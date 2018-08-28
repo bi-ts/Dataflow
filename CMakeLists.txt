@@ -20,7 +20,7 @@ endif()
 
 if(NOT TARGET dst)
   include(get_dst)
-  get_dst(0.1.1 4e9a8215e1165bf8aaec002620d4db4d)
+  get_dst(0.2.0 fa115e5bfcf5b3cdbac0201c4872ffb1)
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
