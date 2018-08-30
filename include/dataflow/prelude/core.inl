@@ -241,8 +241,8 @@ template <typename T>
 dataflow::ref<T>
 dataflow::If(const ref<bool>& x, const ref<T>& y, const ref<T>& z)
 {
-  return ref<T>(
-    internal::node_if<T>::create(internal::node_if_activator::create(x), y, z));
+  return ref<T>(internal::node_if<T>::create(
+    internal::node_if_activator::create(x), y, z, false));
 }
 
 template <typename T>

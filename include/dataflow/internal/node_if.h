@@ -35,8 +35,10 @@ template <typename T> class node_if final : public node_t<T>
   friend class nodes_factory;
 
 public:
-  static ref
-  create(const ref& basis, const ref& consequence, const ref& alternative)
+  static ref create(const ref& basis,
+                    const ref& consequence,
+                    const ref& alternative,
+                    bool eager)
   {
     DATAFLOW___CHECK_PRECONDITION(basis.template is_of_type<bool>());
     DATAFLOW___CHECK_PRECONDITION(consequence.template is_of_type<T>());
@@ -46,7 +48,7 @@ public:
       {basis.id(), alternative.id(), consequence.id()}};
 
     return nodes_factory::create_conditional<node_if<T>>(
-      &args[0], args.size(), node_flags::none);
+      &args[0], args.size(), eager ? node_flags::eager : node_flags::none);
   }
 
 private:
