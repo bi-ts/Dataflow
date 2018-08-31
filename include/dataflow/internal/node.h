@@ -69,12 +69,22 @@ inline update_status& operator&=(update_status& lhs, update_status rhs)
 class DATAFLOW___EXPORT node
 {
 public:
+  void activate(node_id id, const tick_count& t0)
+  {
+    activate_(id, t0);
+  }
+
   update_status update(node_id id,
                        bool initialized,
                        const node** p_args,
                        std::size_t args_count)
   {
     return update_(id, initialized, p_args, args_count);
+  }
+
+  void deactivate(node_id id)
+  {
+    deactivate_(id);
   }
 
   std::string label() const
@@ -100,10 +110,18 @@ protected:
   static void next_value_updated(node_id id);
 
 private:
+  virtual void activate_(node_id id, const tick_count& t0)
+  {
+  }
+
   virtual update_status update_(node_id id,
                                 bool initialized,
                                 const node** p_args,
                                 std::size_t args_count) = 0;
+
+  virtual void deactivate_(node_id id)
+  {
+  }
 
   virtual std::string label_() const = 0;
 

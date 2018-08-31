@@ -431,6 +431,9 @@ void engine::activate_vertex_(vertex_descriptor v,
 {
   CHECK_PRECONDITION(requires_activation(v));
   CHECK_PRECONDITION(*pos == v);
+  CHECK_PRECONDITION(graph_[v].p_node != nullptr);
+
+  graph_[v].p_node->activate(converter::convert(v), ticks_);
 
   graph_[v].position = pos;
 
@@ -445,11 +448,14 @@ void engine::deactivate_vertex_partially_(vertex_descriptor v)
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(graph_[v].initialized);
   CHECK_PRECONDITION(graph_[v].consumers.size() == 0);
+  CHECK_PRECONDITION(graph_[v].p_node != nullptr);
 
   order_.erase(graph_[v].position);
   graph_[v].position = topological_position();
 
   graph_[v].initialized = false;
+
+  graph_[v].p_node->deactivate(converter::convert(v));
 
   CHECK_POSTCONDITION(!graph_[v].initialized);
   CHECK_POSTCONDITION(requires_activation(v));
