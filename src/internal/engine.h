@@ -83,6 +83,10 @@ public:
 
   vertex_descriptor add_persistent_node(node* p_node);
 
+  void add_data_edge(vertex_descriptor u, vertex_descriptor v);
+
+  void remove_data_edge(vertex_descriptor u, std::size_t idx);
+
   void schedule(vertex_descriptor v);
 
   void schedule_for_next_update(vertex_descriptor v);

@@ -365,6 +365,87 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
   BOOST_CHECK_EQUAL(f(), 20);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto y = Var<int>(11);
+  auto z = Var<int>(12);
+
+  auto f = Main(If(x,
+                   [=](const Time& t)
+                   {
+                     return y;
+                   },
+                   [=](const Time& t)
+                   {
+                     return If(x, y, z);
+                   }));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), false);
+  BOOST_CHECK_EQUAL(f(), 11);
+
+  y = 13;
+
+  BOOST_CHECK_EQUAL(f(), 13);
+
+  const auto count = introspect::num_active_nodes();
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(introspect::num_active_nodes(), count + 2);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+  BOOST_CHECK_EQUAL(f(), 12);
+
+  z = 14;
+
+  BOOST_CHECK_EQUAL(f(), 14);
+
+  x = true;
+
+  BOOST_CHECK_EQUAL(introspect::num_active_nodes(), count);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), false);
+  BOOST_CHECK_EQUAL(f(), 13);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto y = Var<int>(11);
+  auto z = Var<int>(12);
+
+  auto f = Main([=](const Time& t0)
+                {
+                  auto zz = If(x,
+                               [=](const Time& t)
+                               {
+                                 return z;
+                               },
+                               [=](const Time& t)
+                               {
+                                 return z;
+                               },
+                               t0);
+
+                  return If(x, y, zz);
+                });
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+
+  x = true;
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
 {
   const var<int> x = Var<int>('A');

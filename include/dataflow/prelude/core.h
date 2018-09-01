@@ -25,6 +25,7 @@
 
 #include "../internal/ref.h"
 
+#include <functional>
 #include <string>
 #include <type_traits>
 
@@ -312,6 +313,23 @@ template <typename T>
 ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
 template <typename T, typename = core::convert_to_flowable_t<T>>
 ref<T> If(const ref<bool>& x, const T& y, const T& z);
+
+template <typename F,
+          typename G,
+          typename T = typename std::enable_if<
+            std::is_same<core::function_of_time_type_t<F>,
+                         core::function_of_time_type_t<G>>::value,
+            core::function_of_time_type_t<F>>::type>
+ref<T> If(const ref<bool>& x, const F& y, const G& z, const Time& t0);
+
+template <typename F,
+          typename G,
+          typename T = typename std::enable_if<
+            std::is_same<core::function_of_time_type_t<F>,
+                         core::function_of_time_type_t<G>>::value,
+            core::function_of_time_type_t<F>>::type>
+std::function<ref<T>(const Time&)>
+If(const ref<bool>& x, const F& y, const G& z);
 
 // Stateful functions
 

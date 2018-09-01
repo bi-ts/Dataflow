@@ -21,6 +21,7 @@
 #endif
 
 #include "../internal/config.h"
+#include "../internal/node_compound.h"
 #include "../internal/node_const.h"
 #include "../internal/node_if.h"
 #include "../internal/node_if_activator.h"
@@ -261,6 +262,27 @@ template <typename T, typename>
 dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
 {
   return If(x, Const<T>(y), Const<T>(z));
+}
+
+template <typename F, typename G, typename T>
+dataflow::ref<T>
+dataflow::If(const ref<bool>& x, const F& y, const G& z, const Time& t0)
+{
+  return ref<T>(
+    internal::node_if<T>::create(internal::node_if_activator::create(x),
+                                 ref<T>(internal::node_compound<T>::create(y)),
+                                 ref<T>(internal::node_compound<T>::create(z)),
+                                 true));
+}
+
+template <typename F, typename G, typename T>
+std::function<dataflow::ref<T>(const dataflow::Time&)>
+dataflow::If(const ref<bool>& x, const F& y, const G& z)
+{
+  return [=](const Time& t0)
+  {
+    return If(x, y, z, t0);
+  };
 }
 
 // Stateful functions

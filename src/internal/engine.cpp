@@ -138,6 +138,26 @@ vertex_descriptor engine::add_persistent_node(node* p_node)
   return v;
 }
 
+void engine::add_data_edge(vertex_descriptor u, vertex_descriptor v)
+{
+  CHECK_PRECONDITION(!is_active_node(u));
+
+  add_data_edge_(u, v);
+}
+
+void engine::remove_data_edge(vertex_descriptor u, std::size_t idx)
+{
+  CHECK_PRECONDITION(!is_active_node(u));
+  CHECK_PRECONDITION(out_degree(u, graph_) > idx);
+  CHECK_PRECONDITION(!is_active_data_dependency(out_edge_at_(u, idx)));
+
+  const auto e = out_edge_at_(u, idx);
+
+  release(target(e, graph_));
+
+  remove_edge(e, graph_);
+}
+
 void engine::schedule(vertex_descriptor v)
 {
   if (graph_[v].position != topological_position())
@@ -496,6 +516,7 @@ void engine::activate_edge_(edge_descriptor e)
 void engine::deactivate_edge_(edge_descriptor e)
 {
   CHECK_PRECONDITION(is_active_data_dependency(e));
+  CHECK_PRECONDITION(is_active_node(source(e, graph_)));
 
   graph_[target(e, graph_)].consumers.erase(graph_[e]);
 
@@ -690,8 +711,6 @@ void engine::deactivate_subgraph_(edge_descriptor e)
 
     if (graph_[w].consumers.size() == 0)
     {
-      deactivate_vertex_(w);
-
       for (auto es = out_edges(w, graph_); es.first != es.second; ++es.first)
       {
         const auto& e = *es.first;
@@ -703,6 +722,8 @@ void engine::deactivate_subgraph_(edge_descriptor e)
           stack.push(target(e, graph_));
         }
       }
+
+      deactivate_vertex_(w);
     }
     else
     {
