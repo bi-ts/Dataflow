@@ -5,14 +5,20 @@ project(dataflow_test)
 
 find_package(Boost 1.68.0 REQUIRED EXACT QUIET)
 
-add_executable(${PROJECT_NAME}
-  main.cpp
-
+add_library(testing_utilities STATIC
   tools/graph_invariant.cpp
   tools/graph_invariant.h
   tools/io_fixture.cpp
   tools/io_fixture.h
+)
+
+target_include_directories(testing_utilities PUBLIC "${Boost_INCLUDE_DIRS}")
+
+target_link_libraries(testing_utilities PUBLIC dataflow++)
   
+add_executable(${PROJECT_NAME}
+  main.cpp
+
   integration/conditional/test_conditional.cpp
   integration/state_machine/test_state_machine.cpp
   
@@ -31,9 +37,6 @@ add_executable(${PROJECT_NAME}
   test_tuple.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${Boost_INCLUDE_DIRS}")
-
-target_link_libraries(${PROJECT_NAME} dataflow++)
+target_link_libraries(${PROJECT_NAME} PRIVATE testing_utilities)
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
