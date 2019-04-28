@@ -107,8 +107,7 @@ ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
                                     const ref<bool>& mouse_pressed,
                                     const Time& t0)
 {
-  const auto tf = [=](const ref<tupleE<mode, point, point, point>>& sp)
-  {
+  const auto tf = [=](const ref<tupleE<mode, point, point, point>>& sp) {
     auto prev_mode = First(sp);
     auto circle_pos = Second(sp);
     auto starting_circle_pos = Third(sp);
@@ -141,12 +140,10 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
   auto mouse_pressed = Var<bool>(false);
   auto mouse_pos = Var(point(0, 0));
 
-  auto f =
-    Main([=](const Time& t0)
-         {
-           return AdjustableCirclePosition(
-             Const(point(100, 100)), Const(30), mouse_pos, mouse_pressed, t0);
-         });
+  auto f = Main([=](const Time& t0) {
+    return AdjustableCirclePosition(
+      Const(point(100, 100)), Const(30), mouse_pos, mouse_pressed, t0);
+  });
 
   BOOST_CHECK(graph_invariant_holds());
 

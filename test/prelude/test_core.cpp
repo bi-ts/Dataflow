@@ -19,6 +19,7 @@
 #include "../tools/io_fixture.h"
 
 #include <dataflow/prelude/core.h>
+
 #include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>
@@ -179,10 +180,7 @@ BOOST_AUTO_TEST_CASE(test_Box_conditional)
 
 BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
 {
-  const auto x = Main([=](const Time& t0)
-                      {
-                        return CurrentTime();
-                      });
+  const auto x = Main([=](const Time& t0) { return CurrentTime(); });
 
   BOOST_CHECK_EQUAL(x(), 0);
 }
@@ -224,10 +222,7 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 {
   const var<int> x = Var<int>(3);
 
-  const auto y = Main([=](const Time& t0)
-                      {
-                        return x(t0);
-                      });
+  const auto y = Main([=](const Time& t0) { return x(t0); });
 
   BOOST_CHECK(!introspect::active_node(x));
 
@@ -297,10 +292,7 @@ BOOST_FIXTURE_TEST_CASE(test_Main, test_core_fixture)
 {
   const var<int> x = Var<int>(6);
 
-  const auto y = Main([=](const Time& t)
-                      {
-                        return x;
-                      });
+  const auto y = Main([=](const Time& t) { return x; });
 
   BOOST_CHECK_EQUAL(y(), 6);
 
@@ -371,15 +363,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   auto y = Var<int>(11);
   auto z = Var<int>(12);
 
-  auto f = Main(If(x,
-                   [=](const Time& t)
-                   {
-                     return y;
-                   },
-                   [=](const Time& t)
-                   {
-                     return If(x, y, z);
-                   }));
+  auto f = Main(If(
+    x,
+    [=](const Time& t) { return y; },
+    [=](const Time& t) { return If(x, y, z); }));
 
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), false);
@@ -416,21 +403,15 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
   auto y = Var<int>(11);
   auto z = Var<int>(12);
 
-  auto f = Main([=](const Time& t0)
-                {
-                  auto zz = If(x,
-                               [=](const Time& t)
-                               {
-                                 return z;
-                               },
-                               [=](const Time& t)
-                               {
-                                 return z;
-                               },
-                               t0);
+  auto f = Main([=](const Time& t0) {
+    auto zz = If(
+      x,
+      [=](const Time& t) { return z; },
+      [=](const Time& t) { return z; },
+      t0);
 
-                  return If(x, y, zz);
-                });
+    return If(x, y, zz);
+  });
 
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
@@ -502,12 +483,8 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
 {
   const auto x = Var<char>('B');
 
-  const auto y = core::Lift("trinity",
-                            x,
-                            [](char c)
-                            {
-                              return std::string(3, c);
-                            });
+  const auto y =
+    core::Lift("trinity", x, [](char c) { return std::string(3, c); });
 
   const auto z = Curr(y);
 
@@ -600,13 +577,8 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
   const auto x = Var<char>('B');
   const auto y = Var<int>(4);
 
-  const auto z = core::Lift("multiply",
-                            x,
-                            y,
-                            [](char c, int n)
-                            {
-                              return std::string(n, c);
-                            });
+  const auto z = core::Lift(
+    "multiply", x, y, [](char c, int n) { return std::string(n, c); });
 
   const auto a = Curr(z);
 
@@ -726,10 +698,7 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
   BOOST_CHECK_EQUAL(introspect::active_node(b), true);
   BOOST_CHECK_EQUAL(introspect::active_node(c), true);
 
-  const auto e = Main([d](const Time&)
-                      {
-                        return d;
-                      });
+  const auto e = Main([d](const Time&) { return d; });
 
   BOOST_CHECK_EQUAL(e(), 132);
 }
@@ -749,10 +718,8 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   capture_output();
 
-  const auto z = Main([=](const Time& t0)
-                      {
-                        return introspect::Log(Prev(v0, x, t0));
-                      });
+  const auto z =
+    Main([=](const Time& t0) { return introspect::Log(Prev(v0, x, t0)); });
 
   reset_output();
 
@@ -786,10 +753,8 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   capture_output();
 
-  const auto z = Main([=](const Time& t0)
-                      {
-                        return If(b, introspect::Log(Prev(v0, x, t0)), 0);
-                      });
+  const auto z = Main(
+    [=](const Time& t0) { return If(b, introspect::Log(Prev(v0, x, t0)), 0); });
 
   reset_output();
 
@@ -835,40 +800,38 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   capture_output();
 
-  const auto y = Main([=](const Time& t0)
-                      {
-                        const auto tf = [=](ref<int> s)
-                        {
-                          struct policy
-                          {
-                            static std::string label()
-                            {
-                              return "test-state-machine";
-                            }
-                            int calculate(int s, char x)
-                            {
-                              switch (s)
-                              {
-                              case 0:
-                                return x == 'a' ? 1 : s;
-                              case 1:
-                                return x == 'b' ? 2 : s;
-                              case 2:
-                                return x == 'c' ? 3 : s;
-                              case 3:
-                                return x == 'd' ? 4 : s;
-                              };
-                              return s;
-                            };
-                          };
+  const auto y = Main([=](const Time& t0) {
+    const auto tf = [=](ref<int> s) {
+      struct policy
+      {
+        static std::string label()
+        {
+          return "test-state-machine";
+        }
+        int calculate(int s, char x)
+        {
+          switch (s)
+          {
+          case 0:
+            return x == 'a' ? 1 : s;
+          case 1:
+            return x == 'b' ? 2 : s;
+          case 2:
+            return x == 'c' ? 3 : s;
+          case 3:
+            return x == 'd' ? 4 : s;
+          };
+          return s;
+        };
+      };
 
-                          return core::Lift<policy>(s, x);
-                        };
+      return core::Lift<policy>(s, x);
+    };
 
-                        const auto s = StateMachine(0, tf, t0);
+    const auto s = StateMachine(0, tf, t0);
 
-                        return introspect::Log(s);
-                      });
+    return introspect::Log(s);
+  });
 
   reset_output();
 
@@ -912,14 +875,11 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_selector_on_prev_throws)
 {
   Engine engine;
 
-  const auto main_fn = [=](const Time& t0)
-  {
-    const auto s = StateMachine(Box(Const(0)),
-                                [=](const ref<box<int>>& sp)
-                                {
-                                  return Box(Boxed(sp));
-                                },
-                                t0);
+  const auto main_fn = [=](const Time& t0) {
+    const auto s = StateMachine(
+      Box(Const(0)),
+      [=](const ref<box<int>>& sp) { return Box(Boxed(sp)); },
+      t0);
 
     return Boxed(s);
   };

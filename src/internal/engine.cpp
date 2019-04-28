@@ -656,9 +656,8 @@ void engine::activate_subgraph_(edge_descriptor e)
           reset_activator_(v, activator_(u));
         }
 
-        bool repositioned =
-          vd.repositioned &&
-          order_.order(graph_[u].position, graph_[v].position);
+        bool repositioned = vd.repositioned && order_.order(graph_[u].position,
+                                                            graph_[v].position);
 
         if (repositioned)
         {
@@ -728,18 +727,15 @@ void engine::deactivate_subgraph_(edge_descriptor e)
     else
     {
       const auto b = activator_(w);
-      if (std::none_of(graph_[w].consumers.begin(),
-                       graph_[w].consumers.end(),
-                       [this, b](vertex_descriptor u)
-                       {
-                         return b == activator_(u);
-                       }))
+      if (std::none_of(
+            graph_[w].consumers.begin(),
+            graph_[w].consumers.end(),
+            [this, b](vertex_descriptor u) { return b == activator_(u); }))
       {
         const auto it = std::min_element(
           graph_[w].consumers.begin(),
           graph_[w].consumers.end(),
-          [this](vertex_descriptor u, vertex_descriptor v)
-          {
+          [this](vertex_descriptor u, vertex_descriptor v) {
             return order_.order(graph_[u].position, graph_[v].position);
           });
 

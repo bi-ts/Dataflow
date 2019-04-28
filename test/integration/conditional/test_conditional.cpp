@@ -21,8 +21,10 @@
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
 
+// clang-format off
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
+// clang-format on
 
 namespace bdata = boost::unit_test::data;
 
@@ -54,14 +56,13 @@ BOOST_DATA_TEST_CASE(test_hat_function,
 
   auto x = Var<int>(x0);
 
-  auto f = Main([x](const Time& t0)
-                {
-                  auto abs = If(x >= 0, x, -x);
+  auto f = Main([x](const Time& t0) {
+    auto abs = If(x >= 0, x, -x);
 
-                  auto g = 4 - If(x >= 0, x * x, 2 * abs);
+    auto g = 4 - If(x >= 0, x * x, 2 * abs);
 
-                  return If(g >= 0, g, 2 - abs);
-                });
+    return If(g >= 0, g, 2 - abs);
+  });
 
   BOOST_CHECK_EQUAL(f(), reference_f(x0));
   BOOST_CHECK(graph_invariant_holds());

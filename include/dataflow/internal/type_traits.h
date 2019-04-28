@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <type_traits>
 #include <ostream>
+#include <type_traits>
 
 namespace dataflow
 {

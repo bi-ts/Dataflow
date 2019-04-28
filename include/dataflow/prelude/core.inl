@@ -32,9 +32,9 @@
 #include "../internal/node_selector_activator.h"
 #include "../internal/node_snapshot.h"
 #include "../internal/node_snapshot_activator.h"
-#include "../internal/node_var.h"
 #include "../internal/node_state.h"
 #include "../internal/node_state_prev.h"
+#include "../internal/node_var.h"
 
 namespace dataflow
 {
@@ -220,10 +220,7 @@ template <typename T, typename FwT> dataflow::var<FwT> dataflow::Var(const T& v)
 
 template <typename T> dataflow::val<T> dataflow::Curr(ref<T> x)
 {
-  return val<T>(internal::node_main<T>::create([x](const Time&)
-                                               {
-                                                 return x;
-                                               }));
+  return val<T>(internal::node_main<T>::create([x](const Time&) { return x; }));
 }
 
 template <typename F, typename T> dataflow::val<T> dataflow::Main(F f)
@@ -279,10 +276,7 @@ template <typename F, typename G, typename T>
 std::function<dataflow::ref<T>(const dataflow::Time&)>
 dataflow::If(const ref<bool>& x, const F& y, const G& z)
 {
-  return [=](const Time& t0)
-  {
-    return If(x, y, z, t0);
-  };
+  return [=](const Time& t0) { return If(x, y, z, t0); };
 }
 
 // Stateful functions

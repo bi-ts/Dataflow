@@ -218,4 +218,3 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
 BOOST_AUTO_TEST_SUITE_END()
 
 } // dataflow_test
-

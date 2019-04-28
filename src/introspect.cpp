@@ -24,8 +24,8 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <memory>
-#include <type_traits>
 #include <regex>
+#include <type_traits>
 
 namespace dataflow
 {
@@ -163,8 +163,7 @@ introspect::out_edges(dependency_graph::vertex_descriptor v,
     --to;
   }
 
-  iterator_delegate::transform_function fn = [](const base_iterator& ei)
-  {
+  iterator_delegate::transform_function fn = [](const base_iterator& ei) {
     return converter::convert(ei);
   };
 
@@ -197,13 +196,11 @@ introspect::vertex_range introspect::vertices(const dependency_graph& g)
     iterator_delegate<base_iterator, const dependency_graph::vertex_descriptor>;
 
   std::function<bool(internal::vertex_descriptor)> predicate =
-    [](internal::vertex_descriptor v)
-  {
-    return false == internal::engine::instance().graph()[v].hidden;
-  };
+    [](internal::vertex_descriptor v) {
+      return false == internal::engine::instance().graph()[v].hidden;
+    };
 
-  iterator_delegate::transform_function fn = [](const base_iterator& vi)
-  {
+  iterator_delegate::transform_function fn = [](const base_iterator& vi) {
     return converter::convert(*vi);
   };
 
@@ -267,10 +264,9 @@ introspect::vertex_range introspect::topological_order()
   // assert(order.front() label is "ground");
 
   iterator_delegate::transform_function fn =
-    [](const internal::topological_list::const_iterator& it)
-  {
-    return converter::convert(*it);
-  };
+    [](const internal::topological_list::const_iterator& it) {
+      return converter::convert(*it);
+    };
 
   return std::make_pair(
     dependency_graph::vertex_iterator(std::unique_ptr<iterator_delegate>(
@@ -358,10 +354,9 @@ introspect::consumers(dependency_graph::vertex_descriptor v)
                       const dependency_graph::vertex_descriptor>;
 
   iterator_delegate::transform_function fn =
-    [](const internal::consumers_list::const_iterator& it)
-  {
-    return converter::convert(*it);
-  };
+    [](const internal::consumers_list::const_iterator& it) {
+      return converter::convert(*it);
+    };
 
   const auto& consumers =
     internal::engine::instance().graph()[converter::convert(v)].consumers;

@@ -18,8 +18,8 @@
 
 #define DATAFLOW___NO_BOOST
 
-#include <dataflow/prelude.h>
 #include <dataflow/introspect.h>
+#include <dataflow/prelude.h>
 
 #include <chrono>
 #include <cmath>

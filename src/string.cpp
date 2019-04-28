@@ -30,4 +30,3 @@ dataflow::ref<std::string> dataflow::FromString(const ref<std::string>& x,
 {
   return x;
 }
-

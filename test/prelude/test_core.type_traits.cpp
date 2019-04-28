@@ -20,9 +20,9 @@
 
 #include <dataflow/prelude/core.h>
 
-#include <boost/test/unit_test.hpp>
-#include <boost/test/test_case_template.hpp>
 #include <boost/mpl/list.hpp>
+#include <boost/test/test_case_template.hpp>
+#include <boost/test/unit_test.hpp>
 
 using namespace dataflow;
 
@@ -168,7 +168,8 @@ typedef boost::mpl::list<no_default_constructor,
                          no_stream_output,
                          no_equality_test,
                          no_inequality_test,
-                         ref_based> not_flowable_types;
+                         ref_based>
+  not_flowable_types;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_flowable_false, T, not_flowable_types)
 {
@@ -219,18 +220,12 @@ BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
   BOOST_CHECK_EQUAL(core::is_function_of_time<int>::value, false);
   BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
 
-  const auto good_function_of_time = [](const Time&)
-  {
-    return Const<int>();
-  };
+  const auto good_function_of_time = [](const Time&) { return Const<int>(); };
 
   BOOST_CHECK_EQUAL(
     core::is_function_of_time<decltype(good_function_of_time)>::value, true);
 
-  const auto bad_function_of_time = [](const Time&)
-  {
-    return 0;
-  };
+  const auto bad_function_of_time = [](const Time&) { return 0; };
 
   BOOST_CHECK_EQUAL(
     core::is_function_of_time<decltype(bad_function_of_time)>::value, false);

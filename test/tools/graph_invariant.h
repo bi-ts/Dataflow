@@ -25,4 +25,3 @@ namespace dataflow_test
 bool graph_invariant_holds(const dataflow::introspect::dependency_graph& g =
                              dataflow::introspect::graph());
 }
-

@@ -94,16 +94,14 @@ public:
       std::transform(vs.first,
                      vs.second,
                      std::back_inserter(potential_activators),
-                     [v](vertex_descriptor u)
-                     {
+                     [v](vertex_descriptor u) {
                        return implied_activator(u, v, introspect::graph());
                      });
 
       const auto vi =
         std::min_element(potential_activators.begin(),
                          potential_activators.end(),
-                         [](vertex_descriptor u, vertex_descriptor w)
-                         {
+                         [](vertex_descriptor u, vertex_descriptor w) {
                            return introspect::update_order(u, w) > 0;
                          });
 
@@ -147,7 +145,8 @@ private:
 bool dataflow_test::graph_invariant_holds(const introspect::dependency_graph& g)
 {
   std::map<introspect::dependency_graph::vertex_descriptor,
-           boost::default_color_type> color_map;
+           boost::default_color_type>
+    color_map;
 
   std::vector<edge_descriptor> bad_edges;
   std::vector<vertex_descriptor> bad_vertices;

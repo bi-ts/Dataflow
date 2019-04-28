@@ -17,6 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/prelude/arithmetic.h>
+
 #include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>

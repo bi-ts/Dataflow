@@ -60,7 +60,7 @@ struct container_gen<dataflow::internal::out_edge_listS<Allocator>, T>
 
 template <typename Allocator>
 struct parallel_edge_traits<dataflow::internal::out_edge_listS<Allocator>>
-  : public parallel_edge_traits<boost::vecS>
+: public parallel_edge_traits<boost::vecS>
 {
 };
 

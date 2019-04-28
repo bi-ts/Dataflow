@@ -83,15 +83,14 @@ namespace core
 
 template <typename T>
 struct is_flowable
-  : std::integral_constant<bool,
-                           std::is_default_constructible<T>::value &&
-                             std::is_copy_constructible<T>::value &&
-                             std::is_copy_assignable<T>::value &&
-                             internal::is_streamable<T>::value &&
-                             internal::is_equality_comparable<T>::value &&
-                             !std::is_base_of<internal::ref, T>::value &&
-                             !std::is_pointer<T>::value &&
-                             !std::is_reference<T>::value>
+: std::integral_constant<
+    bool,
+    std::is_default_constructible<T>::value &&
+      std::is_copy_constructible<T>::value &&
+      std::is_copy_assignable<T>::value && internal::is_streamable<T>::value &&
+      internal::is_equality_comparable<T>::value &&
+      !std::is_base_of<internal::ref, T>::value && !std::is_pointer<T>::value &&
+      !std::is_reference<T>::value>
 {
 };
 
@@ -120,7 +119,7 @@ public:
 
 template <typename T>
 struct convert_to_flowable
-  : enable_if_flowable<typename detail::convert_to_flowable<T>::type>
+: enable_if_flowable<typename detail::convert_to_flowable<T>::type>
 {
 };
 
@@ -148,7 +147,7 @@ struct is_ref : is_flowable<typename detail::data_type<T>::type>
 
 template <typename T>
 struct data_type
-  : std::enable_if<is_ref<T>::value, typename detail::data_type<T>::type>
+: std::enable_if<is_ref<T>::value, typename detail::data_type<T>::type>
 {
 };
 
@@ -172,14 +171,14 @@ public:
 
 template <typename T>
 struct is_function_of_time
-  : is_flowable<typename detail::function_of_time_type<T>::type>
+: is_flowable<typename detail::function_of_time_type<T>::type>
 {
 };
 
 template <typename F>
 struct function_of_time_type
-  : std::enable_if<is_function_of_time<F>::value,
-                   typename detail::function_of_time_type<F>::type>
+: std::enable_if<is_function_of_time<F>::value,
+                 typename detail::function_of_time_type<F>::type>
 {
 };
 
@@ -217,10 +216,8 @@ using enable_if_transition_function_t =
   typename enable_if_transition_function<F, T, U>::type;
 
 template <typename T>
-using argument_data_type =
-  typename std::conditional<is_ref<T>::value,
-                            data_type<T>,
-                            convert_to_flowable<T>>::type;
+using argument_data_type = typename std::
+  conditional<is_ref<T>::value, data_type<T>, convert_to_flowable<T>>::type;
 
 template <typename T>
 using argument_data_type_t = typename argument_data_type<T>::type;
