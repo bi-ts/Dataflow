@@ -31,13 +31,16 @@ function(add_dataflow_test_project name)
   add_test(NAME test_${name} COMMAND test_${name})
 endfunction()
 
+add_dataflow_test_project(core
+  prelude/test_core.cpp
+  prelude/test_core.type_traits.cpp
+)
+
 add_dataflow_test_project(prelude
   test_prelude.cpp
   prelude/test_arithmetic.cpp
   prelude/test_comparison.cpp
   prelude/test_conditional.cpp
-  prelude/test_core.cpp
-  prelude/test_core.type_traits.cpp
   prelude/test_logical.cpp
 )
 
