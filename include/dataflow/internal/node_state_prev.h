@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -24,12 +24,16 @@
 #include "nodes_factory.h"
 #include "ref.h"
 
+#include <tuple>
+#include <utility>
+
 namespace dataflow
 {
 namespace internal
 {
-DATAFLOW___EXPORT const node* update_node_state_prev(node_id id,
-                                                     bool initialized);
+DATAFLOW___EXPORT
+std::pair<const node*, update_status> update_node_state_prev(node_id id,
+                                                             bool initialized);
 
 template <typename T> class node_state_prev final : public node_t<T>
 {
@@ -53,10 +57,16 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    if (auto p_state = update_node_state_prev(id, initialized))
-      return this->set_value_(extract_node_value<T>(p_state));
+    const node* p_state = nullptr;
+    update_status status = update_status::nothing;
 
-    return update_status::nothing;
+    std::tie(p_state, status) = update_node_state_prev(id, initialized);
+
+    DATAFLOW___CHECK_CONDITION(p_state != nullptr);
+
+    status |= this->set_value_(extract_node_value<T>(p_state));
+
+    return status;
   }
 
   virtual std::string label_() const override

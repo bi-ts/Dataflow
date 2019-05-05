@@ -164,15 +164,6 @@ void engine::schedule(vertex_descriptor v)
     order_.mark(graph_[v].position);
 }
 
-void engine::schedule_for_next_update(vertex_descriptor v)
-{
-  CHECK_PRECONDITION(pumping_started_);
-  CHECK_PRECONDITION(v != vertex_descriptor());
-
-  if (graph_[v].position != topological_position())
-    next_update_.push_back(graph_[v].position);
-}
-
 void engine::pump()
 {
   CHECK_PRECONDITION(!pumping_started_);
@@ -303,9 +294,7 @@ update_status engine::update_node_snapshot_activator(vertex_descriptor v,
   {
     activate_subgraph_(e);
 
-    schedule_for_next_update(v);
-
-    return update_status::updated;
+    return update_status::updated | update_status::updated_next;
   }
 
   deactivate_subgraph_(e);
@@ -318,12 +307,12 @@ void engine::update_node_state(vertex_descriptor v)
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(out_degree(v, graph_) == 4);
 
-  engine::instance().schedule_for_next_update(
+  engine::instance().schedule_for_next_update_(
     target(out_edge_at_(v, 0), graph_));
 }
 
-const node* engine::update_node_state_prev(vertex_descriptor v,
-                                           bool initialized)
+std::pair<const node*, update_status>
+engine::update_node_state_prev(vertex_descriptor v, bool initialized)
 {
   const auto u = main_consumer_(v);
 
@@ -341,9 +330,7 @@ const node* engine::update_node_state_prev(vertex_descriptor v,
 
     CHECK_POSTCONDITION(is_active_data_dependency(e_init));
 
-    schedule_for_next_update(v);
-
-    return nullptr;
+    return std::make_pair(graph_[u].p_node, update_status::updated_next);
   }
   else
   {
@@ -357,7 +344,7 @@ const node* engine::update_node_state_prev(vertex_descriptor v,
     CHECK_POSTCONDITION(is_active_data_dependency(e_regular));
   }
 
-  return graph_[u].p_node;
+  return std::make_pair(graph_[u].p_node, update_status::nothing);
 }
 
 engine::engine()
@@ -383,6 +370,15 @@ engine::~engine() noexcept
   {
     assert(false);
   }
+}
+
+void engine::schedule_for_next_update_(vertex_descriptor v)
+{
+  CHECK_PRECONDITION(pumping_started_);
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
+  if (graph_[v].position != topological_position())
+    next_update_.push_back(graph_[v].position);
 }
 
 vertex_descriptor engine::implied_activator_(vertex_descriptor u,
@@ -858,6 +854,11 @@ void engine::pump_()
                                        graph_[v].initialized,
                                        &args_buffer_.front(),
                                        args_buffer_.size());
+
+    if ((status & update_status::updated_next) != update_status::nothing)
+    {
+      schedule_for_next_update_(v);
+    }
 
     if ((status & update_status::updated) != update_status::nothing)
     {

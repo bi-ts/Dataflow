@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -22,8 +22,8 @@
 
 namespace dataflow
 {
-const internal::node* internal::update_node_state_prev(node_id id,
-                                                       bool initialized)
+std::pair<const internal::node*, internal::update_status>
+internal::update_node_state_prev(node_id id, bool initialized)
 {
   return engine::instance().update_node_state_prev(converter::convert(id),
                                                    initialized);

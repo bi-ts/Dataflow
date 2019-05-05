@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -37,7 +37,8 @@ using node_id = std::intptr_t;
 enum class update_status
 {
   nothing = 0x00,
-  updated = 0x01
+  updated = 0x01,
+  updated_next = 0x02
 };
 
 inline update_status operator|(update_status lhs, update_status rhs)
@@ -107,7 +108,6 @@ public:
 protected:
   static const tick_count& ticks_();
   static void pump(node_id id);
-  static void next_value_updated(node_id id);
 
 private:
   virtual void activate_(node_id id, const tick_count& t0)

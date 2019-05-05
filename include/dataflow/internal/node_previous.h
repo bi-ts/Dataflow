@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -66,10 +66,7 @@ private:
 
     const auto status = this->set_value_(val);
 
-    if (next_ != val)
-      node::next_value_updated(id);
-
-    return status;
+    return next_ != val ? status | update_status::updated_next : status;
   }
 
   virtual std::string label_() const override

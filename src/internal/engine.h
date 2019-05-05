@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -25,6 +25,7 @@
 #include "graph.h"
 #include "tick_count.h"
 
+#include <utility>
 #include <vector>
 
 namespace dataflow
@@ -89,8 +90,6 @@ public:
 
   void schedule(vertex_descriptor v);
 
-  void schedule_for_next_update(vertex_descriptor v);
-
   void pump();
 
   update_status update_node_if_activator(vertex_descriptor v,
@@ -107,11 +106,14 @@ public:
 
   void update_node_state(vertex_descriptor v);
 
-  const node* update_node_state_prev(vertex_descriptor v, bool initialized);
+  std::pair<const node*, update_status>
+  update_node_state_prev(vertex_descriptor v, bool initialized);
 
 private:
   explicit engine();
   ~engine() noexcept;
+
+  void schedule_for_next_update_(vertex_descriptor v);
 
   edge_descriptor out_edge_at_(vertex_descriptor v, std::size_t idx) const;
   edge_descriptor last_out_edge_(vertex_descriptor v) const;
