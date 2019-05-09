@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -78,7 +78,7 @@ private:
 
   virtual std::string label_() const override
   {
-    return "selector_activator";
+    return "selector-activator";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
