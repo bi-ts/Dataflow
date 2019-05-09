@@ -92,6 +92,7 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
   std::chrono::steady_clock::time_point constructed;
   std::chrono::steady_clock::time_point activated;
   std::chrono::steady_clock::time_point updated;
+  std::chrono::steady_clock::time_point deactivated;
   std::chrono::steady_clock::time_point destructed;
 
   {
@@ -102,19 +103,23 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
 
     constructed = std::chrono::steady_clock::now();
 
-    auto r = Curr(y);
+    {
+      auto r = Curr(y);
 
-    activated = std::chrono::steady_clock::now();
+      activated = std::chrono::steady_clock::now();
 
-    initial_value = r();
+      initial_value = r();
 
-    x = 42;
+      x = 42;
 
-    updated = std::chrono::steady_clock::now();
+      updated = std::chrono::steady_clock::now();
 
-    last_value = r();
+      last_value = r();
 
-    total_nodes_count = introspect::num_vertices();
+      total_nodes_count = introspect::num_vertices();
+    }
+
+    deactivated = std::chrono::steady_clock::now();
   }
 
   destructed = std::chrono::steady_clock::now();
@@ -136,6 +141,9 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
 
   std::cout << "Update duration (seconds):       "
             << Duration(activated, updated) << std::endl;
+
+  std::cout << "Deactivation duration (seconds): "
+            << Duration(updated, deactivated) << std::endl;
 
   std::cout << "Destruction duration (seconds):  "
             << Duration(updated, destructed) << std::endl
