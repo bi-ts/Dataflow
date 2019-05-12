@@ -24,6 +24,8 @@
 #include "nodes_factory.h"
 #include "ref.h"
 
+#include "std_future.h"
+
 namespace dataflow
 {
 namespace internal
@@ -33,23 +35,42 @@ DATAFLOW___EXPORT bool is_prev(node_id x);
 DATAFLOW___EXPORT update_status
 update_node_selector_activator(node_id id, node_id x, bool initialized);
 
-template <typename T, typename Policy>
-class node_selector_activator final : public node_t<T>, Policy
+template <typename Policy, typename X, typename... Xs>
+class node_selector_activator final : public node_t<X>, Policy
 {
   friend class nodes_factory;
 
-public:
-  static ref create(const ref& x, const Policy& policy = Policy())
+private:
+  // TODO: move these helpers to utilities
+  template <typename> using ref_t = ref;
+
+  struct helper
   {
-    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
+    static bool check_all(bool b)
+    {
+      return b;
+    }
+
+    template <typename B1, typename B2, typename... Bs>
+    static bool check_all(B1 b1, B2 b2, Bs... bs)
+    {
+      return b1 && check_all(b2, bs...);
+    }
+  };
+
+public:
+  static ref create(const Policy& policy, const ref& x, ref_t<Xs>... xs)
+  {
+    DATAFLOW___CHECK_PRECONDITION(helper::check_all(
+      x.template is_of_type<X>(), xs.template is_of_type<Xs>()...));
 
     if (is_prev(x.id()))
       throw std::logic_error("Field selection is not allowed on 'prev' values");
 
-    const auto id = x.id();
+    const std::array<node_id, 1 + sizeof...(Xs)> args = {{x.id(), xs.id()...}};
 
-    return nodes_factory::create<node_selector_activator<T, Policy>>(
-      &id, 1, node_flags::none, policy);
+    return nodes_factory::create<node_selector_activator<Policy, X, Xs...>>(
+      &args[0], args.size(), node_flags::none, policy);
   }
 
 private:
@@ -58,22 +79,29 @@ private:
   {
   }
 
+  // TODO: move to utilities
+  template <typename... Args, std::size_t... Is>
+  ref calculate_(const node** p_args, const std14::index_sequence<Is...>&)
+  {
+    return Policy::calculate(extract_node_value<Args>(p_args[Is])...);
+  }
+
   virtual update_status update_(node_id id,
                                 bool initialized,
                                 const node** p_args,
                                 std::size_t args_count) override
   {
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
-    DATAFLOW___CHECK_PRECONDITION(args_count == 1);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 1 + sizeof...(Xs));
 
-    const auto& v = extract_node_value<T>(p_args[0]);
+    const auto& v = extract_node_value<X>(p_args[0]);
 
-    if (this->set_value_(v) == update_status::nothing)
-      return update_status::nothing;
+    const auto status = this->set_value_(v);
 
-    const ref x = Policy::calculate(v);
+    const auto x = calculate_<X, Xs...>(
+      p_args, std14::make_index_sequence<1 + sizeof...(Xs)>());
 
-    return update_node_selector_activator(id, x.id(), initialized);
+    return status | update_node_selector_activator(id, x.id(), initialized);
   }
 
   virtual std::string label_() const override

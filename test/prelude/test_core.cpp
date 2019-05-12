@@ -78,6 +78,26 @@ public:
     return core::LiftSelector<policy>(x);
   }
 
+  friend ref<T>
+  BoxedOrDefault(const ref<box>& x, const ref<bool>& b, const ref<T>& d)
+  {
+    struct policy
+    {
+      static std::string label()
+      {
+        return "boxed-or-default";
+      }
+      const ref<T>& calculate(const box& x, bool b)
+      {
+        return b ? x.p_impl_->boxed : d_;
+      }
+
+      ref<T> d_;
+    };
+
+    return core::LiftSelector<policy>(policy{d}, x, b);
+  }
+
 private:
   std::shared_ptr<impl> p_impl_;
 };
@@ -176,6 +196,36 @@ BOOST_AUTO_TEST_CASE(test_Box_conditional)
   y = 44;
 
   BOOST_CHECK_EQUAL(b(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
+{
+  Engine engine;
+
+  auto a = Var(11);
+  auto b = Box(a);
+  auto c = Var(true);
+  auto d = Var(22);
+
+  auto e = BoxedOrDefault(b, c, d);
+
+  BOOST_CHECK_EQUAL(introspect::label(e), "boxed-or-default");
+
+  auto f = Curr(e);
+
+  BOOST_CHECK_EQUAL(f(), 11);
+
+  a = 2;
+
+  BOOST_CHECK_EQUAL(f(), 2);
+
+  c = false;
+
+  BOOST_CHECK_EQUAL(f(), 22);
+
+  d = 3;
+
+  BOOST_CHECK_EQUAL(f(), 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)

@@ -272,13 +272,22 @@ template <typename Policy,
               std::declval<X>(), std::declval<Xs>()...))>::type>::type>
 ref<T> LiftPuller(const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename T = core::data_type_t<
-            decltype(std::declval<Policy>().calculate(std::declval<X>()))>>
-ref<T> LiftSelector(const ref<X>& x,
-                    const Policy& policy = Policy(),
-                    bool eager = false);
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = core::data_type_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
+ref<T>
+LiftSelector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = core::data_type_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
+ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 }
 
 // Basic functions

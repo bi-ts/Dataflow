@@ -197,12 +197,22 @@ dataflow::ref<T> dataflow::core::LiftPuller(const ref<X>& x,
   return LiftPuller<Policy>(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename T>
-dataflow::ref<T>
-dataflow::core::LiftSelector(const ref<X>& x, const Policy& policy, bool eager)
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
+                                              const ref<X>& x,
+                                              const ref<Xs>&... xs)
 {
   return ref<T>(internal::node_selector<T, X, Policy>::create(
-    internal::node_selector_activator<X, Policy>::create(x), eager));
+    internal::node_selector_activator<Policy, X, Xs...>::create(
+      policy, x, xs...),
+    false));
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
+                                              const ref<Xs>&... xs)
+{
+  return LiftSelector(Policy(), x, xs...);
 }
 
 // Basic functions
