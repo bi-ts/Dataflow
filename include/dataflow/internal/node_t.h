@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -22,6 +22,7 @@
 #include "node.h"
 #include "type_traits.h"
 
+#include <algorithm>
 #include <sstream>
 
 namespace dataflow
@@ -106,6 +107,13 @@ private:
 private:
   T value_;
 };
+
+template <typename... Bs> static bool check_all(Bs... bs)
+{
+  const auto values = {bs...};
+
+  return std::all_of(values.begin(), values.end(), [](bool b) { return b; });
+}
 
 template <typename T> const T& extract_node_value(const node* p_node)
 {

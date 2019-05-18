@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -73,5 +73,7 @@ template <typename T> const T& ref::value() const
 
   return static_cast<const node_t<T>*>(get_())->value();
 }
+
+template <typename> using ref_t = ref;
 } // internal
 } // dataflow

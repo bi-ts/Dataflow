@@ -40,29 +40,11 @@ class node_selector_activator final : public node_t<X>, Policy
 {
   friend class nodes_factory;
 
-private:
-  // TODO: move these helpers to utilities
-  template <typename> using ref_t = ref;
-
-  struct helper
-  {
-    static bool check_all(bool b)
-    {
-      return b;
-    }
-
-    template <typename B1, typename B2, typename... Bs>
-    static bool check_all(B1 b1, B2 b2, Bs... bs)
-    {
-      return b1 && check_all(b2, bs...);
-    }
-  };
-
 public:
   static ref create(const Policy& policy, const ref& x, ref_t<Xs>... xs)
   {
-    DATAFLOW___CHECK_PRECONDITION(helper::check_all(
-      x.template is_of_type<X>(), xs.template is_of_type<Xs>()...));
+    DATAFLOW___CHECK_PRECONDITION(
+      check_all(x.template is_of_type<X>(), xs.template is_of_type<Xs>()...));
 
     if (is_prev(x.id()))
       throw std::logic_error("Field selection is not allowed on 'prev' values");

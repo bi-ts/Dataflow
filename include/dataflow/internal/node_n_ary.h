@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -37,28 +37,10 @@ class node_n_ary final : public node_t<T>, public Policy
 {
   friend class nodes_factory;
 
-private:
-  template <typename> using ref_t = ref;
-
-  struct helper
-  {
-    static bool check_all(bool b)
-    {
-      return b;
-    }
-
-    template <typename B1, typename B2, typename... Bs>
-    static bool check_all(B1 b1, B2 b2, Bs... bs)
-    {
-      return b1 && check_all(b2, bs...);
-    }
-  };
-
 public:
   static ref create(const Policy& policy, bool eager, ref_t<Xs>... xs)
   {
-    DATAFLOW___CHECK_PRECONDITION(
-      helper::check_all(xs.template is_of_type<Xs>()...));
+    DATAFLOW___CHECK_PRECONDITION(check_all(xs.template is_of_type<Xs>()...));
 
     const std::array<node_id, sizeof...(Xs)> args = {{xs.id()...}};
 
