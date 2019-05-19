@@ -188,10 +188,29 @@ void engine::pump()
   {
     pumping_started_ = false;
     args_buffer_.clear();
+    metadata_.clear();
     throw;
   }
 
   pumping_started_ = false;
+}
+
+void engine::set_metadata(const node* p_node,
+                          std::unique_ptr<const metadata> p_metadata)
+{
+  CHECK_CONDITION(metadata_.find(p_node) == metadata_.end());
+
+  metadata_[p_node] = std::move(p_metadata);
+}
+
+const metadata* engine::get_metadata(const node* p_node)
+{
+  const auto it = metadata_.find(p_node);
+
+  if (it == metadata_.end())
+    return nullptr;
+
+  return it->second.get();
 }
 
 update_status engine::update_node_if_activator(vertex_descriptor v,
@@ -874,6 +893,8 @@ void engine::pump_()
   }
 
   assert(order_.begin_marked() == order_.end_marked());
+
+  metadata_.clear();
 }
 
 } // internal

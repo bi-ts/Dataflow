@@ -36,5 +36,16 @@ void node::pump(node_id id)
   engine::instance().pump();
 }
 
+void node::set_metadata(const node* p_node,
+                        std::unique_ptr<const metadata> p_metadata)
+{
+  engine::instance().set_metadata(p_node, std::move(p_metadata));
+}
+
+const metadata* node::get_metadata(const node* p_node)
+{
+  return engine::instance().get_metadata(p_node);
+}
+
 } // internal
 } // dataflow

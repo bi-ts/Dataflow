@@ -21,6 +21,7 @@
 #include "dataflow++_export.h"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -67,6 +68,12 @@ inline update_status& operator&=(update_status& lhs, update_status rhs)
   return lhs = lhs & rhs;
 }
 
+class metadata
+{
+public:
+  virtual ~metadata(){};
+};
+
 class DATAFLOW___EXPORT node
 {
 public:
@@ -108,6 +115,9 @@ public:
 protected:
   static const tick_count& ticks_();
   static void pump(node_id id);
+  static void set_metadata(const node* p_node,
+                           std::unique_ptr<const metadata> p_metadata);
+  static const metadata* get_metadata(const node* p_node);
 
 private:
   virtual void activate_(node_id id, const tick_count& t0)
