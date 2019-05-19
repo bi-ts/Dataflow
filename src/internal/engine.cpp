@@ -838,6 +838,8 @@ void engine::remove_subgraph_(vertex_descriptor v)
 
 void engine::pump_()
 {
+  CHECK_PRECONDITION(metadata_.empty());
+
   ++ticks_;
 
   CHECK_CONDITION(dynamic_cast<node_time*>(graph_[time_node_v_].p_node));
