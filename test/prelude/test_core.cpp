@@ -490,7 +490,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
     static char calculate(int v)
     {
       return static_cast<char>(v + 2);
-    };
+    }
   };
 
   const auto y = core::Lift(policy(), x);
@@ -515,7 +515,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
     {
       cache_ = static_cast<char>(v + ('a' - 'A'));
       return cache_;
-    };
+    }
 
   private:
     char cache_;
@@ -578,7 +578,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
     static char calculate(char v, int offset)
     {
       return static_cast<char>(v + offset);
-    };
+    }
   };
 
   const auto z = core::Lift(policy(), x, y);
@@ -604,7 +604,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
     {
       cache_ = static_cast<char>(v + (b ? ('a' - 'A') : 0));
       return cache_;
-    };
+    }
 
   private:
     char cache_;
@@ -692,7 +692,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
     {
       return s + "/" + std::string(count, c) + "/" +
              std::to_string(static_cast<int>(v * 100)) + "%";
-    };
+    }
   };
 
   const auto e = core::Lift<policy>(a, b, c, d);
@@ -735,7 +735,7 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
     static int calculate(int x, int y, int z)
     {
       return x + y + z;
-    };
+    }
   };
 
   BOOST_CHECK_EQUAL(introspect::active_node(a), false);
@@ -872,7 +872,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
             return x == 'd' ? 4 : s;
           };
           return s;
-        };
+        }
       };
 
       return core::Lift<policy>(s, x);
