@@ -73,8 +73,6 @@ private:
 
     return this->set_value_(
       calculate_<Xs...>(p_args, std14::make_index_sequence<sizeof...(Xs)>()));
-
-    return update_status::nothing;
   }
 
   virtual std::string label_() const override
