@@ -223,9 +223,21 @@ dataflow::ref<FwT> dataflow::Const(const T& v)
   return ref<FwT>(internal::node_const<FwT>::create(v));
 }
 
+template <typename T, typename... Args, typename>
+dataflow::ref<T> dataflow::Const(Args&&... args)
+{
+  return Const(T(std::forward<Args>(args)...));
+}
+
 template <typename T, typename FwT> dataflow::var<FwT> dataflow::Var(const T& v)
 {
   return var<FwT>(internal::node_var<FwT>::create(v));
+}
+
+template <typename T, typename... Args, typename>
+dataflow::var<T> dataflow::Var(Args&&... args)
+{
+  return Var(T(std::forward<Args>(args)...));
 }
 
 template <typename T> dataflow::val<T> dataflow::Curr(ref<T> x)

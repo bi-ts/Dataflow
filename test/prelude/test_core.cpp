@@ -246,7 +246,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), 17);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_no_params, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Const_default_constructor, test_core_fixture)
 {
   const ref<int> x = Const<int>();
 
@@ -255,6 +255,28 @@ BOOST_FIXTURE_TEST_CASE(test_Const_no_params, test_core_fixture)
   auto y = Curr(x);
 
   BOOST_CHECK_EQUAL(y(), 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Const_forward_args, test_core_fixture)
+{
+  const auto x = Const(17);
+  const auto y = Const<box<int>>(x);
+
+  BOOST_CHECK_EQUAL(introspect::label(y), "const");
+
+  const auto z = Curr(y);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Const_forward_args_to_string_constructor,
+                        test_core_fixture)
+{
+  const auto x = Const<std::string>(10, '*');
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+
+  const auto y = Curr(x);
+
+  BOOST_CHECK_EQUAL(y(), "**********");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
@@ -302,11 +324,40 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), 6);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_default, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
 {
-  auto y = Curr(Var<int>());
+  auto x = Var<int>();
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "var");
+
+  auto y = Curr(x);
 
   BOOST_CHECK_EQUAL(y(), 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Var_forward_args, test_core_fixture)
+{
+  const auto a = Const(1);
+  const auto b = Const(2);
+  const auto x = Var<box<int>>(a);
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "var");
+
+  x = make_box(b);
+
+  auto y = Curr(x);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Var_forward_args_to_string_constructor,
+                        test_core_fixture)
+{
+  const auto x = Var<std::string>(10, '*');
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "var");
+
+  const auto y = Curr(x);
+
+  BOOST_CHECK_EQUAL(y(), "**********");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)

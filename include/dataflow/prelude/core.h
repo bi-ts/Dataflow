@@ -293,10 +293,20 @@ ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 DATAFLOW___EXPORT ref<std::size_t> CurrentTime();
 
 template <typename T, typename FwT = core::convert_to_flowable_t<T>>
-ref<FwT> Const(const T& v = T());
+ref<FwT> Const(const T& v);
+
+template <typename T,
+          typename... Args,
+          typename = core::enable_if_flowable_t<T>>
+ref<T> Const(Args&&... args);
 
 template <typename T, typename FwT = core::convert_to_flowable_t<T>>
-var<FwT> Var(const T& v = T());
+var<FwT> Var(const T& v);
+
+template <typename T,
+          typename... Args,
+          typename = core::enable_if_flowable_t<T>>
+var<T> Var(Args&&... args);
 
 template <typename T> val<T> Curr(ref<T> x);
 
