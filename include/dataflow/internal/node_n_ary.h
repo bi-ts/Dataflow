@@ -40,7 +40,8 @@ class node_n_ary final : public node_t<T>, public Policy
 public:
   static ref create(const Policy& policy, bool eager, ref_t<Xs>... xs)
   {
-    DATAFLOW___CHECK_PRECONDITION(check_all(xs.template is_of_type<Xs>()...));
+    DATAFLOW___CHECK_PRECONDITION(
+      check_all_of(xs.template is_of_type<Xs>()...));
 
     const std::array<node_id, sizeof...(Xs)> args = {{xs.id()...}};
 

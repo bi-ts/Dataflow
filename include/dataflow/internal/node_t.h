@@ -108,7 +108,7 @@ private:
   T value_;
 };
 
-template <typename... Bs> static bool check_all(Bs... bs)
+template <typename... Bs> static bool check_all_of(Bs... bs)
 {
   const auto values = {bs...};
 

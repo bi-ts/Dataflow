@@ -43,8 +43,8 @@ class node_selector_activator final : public node_t<X>, Policy
 public:
   static ref create(const Policy& policy, const ref& x, ref_t<Xs>... xs)
   {
-    DATAFLOW___CHECK_PRECONDITION(
-      check_all(x.template is_of_type<X>(), xs.template is_of_type<Xs>()...));
+    DATAFLOW___CHECK_PRECONDITION(check_all_of(
+      x.template is_of_type<X>(), xs.template is_of_type<Xs>()...));
 
     if (is_prev(x.id()))
       throw std::logic_error("Field selection is not allowed on 'prev' values");
