@@ -32,7 +32,7 @@ namespace dataflow_test
 template <typename T> class box final
 {
 private:
-  struct impl
+  struct data
   {
     ref<T> boxed;
   };
@@ -41,13 +41,13 @@ public:
   box() = default;
 
   explicit box(const ref<T>& value)
-  : p_impl_(std::make_shared<impl>(impl{value}))
+  : p_data_(std::make_shared<data>(data{value}))
   {
   }
 
   bool operator==(const box& other) const
   {
-    return p_impl_ == other.p_impl_;
+    return p_data_ == other.p_data_;
   }
 
   bool operator!=(const box& other) const
@@ -71,7 +71,7 @@ public:
       }
       static const ref<T>& calculate(const box& v)
       {
-        return v.p_impl_->boxed;
+        return v.p_data_->boxed;
       }
     };
 
@@ -89,7 +89,7 @@ public:
       }
       const ref<T>& calculate(const box& x, bool b)
       {
-        return b ? x.p_impl_->boxed : d_;
+        return b ? x.p_data_->boxed : d_;
       }
 
       ref<T> d_;
@@ -99,7 +99,7 @@ public:
   }
 
 private:
-  std::shared_ptr<impl> p_impl_;
+  std::shared_ptr<data> p_data_;
 };
 
 template <typename T> box<T> make_box(const ref<T>& value)
