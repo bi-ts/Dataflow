@@ -95,6 +95,11 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
   std::chrono::steady_clock::time_point deactivated;
   std::chrono::steady_clock::time_point destructed;
 
+  std::size_t constructed_memory_consumption;
+  std::size_t activated_memory_consumption;
+  std::size_t deactivated_memory_consumption;
+  std::size_t destructed_memory_consumption;
+
   {
     start = std::chrono::steady_clock::now();
 
@@ -102,11 +107,13 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
     auto y = constructor(exponent, x);
 
     constructed = std::chrono::steady_clock::now();
+    constructed_memory_consumption = introspect::memory_consumption();
 
     {
       auto r = Curr(y);
 
       activated = std::chrono::steady_clock::now();
+      activated_memory_consumption = introspect::memory_consumption();
 
       initial_value = r();
 
@@ -120,9 +127,11 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
     }
 
     deactivated = std::chrono::steady_clock::now();
+    deactivated_memory_consumption = introspect::memory_consumption();
   }
 
   destructed = std::chrono::steady_clock::now();
+  destructed_memory_consumption = introspect::memory_consumption();
 
   std::cout << "Initial value is:                " << initial_value
             << std::endl;
@@ -153,7 +162,17 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
             << static_cast<std::size_t>(std::pow(2, exponent) /
                                         Duration(activated, updated)) /
                  interactive_fps
+            << std::endl
             << std::endl;
+
+  std::cout << "Memory consumption (constructed):  "
+            << constructed_memory_consumption << std::endl;
+  std::cout << "Memory consumption (activated):    "
+            << activated_memory_consumption << std::endl;
+  std::cout << "Memory consumption (deactivated):  "
+            << deactivated_memory_consumption << std::endl;
+  std::cout << "Memory consumption (destructed):   "
+            << destructed_memory_consumption << std::endl;
 
   std::cout << std::endl;
 }
