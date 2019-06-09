@@ -77,6 +77,18 @@ const double Duration(std::chrono::steady_clock::time_point start,
          1000000.0;
 }
 
+template <typename T> struct benchmark_check_points
+{
+  T start;
+  T constructed;
+  T activated;
+  T updated;
+  T deactivated;
+  T second_time_activated;
+  T second_time_deactivated;
+  T destructed;
+};
+
 void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
 {
   Engine engine;
@@ -88,50 +100,54 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
   int last_value = 0;
   int total_nodes_count = 0;
 
-  std::chrono::steady_clock::time_point start;
-  std::chrono::steady_clock::time_point constructed;
-  std::chrono::steady_clock::time_point activated;
-  std::chrono::steady_clock::time_point updated;
-  std::chrono::steady_clock::time_point deactivated;
-  std::chrono::steady_clock::time_point destructed;
-
-  std::size_t constructed_memory_consumption;
-  std::size_t activated_memory_consumption;
-  std::size_t deactivated_memory_consumption;
-  std::size_t destructed_memory_consumption;
+  benchmark_check_points<std::size_t> memory_consumption;
+  benchmark_check_points<std::chrono::steady_clock::time_point> time_points;
 
   {
-    start = std::chrono::steady_clock::now();
+    time_points.start = std::chrono::steady_clock::now();
+    memory_consumption.start = introspect::memory_consumption();
 
     auto x = Var<int>(1);
     auto y = constructor(exponent, x);
 
-    constructed = std::chrono::steady_clock::now();
-    constructed_memory_consumption = introspect::memory_consumption();
+    time_points.constructed = std::chrono::steady_clock::now();
+    memory_consumption.constructed = introspect::memory_consumption();
 
     {
       auto r = Curr(y);
 
-      activated = std::chrono::steady_clock::now();
-      activated_memory_consumption = introspect::memory_consumption();
+      time_points.activated = std::chrono::steady_clock::now();
+      memory_consumption.activated = introspect::memory_consumption();
 
       initial_value = r();
 
       x = 42;
 
-      updated = std::chrono::steady_clock::now();
+      time_points.updated = std::chrono::steady_clock::now();
+      memory_consumption.updated = introspect::memory_consumption();
 
       last_value = r();
 
       total_nodes_count = introspect::num_vertices();
     }
 
-    deactivated = std::chrono::steady_clock::now();
-    deactivated_memory_consumption = introspect::memory_consumption();
+    time_points.deactivated = std::chrono::steady_clock::now();
+    memory_consumption.deactivated = introspect::memory_consumption();
+
+    {
+      auto r = Curr(y);
+
+      time_points.second_time_activated = std::chrono::steady_clock::now();
+      memory_consumption.second_time_activated =
+        introspect::memory_consumption();
+    }
+    time_points.second_time_deactivated = std::chrono::steady_clock::now();
+    memory_consumption.second_time_deactivated =
+      introspect::memory_consumption();
   }
 
-  destructed = std::chrono::steady_clock::now();
-  destructed_memory_consumption = introspect::memory_consumption();
+  time_points.destructed = std::chrono::steady_clock::now();
+  memory_consumption.destructed = introspect::memory_consumption();
 
   std::cout << "Initial value is:                " << initial_value
             << std::endl;
@@ -142,37 +158,59 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
             << std::endl
             << std::endl;
 
-  std::cout << "Construction duration (seconds): "
-            << Duration(start, constructed) << std::endl;
+  std::cout << "Construction duration (seconds):      "
+            << Duration(time_points.start, time_points.constructed)
+            << std::endl;
 
-  std::cout << "Activation duration (seconds):   "
-            << Duration(constructed, activated) << std::endl;
+  std::cout << "Activation duration (seconds):        "
+            << Duration(time_points.constructed, time_points.activated)
+            << std::endl;
 
-  std::cout << "Update duration (seconds):       "
-            << Duration(activated, updated) << std::endl;
+  std::cout << "Update duration (seconds):            "
+            << Duration(time_points.activated, time_points.updated)
+            << std::endl;
 
-  std::cout << "Deactivation duration (seconds): "
-            << Duration(updated, deactivated) << std::endl;
+  std::cout << "Deactivation duration (seconds):      "
+            << Duration(time_points.updated, time_points.deactivated)
+            << std::endl;
 
-  std::cout << "Destruction duration (seconds):  "
-            << Duration(updated, destructed) << std::endl
+  std::cout << "Second activation duration (seconds): "
+            << Duration(time_points.deactivated,
+                        time_points.second_time_activated)
+            << std::endl;
+
+  std::cout << "Second deactivation duration (seconds): "
+            << Duration(time_points.second_time_activated,
+                        time_points.second_time_deactivated)
+            << std::endl;
+
+  std::cout << "Destruction duration (seconds):       "
+            << Duration(time_points.second_time_deactivated,
+                        time_points.destructed)
+            << std::endl
             << std::endl;
 
   std::cout << "Interactive updates (" << interactive_fps << " FPS):    "
-            << static_cast<std::size_t>(std::pow(2, exponent) /
-                                        Duration(activated, updated)) /
+            << static_cast<std::size_t>(
+                 std::pow(2, exponent) /
+                 Duration(time_points.activated, time_points.updated)) /
                  interactive_fps
             << std::endl
             << std::endl;
 
-  std::cout << "Memory consumption (constructed):  "
-            << constructed_memory_consumption << std::endl;
-  std::cout << "Memory consumption (activated):    "
-            << activated_memory_consumption << std::endl;
-  std::cout << "Memory consumption (deactivated):  "
-            << deactivated_memory_consumption << std::endl;
-  std::cout << "Memory consumption (destructed):   "
-            << destructed_memory_consumption << std::endl;
+  std::cout << "Memory consumption (bytes)" << std::endl;
+  std::cout << "Initial:      " << (memory_consumption.start) << std::endl;
+  std::cout << "Constructed:  " << (memory_consumption.constructed)
+            << std::endl;
+  std::cout << "Activated:    " << (memory_consumption.activated) << std::endl;
+  std::cout << "Updated:      " << (memory_consumption.updated) << std::endl;
+  std::cout << "Deactivated:  " << (memory_consumption.deactivated)
+            << std::endl;
+  std::cout << "Activated:    " << (memory_consumption.second_time_activated)
+            << std::endl;
+  std::cout << "Deactivated:  " << (memory_consumption.second_time_deactivated)
+            << std::endl;
+  std::cout << "Destructed:   " << (memory_consumption.destructed) << std::endl;
 
   std::cout << std::endl;
 }
