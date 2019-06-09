@@ -158,33 +158,34 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
             << std::endl
             << std::endl;
 
-  std::cout << "Construction duration (seconds):      "
+  std::cout << "Durations (seconds)" << std::endl;
+  std::cout << "Construction: "
             << Duration(time_points.start, time_points.constructed)
             << std::endl;
 
-  std::cout << "Activation duration (seconds):        "
+  std::cout << "Activation*:  "
             << Duration(time_points.constructed, time_points.activated)
             << std::endl;
 
-  std::cout << "Update duration (seconds):            "
+  std::cout << "Update:       "
             << Duration(time_points.activated, time_points.updated)
             << std::endl;
 
-  std::cout << "Deactivation duration (seconds):      "
+  std::cout << "Deactivation: "
             << Duration(time_points.updated, time_points.deactivated)
             << std::endl;
 
-  std::cout << "Second activation duration (seconds): "
+  std::cout << "Activation*:  "
             << Duration(time_points.deactivated,
                         time_points.second_time_activated)
             << std::endl;
 
-  std::cout << "Second deactivation duration (seconds): "
+  std::cout << "Deactivation: "
             << Duration(time_points.second_time_activated,
                         time_points.second_time_deactivated)
             << std::endl;
 
-  std::cout << "Destruction duration (seconds):       "
+  std::cout << "Destruction:  "
             << Duration(time_points.second_time_deactivated,
                         time_points.destructed)
             << std::endl
@@ -199,20 +200,20 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
             << std::endl;
 
   std::cout << "Memory consumption (bytes)" << std::endl;
-  std::cout << "Initial:      " << (memory_consumption.start) << std::endl;
-  std::cout << "Constructed:  " << (memory_consumption.constructed)
+  std::cout << "Initial:     " << (memory_consumption.start) << std::endl;
+  std::cout << "Constructed: " << (memory_consumption.constructed) << std::endl;
+  std::cout << "Activated*:  " << (memory_consumption.activated) << std::endl;
+  std::cout << "Updated:     " << (memory_consumption.updated) << std::endl;
+  std::cout << "Deactivated: " << (memory_consumption.deactivated) << std::endl;
+  std::cout << "Activated*:  " << (memory_consumption.second_time_activated)
             << std::endl;
-  std::cout << "Activated:    " << (memory_consumption.activated) << std::endl;
-  std::cout << "Updated:      " << (memory_consumption.updated) << std::endl;
-  std::cout << "Deactivated:  " << (memory_consumption.deactivated)
+  std::cout << "Deactivated: " << (memory_consumption.second_time_deactivated)
             << std::endl;
-  std::cout << "Activated:    " << (memory_consumption.second_time_activated)
+  std::cout << "Destructed:  " << (memory_consumption.destructed) << std::endl
             << std::endl;
-  std::cout << "Deactivated:  " << (memory_consumption.second_time_deactivated)
-            << std::endl;
-  std::cout << "Destructed:   " << (memory_consumption.destructed) << std::endl;
 
-  std::cout << std::endl;
+  std::cout << "*Activation operation also includes initial update" << std::endl
+            << std::endl;
 }
 
 int main()
