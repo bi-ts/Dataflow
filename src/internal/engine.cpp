@@ -341,6 +341,8 @@ engine::update_node_state_prev(vertex_descriptor v, bool initialized)
   const auto e_init = out_edge_at_(u, 1);
   const auto e_regular = out_edge_at_(u, 2);
 
+  auto status = update_status::nothing;
+
   if (!initialized)
   {
     CHECK_PRECONDITION(!is_active_data_dependency(e_init));
@@ -348,8 +350,9 @@ engine::update_node_state_prev(vertex_descriptor v, bool initialized)
     activate_subgraph_(e_init);
 
     CHECK_POSTCONDITION(is_active_data_dependency(e_init));
+    CHECK_POSTCONDITION(!is_active_data_dependency(e_regular));
 
-    return std::make_pair(graph_[u].p_node, update_status::updated_next);
+    status = update_status::updated_next;
   }
   else
   {
@@ -357,13 +360,15 @@ engine::update_node_state_prev(vertex_descriptor v, bool initialized)
     {
       deactivate_subgraph_(e_init);
       activate_subgraph_(e_regular);
+
+      status = update_status::updated;
     }
 
     CHECK_POSTCONDITION(!is_active_data_dependency(e_init));
     CHECK_POSTCONDITION(is_active_data_dependency(e_regular));
   }
 
-  return std::make_pair(graph_[u].p_node, update_status::nothing);
+  return std::make_pair(graph_[u].p_node, status);
 }
 
 engine::engine()

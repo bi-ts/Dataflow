@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -104,6 +104,23 @@ BOOST_AUTO_TEST_CASE(test_regression_Or_num_vertices)
   const auto a = Or(Var(true), Var(true));
 
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 6);
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_StateMachine_independent_on_previous_state)
+{
+  Engine engine;
+
+  const auto x = Var<int>(1);
+
+  const auto tf = [=](const ref<int>&) { return x; };
+
+  const auto y = Main([=](const Time& t0) { return StateMachine(0, tf, t0); });
+
+  BOOST_CHECK_EQUAL(y(), 1);
+
+  x = 33;
+
+  BOOST_CHECK_EQUAL(y(), 33);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
