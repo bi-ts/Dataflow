@@ -972,6 +972,26 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
                     "state = 0;state = 1;state = 2;state = 3;state = 4;");
 }
 
+BOOST_AUTO_TEST_CASE(
+  test_StateMachine_transition_function_requires_initialization)
+{
+  Engine engine;
+
+  const auto x = Var<int>(1);
+
+  const auto tf = [=](const ref<int>&) {
+    return [=](const Time& t0) { return x(t0); };
+  };
+
+  const auto y = Main([=](const Time& t0) { return StateMachine(0, tf, t0); });
+
+  BOOST_CHECK_EQUAL(y(), 1);
+
+  x = 33;
+
+  BOOST_CHECK_EQUAL(y(), 1);
+}
+
 BOOST_AUTO_TEST_CASE(test_StateMachine_selector_on_prev_throws)
 {
   Engine engine;

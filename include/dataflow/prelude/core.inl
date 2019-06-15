@@ -102,6 +102,28 @@ dataflow::ref<T> dataflow::core::make_argument(const ref<T>& x)
   return x;
 }
 
+template <typename F, typename T, typename>
+dataflow::ref<T> dataflow::core::invoke_transition_function(const F& f,
+                                                            const ref<T>& sp,
+                                                            const Time& t0)
+{
+  struct helper
+  {
+    static ref<T> init(const ref<T>& x, const Time&)
+    {
+      return x;
+    }
+
+    static ref<T> init(const std::function<ref<T>(const Time&)>& f,
+                       const Time& t0)
+    {
+      return f(t0);
+    }
+  };
+
+  return helper::init(f(sp), t0);
+}
+
 template <typename F, typename X, typename T>
 dataflow::ref<T>
 dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)
@@ -315,7 +337,7 @@ dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 {
   const ref<T> sp = ref<T>(internal::node_state_prev<T>::create());
 
-  const ref<T> s = tf(sp);
+  const auto s = core::invoke_transition_function(tf, sp, t0);
 
   return ref<T>(
     internal::node_state<T>::create(sp, core::make_argument(s0), s));

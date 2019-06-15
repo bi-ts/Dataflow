@@ -189,7 +189,7 @@ using function_of_time_type_t = typename function_of_time_type<F>::type;
 
 namespace detail
 {
-template <typename F, typename T> struct transition_function_result
+template <typename F, typename T> struct type_1_transition_function_result
 {
 private:
   template <typename FF,
@@ -203,11 +203,28 @@ private:
 public:
   using type = decltype(test_(std::declval<F>()));
 };
+
+template <typename F, typename T> struct type_2_transition_function_result
+{
+private:
+  template <
+    typename FF,
+    typename = std::enable_if<std::is_same<
+      function_of_time_type_t<typename std::result_of<FF(const ref<T>&)>::type>,
+      T>::value>>
+  static T test_(const FF&);
+
+  static void test_(...);
+
+public:
+  using type = decltype(test_(std::declval<F>()));
+};
 }
 
 template <typename F, typename T>
-using is_transition_function =
-  is_flowable<typename detail::transition_function_result<F, T>::type>;
+using is_transition_function = internal::std17::disjunction<
+  is_flowable<typename detail::type_1_transition_function_result<F, T>::type>,
+  is_flowable<typename detail::type_2_transition_function_result<F, T>::type>>;
 
 template <typename F, typename T, typename U = T>
 using enable_if_transition_function =
@@ -230,6 +247,11 @@ template <typename T, typename FwT = convert_to_flowable_t<T>>
 ref<FwT> make_argument(const T& v);
 
 template <typename T> ref<T> make_argument(const ref<T>& x);
+
+template <typename F,
+          typename T,
+          typename = enable_if_transition_function_t<F, T>>
+ref<T> invoke_transition_function(const F& f, const ref<T>& sp, const Time& t0);
 
 template <typename F,
           typename X,
