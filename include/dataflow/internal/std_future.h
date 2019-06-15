@@ -68,6 +68,20 @@ struct conjunction<Arg, Args...>
 {
 };
 
+template <typename...> struct disjunction : std::false_type
+{
+};
+
+template <typename Arg> struct disjunction<Arg> : Arg
+{
+};
+
+template <typename Arg, typename... Args>
+struct disjunction<Arg, Args...>
+: std14::conditional_t<static_cast<bool>(Arg::value), Arg, disjunction<Args...>>
+{
+};
+
 template <typename B>
 struct negation : bool_constant<!static_cast<bool>(B::value)>
 {
