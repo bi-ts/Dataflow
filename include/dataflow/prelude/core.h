@@ -24,6 +24,7 @@
 #include "dataflow++_export.h"
 
 #include "../internal/ref.h"
+#include "../internal/std_future.h"
 
 #include <functional>
 #include <string>
@@ -83,14 +84,15 @@ namespace core
 
 template <typename T>
 struct is_flowable
-: std::integral_constant<
-    bool,
-    std::is_default_constructible<T>::value &&
-      std::is_copy_constructible<T>::value &&
-      std::is_copy_assignable<T>::value && internal::is_streamable<T>::value &&
-      internal::is_equality_comparable<T>::value &&
-      !std::is_base_of<internal::ref, T>::value && !std::is_pointer<T>::value &&
-      !std::is_reference<T>::value>
+: internal::std17::conjunction<
+    std::is_default_constructible<T>,
+    std::is_copy_constructible<T>,
+    std::is_copy_assignable<T>,
+    internal::is_streamable<T>,
+    internal::is_equality_comparable<T>,
+    internal::std17::negation<std::is_base_of<internal::ref, T>>,
+    internal::std17::negation<std::is_pointer<T>>,
+    internal::std17::negation<std::is_reference<T>>>
 {
 };
 

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,6 +17,8 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
+#include <type_traits>
 
 namespace dataflow
 {
@@ -43,6 +45,33 @@ template <std::size_t... Is> struct index_sequence_builder<0, Is...>
 
 template <std::size_t N>
 using make_index_sequence = typename detail::index_sequence_builder<N>::type;
+
+template <bool B, class T, class F>
+using conditional_t = typename std::conditional<B, T, F>::type;
+}
+
+namespace std17
+{
+template <bool B> using bool_constant = std::integral_constant<bool, B>;
+
+template <typename...> struct conjunction : std::true_type
+{
+};
+
+template <typename Arg> struct conjunction<Arg> : Arg
+{
+};
+
+template <typename Arg, typename... Args>
+struct conjunction<Arg, Args...>
+: std14::conditional_t<static_cast<bool>(Arg::value), conjunction<Args...>, Arg>
+{
+};
+
+template <typename B>
+struct negation : bool_constant<!static_cast<bool>(B::value)>
+{
+};
 }
 }
 }
