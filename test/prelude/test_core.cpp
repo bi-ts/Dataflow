@@ -458,6 +458,19 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
   BOOST_CHECK_EQUAL(f(), 20);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_If_var_str_strliteral, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+
+  auto f = *If(x, std::string("str"), "strliteral");
+
+  BOOST_CHECK_EQUAL(f(), "str");
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), "strliteral");
+}
+
 BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
 {
   auto x = Var<bool>(true);

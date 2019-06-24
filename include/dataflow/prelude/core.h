@@ -241,6 +241,19 @@ using argument_data_type = typename std::
 template <typename T>
 using argument_data_type_t = typename argument_data_type<T>::type;
 
+template <typename T,
+          typename U,
+          typename V = typename argument_data_type<T>::type>
+using enable_for_argument_data_type =
+  std::enable_if<std::is_same<typename argument_data_type<T>::type, U>::value,
+                 V>;
+
+template <typename T,
+          typename U,
+          typename V = typename argument_data_type<T>::type>
+using enable_for_argument_data_type_t =
+  typename enable_for_argument_data_type<T, U, V>::type;
+
 // Utility functions
 
 template <typename T, typename FwT = convert_to_flowable_t<T>>
@@ -343,14 +356,11 @@ template <typename T> val<T> operator*(ref<T> x);
 
 // Conditional functions
 
-template <typename T>
-ref<T> If(const ref<bool>& x, const ref<T>& y, const ref<T>& z);
-template <typename T>
-ref<T> If(const ref<bool>& x, const T& y, const ref<T>& z);
-template <typename T>
-ref<T> If(const ref<bool>& x, const ref<T>& y, const T& z);
-template <typename T, typename = core::convert_to_flowable_t<T>>
-ref<T> If(const ref<bool>& x, const T& y, const T& z);
+template <typename T,
+          typename U,
+          typename FwT = core::argument_data_type_t<T>,
+          typename = core::enable_for_argument_data_type_t<U, FwT>>
+ref<FwT> If(const ref<bool>& x, const T& y, const U& z);
 
 template <typename F,
           typename G,

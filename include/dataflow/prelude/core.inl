@@ -279,30 +279,14 @@ template <typename T> dataflow::val<T> dataflow::operator*(ref<T> x)
   return Curr(x);
 }
 
-template <typename T>
-dataflow::ref<T>
-dataflow::If(const ref<bool>& x, const ref<T>& y, const ref<T>& z)
+template <typename T, typename U, typename FwT, typename>
+dataflow::ref<FwT> dataflow::If(const ref<bool>& x, const T& y, const U& z)
 {
-  return ref<T>(internal::node_if<T>::create(
-    internal::node_if_activator::create(x), y, z, false));
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const ref<T>& z)
-{
-  return If(x, Const<T>(y), z);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const ref<T>& y, const T& z)
-{
-  return If(x, y, Const<T>(z));
-}
-
-template <typename T, typename>
-dataflow::ref<T> dataflow::If(const ref<bool>& x, const T& y, const T& z)
-{
-  return If(x, Const<T>(y), Const<T>(z));
+  return ref<FwT>(internal::node_if<FwT>::create(
+    internal::node_if_activator::create(core::make_argument(x)),
+    core::make_argument(y),
+    core::make_argument(z),
+    false));
 }
 
 template <typename F, typename G, typename T>
