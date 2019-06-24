@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "std_future.h"
+
 #include <ostream>
 #include <type_traits>
 
@@ -46,10 +48,10 @@ template <typename T> struct is_equality_comparable
 {
 private:
   template <typename U>
-  static auto test_(int) -> decltype(
-    std::is_same<bool, decltype(std::declval<U>() == std::declval<U>())>::value,
-    std::is_same<bool, decltype(std::declval<U>() != std::declval<U>())>::value,
-    std::true_type());
+  static std17::conjunction<
+    std::is_convertible<decltype(std::declval<U>() == std::declval<U>()), bool>,
+    std::is_convertible<decltype(std::declval<U>() != std::declval<U>()), bool>>
+  test_(int);
 
   template <typename> static std::false_type test_(...);
 

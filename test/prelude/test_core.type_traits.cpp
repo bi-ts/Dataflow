@@ -143,6 +143,41 @@ template <> bool test_type_traits<no_inequality_test>::is_equality_comparable()
   return false;
 }
 
+struct bad_equality_test
+{
+  std::string operator==(const bad_equality_test&) const;
+  bool operator!=(const bad_equality_test&) const;
+
+  friend std::ostream& operator<<(std::ostream&, const bad_equality_test&);
+};
+
+template <> bool test_type_traits<bad_equality_test>::is_equality_comparable()
+{
+  return false;
+}
+
+struct bad_inequality_test
+{
+  bool operator==(const bad_inequality_test&) const;
+  std::string operator!=(const bad_inequality_test&) const;
+
+  friend std::ostream& operator<<(std::ostream&, const bad_inequality_test&);
+};
+
+template <> bool test_type_traits<bad_inequality_test>::is_equality_comparable()
+{
+  return false;
+}
+
+struct convertible_to_bool_equality_test
+{
+  int operator==(const convertible_to_bool_equality_test&) const;
+  int operator!=(const convertible_to_bool_equality_test&) const;
+
+  friend std::ostream& operator<<(std::ostream&,
+                                  const convertible_to_bool_equality_test&);
+};
+
 struct ref_based : internal::ref
 {
   ref_based();
@@ -168,6 +203,8 @@ typedef boost::mpl::list<no_default_constructor,
                          no_stream_output,
                          no_equality_test,
                          no_inequality_test,
+                         bad_equality_test,
+                         bad_inequality_test,
                          ref_based>
   not_flowable_types;
 
@@ -192,6 +229,12 @@ BOOST_AUTO_TEST_CASE(test_is_flowable)
   BOOST_CHECK_EQUAL(core::is_flowable<int>::value, true);
   BOOST_CHECK_EQUAL(core::is_flowable<float>::value, true);
   BOOST_CHECK_EQUAL(core::is_flowable<std::string>::value, true);
+
+  BOOST_CHECK_EQUAL(
+    internal::is_equality_comparable<convertible_to_bool_equality_test>::value,
+    true);
+  BOOST_CHECK_EQUAL(core::is_flowable<convertible_to_bool_equality_test>::value,
+                    true);
 
   BOOST_CHECK_EQUAL(core::is_flowable<const int*>::value, false);
   BOOST_CHECK_EQUAL(core::is_flowable<const int&>::value, false);
