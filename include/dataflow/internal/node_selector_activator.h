@@ -61,7 +61,6 @@ private:
   {
   }
 
-  // TODO: move to utilities
   template <typename... Args, std::size_t... Is>
   ref calculate_(const node** p_args, const std14::index_sequence<Is...>&)
   {
