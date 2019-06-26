@@ -300,5 +300,23 @@ BOOST_AUTO_TEST_CASE(test_is_transition_function)
   BOOST_CHECK_EQUAL((core::is_transition_function<int, int>::value), false);
 }
 
+BOOST_AUTO_TEST_CASE(test_patch_type)
+{
+  struct custom_patch_type
+  {
+  };
+
+  struct custom_type
+  {
+    using patch_type = custom_patch_type;
+  };
+
+  BOOST_CHECK(
+    (std::is_same<core::patch_type_t<custom_type>, custom_patch_type>::value));
+
+  BOOST_CHECK(
+    (std::is_same<core::patch_type_t<int>, core::generic_patch<int>>::value));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
