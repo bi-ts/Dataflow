@@ -79,6 +79,43 @@ public:
 
 namespace core
 {
+template <typename T> class generic_patch
+{
+public:
+  using data_type = T;
+
+public:
+  explicit generic_patch(const T& curr);
+
+  T apply(const T&) const;
+
+private:
+  T curr_;
+};
+
+template <typename T, typename Patch = generic_patch<T>> class diff final
+{
+public:
+  using data_type = T;
+  using patch_type = Patch;
+
+  static_assert(std::is_same<typename Patch::data_type, T>::value,
+                "Wrong patch data type");
+
+public:
+  explicit diff(const T& curr, const T& prev, const Patch& patch);
+
+  explicit diff(const T& curr, const T& prev);
+
+  const T& curr() const;
+  const T& prev() const;
+  const Patch& patch() const;
+
+private:
+  T curr_;
+  T prev_;
+  Patch patch_;
+};
 
 // Type traits
 
@@ -254,6 +291,27 @@ template <typename T,
 using enable_for_argument_data_type_t =
   typename enable_for_argument_data_type<T, U, V>::type;
 
+template <typename T> struct patch_type
+{
+private:
+  template <typename TT, typename Patch = typename TT::patch_type>
+  static Patch test_(const TT&);
+
+  static generic_patch<T> test_(...);
+
+public:
+  using type = decltype(test_(std::declval<T>()));
+};
+
+template <typename T> using patch_type_t = typename patch_type<T>::type;
+
+template <typename T> struct diff_type
+{
+  using type = diff<T, patch_type_t<T>>;
+};
+
+template <typename T> using diff_type_t = typename diff_type<T>::type;
+
 // Utility functions
 
 template <typename T, typename FwT = convert_to_flowable_t<T>>
@@ -323,6 +381,20 @@ template <typename Policy,
           typename T = data_type_t<decltype(std::declval<Policy>().calculate(
             std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
+
+template <typename Policy,
+          typename X,
+          typename... Xs,
+          typename T = decltype(std::declval<Policy>().calculate(
+            std::declval<X>(), std::declval<Xs>()...))>
+ref<T> LiftPatcher(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+
+template <typename Policy,
+          typename X,
+          typename... Xs,
+          typename T = decltype(std::declval<Policy>().calculate(
+            std::declval<X>(), std::declval<Xs>()...))>
+ref<T> LiftPatcher(const ref<X>& x, const ref<Xs>&... xs);
 }
 
 // Basic functions

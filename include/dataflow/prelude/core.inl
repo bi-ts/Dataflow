@@ -27,6 +27,7 @@
 #include "../internal/node_if_activator.h"
 #include "../internal/node_main.h"
 #include "../internal/node_n_ary.h"
+#include "../internal/node_patcher_n_ary.h"
 #include "../internal/node_previous.h"
 #include "../internal/node_selector.h"
 #include "../internal/node_selector_activator.h"
@@ -85,6 +86,51 @@ template <typename T> const var<T>& var<T>::operator=(const T& v) const
   this->schedule_();
 
   return *this;
+}
+
+namespace core
+{
+template <typename T>
+generic_patch<T>::generic_patch(const T& curr)
+: curr_(curr)
+{
+}
+
+template <typename T> T generic_patch<T>::apply(const T&) const
+{
+  return curr_;
+}
+
+template <typename T, typename Patch>
+diff<T, Patch>::diff(const T& curr, const T& prev, const Patch& patch)
+: curr_(curr)
+, prev_(prev)
+, patch_(patch)
+{
+}
+
+template <typename T, typename Patch>
+diff<T, Patch>::diff(const T& curr, const T& prev)
+: curr_(curr)
+, prev_(prev)
+, patch_(curr)
+{
+}
+
+template <typename T, typename Patch> const T& diff<T, Patch>::curr() const
+{
+  return curr_;
+}
+
+template <typename T, typename Patch> const T& diff<T, Patch>::prev() const
+{
+  return prev_;
+}
+
+template <typename T, typename Patch> const Patch& diff<T, Patch>::patch() const
+{
+  return patch_;
+}
 }
 }
 
@@ -235,6 +281,28 @@ dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
                                               const ref<Xs>&... xs)
 {
   return LiftSelector(Policy(), x, xs...);
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftPatcher(const Policy& policy,
+                                             const ref<X>& x,
+                                             const ref<Xs>&... xs)
+{
+  return ref<T>(
+    internal::node_patcher_n_ary<Policy,
+                                 core::patch_type_t<T>,
+                                 core::diff_type_t<X>,
+                                 core::diff_type_t<Xs>...>::create(policy,
+                                                                   false,
+                                                                   x,
+                                                                   xs...));
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftPatcher(const ref<X>& x,
+                                             const ref<Xs>&... xs)
+{
+  return LiftPatcher(Policy(), x, xs...);
 }
 
 // Basic functions

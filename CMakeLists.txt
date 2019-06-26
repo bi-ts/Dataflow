@@ -61,6 +61,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/node_if_activator.h
   include/dataflow/internal/node_main.h
   include/dataflow/internal/node_n_ary.h
+  include/dataflow/internal/node_patcher_n_ary.h
   include/dataflow/internal/node_previous.h
   include/dataflow/internal/node_selector.h
   include/dataflow/internal/node_selector_activator.h
