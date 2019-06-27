@@ -290,6 +290,18 @@ BOOST_AUTO_TEST_CASE(test_is_transition_function)
     true);
 
   BOOST_CHECK_EQUAL(
+    (core::is_transition_function<
+      std::function<std::function<val<int>(const Time&)>(ref<int>)>,
+      int>::value),
+    true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_transition_function<
+      std::function<std::function<var<int>(const Time&)>(ref<int>)>,
+      int>::value),
+    true);
+
+  BOOST_CHECK_EQUAL(
     (core::is_transition_function<ref<int> (*)(ref<int>), int>::value), true);
 
   BOOST_CHECK_EQUAL(
