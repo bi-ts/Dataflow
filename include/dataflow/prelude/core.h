@@ -320,11 +320,6 @@ ref<FwT> make_argument(const T& v);
 template <typename T> ref<T> make_argument(const ref<T>& x);
 
 template <typename F,
-          typename T,
-          typename = enable_if_transition_function_t<F, T>>
-ref<T> invoke_transition_function(const F& f, const ref<T>& sp, const Time& t0);
-
-template <typename F,
           typename X,
           typename T = typename std::result_of<F(const X&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, F func);
