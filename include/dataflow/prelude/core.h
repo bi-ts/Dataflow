@@ -85,7 +85,7 @@ public:
   using data_type = T;
 
 public:
-  explicit generic_patch(const T& curr);
+  explicit generic_patch(const T& curr, const T& prev);
 
   T apply(const T&) const;
 

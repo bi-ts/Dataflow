@@ -91,7 +91,7 @@ template <typename T> const var<T>& var<T>::operator=(const T& v) const
 namespace core
 {
 template <typename T>
-generic_patch<T>::generic_patch(const T& curr)
+generic_patch<T>::generic_patch(const T& curr, const T& prev)
 : curr_(curr)
 {
 }
@@ -113,7 +113,7 @@ template <typename T, typename Patch>
 diff<T, Patch>::diff(const T& curr, const T& prev)
 : curr_(curr)
 , prev_(prev)
-, patch_(curr)
+, patch_(curr, prev)
 {
 }
 

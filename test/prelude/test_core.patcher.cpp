@@ -55,12 +55,8 @@ struct patch
 {
   using data_type = data;
 
-  explicit patch()
-  {
-  }
-
-  explicit patch(data)
-  : diff()
+  explicit patch(const data& curr, const data& prev)
+  : diff(curr.value - prev.value)
   {
   }
 
@@ -200,13 +196,13 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
 
     static int calculate(int v)
     {
-      return 0;
+      return 5 * v;
     }
 
     static core::generic_patch<int>
     prepare_patch(const core::diff_type_t<int>& v)
     {
-      return core::generic_patch<int>(v.curr() - v.prev());
+      return core::generic_patch<int>(5 * v.curr(), 5 * v.prev());
     }
   };
 
@@ -214,15 +210,15 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
   auto y = core::LiftPatcher<policy>(x);
   auto z = *y;
 
-  BOOST_CHECK_EQUAL(z(), 0);
+  BOOST_CHECK_EQUAL(z(), 110);
 
   x = 64;
 
-  BOOST_CHECK_EQUAL(z(), 42);
+  BOOST_CHECK_EQUAL(z(), 320);
 
   x = 0;
 
-  BOOST_CHECK_EQUAL(z(), -64);
+  BOOST_CHECK_EQUAL(z(), 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
