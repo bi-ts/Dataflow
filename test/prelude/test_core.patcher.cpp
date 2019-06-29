@@ -73,12 +73,51 @@ struct patch
   int diff;
 };
 
-BOOST_AUTO_TEST_SUITE(test_core_patcher)
-
-BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
+class patcher_test_counters
 {
-  Engine engine;
+public:
+  explicit patcher_test_counters()
+  : calculate_counter_()
+  , prepare_patch_counter_()
+  {
+  }
 
+  patcher_test_counters(int calculate_counter, int prepare_patch_counter)
+  : calculate_counter_(calculate_counter)
+  , prepare_patch_counter_(prepare_patch_counter)
+  {
+  }
+
+  void inc_calculate_counter()
+  {
+    ++calculate_counter_;
+  }
+
+  void inc_prepare_patch_counter()
+  {
+    ++prepare_patch_counter_;
+  }
+
+  bool operator==(const patcher_test_counters& other) const
+  {
+    return calculate_counter_ == other.calculate_counter_ &&
+           prepare_patch_counter_ == other.prepare_patch_counter_;
+  }
+
+  friend std::ostream& operator<<(std::ostream& out,
+                                  const patcher_test_counters& value)
+  {
+    return out << "{" << value.calculate_counter_ << ", "
+               << value.prepare_patch_counter_ << "}";
+  }
+
+private:
+  int calculate_counter_;
+  int prepare_patch_counter_;
+};
+
+ref<data> MakeData(patcher_test_counters& counters, ref<int> x)
+{
   struct make_data_policy
   {
     static std::string label()
@@ -88,20 +127,25 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
 
     data calculate(int v)
     {
-      ++calculate_counter;
+      counters.inc_calculate_counter();
       return data{v};
     }
 
     patch prepare_patch(const core::diff_type_t<int>& v)
     {
-      ++prepare_patch_counter;
+      counters.inc_prepare_patch_counter();
       return patch{v.curr() - v.prev()};
     }
 
-    int& calculate_counter;
-    int& prepare_patch_counter;
+    patcher_test_counters& counters;
   };
 
+  return core::LiftPatcher(make_data_policy{counters}, x);
+}
+
+ref<data>
+TransformData(patcher_test_counters& counters, ref<data> x, ref<int> y)
+{
   struct transform_data_policy
   {
     static std::string label()
@@ -111,75 +155,63 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
 
     data calculate(data v, int u)
     {
-      ++calculate_counter;
+      counters.inc_calculate_counter();
       return data{v.value + u};
     }
 
     patch prepare_patch(const core::diff_type_t<data>& v,
                         const core::diff_type_t<int>& u)
     {
-      ++prepare_patch_counter;
+      counters.inc_prepare_patch_counter();
       return patch{v.patch().diff + (u.curr() - u.prev())};
     }
 
-    int& calculate_counter;
-    int& prepare_patch_counter;
+    patcher_test_counters& counters;
   };
 
-  int make_data_calculate_counter = 0;
-  int make_data_prepare_patch_counter = 0;
+  return core::LiftPatcher(transform_data_policy{counters}, x, y);
+}
 
-  int transform_data_calculate_counter = 0;
-  int transform_data_prepare_patch_counter = 0;
+BOOST_AUTO_TEST_SUITE(test_core_patcher)
+
+BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
+{
+  Engine engine;
+
+  patcher_test_counters make_data_counters;
+  patcher_test_counters transform_data_counters;
 
   auto x = Var<int>(22);
   auto y = Var<int>(2);
 
-  auto a = core::LiftPatcher(make_data_policy{make_data_calculate_counter,
-                                              make_data_prepare_patch_counter},
-                             x);
+  auto a = MakeData(make_data_counters, x);
+  auto b = TransformData(transform_data_counters, a, y);
 
-  auto b = core::LiftPatcher(
-    transform_data_policy{transform_data_calculate_counter,
-                          transform_data_prepare_patch_counter},
-    a,
-    y);
-
-  BOOST_CHECK_EQUAL(make_data_calculate_counter, 0);
-  BOOST_CHECK_EQUAL(make_data_prepare_patch_counter, 0);
-  BOOST_CHECK_EQUAL(transform_data_calculate_counter, 0);
-  BOOST_CHECK_EQUAL(transform_data_prepare_patch_counter, 0);
+  BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(0, 0));
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
   auto f = *b;
 
-  BOOST_CHECK_EQUAL(make_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(make_data_prepare_patch_counter, 0);
-  BOOST_CHECK_EQUAL(transform_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(transform_data_prepare_patch_counter, 0);
+  BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 0));
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(f(), data{24});
 
   x = 32;
 
-  BOOST_CHECK_EQUAL(make_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(make_data_prepare_patch_counter, 1);
-  BOOST_CHECK_EQUAL(transform_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(transform_data_prepare_patch_counter, 1);
+  BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 1));
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(f(), data{34});
 
   x = 12;
 
-  BOOST_CHECK_EQUAL(make_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(make_data_prepare_patch_counter, 2);
-  BOOST_CHECK_EQUAL(transform_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(transform_data_prepare_patch_counter, 2);
+  BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 2));
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(f(), data{14});
 
   y = 3;
 
-  BOOST_CHECK_EQUAL(make_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(make_data_prepare_patch_counter, 2);
-  BOOST_CHECK_EQUAL(transform_data_calculate_counter, 1);
-  BOOST_CHECK_EQUAL(transform_data_prepare_patch_counter, 3);
+  BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 2));
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(f(), data{15});
 }
 
