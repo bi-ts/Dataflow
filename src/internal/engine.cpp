@@ -196,21 +196,21 @@ void engine::pump()
 }
 
 void engine::set_metadata(const node* p_node,
-                          std::unique_ptr<const metadata> p_metadata)
+                          std::shared_ptr<const metadata> p_metadata)
 {
   CHECK_CONDITION(metadata_.find(p_node) == metadata_.end());
 
   metadata_[p_node] = std::move(p_metadata);
 }
 
-const metadata* engine::get_metadata(const node* p_node)
+const std::shared_ptr<const metadata>& engine::get_metadata(const node* p_node)
 {
   const auto it = metadata_.find(p_node);
 
   if (it == metadata_.end())
-    return nullptr;
+    return p_no_metadata_;
 
-  return it->second.get();
+  return it->second;
 }
 
 update_status engine::update_node_if_activator(vertex_descriptor v,

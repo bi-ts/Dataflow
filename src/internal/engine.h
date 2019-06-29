@@ -93,8 +93,8 @@ public:
   void pump();
 
   void set_metadata(const node* p_node,
-                    std::unique_ptr<const metadata> p_metadata);
-  const metadata* get_metadata(const node* p_node);
+                    std::shared_ptr<const metadata> p_metadata);
+  const std::shared_ptr<const metadata>& get_metadata(const node* p_node);
 
   update_status update_node_if_activator(vertex_descriptor v,
                                          bool initialized,
@@ -166,7 +166,8 @@ private:
   std::vector<const node*, memory_allocator<const node*>> args_buffer_;
   tick_count ticks_;
   vertex_descriptor time_node_v_;
-  std::unordered_map<const node*, std::unique_ptr<const metadata>> metadata_;
+  std::unordered_map<const node*, std::shared_ptr<const metadata>> metadata_;
+  const std::shared_ptr<const metadata> p_no_metadata_;
 
 private:
   static engine* gp_engine_;

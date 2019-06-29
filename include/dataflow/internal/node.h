@@ -116,8 +116,9 @@ protected:
   static const tick_count& ticks_();
   static void pump(node_id id);
   static void set_metadata(const node* p_node,
-                           std::unique_ptr<const metadata> p_metadata);
-  static const metadata* get_metadata(const node* p_node);
+                           std::shared_ptr<const metadata> p_metadata);
+  static const std::shared_ptr<const metadata>&
+  get_metadata(const node* p_node);
 
 private:
   virtual void activate_(node_id id, const tick_count& t0)

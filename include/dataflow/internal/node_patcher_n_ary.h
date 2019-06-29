@@ -85,7 +85,7 @@ private:
   template <typename Diff, std::size_t Idx>
   Diff get_argument_diff_(const node* p_node)
   {
-    const auto p_metadata = node::get_metadata(p_node);
+    const auto& p_metadata = node::get_metadata(p_node).get();
 
     if (!p_metadata)
       return Diff(extract_node_value<typename Diff::data_type>(p_node),
