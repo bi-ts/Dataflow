@@ -280,6 +280,80 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
   BOOST_CHECK_EQUAL(f(), data{15});
 }
 
+BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
+{
+  Engine engine;
+
+  patcher_test_counters transform_data_counters;
+
+  auto x = Var<data>(data{22});
+  auto y = Var<int>(33);
+
+  auto z = TransformData(transform_data_counters, x, y);
+
+  //         f
+  //         |
+  //         z
+  //         |
+  // TransformData (+)
+  // |              |
+  // x              y
+
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
+
+  auto f = *z;
+
+  //         f=55
+  //          |
+  //          z
+  //          |
+  //  TransformData (+)
+  //  |              |
+  // x=22           y=33
+
+  BOOST_CHECK_EQUAL(f(), data{55});
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
+
+  x = data{44};
+
+  //         f=77
+  //          |
+  //          z
+  //          |
+  //  TransformData (+)
+  //  |              |
+  // x=44           y=33
+
+  BOOST_CHECK_EQUAL(f(), data{77});
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1, 1));
+
+  y = 55;
+
+  //         f=99
+  //          |
+  //          z
+  //          |
+  //  TransformData (+)
+  //  |              |
+  // x=44           y=55
+
+  BOOST_CHECK_EQUAL(f(), data{99});
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2, 1));
+
+  x = data{11};
+
+  //         f=66
+  //          |
+  //          z
+  //          |
+  //  TransformData (+)
+  //  |              |
+  // x=11           y=55
+
+  BOOST_CHECK_EQUAL(f(), data{66});
+  BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3, 2));
+}
+
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
 {
   Engine engine;
