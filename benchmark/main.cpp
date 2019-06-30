@@ -93,7 +93,7 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
 {
   Engine engine;
 
-  const auto exponent = 17;
+  const auto exponent = 14;
   const auto interactive_fps = 25;
 
   int initial_value = 0;
