@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -53,6 +53,7 @@ public:
 
 private:
   explicit node_if()
+  : p_prev_branch_()
   {
   }
 
@@ -64,7 +65,17 @@ private:
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
     DATAFLOW___CHECK_PRECONDITION(args_count == 2);
 
+    if (initialized && p_prev_branch_ == p_args[1])
+      node::set_metadata(this, node::get_metadata(p_args[1]));
+
+    p_prev_branch_ = p_args[1];
+
     return this->set_value_(extract_node_value<T>(p_args[1]));
+  }
+
+  virtual void deactivate_(node_id id) override
+  {
+    p_prev_branch_ = nullptr;
   }
 
   virtual std::string label_() const override
@@ -76,6 +87,9 @@ private:
   {
     return std::make_pair(sizeof(*this), alignof(decltype(*this)));
   }
+
+private:
+  const node* p_prev_branch_; // TODO: try to avoid this cache
 };
 } // internal
 } // dataflow

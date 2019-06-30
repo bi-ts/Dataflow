@@ -87,9 +87,11 @@ private:
   {
     const auto& p_metadata = node::get_metadata(p_node).get();
 
+    const auto& curr = extract_node_value<typename Diff::data_type>(p_node);
+    const auto& prev = std::get<Idx>(prev_args_);
+
     if (!p_metadata)
-      return Diff(extract_node_value<typename Diff::data_type>(p_node),
-                  std::get<Idx>(prev_args_));
+      return Diff(curr, prev);
 
     DATAFLOW___CHECK_CONDITION(
       dynamic_cast<const patch_metadata<typename Diff::patch_type>*>(
@@ -98,9 +100,7 @@ private:
     const auto p_patch_metadata =
       static_cast<const patch_metadata<typename Diff::patch_type>*>(p_metadata);
 
-    return Diff(extract_node_value<typename Diff::data_type>(p_node),
-                std::get<Idx>(prev_args_),
-                p_patch_metadata->patch);
+    return Diff(curr, prev, p_patch_metadata->patch);
   }
 
   template <std::size_t... Is>
