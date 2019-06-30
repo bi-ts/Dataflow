@@ -69,6 +69,58 @@ ref<int> ConstructBinary(std::size_t exponent, ref<int> x)
   return ConstructBinary(exponent - 1, x) + ConstructBinary(exponent - 1, x);
 }
 
+class array_data
+{
+public:
+  array_data(int x = 0)
+  {
+    for (auto& v : values)
+      v = x;
+  }
+
+  bool operator==(const array_data& other) const
+  {
+    return values == other.values;
+  }
+
+  bool operator!=(const array_data& other) const
+  {
+    return !(*this == other);
+  }
+
+  friend array_data operator+(const array_data& lhs, const array_data& rhs)
+  {
+    array_data data;
+
+    for (std::size_t i = 0; i < size; ++i)
+    {
+      data.values[i] = lhs.values[i] + rhs.values[i];
+    }
+
+    return data;
+  }
+
+  friend std::ostream& operator<<(std::ostream& out, const array_data& data)
+  {
+    out << "array_data{" << size << "x" << data.values[0] << "}";
+    return out;
+  }
+
+private:
+  static constexpr std::size_t size = 256;
+  std::array<int, size> values;
+};
+
+ref<array_data> ConstructUnaryArray(std::size_t exponent, ref<array_data> x)
+{
+  if (exponent == 0)
+    return x;
+
+  const auto y = ConstructUnaryArray(exponent - 1, x);
+
+  return ConstructUnaryArray(exponent - 1, y++);
+}
+
 const double Duration(std::chrono::steady_clock::time_point start,
                       std::chrono::steady_clock::time_point end)
 {
@@ -89,16 +141,17 @@ template <typename T> struct benchmark_check_points
   T destructed;
 };
 
-void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
+template <typename T>
+void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
 {
   Engine engine;
 
   const auto exponent = 14;
   const auto interactive_fps = 25;
 
-  int initial_value = 0;
-  int last_value = 0;
-  int total_nodes_count = 0;
+  T initial_value{};
+  T last_value{};
+  int total_nodes_count{};
 
   benchmark_check_points<std::size_t> memory_consumption;
   benchmark_check_points<std::chrono::steady_clock::time_point> time_points;
@@ -107,7 +160,7 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
     time_points.start = std::chrono::steady_clock::now();
     memory_consumption.start = introspect::memory_consumption();
 
-    auto x = Var<int>(1);
+    auto x = Var<T>(1);
     auto y = constructor(exponent, x);
 
     time_points.constructed = std::chrono::steady_clock::now();
@@ -121,7 +174,7 @@ void Benchmark(std::function<ref<int>(int, const ref<int>& x)> constructor)
 
       initial_value = r();
 
-      x = 42;
+      x = {42};
 
       time_points.updated = std::chrono::steady_clock::now();
       memory_consumption.updated = introspect::memory_consumption();
@@ -222,11 +275,15 @@ int main()
 
   std::cout << Title2("Unary nodes update") << std::endl;
 
-  Benchmark(ConstructUnary);
+  Benchmark<int>(ConstructUnary);
 
   std::cout << Title2("Binary nodes update") << std::endl;
 
-  Benchmark(ConstructBinary);
+  Benchmark<int>(ConstructBinary);
+
+  std::cout << Title2("Unary nodes update (array data)") << std::endl;
+
+  Benchmark<array_data>(ConstructUnaryArray);
 
   return 0;
 }
