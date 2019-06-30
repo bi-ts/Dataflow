@@ -310,11 +310,49 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   auto c = TransformData2(
     transform_data_counters, If(core::Lift<policy>(y), a, b), b, z);
 
+  //                   f
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //    .-no-<if>-yes-.  |     |
+  //    |      |      |  |     |
+  //    .------+------+--*     |
+  //    |      |      |        |
+  //    b      |      a        |
+  //    |      |      |        |
+  // MakeData  |   MakeData    |
+  //    |      |      |        |
+  //    |      |      |        |
+  //    |   (y < 4)   |        |
+  //    |      |      |        |
+  //    *--.---*      |        |
+  //       |          |        |
+  //       y          x        z
+
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
   auto f = *c;
+
+  //                  f=26
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //         <if>-yes-.  |     |
+  //           |      |  |     |
+  //    .------+------+--*     |
+  //    |      |      |        |
+  //    b      |      a        |
+  //    |      |      |        |
+  // MakeData  |   MakeData    |
+  //    |      |      |        |
+  //    |      |      |        |
+  //    |   (y < 4)   |        |
+  //    |      |      |        |
+  //    *--.---*      |        |
+  //       |          |        |
+  //      y=2        x=22     z=2
 
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
@@ -323,12 +361,50 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
 
   x = 32;
 
+  //                  f=36
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //         <if>-yes-.  |     |
+  //           |      |  |     |
+  //    .------+------+--*     |
+  //    |      |      |        |
+  //    b      |      a        |
+  //    |      |      |        |
+  // MakeData  |   MakeData    |
+  //    |      |      |        |
+  //    |      |      |        |
+  //    |   (y < 4)   |        |
+  //    |      |      |        |
+  //    *--.---*      |        |
+  //       |          |        |
+  //      y=2        x=32     z=2
+
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(f(), data{36});
 
   z = 3;
+
+  //                  f=37
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //         <if>-yes-.  |     |
+  //           |      |  |     |
+  //    .------+------+--*     |
+  //    |      |      |        |
+  //    b      |      a        |
+  //    |      |      |        |
+  // MakeData  |   MakeData    |
+  //    |      |      |        |
+  //    |      |      |        |
+  //    |   (y < 4)   |        |
+  //    |      |      |        |
+  //    *--.---*      |        |
+  //       |          |        |
+  //      y=2        x=32     z=3
 
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
@@ -337,12 +413,50 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
 
   y = 4;
 
+  //                  f=11
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //    .-no-<if>        |     |
+  //    |      |         |     |
+  //    .------+---------*     |
+  //    |      |               |
+  //    b      |               |
+  //    |      |               |
+  // MakeData  |               |
+  //    |      |               |
+  //    |      |               |
+  //    |   (y < 4)            |
+  //    |      |               |
+  //    *--.---*               |
+  //       |                   |
+  //      y=4                 z=3
+
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3, 1));
   BOOST_CHECK_EQUAL(f(), data{11});
 
   y = 8;
+
+  //                  f=19
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //    .-no-<if>        |     |
+  //    |      |         |     |
+  //    .------+---------*     |
+  //    |      |               |
+  //    b      |               |
+  //    |      |               |
+  // MakeData  |               |
+  //    |      |               |
+  //    |      |               |
+  //    |   (y < 4)            |
+  //    |      |               |
+  //    *--.---*               |
+  //       |                   |
+  //      y=8                 z=3
 
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 2));
@@ -351,12 +465,50 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
 
   y = 3;
 
+  //                  f=38
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //         <if>-yes-.  |     |
+  //           |      |  |     |
+  //    .------+------+--*     |
+  //    |      |      |        |
+  //    b      |      a        |
+  //    |      |      |        |
+  // MakeData  |   MakeData    |
+  //    |      |      |        |
+  //    |      |      |        |
+  //    |   (y < 4)   |        |
+  //    |      |      |        |
+  //    *--.---*      |        |
+  //       |          |        |
+  //      y=3        x=32     z=3
+
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(2, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 5, 2));
   BOOST_CHECK_EQUAL(f(), data{38});
 
   x = 0;
+
+  //                  f=6
+  //                   |
+  //           TransformData2 (+)
+  //           |         |     |
+  //         <if>-yes-.  |     |
+  //           |      |  |     |
+  //    .------+------+--*     |
+  //    |      |      |        |
+  //    b      |      a        |
+  //    |      |      |        |
+  // MakeData  |   MakeData    |
+  //    |      |      |        |
+  //    |      |      |        |
+  //    |   (y < 4)   |        |
+  //    |      |      |        |
+  //    *--.---*      |        |
+  //       |          |        |
+  //      y=3        x=0      z=3
 
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(2, 2));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 3));
