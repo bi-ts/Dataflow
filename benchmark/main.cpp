@@ -223,11 +223,9 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
   time_points.destructed = std::chrono::steady_clock::now();
   memory_consumption.destructed = introspect::memory_consumption();
 
-  std::cout << "f(" << std::setw(2) << initial_x << ") = " << std::setw(20)
-            << initial_value << std::endl;
+  std::cout << "f(" << initial_x << ") = " << initial_value << std::endl;
 
-  std::cout << "f(" << std::setw(2) << last_x << ") = " << std::setw(20)
-            << last_value << std::endl;
+  std::cout << "f(" << last_x << ") = " << last_value << std::endl;
 
   std::cout << std::endl;
 
@@ -235,37 +233,40 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
             << std::endl
             << std::endl;
 
-  std::cout << "Durations (seconds)" << std::endl;
-  std::cout << "Construction: "
+  std::cout << "              Duration (sec)   Memory (bytes)" << std::endl;
+  std::cout << "Initial:                       " << (memory_consumption.start)
+            << std::endl;
+
+  std::cout << "Construction: " << std::left << std::setw(17)
             << Duration(time_points.start, time_points.constructed)
-            << std::endl;
+            << (memory_consumption.constructed) << std::endl;
 
-  std::cout << "Activation*:  "
+  std::cout << "Activation*:  " << std::left << std::setw(17)
             << Duration(time_points.constructed, time_points.activated)
-            << std::endl;
+            << (memory_consumption.activated) << std::endl;
 
-  std::cout << "Update:       "
+  std::cout << "Update:       " << std::left << std::setw(17)
             << Duration(time_points.activated, time_points.updated)
-            << std::endl;
+            << (memory_consumption.updated) << std::endl;
 
-  std::cout << "Deactivation: "
+  std::cout << "Deactivation: " << std::left << std::setw(17)
             << Duration(time_points.updated, time_points.deactivated)
-            << std::endl;
+            << (memory_consumption.deactivated) << std::endl;
 
-  std::cout << "Activation*:  "
+  std::cout << "Activation*:  " << std::left << std::setw(17)
             << Duration(time_points.deactivated,
                         time_points.second_time_activated)
-            << std::endl;
+            << (memory_consumption.second_time_activated) << std::endl;
 
-  std::cout << "Deactivation: "
+  std::cout << "Deactivation: " << std::left << std::setw(17)
             << Duration(time_points.second_time_activated,
                         time_points.second_time_deactivated)
-            << std::endl;
+            << (memory_consumption.second_time_deactivated) << std::endl;
 
-  std::cout << "Destruction:  "
+  std::cout << "Destruction:  " << std::left << std::setw(17)
             << Duration(time_points.second_time_deactivated,
                         time_points.destructed)
-            << std::endl
+            << (memory_consumption.destructed) << std::endl
             << std::endl;
 
   std::cout << "Interactive updates (" << interactive_fps << " FPS):    "
@@ -274,19 +275,6 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
                  Duration(time_points.activated, time_points.updated)) /
                  interactive_fps
             << std::endl
-            << std::endl;
-
-  std::cout << "Memory consumption (bytes)" << std::endl;
-  std::cout << "Initial:     " << (memory_consumption.start) << std::endl;
-  std::cout << "Constructed: " << (memory_consumption.constructed) << std::endl;
-  std::cout << "Activated*:  " << (memory_consumption.activated) << std::endl;
-  std::cout << "Updated:     " << (memory_consumption.updated) << std::endl;
-  std::cout << "Deactivated: " << (memory_consumption.deactivated) << std::endl;
-  std::cout << "Activated*:  " << (memory_consumption.second_time_activated)
-            << std::endl;
-  std::cout << "Deactivated: " << (memory_consumption.second_time_deactivated)
-            << std::endl;
-  std::cout << "Destructed:  " << (memory_consumption.destructed) << std::endl
             << std::endl;
 
   std::cout << "*Activation operation also includes initial update" << std::endl
