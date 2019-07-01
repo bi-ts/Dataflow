@@ -51,14 +51,31 @@ std::string Title2(const std::string& title)
   return Title(title, '-');
 }
 
-ref<int> ConstructUnary(std::size_t exponent, ref<int> x)
+ref<int> ConstructLinearSequence(std::size_t exponent, ref<int> x)
 {
   if (exponent == 0)
     return x;
 
-  const auto y = ConstructUnary(exponent - 1, x);
+  const auto y = ConstructLinearSequence(exponent - 1, x);
 
-  return ConstructUnary(exponent - 1, y++);
+  return ConstructLinearSequence(exponent - 1, y++);
+}
+
+ref<int> ConstructLinearSequenceAndPrintDescription(std::size_t exponent,
+                                                    ref<int> x)
+{
+  const auto prev = std::cout.fill('-');
+
+  std::cout << std::endl;
+  std::cout << "f(x) = incr( incr( incr( ... incr( x ) ... ) ) )" << std::endl;
+  std::cout << "      |                           |" << std::endl;
+  std::cout << "      `-----" << std::setw(10) << (int(1) << exponent) - 1
+            << " times------'" << std::endl;
+  std::cout << std::endl;
+
+  std::cout.fill(prev);
+
+  return ConstructLinearSequence(exponent, x);
 }
 
 ref<int> ConstructBinary(std::size_t exponent, ref<int> x)
@@ -111,14 +128,15 @@ private:
   std::array<int, size> values;
 };
 
-ref<array_data> ConstructUnaryArray(std::size_t exponent, ref<array_data> x)
+ref<array_data> ConstructLinearSequenceArray(std::size_t exponent,
+                                             ref<array_data> x)
 {
   if (exponent == 0)
     return x;
 
-  const auto y = ConstructUnaryArray(exponent - 1, x);
+  const auto y = ConstructLinearSequenceArray(exponent - 1, x);
 
-  return ConstructUnaryArray(exponent - 1, y++);
+  return ConstructLinearSequenceArray(exponent - 1, y++);
 }
 
 const double Duration(std::chrono::steady_clock::time_point start,
@@ -149,6 +167,9 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
   const auto exponent = 14;
   const auto interactive_fps = 25;
 
+  const T initial_x{1};
+  const T last_x{42};
+
   T initial_value{};
   T last_value{};
   int total_nodes_count{};
@@ -160,7 +181,7 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
     time_points.start = std::chrono::steady_clock::now();
     memory_consumption.start = introspect::memory_consumption();
 
-    auto x = Var<T>(1);
+    auto x = Var<T>(initial_x);
     auto y = constructor(exponent, x);
 
     time_points.constructed = std::chrono::steady_clock::now();
@@ -174,7 +195,7 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
 
       initial_value = r();
 
-      x = {42};
+      x = last_x;
 
       time_points.updated = std::chrono::steady_clock::now();
       memory_consumption.updated = introspect::memory_consumption();
@@ -202,12 +223,15 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
   time_points.destructed = std::chrono::steady_clock::now();
   memory_consumption.destructed = introspect::memory_consumption();
 
-  std::cout << "Initial value is:                " << initial_value
-            << std::endl;
-  std::cout << "Last value is:                   " << last_value << std::endl
-            << std::endl;
+  std::cout << "f(" << std::setw(2) << initial_x << ") = " << std::setw(20)
+            << initial_value << std::endl;
 
-  std::cout << "Total nodes count:               " << total_nodes_count
+  std::cout << "f(" << std::setw(2) << last_x << ") = " << std::setw(20)
+            << last_value << std::endl;
+
+  std::cout << std::endl;
+
+  std::cout << "Total nodes count: " << std::setw(9) << total_nodes_count
             << std::endl
             << std::endl;
 
@@ -273,17 +297,17 @@ int main()
 {
   std::cout << Title1("Dataflow++ benchmark") << std::endl;
 
-  std::cout << Title2("Unary nodes update") << std::endl;
+  std::cout << Title2("Linear sequence update") << std::endl;
 
-  Benchmark<int>(ConstructUnary);
+  Benchmark<int>(ConstructLinearSequenceAndPrintDescription);
 
   std::cout << Title2("Binary nodes update") << std::endl;
 
   Benchmark<int>(ConstructBinary);
 
-  std::cout << Title2("Unary nodes update (array data)") << std::endl;
+  std::cout << Title2("Linear sequence update (array data)") << std::endl;
 
-  Benchmark<array_data>(ConstructUnaryArray);
+  Benchmark<array_data>(ConstructLinearSequenceArray);
 
   return 0;
 }
