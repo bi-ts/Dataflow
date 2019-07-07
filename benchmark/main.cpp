@@ -216,7 +216,16 @@ std::pair<ref<array_data>, std::size_t>
 ConstructLinearSequenceArrayAndPrintDescription(std::size_t exponent,
                                                 ref<array_data> x)
 {
-  std::cout << "TODO: add description" << std::endl << std::endl;
+  const auto prev = std::cout.fill('-');
+
+  std::cout << std::endl;
+  std::cout << "f(x) = incr( incr( incr( ... incr( x ) ... ) ) )" << std::endl;
+  std::cout << "      |                           |" << std::endl;
+  std::cout << "      `-----" << std::right << std::setw(10)
+            << (1 << exponent) - 1 << " times------'" << std::endl;
+  std::cout << std::endl;
+
+  std::cout.fill(prev);
 
   return {ConstructLinearSequenceArray(exponent, x), (1 << exponent) - 1};
 }
