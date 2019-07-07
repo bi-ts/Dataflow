@@ -96,15 +96,15 @@ ConstructConditionalLinearSequenceAndPrintDescription(std::size_t exponent,
   const auto prev = std::cout.fill('-');
 
   std::cout << std::endl;
-  std::cout << "       ," << std::endl;
-  std::cout << "       | incr( incr( incr( ... incr( x ) ... ) ) ), if x == 1;"
+  std::cout << "       ,-" << std::endl;
+  std::cout << "       |  incr( incr( incr( ... incr( x ) ... ) ) ), if x == 1;"
             << std::endl;
   std::cout << "f(x) = {" << std::endl;
-  std::cout << "       | decr( decr( decr( ... decr( x ) ... ) ) ), otherwise."
+  std::cout << "       |  decr( decr( decr( ... decr( x ) ... ) ) ), otherwise."
             << std::endl;
-  std::cout << "       `" << std::endl;
-  std::cout << "        |                           |" << std::endl;
-  std::cout << "        `-----" << std::right << std::setw(10)
+  std::cout << "       `-" << std::endl;
+  std::cout << "         |                           |" << std::endl;
+  std::cout << "         `-----" << std::right << std::setw(10)
             << (1 << exponent) - 1 << " times------'" << std::endl;
   std::cout << std::endl;
 
