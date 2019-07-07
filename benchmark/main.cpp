@@ -52,14 +52,24 @@ std::string Title2(const std::string& title)
   return Title(title, '-');
 }
 
-ref<int> ConstructLinearSequence(std::size_t exponent, ref<int> x)
+ref<int> ConstructLinearSequenceIncr(std::size_t exponent, ref<int> x)
 {
   if (exponent == 0)
     return x;
 
-  const auto y = ConstructLinearSequence(exponent - 1, x);
+  const auto y = ConstructLinearSequenceIncr(exponent - 1, x);
 
-  return ConstructLinearSequence(exponent - 1, y++);
+  return ConstructLinearSequenceIncr(exponent - 1, y++);
+}
+
+ref<int> ConstructLinearSequenceDecr(std::size_t exponent, ref<int> x)
+{
+  if (exponent == 0)
+    return x;
+
+  const auto y = ConstructLinearSequenceDecr(exponent - 1, x);
+
+  return ConstructLinearSequenceDecr(exponent - 1, y--);
 }
 
 std::pair<ref<int>, std::size_t>
@@ -76,7 +86,39 @@ ConstructLinearSequenceAndPrintDescription(std::size_t exponent, ref<int> x)
 
   std::cout.fill(prev);
 
-  return {ConstructLinearSequence(exponent, x), (1 << exponent) - 1};
+  return {ConstructLinearSequenceIncr(exponent, x), (1 << exponent) - 1};
+}
+
+std::pair<ref<int>, std::size_t>
+ConstructConditionalLinearSequenceAndPrintDescription(std::size_t exponent,
+                                                      ref<int> x)
+{
+  const auto prev = std::cout.fill('-');
+
+  std::cout << std::endl;
+  std::cout << "       ," << std::endl;
+  std::cout << "       | incr( incr( incr( ... incr( x ) ... ) ) ), if x == 1;"
+            << std::endl;
+  std::cout << "f(x) = {" << std::endl;
+  std::cout << "       | decr( decr( decr( ... decr( x ) ... ) ) ), otherwise."
+            << std::endl;
+  std::cout << "       `" << std::endl;
+  std::cout << "        |                           |" << std::endl;
+  std::cout << "        `-----" << std::right << std::setw(10)
+            << (1 << exponent) - 1 << " times------'" << std::endl;
+  std::cout << std::endl;
+
+  std::cout.fill(prev);
+
+  const auto incr = ConstructLinearSequenceIncr(exponent, x);
+  const auto decr = ConstructLinearSequenceDecr(exponent, x);
+
+  const auto nodes_count = 2                     // conditional node
+                           + (1 << exponent) - 1 // nodes per branch
+                           + 1                   // equality comparison
+                           + 0;                  // `Const(1)` is never active
+
+  return {If(x == 1, incr, decr), nodes_count};
 }
 
 ref<int> ConstructBinary(std::size_t exponent, ref<int> x)
@@ -388,6 +430,10 @@ int main()
   std::cout << Title2("Linear sequence update") << std::endl;
 
   Benchmark<int>(ConstructLinearSequenceAndPrintDescription);
+
+  std::cout << Title2("Conditional linear sequence update") << std::endl;
+
+  Benchmark<int>(ConstructConditionalLinearSequenceAndPrintDescription);
 
   std::cout << Title2("Binary nodes update") << std::endl;
 
