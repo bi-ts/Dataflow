@@ -27,6 +27,7 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <vector>
 
 using namespace dataflow;
 
@@ -61,29 +62,101 @@ ref<int> ConstructLinearSequence(std::size_t exponent, ref<int> x)
   return ConstructLinearSequence(exponent - 1, y++);
 }
 
-ref<int> ConstructLinearSequenceAndPrintDescription(std::size_t exponent,
-                                                    ref<int> x)
+std::pair<ref<int>, std::size_t>
+ConstructLinearSequenceAndPrintDescription(std::size_t exponent, ref<int> x)
 {
   const auto prev = std::cout.fill('-');
 
   std::cout << std::endl;
   std::cout << "f(x) = incr( incr( incr( ... incr( x ) ... ) ) )" << std::endl;
   std::cout << "      |                           |" << std::endl;
-  std::cout << "      `-----" << std::setw(10) << (int(1) << exponent) - 1
-            << " times------'" << std::endl;
+  std::cout << "      `-----" << std::right << std::setw(10)
+            << (1 << exponent) - 1 << " times------'" << std::endl;
   std::cout << std::endl;
 
   std::cout.fill(prev);
 
-  return ConstructLinearSequence(exponent, x);
+  return {ConstructLinearSequence(exponent, x), (1 << (exponent)) - 1};
 }
 
 ref<int> ConstructBinary(std::size_t exponent, ref<int> x)
 {
-  if (exponent == 0)
-    return x;
+  std::vector<ref<int>> level = {x};
 
-  return ConstructBinary(exponent - 1, x) + ConstructBinary(exponent - 1, x);
+  for (std::size_t i = 0; i < exponent - 1; ++i)
+  {
+    std::vector<ref<int>> tmp;
+
+    for (const auto& a : level)
+    {
+      tmp.push_back(a++);
+      tmp.push_back(a++);
+    }
+
+    level.swap(tmp);
+  }
+
+  for (std::size_t i = exponent - 1; i > 0; --i)
+  {
+    std::vector<ref<int>> tmp;
+
+    for (std::size_t j = 0; j < level.size(); j += 2)
+    {
+      tmp.push_back(level.at(j) + level.at(j + 1));
+    }
+
+    level.swap(tmp);
+  }
+
+  if (level.size() != 1)
+    throw std::logic_error("benchmark logic error");
+
+  return level.front();
+}
+
+std::pair<ref<int>, std::size_t>
+ConstructBinaryAndPrintDescription(std::size_t exponent, ref<int> x)
+{
+  std::pair<int, std::string> desc[] = {
+    {0, "                            f(x)                                "},
+    {1, "                             |                                  "},
+    {1, "              .-------------add---------------.           -.    "},
+    {1, "              |                               |            |    "},
+    {2, "        .----add---.                    .----add---.      -|    "},
+    {2, "        |          |                    |          |       |    "},
+    {3, "    .--add-.   .--add-.             .--add-.   .--add-.   -|    "},
+    {3, "    |      |   |      |             |      |   |      |    |    "},
+    {4, "                                                           |    "},
+    {4, "    |      |   |      |             |      |   |      |    |    "},
+    {3,
+     [&]() {
+       std::stringstream ss;
+       ss << "  incr   incr incr  incr ." << std::right << std::setw(5)
+          << std::setfill('.') << (1 << (exponent - 1))
+          << ".. incr   incr incr   incr -| " << std::left << std::setfill(' ')
+          << 2 * (exponent - 1);
+       return ss.str();
+     }()},
+    {3, "    |      |   |      |             |      |   |      |    | levels "},
+    {4, "                                                           |    "},
+    {4, "    |      |   |      |             |      |   |      |    |    "},
+    {3, "    `-incr-'   `-incr-'             `-incr-'   `-incr-'   -|    "},
+    {2, "        |          |                    |          |       |    "},
+    {2, "        `---incr---'                    `---incr---'      -'    "},
+    {1, "             |                               |                  "},
+    {1, "             `---------------+---------------'                  "},
+    {0, "                             |                                  "},
+    {0, "                             x                                  "}};
+
+  std::cout << std::endl;
+  for (const auto p : desc)
+  {
+    if (exponent > p.first)
+      std::cout << p.second << std::endl;
+  }
+  std::cout << std::endl;
+
+  return {ConstructBinary(exponent, x), 3 * (1 << (exponent - 1)) - 3};
 }
 
 class array_data
@@ -139,6 +212,15 @@ ref<array_data> ConstructLinearSequenceArray(std::size_t exponent,
   return ConstructLinearSequenceArray(exponent - 1, y++);
 }
 
+std::pair<ref<array_data>, std::size_t>
+ConstructLinearSequenceArrayAndPrintDescription(std::size_t exponent,
+                                                ref<array_data> x)
+{
+  std::cout << "TODO: add description" << std::endl << std::endl;
+
+  return {ConstructLinearSequenceArray(exponent, x), (1 << exponent) - 1};
+}
+
 const double Duration(std::chrono::steady_clock::time_point start,
                       std::chrono::steady_clock::time_point end)
 {
@@ -160,7 +242,9 @@ template <typename T> struct benchmark_check_points
 };
 
 template <typename T>
-void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
+void Benchmark(
+  std::function<std::pair<ref<T>, std::size_t>(int, const ref<T>& x)>
+    constructor)
 {
   Engine engine;
 
@@ -177,18 +261,25 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
   benchmark_check_points<std::size_t> memory_consumption;
   benchmark_check_points<std::chrono::steady_clock::time_point> time_points;
 
+  std::size_t expected_active_nodes_count = 0;
   {
     time_points.start = std::chrono::steady_clock::now();
     memory_consumption.start = introspect::memory_consumption();
 
-    auto x = Var<T>(initial_x);
-    auto y = constructor(exponent, x);
+    const auto x = Var<T>(initial_x);
+    const auto info = constructor(exponent, x);
+    const auto y = info.first;
+    const auto constructed_nodes_count = info.second;
+    expected_active_nodes_count = constructed_nodes_count + 3;
 
     time_points.constructed = std::chrono::steady_clock::now();
     memory_consumption.constructed = introspect::memory_consumption();
 
     {
       auto r = Curr(y);
+
+      if (introspect::num_active_nodes() != expected_active_nodes_count)
+        throw std::logic_error("benchmark logic error");
 
       time_points.activated = std::chrono::steady_clock::now();
       memory_consumption.activated = introspect::memory_consumption();
@@ -271,7 +362,7 @@ void Benchmark(std::function<ref<T>(int, const ref<T>& x)> constructor)
 
   std::cout << "Interactive updates (" << interactive_fps << " FPS):    "
             << static_cast<std::size_t>(
-                 std::pow(2, exponent) /
+                 expected_active_nodes_count /
                  Duration(time_points.activated, time_points.updated)) /
                  interactive_fps
             << std::endl
@@ -291,11 +382,11 @@ int main()
 
   std::cout << Title2("Binary nodes update") << std::endl;
 
-  Benchmark<int>(ConstructBinary);
+  Benchmark<int>(ConstructBinaryAndPrintDescription);
 
   std::cout << Title2("Linear sequence update (array data)") << std::endl;
 
-  Benchmark<array_data>(ConstructLinearSequenceArray);
+  Benchmark<array_data>(ConstructLinearSequenceArrayAndPrintDescription);
 
   return 0;
 }
