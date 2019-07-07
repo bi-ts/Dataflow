@@ -76,7 +76,7 @@ ConstructLinearSequenceAndPrintDescription(std::size_t exponent, ref<int> x)
 
   std::cout.fill(prev);
 
-  return {ConstructLinearSequence(exponent, x), (1 << (exponent)) - 1};
+  return {ConstructLinearSequence(exponent, x), (1 << exponent) - 1};
 }
 
 ref<int> ConstructBinary(std::size_t exponent, ref<int> x)
