@@ -311,11 +311,14 @@ void Benchmark(
 
   benchmark_check_points<std::size_t> memory_consumption;
   benchmark_check_points<std::chrono::steady_clock::time_point> time_points;
+  benchmark_check_points<std::pair<std::size_t, std::size_t>> nodes_count;
 
   std::size_t expected_active_nodes_count = 0;
   {
     time_points.start = std::chrono::steady_clock::now();
     memory_consumption.start = introspect::memory_consumption();
+    nodes_count.start = {introspect::num_active_nodes(),
+                         introspect::num_vertices()};
 
     const auto x = Var<T>(initial_x);
     const auto info = constructor(exponent, x);
@@ -325,6 +328,8 @@ void Benchmark(
 
     time_points.constructed = std::chrono::steady_clock::now();
     memory_consumption.constructed = introspect::memory_consumption();
+    nodes_count.constructed = {introspect::num_active_nodes(),
+                               introspect::num_vertices()};
 
     {
       auto r = Curr(y);
@@ -334,6 +339,8 @@ void Benchmark(
 
       time_points.activated = std::chrono::steady_clock::now();
       memory_consumption.activated = introspect::memory_consumption();
+      nodes_count.activated = {introspect::num_active_nodes(),
+                               introspect::num_vertices()};
 
       initial_value = r();
 
@@ -341,6 +348,8 @@ void Benchmark(
 
       time_points.updated = std::chrono::steady_clock::now();
       memory_consumption.updated = introspect::memory_consumption();
+      nodes_count.updated = {introspect::num_active_nodes(),
+                             introspect::num_vertices()};
 
       last_value = r();
 
@@ -349,6 +358,8 @@ void Benchmark(
 
     time_points.deactivated = std::chrono::steady_clock::now();
     memory_consumption.deactivated = introspect::memory_consumption();
+    nodes_count.deactivated = {introspect::num_active_nodes(),
+                               introspect::num_vertices()};
 
     {
       auto r = Curr(y);
@@ -356,14 +367,20 @@ void Benchmark(
       time_points.second_time_activated = std::chrono::steady_clock::now();
       memory_consumption.second_time_activated =
         introspect::memory_consumption();
+      nodes_count.second_time_activated = {introspect::num_active_nodes(),
+                                           introspect::num_vertices()};
     }
     time_points.second_time_deactivated = std::chrono::steady_clock::now();
     memory_consumption.second_time_deactivated =
       introspect::memory_consumption();
+    nodes_count.second_time_deactivated = {introspect::num_active_nodes(),
+                                           introspect::num_vertices()};
   }
 
   time_points.destructed = std::chrono::steady_clock::now();
   memory_consumption.destructed = introspect::memory_consumption();
+  nodes_count.destructed = {introspect::num_active_nodes(),
+                            introspect::num_vertices()};
 
   std::cout << "f(" << initial_x << ") = " << initial_value << std::endl;
 
@@ -371,44 +388,61 @@ void Benchmark(
 
   std::cout << std::endl;
 
-  std::cout << "Total nodes count: " << std::setw(9) << total_nodes_count
-            << std::endl
-            << std::endl;
+  std::cout << "Total nodes count: " << total_nodes_count << std::endl;
 
-  std::cout << "              Duration (sec)   Memory (bytes)" << std::endl;
-  std::cout << "Initial:                       " << (memory_consumption.start)
-            << std::endl;
+  std::cout << std::endl;
+
+  std::cout
+    << "              Duration (sec)   Memory (bytes)   Nodes (active/all)"
+    << std::endl;
+  std::cout << "Initial:                       " << std::left << std::setw(17)
+            << (memory_consumption.start) << nodes_count.start.first << "/"
+            << nodes_count.start.second << std::endl;
 
   std::cout << "Construction: " << std::left << std::setw(17)
             << Duration(time_points.start, time_points.constructed)
-            << (memory_consumption.constructed) << std::endl;
+            << std::setw(17) << (memory_consumption.constructed)
+            << nodes_count.constructed.first << "/"
+            << nodes_count.constructed.second << std::endl;
 
   std::cout << "Activation*:  " << std::left << std::setw(17)
             << Duration(time_points.constructed, time_points.activated)
-            << (memory_consumption.activated) << std::endl;
+            << std::setw(17) << (memory_consumption.activated)
+            << nodes_count.activated.first << "/"
+            << nodes_count.activated.second << std::endl;
 
   std::cout << "Update:       " << std::left << std::setw(17)
             << Duration(time_points.activated, time_points.updated)
-            << (memory_consumption.updated) << std::endl;
+            << std::setw(17) << (memory_consumption.updated)
+            << nodes_count.updated.first << "/" << nodes_count.updated.second
+            << std::endl;
 
   std::cout << "Deactivation: " << std::left << std::setw(17)
             << Duration(time_points.updated, time_points.deactivated)
-            << (memory_consumption.deactivated) << std::endl;
+            << std::setw(17) << (memory_consumption.deactivated)
+            << nodes_count.deactivated.first << "/"
+            << nodes_count.deactivated.second << std::endl;
 
   std::cout << "Activation*:  " << std::left << std::setw(17)
             << Duration(time_points.deactivated,
                         time_points.second_time_activated)
-            << (memory_consumption.second_time_activated) << std::endl;
+            << std::setw(17) << (memory_consumption.second_time_activated)
+            << nodes_count.second_time_activated.first << "/"
+            << nodes_count.second_time_activated.second << std::endl;
 
   std::cout << "Deactivation: " << std::left << std::setw(17)
             << Duration(time_points.second_time_activated,
                         time_points.second_time_deactivated)
-            << (memory_consumption.second_time_deactivated) << std::endl;
+            << std::setw(17) << (memory_consumption.second_time_deactivated)
+            << nodes_count.second_time_deactivated.first << "/"
+            << nodes_count.second_time_deactivated.second << std::endl;
 
   std::cout << "Destruction:  " << std::left << std::setw(17)
             << Duration(time_points.second_time_deactivated,
                         time_points.destructed)
-            << (memory_consumption.destructed) << std::endl
+            << std::setw(17) << (memory_consumption.destructed)
+            << nodes_count.destructed.first << "/"
+            << nodes_count.destructed.second << std::endl
             << std::endl;
 
   std::cout << "Interactive updates (" << interactive_fps << " FPS):    "
