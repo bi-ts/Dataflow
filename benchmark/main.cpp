@@ -21,6 +21,8 @@
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
 
+#include <benchmark/benchmark.h>
+
 #include <chrono>
 #include <cmath>
 #include <ctime>
@@ -457,9 +459,31 @@ void Benchmark(
             << std::endl;
 }
 
-int main()
+static void ConstIntConstruct(benchmark::State& state)
 {
+  Engine engine;
+
+  std::vector<ref<int>> tmp;
+  tmp.reserve(1);
+
+  for (auto _ : state)
+  {
+    tmp.push_back(Const(0));
+  }
+}
+
+BENCHMARK(ConstIntConstruct);
+
+int main(int argc, char** argv)
+{
+  benchmark::Initialize(&argc, argv);
+
+  if (benchmark::ReportUnrecognizedArguments(argc, argv))
+    return 1;
+
   std::cout << Title1("Dataflow++ benchmark") << std::endl;
+
+  benchmark::RunSpecifiedBenchmarks();
 
   std::cout << Title2("Linear sequence update") << std::endl;
 

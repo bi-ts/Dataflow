@@ -23,11 +23,13 @@ if(NOT TARGET dst)
   get_dst(0.2.0 fa115e5bfcf5b3cdbac0201c4872ffb1)
 endif()
 
+include(get_google_benchmark)
+get_google_benchmark(1.5.0 1af48846917b9730bee1848f6e38f563)
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
   set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.8")
 endif()
 
 add_library(${PROJECT_NAME} SHARED
