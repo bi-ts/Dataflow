@@ -464,7 +464,7 @@ static void ConstIntConstruct(benchmark::State& state)
   Engine engine;
 
   std::vector<ref<int>> tmp;
-  tmp.reserve(1);
+  tmp.reserve(state.max_iterations);
 
   for (auto _ : state)
   {
