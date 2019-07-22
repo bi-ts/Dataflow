@@ -459,7 +459,7 @@ void Benchmark(
             << std::endl;
 }
 
-static void ConstIntConstruct(benchmark::State& state)
+static void Constuct_ConstInt(benchmark::State& state)
 {
   Engine engine;
 
@@ -472,7 +472,7 @@ static void ConstIntConstruct(benchmark::State& state)
   }
 }
 
-BENCHMARK(ConstIntConstruct);
+BENCHMARK(Constuct_ConstInt);
 
 int main(int argc, char** argv)
 {
