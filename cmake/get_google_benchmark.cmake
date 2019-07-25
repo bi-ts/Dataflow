@@ -15,7 +15,7 @@ macro(get_google_benchmark google_benchmark_version google_benchmark_md5)
     set(GOOGLE_BENCHMARK_PACKAGE_MD5 ${google_benchmark_md5})
 
     configure_file(
-      "${_input_file}" 
+      "${_input_file}"
       "${CMAKE_BINARY_DIR}/get-google_benchmark/CMakeLists.txt"
       @ONLY
     )
@@ -24,7 +24,7 @@ macro(get_google_benchmark google_benchmark_version google_benchmark_md5)
     unset(GOOGLE_BENCHMARK_PACKAGE_MD5)
 
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" . 
+      COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/get-google_benchmark"
     )
 

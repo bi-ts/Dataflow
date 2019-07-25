@@ -12,7 +12,7 @@ macro(get_dst dst_version dst_md5)
     set(DST_PACKAGE_MD5 ${dst_md5})
 
     configure_file(
-      "${_input_file}" 
+      "${_input_file}"
       "${CMAKE_BINARY_DIR}/get-dst/CMakeLists.txt"
       @ONLY
     )

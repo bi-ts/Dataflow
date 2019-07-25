@@ -21,7 +21,7 @@ macro(get_boost boost_version boost_md5)
     set(BOOST_PACKAGE_NAME boost_${_version_underscore}.zip)
 
     configure_file(
-      "${_input_file}" 
+      "${_input_file}"
       "${CMAKE_BINARY_DIR}/get-boost/CMakeLists.txt"
       @ONLY
     )

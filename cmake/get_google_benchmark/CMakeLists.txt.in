@@ -14,7 +14,7 @@ ExternalProject_add(google_benchmark
                     -DBENCHMARK_ENABLE_TESTING=OFF
                     -DBENCHMARK_USE_LIBCXX=ON
                     -DCMAKE_INSTALL_PREFIX=../google_benchmark-install
-                    ../google_benchmark 
+                    ../google_benchmark
   BUILD_COMMAND     ${CMAKE_COMMAND} --build . --config Release
         COMMAND     ${CMAKE_COMMAND} --build . --config Debug
   INSTALL_COMMAND   ${CMAKE_COMMAND} -DCMAKE_INSTALL_CONFIG_NAME=Release -P cmake_install.cmake
