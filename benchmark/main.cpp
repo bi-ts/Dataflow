@@ -485,6 +485,8 @@ int main(int argc, char** argv)
 
   benchmark::RunSpecifiedBenchmarks();
 
+  std::cout << std::endl;
+
   std::cout << Title2("Linear sequence update") << std::endl;
 
   Benchmark<int>(ConstructLinearSequenceAndPrintDescription);
