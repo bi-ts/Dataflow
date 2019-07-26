@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -163,9 +163,9 @@ template <typename T> dataflow::ref<T> dataflow::Incr(const ref<T>& x)
     {
       return "incr";
     }
-    T calculate(const T& x)
+    T calculate(T x)
     {
-      return x + 1;
+      return ++x;
     }
   };
   return core::Lift<policy>(x);
@@ -179,9 +179,9 @@ template <typename T> dataflow::ref<T> dataflow::Decr(const ref<T>& x)
     {
       return "decr";
     }
-    T calculate(const T& x)
+    T calculate(T x)
     {
-      return x - 1;
+      return --x;
     }
   };
   return core::Lift<policy>(x);

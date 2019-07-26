@@ -222,16 +222,12 @@ public:
     return !(*this == other);
   }
 
-  friend array_data operator+(const array_data& lhs, const array_data& rhs)
+  array_data& operator++()
   {
-    array_data data;
+    for (auto& v : values)
+      ++v;
 
-    for (std::size_t i = 0; i < size; ++i)
-    {
-      data.values[i] = lhs.values[i] + rhs.values[i];
-    }
-
-    return data;
+    return *this;
   }
 
   friend std::ostream& operator<<(std::ostream& out, const array_data& data)
