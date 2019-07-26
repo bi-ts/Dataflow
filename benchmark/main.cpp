@@ -543,6 +543,31 @@ static void Construct_Conditional_If_Int(benchmark::State& state)
 
 BENCHMARK(Construct_Conditional_If_Int);
 
+static void Update_Unary_Incr_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(1);
+
+  std::vector<ref<int>> tmp(1, x);
+
+  for (benchmark::IterationCount i = 0; i < state.max_iterations; ++i)
+  {
+    const auto a = tmp.front();
+    tmp.pop_back();
+    tmp.push_back(Incr(a));
+  }
+
+  const auto y = *tmp.front();
+
+  while (state.KeepRunningBatch(state.max_iterations))
+  {
+    x = 2;
+  }
+}
+
+BENCHMARK(Update_Unary_Incr_Int);
+
 static void Destroy_NoArgs_Const_Int(benchmark::State& state)
 {
   Engine engine;
