@@ -18,6 +18,8 @@
 
 #define DATAFLOW___NO_BOOST
 
+#include "check_points.h"
+
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
 
@@ -32,6 +34,7 @@
 #include <vector>
 
 using namespace dataflow;
+using namespace benchmark;
 
 std::string Title(const std::string& title, char filler)
 {
@@ -270,26 +273,6 @@ ConstructLinearSequenceArrayAndPrintDescription(std::size_t exponent,
   return {ConstructLinearSequenceArray(exponent, x), (1 << exponent) - 1};
 }
 
-const double Duration(std::chrono::steady_clock::time_point start,
-                      std::chrono::steady_clock::time_point end)
-{
-  return std::chrono::duration_cast<std::chrono::microseconds>(end - start)
-           .count() /
-         1000000.0;
-}
-
-template <typename T> struct benchmark_check_points
-{
-  T start;
-  T constructed;
-  T activated;
-  T updated;
-  T deactivated;
-  T second_time_activated;
-  T second_time_deactivated;
-  T destructed;
-};
-
 template <typename T>
 void Benchmark(
   std::function<std::pair<ref<T>, std::size_t>(int, const ref<T>& x)>
@@ -307,16 +290,11 @@ void Benchmark(
   T last_value{};
   int total_nodes_count{};
 
-  benchmark_check_points<std::size_t> memory_consumption;
-  benchmark_check_points<std::chrono::steady_clock::time_point> time_points;
-  benchmark_check_points<std::pair<std::size_t, std::size_t>> nodes_count;
+  CheckPoints check_points;
 
   std::size_t expected_active_nodes_count = 0;
   {
-    time_points.start = std::chrono::steady_clock::now();
-    memory_consumption.start = introspect::memory_consumption();
-    nodes_count.start = {introspect::num_active_nodes(),
-                         introspect::num_vertices()};
+    check_points.start = make_check_point();
 
     const auto x = Var<T>(initial_x);
     const auto info = constructor(exponent, x);
@@ -324,10 +302,7 @@ void Benchmark(
     const auto constructed_nodes_count = info.second;
     expected_active_nodes_count = constructed_nodes_count + 3;
 
-    time_points.constructed = std::chrono::steady_clock::now();
-    memory_consumption.constructed = introspect::memory_consumption();
-    nodes_count.constructed = {introspect::num_active_nodes(),
-                               introspect::num_vertices()};
+    check_points.constructed = make_check_point();
 
     {
       auto r = Curr(y);
@@ -335,50 +310,30 @@ void Benchmark(
       if (introspect::num_active_nodes() != expected_active_nodes_count)
         throw std::logic_error("benchmark logic error");
 
-      time_points.activated = std::chrono::steady_clock::now();
-      memory_consumption.activated = introspect::memory_consumption();
-      nodes_count.activated = {introspect::num_active_nodes(),
-                               introspect::num_vertices()};
+      check_points.activated = make_check_point();
 
       initial_value = r();
 
       x = last_x;
 
-      time_points.updated = std::chrono::steady_clock::now();
-      memory_consumption.updated = introspect::memory_consumption();
-      nodes_count.updated = {introspect::num_active_nodes(),
-                             introspect::num_vertices()};
+      check_points.updated = make_check_point();
 
       last_value = r();
 
       total_nodes_count = introspect::num_vertices();
     }
 
-    time_points.deactivated = std::chrono::steady_clock::now();
-    memory_consumption.deactivated = introspect::memory_consumption();
-    nodes_count.deactivated = {introspect::num_active_nodes(),
-                               introspect::num_vertices()};
+    check_points.deactivated = make_check_point();
 
     {
       auto r = Curr(y);
 
-      time_points.second_time_activated = std::chrono::steady_clock::now();
-      memory_consumption.second_time_activated =
-        introspect::memory_consumption();
-      nodes_count.second_time_activated = {introspect::num_active_nodes(),
-                                           introspect::num_vertices()};
+      check_points.second_time_activated = make_check_point();
     }
-    time_points.second_time_deactivated = std::chrono::steady_clock::now();
-    memory_consumption.second_time_deactivated =
-      introspect::memory_consumption();
-    nodes_count.second_time_deactivated = {introspect::num_active_nodes(),
-                                           introspect::num_vertices()};
+    check_points.second_time_deactivated = make_check_point();
   }
 
-  time_points.destructed = std::chrono::steady_clock::now();
-  memory_consumption.destructed = introspect::memory_consumption();
-  nodes_count.destructed = {introspect::num_active_nodes(),
-                            introspect::num_vertices()};
+  check_points.destructed = make_check_point();
 
   std::cout << "f(" << initial_x << ") = " << initial_value << std::endl;
 
@@ -390,68 +345,16 @@ void Benchmark(
 
   std::cout << std::endl;
 
-  std::cout
-    << "              Duration (sec)   Memory (bytes)   Nodes (active/all)"
-    << std::endl;
-  std::cout << "Initial:                       " << std::left << std::setw(17)
-            << (memory_consumption.start) << nodes_count.start.first << "/"
-            << nodes_count.start.second << std::endl;
+  PrintCheckPoints(std::cout, check_points);
 
-  std::cout << "Construction: " << std::left << std::setw(17)
-            << Duration(time_points.start, time_points.constructed)
-            << std::setw(17) << (memory_consumption.constructed)
-            << nodes_count.constructed.first << "/"
-            << nodes_count.constructed.second << std::endl;
-
-  std::cout << "Activation*:  " << std::left << std::setw(17)
-            << Duration(time_points.constructed, time_points.activated)
-            << std::setw(17) << (memory_consumption.activated)
-            << nodes_count.activated.first << "/"
-            << nodes_count.activated.second << std::endl;
-
-  std::cout << "Update:       " << std::left << std::setw(17)
-            << Duration(time_points.activated, time_points.updated)
-            << std::setw(17) << (memory_consumption.updated)
-            << nodes_count.updated.first << "/" << nodes_count.updated.second
-            << std::endl;
-
-  std::cout << "Deactivation: " << std::left << std::setw(17)
-            << Duration(time_points.updated, time_points.deactivated)
-            << std::setw(17) << (memory_consumption.deactivated)
-            << nodes_count.deactivated.first << "/"
-            << nodes_count.deactivated.second << std::endl;
-
-  std::cout << "Activation*:  " << std::left << std::setw(17)
-            << Duration(time_points.deactivated,
-                        time_points.second_time_activated)
-            << std::setw(17) << (memory_consumption.second_time_activated)
-            << nodes_count.second_time_activated.first << "/"
-            << nodes_count.second_time_activated.second << std::endl;
-
-  std::cout << "Deactivation: " << std::left << std::setw(17)
-            << Duration(time_points.second_time_activated,
-                        time_points.second_time_deactivated)
-            << std::setw(17) << (memory_consumption.second_time_deactivated)
-            << nodes_count.second_time_deactivated.first << "/"
-            << nodes_count.second_time_deactivated.second << std::endl;
-
-  std::cout << "Destruction:  " << std::left << std::setw(17)
-            << Duration(time_points.second_time_deactivated,
-                        time_points.destructed)
-            << std::setw(17) << (memory_consumption.destructed)
-            << nodes_count.destructed.first << "/"
-            << nodes_count.destructed.second << std::endl
-            << std::endl;
+  std::cout << std::endl;
 
   std::cout << "Interactive updates (" << interactive_fps << " FPS):    "
             << static_cast<std::size_t>(
                  expected_active_nodes_count /
-                 Duration(time_points.activated, time_points.updated)) /
+                 CalculateUpdateDurationSec(check_points)) /
                  interactive_fps
             << std::endl
-            << std::endl;
-
-  std::cout << "*Activation operation also includes initial update" << std::endl
             << std::endl;
 }
 

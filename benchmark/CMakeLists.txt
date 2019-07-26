@@ -2,7 +2,13 @@ cmake_minimum_required(VERSION 3.4)
 
 project(dataflow_benchmark)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME}
+  check_point.cpp
+  check_point.h
+  check_points.cpp
+  check_points.h
+  main.cpp
+  )
 
 target_link_libraries(${PROJECT_NAME} dataflow++ benchmark::benchmark)
 
