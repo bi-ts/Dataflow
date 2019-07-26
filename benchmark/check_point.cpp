@@ -24,6 +24,24 @@
 
 #include <iomanip>
 
+namespace benchmark
+{
+namespace
+{
+void PrintCheckPointWithoutTime(std::ostream& out,
+                                const CheckPoint& check_point)
+{
+  out << std::left << std::setw(17) << check_point.memory_consumption;
+
+  out << std::right << std::setw(8) << check_point.active_nodes_count;
+  out << "/";
+  out << std::left << std::setw(8) << check_point.all_nodes_count;
+
+  out << std::endl;
+}
+}
+}
+
 benchmark::CheckPoint benchmark::make_check_point()
 {
   return CheckPoint{dataflow::introspect::memory_consumption(),
@@ -36,9 +54,9 @@ void benchmark::PrintCheckPoint(std::ostream& out,
                                 const std::string& name,
                                 const CheckPoint& check_point)
 {
-  out << std::left << std::setw(31) << name + ':' << std::setw(17)
-      << check_point.memory_consumption << check_point.active_nodes_count << "/"
-      << check_point.all_nodes_count << std::endl;
+  out << std::left << std::setw(31) << name + ':';
+
+  PrintCheckPointWithoutTime(out, check_point);
 }
 
 void benchmark::PrintCheckPoint(std::ostream& out,
@@ -51,8 +69,7 @@ void benchmark::PrintCheckPoint(std::ostream& out,
                           .count() /
                         1000000.0;
 
-  out << std::left << std::setw(14) << name + ':' << std::setw(17) << duration
-      << std::setw(17) << (check_point.memory_consumption)
-      << check_point.active_nodes_count << "/" << check_point.all_nodes_count
-      << std::endl;
+  out << std::left << std::setw(14) << name + ':' << std::setw(17) << duration;
+
+  PrintCheckPointWithoutTime(out, check_point);
 }
