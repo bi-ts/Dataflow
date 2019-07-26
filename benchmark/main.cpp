@@ -459,7 +459,7 @@ void Benchmark(
             << std::endl;
 }
 
-static void Construct_ConstInt(benchmark::State& state)
+static void Construct_NoArgs_Const_Int(benchmark::State& state)
 {
   Engine engine;
 
@@ -472,7 +472,180 @@ static void Construct_ConstInt(benchmark::State& state)
   }
 }
 
-BENCHMARK(Construct_ConstInt);
+BENCHMARK(Construct_NoArgs_Const_Int);
+
+static void Construct_NoArgs_Var_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  std::vector<ref<int>> tmp;
+  tmp.reserve(state.max_iterations);
+
+  for (auto _ : state)
+  {
+    tmp.push_back(Var(0));
+  }
+}
+
+BENCHMARK(Construct_NoArgs_Var_Int);
+
+static void Construct_Unary_Incr_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(1);
+
+  std::vector<ref<int>> tmp;
+  tmp.reserve(state.max_iterations);
+
+  for (auto _ : state)
+  {
+    tmp.push_back(Incr(x));
+  }
+}
+
+BENCHMARK(Construct_Unary_Incr_Int);
+
+static void Construct_Binary_Add_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(1);
+  const auto y = Var(5);
+
+  std::vector<ref<int>> tmp;
+  tmp.reserve(state.max_iterations);
+
+  for (auto _ : state)
+  {
+    tmp.push_back(Add(x, y));
+  }
+}
+
+BENCHMARK(Construct_Binary_Add_Int);
+
+static void Construct_Conditional_If_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(true);
+  const auto y = Var(5);
+  const auto z = Var(9);
+
+  std::vector<ref<int>> tmp;
+  tmp.reserve(state.max_iterations);
+
+  for (auto _ : state)
+  {
+    tmp.push_back(If(x, y, z));
+  }
+}
+
+BENCHMARK(Construct_Conditional_If_Int);
+
+static void Destroy_NoArgs_Const_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  std::vector<ref<int>> tmp;
+
+  for (benchmark::IterationCount i = 0; i < state.max_iterations; ++i)
+  {
+    tmp.push_back(Const(0));
+  }
+
+  for (auto _ : state)
+  {
+    tmp.pop_back();
+  }
+}
+
+BENCHMARK(Destroy_NoArgs_Const_Int);
+
+static void Destroy_NoArgs_Var_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  std::vector<ref<int>> tmp;
+
+  for (benchmark::IterationCount i = 0; i < state.max_iterations; ++i)
+  {
+    tmp.push_back(Var(0));
+  }
+
+  for (auto _ : state)
+  {
+    tmp.pop_back();
+  }
+}
+
+BENCHMARK(Destroy_NoArgs_Var_Int);
+
+static void Destroy_Unary_Incr_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(1);
+
+  std::vector<ref<int>> tmp;
+
+  for (benchmark::IterationCount i = 0; i < state.max_iterations; ++i)
+  {
+    tmp.push_back(Incr(x));
+  }
+
+  for (auto _ : state)
+  {
+    tmp.pop_back();
+  }
+}
+
+BENCHMARK(Destroy_Unary_Incr_Int);
+
+static void Destroy_Binary_Add_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(1);
+  const auto y = Var(1);
+
+  std::vector<ref<int>> tmp;
+
+  for (benchmark::IterationCount i = 0; i < state.max_iterations; ++i)
+  {
+    tmp.push_back(Add(x, y));
+  }
+
+  for (auto _ : state)
+  {
+    tmp.pop_back();
+  }
+}
+
+BENCHMARK(Destroy_Binary_Add_Int);
+
+static void Destroy_Conditional_If_Int(benchmark::State& state)
+{
+  Engine engine;
+
+  const auto x = Var(true);
+  const auto y = Var(5);
+  const auto z = Var(9);
+
+  std::vector<ref<int>> tmp;
+
+  for (benchmark::IterationCount i = 0; i < state.max_iterations; ++i)
+  {
+    tmp.push_back(If(x, y, z));
+  }
+
+  for (auto _ : state)
+  {
+    tmp.pop_back();
+  }
+}
+
+BENCHMARK(Destroy_Conditional_If_Int);
 
 int main(int argc, char** argv)
 {
