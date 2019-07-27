@@ -68,6 +68,9 @@ public:
   bool is_persistent_node(vertex_descriptor v) const;
   bool is_previous_node(vertex_descriptor v) const;
 
+  std::size_t changed_nodes_count() const;
+  std::size_t updated_nodes_count() const;
+
   bool requires_activation(vertex_descriptor v) const;
 
   void add_ref(vertex_descriptor v);
@@ -168,6 +171,8 @@ private:
   vertex_descriptor time_node_v_;
   std::unordered_map<const node*, std::shared_ptr<const metadata>> metadata_;
   const std::shared_ptr<const metadata> p_no_metadata_;
+  std::size_t changed_nodes_count_;
+  std::size_t updated_nodes_count_;
 
 private:
   static engine* gp_engine_;

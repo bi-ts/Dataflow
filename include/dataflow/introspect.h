@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -184,6 +184,10 @@ DATAFLOW___EXPORT
 vertex_range topological_order();
 
 DATAFLOW___EXPORT dependency_graph::vertices_size_type num_active_nodes();
+
+DATAFLOW___EXPORT dependency_graph::vertices_size_type num_changed_nodes();
+
+DATAFLOW___EXPORT dependency_graph::vertices_size_type num_updated_nodes();
 
 DATAFLOW___EXPORT std::size_t memory_consumption();
 

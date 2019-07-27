@@ -280,6 +280,16 @@ introspect::dependency_graph::vertices_size_type introspect::num_active_nodes()
   return internal::engine::instance().order().size();
 }
 
+introspect::dependency_graph::vertices_size_type introspect::num_changed_nodes()
+{
+  return internal::engine::instance().changed_nodes_count();
+}
+
+introspect::dependency_graph::vertices_size_type introspect::num_updated_nodes()
+{
+  return internal::engine::instance().updated_nodes_count();
+}
+
 std::size_t introspect::memory_consumption()
 {
   return internal::engine::allocator_type::allocated();

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -214,6 +214,53 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
   std::tie(it, it_end) = introspect::topological_order();
 
   BOOST_CHECK_EQUAL(std::distance(it, it_end), 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
+                        test_introspect_fixture)
+{
+  // TODO: move this test to test_core?
+
+  //          y
+  //          |
+  //       ,-(+)-.
+  //       |     |
+  //    ,-(-)-.  5
+  //    |     |
+  // ,-(*)-.  |
+  // |     |  |
+  // `-----*--'
+  //       |
+  //       x
+
+  auto x = Var(1);
+
+  const auto y = *(x * x - x + 5);
+
+  BOOST_CHECK_EQUAL(y(), 5);
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
+  BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
+
+  // TODO: should be 6 (all but const)?
+  BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 4);
+
+  BOOST_CHECK_EQUAL(introspect::num_updated_nodes(), 6);
+
+  x = 0;
+
+  BOOST_CHECK_EQUAL(y(), 5);
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
+  BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
+  BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 3);
+  BOOST_CHECK_EQUAL(introspect::num_updated_nodes(), 4);
+
+  x = 10;
+
+  BOOST_CHECK_EQUAL(y(), 95);
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
+  BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
+  BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 6);
+  BOOST_CHECK_EQUAL(introspect::num_updated_nodes(), 6);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_nodes_traversal, test_introspect_fixture)

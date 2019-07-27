@@ -379,6 +379,8 @@ engine::engine()
 , args_buffer_(allocator_)
 , ticks_()
 , time_node_v_()
+, changed_nodes_count_()
+, updated_nodes_count_()
 {
 }
 
@@ -846,6 +848,8 @@ void engine::pump_()
   CHECK_PRECONDITION(metadata_.empty());
 
   ++ticks_;
+  changed_nodes_count_ = 0;
+  updated_nodes_count_ = 0;
 
   CHECK_CONDITION(dynamic_cast<node_time*>(graph_[time_node_v_].p_node));
 
@@ -881,6 +885,8 @@ void engine::pump_()
                                        &args_buffer_.front(),
                                        args_buffer_.size());
 
+    ++updated_nodes_count_;
+
     if ((status & update_status::updated_next) != update_status::nothing)
     {
       schedule_for_next_update_(v);
@@ -888,6 +894,8 @@ void engine::pump_()
 
     if ((status & update_status::updated) != update_status::nothing)
     {
+      ++changed_nodes_count_;
+
       for (auto v : graph_[v].consumers)
       {
         order_.mark(graph_[v].position);
