@@ -167,31 +167,31 @@ ConstructBinaryAndPrintDescription(std::size_t exponent, ref<int> x)
   std::pair<int, std::string> desc[] = {
     {0, "                            f(x)                                "},
     {1, "                             |                                  "},
-    {1, "              .-------------add---------------.           -.    "},
-    {1, "              |                               |            |    "},
-    {2, "        .----add---.                    .----add---.      -|    "},
-    {2, "        |          |                    |          |       |    "},
-    {3, "    .--add-.   .--add-.             .--add-.   .--add-.   -|    "},
-    {3, "    |      |   |      |             |      |   |      |    |    "},
+    {1, "             ,--------------add----------------.          -.    "},
+    {1, "             |                                 |           |    "},
+    {2, "       ,----add---.                      ,----add---.     -|    "},
+    {2, "       |          |                      |          |      |    "},
+    {3, "   ,--add-.   ,--add-.               ,--add-.   ,--add-.  -|    "},
+    {3, "   |      |   |      |               |      |   |      |   |    "},
     {4, "                                                           |    "},
-    {4, "    |      |   |      |             |      |   |      |    |    "},
+    {4, "   |      |   |      |               |      |   |      |   |    "},
     {3,
      [&]() {
        std::stringstream ss;
-       ss << "  incr   incr incr  incr ." << std::right << std::setw(5)
+       ss << " incr   incr incr  incr .." << std::left << std::setw(7)
           << std::setfill('.') << (1 << (exponent - 1))
-          << ".. incr   incr incr   incr -| " << std::left << std::setfill(' ')
+          << ". incr   incr incr  incr -| " << std::left << std::setfill(' ')
           << 2 * (exponent - 1);
        return ss.str();
      }()},
-    {3, "    |      |   |      |             |      |   |      |    | levels "},
+    {3, "   |      |   |      |               |      |   |      |   | levels"},
     {4, "                                                           |    "},
-    {4, "    |      |   |      |             |      |   |      |    |    "},
-    {3, "    `-incr-'   `-incr-'             `-incr-'   `-incr-'   -|    "},
-    {2, "        |          |                    |          |       |    "},
-    {2, "        `---incr---'                    `---incr---'      -'    "},
-    {1, "             |                               |                  "},
-    {1, "             `---------------+---------------'                  "},
+    {4, "   |      |   |      |               |      |   |      |   |    "},
+    {3, "   `-incr-'   `-incr-'               `-incr-'   `-incr-'  -|    "},
+    {2, "       |          |                      |          |      |    "},
+    {2, "       `---incr---'                      `---incr---'     -'    "},
+    {1, "            |                                 |                 "},
+    {1, "            `----------------+----------------'                 "},
     {0, "                             |                                  "},
     {0, "                             x                                  "}};
 
