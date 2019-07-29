@@ -31,7 +31,7 @@ namespace
 void PrintCheckPointWithoutTime(std::ostream& out,
                                 const CheckPoint& check_point)
 {
-  out << std::left << std::setw(17) << check_point.memory_consumption;
+  out << std::right << std::setw(11) << check_point.memory_consumption << ' ';
 
   out << std::right << std::setw(8) << check_point.active_nodes_count;
   out << "/";
@@ -46,6 +46,7 @@ benchmark::CheckPoint benchmark::make_check_point()
 {
   return CheckPoint{dataflow::introspect::memory_consumption(),
                     std::chrono::steady_clock::now(),
+                    dataflow::introspect::num_updated_nodes(),
                     dataflow::introspect::num_active_nodes(),
                     dataflow::introspect::num_vertices()};
 }
@@ -54,7 +55,7 @@ void benchmark::PrintCheckPoint(std::ostream& out,
                                 const std::string& name,
                                 const CheckPoint& check_point)
 {
-  out << std::left << std::setw(31) << name + ':';
+  out << std::left << std::setw(36) << name + ':';
 
   PrintCheckPointWithoutTime(out, check_point);
 }
@@ -62,14 +63,16 @@ void benchmark::PrintCheckPoint(std::ostream& out,
 void benchmark::PrintCheckPoint(std::ostream& out,
                                 const std::string& name,
                                 const CheckPoint& check_point,
-                                std::chrono::steady_clock::time_point prev_time)
+                                std::chrono::steady_clock::time_point prev_time,
+                                std::size_t affected_nodes)
 {
-  const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
-                          check_point.time - prev_time)
-                          .count() /
-                        1000000.0;
+  const auto duration_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                             check_point.time - prev_time)
+                             .count();
 
-  out << std::left << std::setw(14) << name + ':' << std::setw(17) << duration;
+  out << std::left << std::setw(12) << name + ':' << std::setw(11) << std::right
+      << std::fixed << std::setprecision(2) << (duration_ns / 1000000.0) << ' '
+      << std::setw(11) << (duration_ns / affected_nodes) << " ";
 
   PrintCheckPointWithoutTime(out, check_point);
 }

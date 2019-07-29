@@ -31,37 +31,64 @@ double benchmark::CalculateUpdateDurationSec(const CheckPoints& check_points)
 void benchmark::PrintCheckPoints(std::ostream& out,
                                  const CheckPoints& check_points)
 {
-  out << "              Duration (sec)   Memory (bytes)   Nodes (active/all)"
+  out << "-----------------------------------------------------------------"
+      << std::endl;
+  out << "                  Total    Time per      Memory       Nodes"
+      << std::endl;
+  out << "              time (ms)   node (ns)     (bytes)   active/all"
+      << std::endl;
+  out << "-----------------------------------------------------------------"
       << std::endl;
 
   PrintCheckPoint(out, "Initial", check_points.start);
 
-  PrintCheckPoint(
-    out, "Constructed", check_points.constructed, check_points.start.time);
+  PrintCheckPoint(out,
+                  "Constructed",
+                  check_points.constructed,
+                  check_points.start.time,
+                  check_points.constructed.all_nodes_count -
+                    check_points.start.all_nodes_count);
 
-  PrintCheckPoint(
-    out, "Activated*", check_points.activated, check_points.constructed.time);
+  PrintCheckPoint(out,
+                  "Activated*",
+                  check_points.activated,
+                  check_points.constructed.time,
+                  check_points.activated.active_nodes_count -
+                    check_points.constructed.active_nodes_count);
 
-  PrintCheckPoint(
-    out, "Updated", check_points.updated, check_points.activated.time);
+  PrintCheckPoint(out,
+                  "Updated",
+                  check_points.updated,
+                  check_points.activated.time,
+                  check_points.updated.updated_nodes_count);
 
-  PrintCheckPoint(
-    out, "Deactivated", check_points.deactivated, check_points.updated.time);
+  PrintCheckPoint(out,
+                  "Deactivated",
+                  check_points.deactivated,
+                  check_points.updated.time,
+                  check_points.updated.active_nodes_count -
+                    check_points.deactivated.active_nodes_count);
 
   PrintCheckPoint(out,
                   "Activated*",
                   check_points.second_time_activated,
-                  check_points.deactivated.time);
+                  check_points.deactivated.time,
+                  check_points.second_time_activated.active_nodes_count -
+                    check_points.deactivated.active_nodes_count);
 
   PrintCheckPoint(out,
                   "Deactivated",
                   check_points.second_time_deactivated,
-                  check_points.second_time_activated.time);
+                  check_points.second_time_activated.time,
+                  check_points.second_time_activated.active_nodes_count -
+                    check_points.second_time_deactivated.active_nodes_count);
 
   PrintCheckPoint(out,
                   "Destructed",
                   check_points.destructed,
-                  check_points.second_time_deactivated.time);
+                  check_points.second_time_deactivated.time,
+                  check_points.second_time_deactivated.all_nodes_count -
+                    check_points.destructed.all_nodes_count);
 
   out << std::endl;
 

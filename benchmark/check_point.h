@@ -26,6 +26,7 @@ struct CheckPoint
 {
   std::size_t memory_consumption;
   std::chrono::steady_clock::time_point time;
+  std::size_t updated_nodes_count;
   std::size_t active_nodes_count;
   std::size_t all_nodes_count;
 };
@@ -39,5 +40,6 @@ void PrintCheckPoint(std::ostream& out,
 void PrintCheckPoint(std::ostream& out,
                      const std::string& name,
                      const CheckPoint& check_point,
-                     std::chrono::steady_clock::time_point prev_time);
+                     std::chrono::steady_clock::time_point prev_time,
+                     std::size_t affected_nodes);
 }
