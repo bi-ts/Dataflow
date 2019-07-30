@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -57,30 +57,10 @@ dataflow::pair<T, U> dataflow::make_pair(const ref<T>& first,
   return pair<T, U>(first, second);
 }
 
-template <typename T, typename U>
-dataflow::ref<dataflow::pair<T, U>> dataflow::Pair(const ref<T>& first,
-                                                   const ref<U>& second)
-{
-  return Const(make_pair(first, second));
-}
-
-template <typename T, typename U, typename FwT>
-dataflow::ref<dataflow::pair<FwT, U>> dataflow::Pair(const T& first,
-                                                     const ref<U>& second)
-{
-  return Pair(Const(first), second);
-}
-
-template <typename T, typename U, typename FwU>
-dataflow::ref<dataflow::pair<T, FwU>> dataflow::Pair(const ref<T>& first,
-                                                     const U& second)
-{
-  return Pair(first, Const(second));
-}
-
 template <typename T, typename U, typename FwT, typename FwU>
 dataflow::ref<dataflow::pair<FwT, FwU>> dataflow::Pair(const T& first,
                                                        const U& second)
 {
-  return Pair(Const(first), Const(second));
+  return Const<pair<FwT, FwU>>(core::make_argument(first),
+                               core::make_argument(second));
 }

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -87,19 +87,10 @@ std::ostream& operator<<(std::ostream& out, const pair<T, U>& value);
 template <typename T, typename U>
 pair<T, U> make_pair(const ref<T>& first, const ref<U>& second);
 
-template <typename T, typename U>
-ref<pair<T, U>> Pair(const ref<T>& first, const ref<U>& second);
-
-template <typename T, typename U, typename FwT = core::convert_to_flowable_t<T>>
-ref<pair<FwT, U>> Pair(const T& first, const ref<U>& second);
-
-template <typename T, typename U, typename FwU = core::convert_to_flowable_t<U>>
-ref<pair<T, FwU>> Pair(const ref<T>& first, const U& second);
-
 template <typename T,
           typename U,
-          typename FwT = core::convert_to_flowable_t<T>,
-          typename FwU = core::convert_to_flowable_t<U>>
+          typename FwT = core::argument_data_type_t<T>,
+          typename FwU = core::argument_data_type_t<U>>
 ref<pair<FwT, FwU>> Pair(const T& first, const U& second);
 
 /// \}
