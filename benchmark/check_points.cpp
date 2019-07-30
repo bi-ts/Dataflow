@@ -33,9 +33,9 @@ void benchmark::PrintCheckPoints(std::ostream& out,
 {
   out << "-----------------------------------------------------------------"
       << std::endl;
-  out << "                  Total    Time per      Memory       Nodes"
+  out << "                  Total    Time per      Memory    Nodes count"
       << std::endl;
-  out << "              time (ms)   node (ns)     (bytes)   active/all"
+  out << "              time (ms)   node (ns)     (bytes)   active/total"
       << std::endl;
   out << "-----------------------------------------------------------------"
       << std::endl;
