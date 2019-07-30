@@ -386,7 +386,7 @@ engine::engine()
 
 engine::~engine() noexcept
 {
-  assert(num_vertices(graph_) == 1);
+  CHECK_PRECONDITION_NOEXCEPT(num_vertices(graph_) == 1);
 
   try
   {
@@ -394,7 +394,7 @@ engine::~engine() noexcept
   }
   catch (const std::exception& ex)
   {
-    assert(false);
+    CHECK_NOT_REACHABLE_NOEXCEPT();
   }
 }
 

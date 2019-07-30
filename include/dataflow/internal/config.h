@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -22,9 +22,19 @@
 
 #define DATAFLOW___CHECK_ARGUMENT(x) assert(x)
 
-#define DATAFLOW___CHECK_NOT_REACHABLE()                                       \
-  assert(!"The function is not supposed to be called")
-
+#define DATAFLOW___CHECK_NOT_REACHABLE() assert(!"Not supposed to be reached")
 #define DATAFLOW___CHECK_PRECONDITION(x) assert(x)
 #define DATAFLOW___CHECK_CONDITION(x) assert(x)
 #define DATAFLOW___CHECK_POSTCONDITION(x) assert(x)
+
+#define DATAFLOW___CHECK_NOT_REACHABLE_DEBUG()                                 \
+  assert(!"Not supposed to be reached")
+#define DATAFLOW___CHECK_PRECONDITION_DEBUG(x) assert(x)
+#define DATAFLOW___CHECK_CONDITION_DEBUG(x) assert(x)
+#define DATAFLOW___CHECK_POSTCONDITION_DEBUG(x) assert(x)
+
+#define DATAFLOW___CHECK_NOT_REACHABLE_NOEXCEPT()                              \
+  assert(!"Not supposed to be reached")
+#define DATAFLOW___CHECK_PRECONDITION_NOEXCEPT(x) assert(x)
+#define DATAFLOW___CHECK_CONDITION_NOEXCEPT(x) assert(x)
+#define DATAFLOW___CHECK_POSTCONDITION_NOEXCEPT(x) assert(x)
