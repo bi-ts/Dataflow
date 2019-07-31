@@ -20,6 +20,7 @@
 #include "config.h"
 #include "node_time.h"
 #include "utility.h"
+#include "vd_handle.h"
 
 #include <dst/allocator/utility.h>
 
@@ -718,7 +719,7 @@ void engine::deactivate_subgraph_(edge_descriptor e)
 
   deactivate_edge_(e);
 
-  std::stack<vertex_descriptor> stack;
+  std::stack<vd_handle> stack;
 
   stack.push(v);
 
@@ -787,60 +788,42 @@ void engine::deactivate_subgraph_(edge_descriptor e)
 
 void engine::remove_subgraph_(vertex_descriptor v)
 {
-  CHECK_PRECONDITION(graph_[v].ref_count() == 0);
+  std::stack<vertex_descriptor> stack;
 
-  class remove_ref_dfs_visitor : public boost::default_dfs_visitor
+  stack.push(v);
+
+  while (!stack.empty())
   {
-  public:
-    remove_ref_dfs_visitor(dependency_graph& g)
-    : graph_(g)
-    {
-    }
+    const auto u = stack.top();
+    stack.pop();
 
-    void discover_vertex(vertex_descriptor v, const dependency_graph&)
-    {
-      assert(graph_[v].ref_count() == 0);
+    CHECK_CONDITION(graph_[u].ref_count() == 0);
 
-      if (engine::instance().is_active_node(v))
+    if (is_active_node(u))
+    {
+      for (auto es = out_edges(u, graph_); es.first != es.second; ++es.first)
       {
-        for (auto es = out_edges(v, graph_); es.first != es.second; ++es.first)
-        {
-          const auto e = *es.first;
-          if (engine::instance().is_active_data_dependency(e))
-            engine::instance().deactivate_subgraph_(e);
-        }
-
-        engine::instance().deactivate_vertex_(v);
+        const auto e = *es.first;
+        if (is_active_data_dependency(e))
+          deactivate_subgraph_(e);
       }
 
-      CHECK_CONDITION(!engine::instance().is_active_node(v));
-
-      for (auto es = out_edges(v, graph_); es.first != es.second; ++es.first)
-      {
-        const auto u = target(*es.first, graph_);
-        if (graph_[u].release())
-        {
-          graph_[u].vertex_color = vertex::color::white;
-        }
-      }
+      deactivate_vertex_(u);
     }
 
-    void finish_vertex(vertex_descriptor v, const dependency_graph&)
+    CHECK_CONDITION(!is_active_node(u));
+
+    for (auto es = out_edges(u, graph_); es.first != es.second; ++es.first)
     {
-      if (graph_[v].ref_count() == 0)
-      {
-        engine::instance().delete_node_(v);
-      }
+      CHECK_CONDITION(!is_logical_dependency(*es.first));
+
+      const auto w = target(*es.first, graph_);
+      if (graph_[w].release())
+        stack.push(w);
     }
 
-  private:
-    dependency_graph& graph_;
-  };
-
-  graph_[v].vertex_color = vertex::color::white;
-
-  boost::depth_first_visit(
-    graph_, v, remove_ref_dfs_visitor(graph_), color_map(graph_));
+    delete_node_(u);
+  }
 }
 
 void engine::pump_()

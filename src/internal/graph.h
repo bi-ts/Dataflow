@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "config.h"
+
 #include <dataflow/internal/node.h>
 
 #include <dst/allocator/global_counter_allocator.h>
@@ -33,6 +35,10 @@
 #include <limits>
 #include <list>
 #include <type_traits>
+
+#ifndef NDEBUG
+#include <unordered_set>
+#endif
 
 namespace dataflow
 {
@@ -170,13 +176,78 @@ public:
   consumers_list consumers;
 };
 
-using dependency_graph =
+using dependency_graph_base =
   boost::adjacency_list<out_edge_listS<memory_allocator<void>>,
                         vertex_listS<memory_allocator<void>>,
                         boost::directedS,
                         vertex,
                         active_edge_ticket,
                         boost::no_property>;
+
+// TODO: reimplement `dependency_graph` class to be able to identify invalid
+//       vertices in constant time
+class dependency_graph : public dependency_graph_base
+{
+public:
+  vertex& operator[](const vertex_descriptor& v)
+  {
+    CHECK_CONDITION_DEBUG(vertex_registry_.find(v) != vertex_registry_.end());
+
+    dependency_graph_base& g = *this;
+
+    return g[v];
+  }
+
+  const vertex& operator[](const vertex_descriptor& v) const
+  {
+    CHECK_CONDITION_DEBUG(vertex_registry_.find(v) != vertex_registry_.end());
+
+    const dependency_graph_base& g = *this;
+
+    return g[v];
+  }
+
+  dependency_graph_base::edge_property_type&
+  operator[](const dependency_graph_base::edge_descriptor& e)
+  {
+    dependency_graph_base& g = *this;
+
+    return g[e];
+  }
+
+  const dependency_graph_base::edge_property_type&
+  operator[](const dependency_graph_base::edge_descriptor& e) const
+  {
+    const dependency_graph_base& g = *this;
+
+    return g[e];
+  }
+
+  friend vertex_descriptor add_vertex(vertex properties, dependency_graph& g)
+  {
+    dependency_graph_base& base_g = g;
+
+    const auto v = add_vertex(properties, base_g);
+
+    CHECK_CONDITION_DEBUG(g.vertex_registry_.insert(v).second);
+
+    return v;
+  }
+
+  friend void remove_vertex(vertex_descriptor v, dependency_graph& g)
+  {
+    CHECK_CONDITION_DEBUG(g.vertex_registry_.erase(v) == 1);
+
+    dependency_graph_base& base_g = g;
+
+    remove_vertex(v, base_g);
+  }
+
+private:
+#ifndef NDEBUG
+  std::unordered_set<vertex_descriptor> vertex_registry_;
+#endif
+};
 
 static_assert(
   std::is_same<vertex_descriptor,

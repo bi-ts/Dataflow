@@ -123,5 +123,37 @@ BOOST_AUTO_TEST_CASE(test_regression_StateMachine_independent_on_previous_state)
   BOOST_CHECK_EQUAL(y(), 33);
 }
 
+BOOST_AUTO_TEST_CASE(test_regression_diamond_destruction)
+{
+  Engine engine;
+
+  const auto y = []() {
+    const auto x = Var<int>(6);
+    return Curr(x * x);
+  }();
+
+  BOOST_CHECK_EQUAL(y(), 36);
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_compound_deactivation)
+{
+  Engine engine;
+
+  const auto x = Var<bool>(true);
+
+  const auto y = If(
+    x,
+    [](const Time&) { return Const<int>(100); },
+    [](const Time&) { return Const<int>(200); });
+
+  const auto z = Main(y);
+
+  BOOST_CHECK_EQUAL(z(), 100);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(z(), 200);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
