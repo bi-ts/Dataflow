@@ -155,5 +155,20 @@ BOOST_AUTO_TEST_CASE(test_regression_compound_deactivation)
   BOOST_CHECK_EQUAL(z(), 200);
 }
 
+BOOST_AUTO_TEST_CASE(test_regression_no_bad_ref_type_conversion)
+{
+  BOOST_CHECK((!std::is_constructible<ref<int>, ref<std::string>>::value));
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_no_bad_val_type_conversion)
+{
+  BOOST_CHECK((!std::is_constructible<val<int>, val<std::string>>::value));
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_no_bad_var_type_conversion)
+{
+  BOOST_CHECK((!std::is_constructible<var<int>, var<std::string>>::value));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

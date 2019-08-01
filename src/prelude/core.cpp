@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -35,5 +35,6 @@ Engine::~Engine()
 
 dataflow::ref<std::size_t> dataflow::CurrentTime()
 {
-  return ref<std::size_t>(internal::nodes_factory::get_time());
+  return internal::make_ref<ref<std::size_t>>(
+    internal::nodes_factory::get_time());
 }

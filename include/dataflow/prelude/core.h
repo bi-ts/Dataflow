@@ -51,30 +51,44 @@ public:
   ~Engine();
 };
 
+namespace internal
+{
+template <typename Ref> Ref make_ref(const ref& x);
+}
+
 template <typename T> class ref : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
-public:
-  explicit ref(const internal::ref& r);
+  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
 
+public:
   ref<T> operator()(const Time& t) const;
+
+protected:
+  explicit ref(const internal::ref& r);
 };
 
 template <typename T> class val final : public ref<T>
 {
-public:
-  explicit val(const internal::ref& r);
+  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
 
+public:
   const T& operator()() const;
+
+private:
+  explicit val(const internal::ref& r);
 };
 
 template <typename T> class var final : public ref<T>
 {
-public:
-  explicit var(const internal::ref& r);
+  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
 
+public:
   const var& operator=(const T& v) const;
+
+private:
+  explicit var(const internal::ref& r);
 };
 
 namespace core
