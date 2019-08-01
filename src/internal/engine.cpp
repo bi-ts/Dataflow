@@ -730,7 +730,7 @@ void engine::deactivate_subgraph_(edge_descriptor e)
     if (graph_[w].eager || !is_active_node(w))
       continue;
 
-    if (graph_[w].consumers.size() == 0)
+    if (graph_[w].consumers.empty())
     {
       for (auto es = out_edges(w, graph_); es.first != es.second; ++es.first)
       {
@@ -761,7 +761,7 @@ void engine::deactivate_subgraph_(edge_descriptor e)
             return order_.order(graph_[u].position, graph_[v].position);
           });
 
-        bool marked = order_.marked(graph_[w].position);
+        const bool marked = order_.marked(graph_[w].position);
 
         order_.erase(graph_[w].position);
         graph_[w].position = order_.insert(graph_[*it].position, w);
