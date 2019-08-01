@@ -105,7 +105,6 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/nodes_factory.cpp
   src/internal/ref.cpp
   src/internal/tick_count.h
-  src/internal/utility.h
   src/internal/vd_handle.h
   src/internal/vd_handle.inl
 )

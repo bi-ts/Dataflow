@@ -107,14 +107,6 @@ private:
   using uint = std::size_t;
 
 public:
-  enum class color : uint
-  {
-    black = 0x0,
-    gray = 0x1,
-    white = 0x2
-  };
-
-public:
   vertex(node* p_node)
   : eager(false)
   , conditional(false)
@@ -123,7 +115,6 @@ public:
   , initialized(false)
   , hidden(false)
   , previous(false)
-  , vertex_color(color::black)
   , ref_count_(0)
   , position()
   , p_node(p_node)
@@ -165,7 +156,6 @@ public:
   uint initialized : 1;
   uint hidden : 1;
   uint previous : 1;
-  color vertex_color : 2;
 
 private:
   uint ref_count_;

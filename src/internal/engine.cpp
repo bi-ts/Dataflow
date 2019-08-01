@@ -19,7 +19,6 @@
 #include "engine.h"
 #include "config.h"
 #include "node_time.h"
-#include "utility.h"
 #include "vd_handle.h"
 
 #include <dst/allocator/utility.h>
