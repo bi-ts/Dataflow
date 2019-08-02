@@ -326,6 +326,28 @@ template <typename T> struct diff_type
 
 template <typename T> using diff_type_t = typename diff_type<T>::type;
 
+template <typename T, typename... Args>
+using enable_if_all =
+  std::enable_if<internal::std17::conjunction<Args...>::value, T>;
+
+template <typename T, typename... Args>
+using enable_if_all_t = typename enable_if_all<T, Args...>::type;
+
+template <typename T, typename... Args>
+using enable_if_some =
+  std::enable_if<internal::std17::disjunction<Args...>::value, T>;
+
+template <typename T = void, typename... Args>
+using enable_if_some_t = typename enable_if_some<T, Args...>::type;
+
+template <typename T, typename... Args>
+using enable_if_none = std::enable_if<
+  internal::std17::conjunction<internal::std17::negation<Args>...>::value,
+  T>;
+
+template <typename T = void, typename... Args>
+using enable_if_none_t = typename enable_if_none<T, Args...>::type;
+
 // Utility functions
 
 template <typename T, typename FwT = convert_to_flowable_t<T>>
