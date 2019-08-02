@@ -91,6 +91,9 @@ private:
   explicit var(const internal::ref& r);
 };
 
+template <typename T>
+using function_of_time = std::function<ref<T>(const Time&)>;
+
 namespace core
 {
 template <typename T> class generic_patch
@@ -500,8 +503,7 @@ template <typename FArgT,
           typename = core::enable_if_some_t<void,
                                             core::is_function_of_time<FArgT>,
                                             core::is_function_of_time<FArgU>>>
-std::function<ref<T>(const Time&)>
-If(const ref<bool>& x, const FArgT& y, const FArgU& z);
+function_of_time<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
 
 // Stateful functions
 

@@ -377,7 +377,7 @@ dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z, const Time& t0)
 }
 
 template <typename FArgT, typename FArgU, typename T, typename, typename>
-std::function<dataflow::ref<T>(const dataflow::Time&)>
+dataflow::function_of_time<T>
 dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 {
   return [=](const Time& t0) { return If(x, y, z, t0); };
@@ -403,7 +403,7 @@ dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
       return x;
     }
 
-    static ref<T> init(const std::function<ref<T>(const Time&)>& f)
+    static ref<T> init(const function_of_time<T>& f)
     {
       return internal::make_ref<ref<T>>(internal::node_compound<T>::create(f));
     }
