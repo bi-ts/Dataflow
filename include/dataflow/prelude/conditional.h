@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -46,31 +46,20 @@ ref<U> Switch(const ref<T>& x,
               const std::pair<ref<T>, ref<U>>& first_case,
               const Cases&... other_cases);
 
-template <typename T, typename U>
-std::pair<ref<T>, ref<U>> Case(const ref<T>& x, const ref<U>& y);
+template <typename ArgT,
+          typename ArgU,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename U = core::argument_data_type_t<ArgU>>
+std::pair<ref<T>, ref<U>> Case(const ArgT& x, const ArgU& y);
 
-template <typename T, typename U, typename FwU = core::convert_to_flowable_t<U>>
-std::pair<ref<T>, ref<FwU>> Case(const ref<T>& x, const U& y);
+template <typename ArgT, typename T = core::argument_data_type_t<ArgT>>
+ref<T> Default(const ArgT& x);
 
-template <typename T, typename U, typename FwT = core::convert_to_flowable_t<T>>
-std::pair<ref<FwT>, ref<U>> Case(const T& x, const ref<U>& y);
-
-template <typename T,
-          typename U,
-          typename FwT = core::convert_to_flowable_t<T>,
-          typename FwU = core::convert_to_flowable_t<U>>
-std::pair<ref<FwT>, ref<FwU>> Case(const T& x, const U& y);
-
-template <typename T> ref<T> Default(const ref<T>& x);
-
-template <typename T, typename FwT = core::convert_to_flowable_t<T>>
-ref<FwT> Default(const T& v);
-
-template <typename T>
-std::pair<ref<bool>, ref<T>> operator>>=(const ref<bool>& x, const ref<T>& y);
-
-template <typename T, typename FwT = core::convert_to_flowable_t<T>>
-std::pair<ref<bool>, ref<FwT>> operator>>=(const ref<bool>& x, const T& y);
+template <typename ArgT,
+          typename ArgU,
+          typename R = decltype(Case(std::declval<ArgT>(),
+                                     std::declval<ArgU>()))>
+R operator>>=(ArgT&& x, ArgU&& y);
 
 /// \}
 } // dataflow

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -55,55 +55,21 @@ dataflow::ref<U> dataflow::Switch(const ref<T>& x,
     x == first_case.first, first_case.second, Switch(x, other_cases...));
 }
 
-template <typename T, typename U>
-std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const ref<T>& x,
-                                                             const ref<U>& y)
+template <typename ArgT, typename ArgU, typename T, typename U>
+std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const ArgT& x,
+                                                             const ArgU& y)
 {
-  return std::make_pair(x, y);
+  return std::make_pair(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename T, typename U, typename FwU>
-std::pair<dataflow::ref<T>, dataflow::ref<FwU>> dataflow::Case(const ref<T>& x,
-                                                               const U& y)
+template <typename ArgT, typename T>
+dataflow::ref<T> dataflow::Default(const ArgT& x)
 {
-  return std::make_pair(x, Const(y));
+  return core::make_argument(x);
 }
 
-template <typename T, typename U, typename FwT>
-std::pair<dataflow::ref<FwT>, dataflow::ref<U>> dataflow::Case(const T& x,
-                                                               const ref<U>& y)
+template <typename ArgT, typename ArgU, typename R>
+R dataflow::operator>>=(ArgT&& x, ArgU&& y)
 {
-  return Case(Const(x), y);
-}
-
-template <typename T, typename U, typename FwT, typename FwU>
-std::pair<dataflow::ref<FwT>, dataflow::ref<FwU>> dataflow::Case(const T& x,
-                                                                 const U& y)
-{
-  return Case(Const(x), Const(y));
-}
-
-template <typename T> dataflow::ref<T> dataflow::Default(const ref<T>& x)
-{
-  return x;
-}
-
-template <typename T, typename FwT>
-dataflow::ref<FwT> dataflow::Default(const T& v)
-{
-  return Const(v);
-}
-
-template <typename T>
-std::pair<dataflow::ref<bool>, dataflow::ref<T>> dataflow::
-operator>>=(const ref<bool>& x, const ref<T>& y)
-{
-  return Case(x, y);
-}
-
-template <typename T, typename FwT>
-std::pair<dataflow::ref<bool>, dataflow::ref<FwT>> dataflow::
-operator>>=(const ref<bool>& x, const T& y)
-{
-  return Case(x, y);
+  return Case(std::forward<ArgT>(x), std::forward<ArgU>(y));
 }
