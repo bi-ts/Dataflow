@@ -342,20 +342,43 @@ dataflow::ref<FwT> dataflow::If(const ref<bool>& x, const T& y, const U& z)
     false));
 }
 
-template <typename F, typename G, typename T>
-dataflow::ref<T>
-dataflow::If(const ref<bool>& x, const F& y, const G& z, const Time& t0)
+namespace dataflow
 {
-  return internal::make_ref<ref<T>>(internal::node_if<T>::create(
-    internal::node_if_activator::create(x),
-    internal::make_ref<ref<T>>(internal::node_compound<T>::create(y)),
-    internal::make_ref<ref<T>>(internal::node_compound<T>::create(z)),
-    true));
+namespace detail
+{
+template <typename F>
+ref<core::function_of_time_type_t<F>>
+ref_from_function_of_time_or_ref(const F& f)
+{
+  using type = core::function_of_time_type_t<F>;
+
+  return internal::make_ref<ref<type>>(
+    internal::node_compound<type>::create(f));
 }
 
-template <typename F, typename G, typename T>
+template <typename ArgT>
+ref<core::argument_data_type_t<ArgT>>
+ref_from_function_of_time_or_ref(const ArgT& x)
+{
+  return core::make_argument(x);
+}
+}
+}
+
+template <typename FArgT, typename FArgU, typename T, typename, typename>
+dataflow::ref<T>
+dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z, const Time& t0)
+{
+  return internal::make_ref<ref<T>>(
+    internal::node_if<T>::create(internal::node_if_activator::create(x),
+                                 detail::ref_from_function_of_time_or_ref(y),
+                                 detail::ref_from_function_of_time_or_ref(z),
+                                 true));
+}
+
+template <typename FArgT, typename FArgU, typename T, typename, typename>
 std::function<dataflow::ref<T>(const dataflow::Time&)>
-dataflow::If(const ref<bool>& x, const F& y, const G& z)
+dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 {
   return [=](const Time& t0) { return If(x, y, z, t0); };
 }

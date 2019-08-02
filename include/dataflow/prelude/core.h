@@ -305,6 +305,25 @@ template <typename T,
 using enable_for_argument_data_type_t =
   typename enable_for_argument_data_type<T, U, V>::type;
 
+template <typename T>
+using farg_data_type = typename std::conditional<is_function_of_time<T>::value,
+                                                 function_of_time_type<T>,
+                                                 argument_data_type<T>>::type;
+
+template <typename T> using farg_data_type_t = typename farg_data_type<T>::type;
+
+template <typename Arg,
+          typename T,
+          typename U = typename farg_data_type<Arg>::type>
+using enable_for_farg_data_type =
+  std::enable_if<std::is_same<typename farg_data_type<Arg>::type, T>::value, U>;
+
+template <typename Arg,
+          typename T,
+          typename U = typename farg_data_type<Arg>::type>
+using enable_for_farg_data_type_t =
+  typename enable_for_farg_data_type<Arg, T, U>::type;
+
 template <typename T> struct patch_type
 {
 private:
@@ -465,22 +484,24 @@ template <typename T,
           typename = core::enable_for_argument_data_type_t<U, FwT>>
 ref<FwT> If(const ref<bool>& x, const T& y, const U& z);
 
-template <typename F,
-          typename G,
-          typename T = typename std::enable_if<
-            std::is_same<core::function_of_time_type_t<F>,
-                         core::function_of_time_type_t<G>>::value,
-            core::function_of_time_type_t<F>>::type>
-ref<T> If(const ref<bool>& x, const F& y, const G& z, const Time& t0);
+template <typename FArgT,
+          typename FArgU,
+          typename T = core::farg_data_type_t<FArgT>,
+          typename = core::enable_for_farg_data_type_t<FArgU, T>,
+          typename = core::enable_if_some_t<void,
+                                            core::is_function_of_time<FArgT>,
+                                            core::is_function_of_time<FArgU>>>
+ref<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z, const Time& t0);
 
-template <typename F,
-          typename G,
-          typename T = typename std::enable_if<
-            std::is_same<core::function_of_time_type_t<F>,
-                         core::function_of_time_type_t<G>>::value,
-            core::function_of_time_type_t<F>>::type>
+template <typename FArgT,
+          typename FArgU,
+          typename T = core::farg_data_type_t<FArgT>,
+          typename = core::enable_for_farg_data_type_t<FArgU, T>,
+          typename = core::enable_if_some_t<void,
+                                            core::is_function_of_time<FArgT>,
+                                            core::is_function_of_time<FArgU>>>
 std::function<ref<T>(const Time&)>
-If(const ref<bool>& x, const F& y, const G& z);
+If(const ref<bool>& x, const FArgT& y, const FArgU& z);
 
 // Stateful functions
 

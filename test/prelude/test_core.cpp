@@ -511,6 +511,61 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   BOOST_CHECK_EQUAL(f(), 13);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_If_ref_fn, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto y = Var<int>(11);
+  auto z = Var<int>(12);
+
+  auto f = Main(If(x, y, [=](const Time& t0) { return z; }));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), false);
+  BOOST_CHECK_EQUAL(f(), 11);
+
+  y = 34;
+
+  BOOST_CHECK_EQUAL(f(), 34);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+  BOOST_CHECK_EQUAL(f(), 12);
+
+  z = 15;
+
+  BOOST_CHECK_EQUAL(f(), 15);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_If_fn_ref, test_core_fixture)
+{
+  auto x = Var<bool>(true);
+  auto y = Var<int>(11);
+  auto z = Var<int>(12);
+
+  auto f = Main(If(
+    x, [=](const Time& t0) { return y; }, z));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), false);
+  BOOST_CHECK_EQUAL(f(), 11);
+
+  y = 34;
+
+  BOOST_CHECK_EQUAL(f(), 34);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(z), true);
+  BOOST_CHECK_EQUAL(f(), 12);
+
+  z = 15;
+
+  BOOST_CHECK_EQUAL(f(), 15);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
 {
   auto x = Var<bool>(true);
