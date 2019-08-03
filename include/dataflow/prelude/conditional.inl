@@ -22,28 +22,13 @@
 
 #include "comparison.h"
 
-template <typename T>
-dataflow::ref<T>
-dataflow::Switch(const std::pair<ref<bool>, ref<T>>& first_case,
-                 const ref<T>& default_case)
-{
-  return If(first_case.first, first_case.second, default_case);
-}
-
-template <typename T, typename... Cases>
-dataflow::ref<T>
-dataflow::Switch(const std::pair<ref<bool>, ref<T>>& first_case,
-                 const Cases&... other_cases)
-{
-  return If(first_case.first, first_case.second, Switch(other_cases...));
-}
-
 template <typename T, typename U>
-dataflow::ref<U> dataflow::Switch(const ref<T>& x,
-                                  const std::pair<ref<T>, ref<U>>& first_case,
-                                  const ref<U>& default_case)
+dataflow::ref<U>
+dataflow::Switch(const ref<T>& x,
+                 const std::pair<ref<T>, ref<U>>& first_case,
+                 const std::pair<std::true_type, ref<U>>& default_case)
 {
-  return If(x == first_case.first, first_case.second, default_case);
+  return If(x == first_case.first, first_case.second, default_case.second);
 }
 
 template <typename T, typename U, typename... Cases>
@@ -55,21 +40,47 @@ dataflow::ref<U> dataflow::Switch(const ref<T>& x,
     x == first_case.first, first_case.second, Switch(x, other_cases...));
 }
 
-template <typename ArgT, typename ArgU, typename T, typename U>
-std::pair<dataflow::ref<T>, dataflow::ref<U>> dataflow::Case(const ArgT& x,
-                                                             const ArgU& y)
+template <typename FArgT, typename FArgU>
+dataflow::core::
+  farg_result_t<dataflow::core::farg_data_type_t<FArgT>, FArgT, FArgU>
+  dataflow::Switch(const std::pair<dataflow::ref<bool>, FArgT>& first_case,
+                   const std::pair<std::true_type, FArgU>& default_case)
 {
-  return std::make_pair(core::make_argument(x), core::make_argument(y));
+  return If(first_case.first, first_case.second, default_case.second);
 }
 
-template <typename ArgT, typename T>
-dataflow::ref<T> dataflow::Default(const ArgT& x)
+template <typename FArg, typename... Conds, typename... FArgs>
+dataflow::core::
+  farg_result_t<dataflow::core::farg_data_type_t<FArg>, FArg, FArgs...>
+  dataflow::Switch(const std::pair<dataflow::ref<bool>, FArg>& first_case,
+                   const std::pair<Conds, FArgs>&... other_cases)
 {
-  return core::make_argument(x);
+  return If(first_case.first, first_case.second, Switch(other_cases...));
 }
 
-template <typename ArgT, typename ArgU, typename R>
-R dataflow::operator>>=(ArgT&& x, ArgU&& y)
+template <typename ArgT, typename FArgU>
+std::pair<
+  dataflow::ref<dataflow::core::argument_data_type_t<ArgT>>,
+  dataflow::core::farg_result_t<dataflow::core::farg_data_type_t<FArgU>, FArgU>>
+dataflow::Case(const ArgT& x, const FArgU& y)
 {
-  return Case(std::forward<ArgT>(x), std::forward<ArgU>(y));
+  return std::make_pair(core::make_argument(x), core::make_farg(y));
+}
+
+template <typename FArgT>
+std::pair<
+  std::true_type,
+  dataflow::core::farg_result_t<dataflow::core::farg_data_type_t<FArgT>, FArgT>>
+dataflow::Default(const FArgT& x)
+{
+  return std::make_pair(std::true_type{}, core::make_farg(x));
+}
+
+template <typename ArgT, typename FArgU>
+std::pair<
+  dataflow::ref<dataflow::core::argument_data_type_t<ArgT>>,
+  dataflow::core::farg_result_t<dataflow::core::farg_data_type_t<FArgU>, FArgU>>
+dataflow::operator>>=(const ArgT& x, const FArgU& y)
+{
+  return Case(x, y);
 }

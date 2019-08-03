@@ -28,38 +28,40 @@ namespace dataflow
 /// \defgroup conditional
 /// \{
 
-template <typename T>
-ref<T> Switch(const std::pair<ref<bool>, ref<T>>& first_case,
-              const ref<T>& default_case);
-
-template <typename T, typename... Cases>
-ref<T> Switch(const std::pair<ref<bool>, ref<T>>& first_case,
-              const Cases&... other_cases);
-
 template <typename T, typename U>
 ref<U> Switch(const ref<T>& x,
               const std::pair<ref<T>, ref<U>>& first_case,
-              const ref<U>& default_case);
+              const std::pair<std::true_type, ref<U>>& default_case);
 
 template <typename T, typename U, typename... Cases>
 ref<U> Switch(const ref<T>& x,
               const std::pair<ref<T>, ref<U>>& first_case,
               const Cases&... other_cases);
 
-template <typename ArgT,
-          typename ArgU,
-          typename T = core::argument_data_type_t<ArgT>,
-          typename U = core::argument_data_type_t<ArgU>>
-std::pair<ref<T>, ref<U>> Case(const ArgT& x, const ArgU& y);
+template <typename FArgT, typename FArgU>
+core::farg_result_t<core::farg_data_type_t<FArgT>, FArgT, FArgU>
+Switch(const std::pair<ref<bool>, FArgT>& first_case,
+       const std::pair<std::true_type, FArgU>& default_case);
 
-template <typename ArgT, typename T = core::argument_data_type_t<ArgT>>
-ref<T> Default(const ArgT& x);
+template <typename FArg, typename... Conds, typename... FArgs>
+core::farg_result_t<core::farg_data_type_t<FArg>, FArg, FArgs...>
+Switch(const std::pair<ref<bool>, FArg>& first_case,
+       const std::pair<Conds, FArgs>&... other_cases);
 
-template <typename ArgT,
-          typename ArgU,
-          typename R = decltype(Case(std::declval<ArgT>(),
-                                     std::declval<ArgU>()))>
-R operator>>=(ArgT&& x, ArgU&& y);
+template <typename ArgT, typename FArgU>
+std::pair<ref<core::argument_data_type_t<ArgT>>,
+          core::farg_result_t<core::farg_data_type_t<FArgU>, FArgU>>
+Case(const ArgT& x, const FArgU& y);
+
+template <typename FArgT>
+std::pair<std::true_type,
+          core::farg_result_t<core::farg_data_type_t<FArgT>, FArgT>>
+Default(const FArgT& x);
+
+template <typename ArgT, typename FArgU>
+std::pair<ref<core::argument_data_type_t<ArgT>>,
+          core::farg_result_t<core::farg_data_type_t<FArgU>, FArgU>>
+operator>>=(const ArgT& x, const FArgU& y);
 
 /// \}
 } // dataflow

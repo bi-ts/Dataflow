@@ -197,6 +197,80 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_fixture)
   BOOST_CHECK_EQUAL(f(), "error");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Switch_time_func, test_fixture)
+{
+  auto x = Var("ten");
+  auto y = Var(0);
+
+  const std::function<ref<int>(const Time&)> ff =
+    Switch(Case(x == "one", 1),
+           Case(x == "three", [](const Time& t0) { return Const(3); }),
+           Case(x == "five", 5),
+           Case(x == "ten", [](const Time& t0) { return Const(10); }),
+           Default(y));
+
+  auto f = Main(ff);
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = "one";
+
+  BOOST_CHECK_EQUAL(f(), 1);
+
+  x = "five";
+
+  BOOST_CHECK_EQUAL(f(), 5);
+
+  x = "three";
+
+  BOOST_CHECK_EQUAL(f(), 3);
+
+  x = "ten";
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = "NAN";
+
+  BOOST_CHECK_EQUAL(f(), 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_Switch_time_func_default, test_fixture)
+{
+  auto x = Var("ten");
+  auto y = Var(0);
+
+  const std::function<ref<int>(const Time&)> ff =
+    Switch(Case(x == "one", [](const Time& t0) { return Const(1); }),
+           Case(x == "three", 3),
+           Case(x == "five", [](const Time& t0) { return Const(5); }),
+           Case(x == "ten", 10),
+           Default([=](const Time& t0) { return y; }));
+
+  auto f = Main(ff);
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = "one";
+
+  BOOST_CHECK_EQUAL(f(), 1);
+
+  x = "five";
+
+  BOOST_CHECK_EQUAL(f(), 5);
+
+  x = "three";
+
+  BOOST_CHECK_EQUAL(f(), 3);
+
+  x = "ten";
+
+  BOOST_CHECK_EQUAL(f(), 10);
+
+  x = "NAN";
+
+  BOOST_CHECK_EQUAL(f(), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } // dataflow_test

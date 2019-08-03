@@ -153,6 +153,20 @@ dataflow::ref<T> dataflow::core::make_argument(const ref<T>& x)
   return x;
 }
 
+template <typename F>
+dataflow::function_of_time<dataflow::core::function_of_time_type_t<F>>
+dataflow::core::make_farg(const F& f)
+{
+  return f;
+}
+
+template <typename T>
+dataflow::ref<dataflow::core::argument_data_type_t<T>>
+dataflow::core::make_farg(const T& x)
+{
+  return make_argument(x);
+}
+
 template <typename F, typename X, typename T>
 dataflow::ref<T>
 dataflow::core::Lift(const std::string& label, const ref<X>& x, F func)

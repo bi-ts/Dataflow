@@ -327,6 +327,15 @@ template <typename Arg,
 using enable_for_farg_data_type_t =
   typename enable_for_farg_data_type<Arg, T, U>::type;
 
+template <typename T, typename... FArgs>
+using farg_result = std::conditional<
+  internal::std17::disjunction<core::is_function_of_time<FArgs>...>::value,
+  function_of_time<T>,
+  ref<T>>;
+
+template <typename T, typename... FArgs>
+using farg_result_t = typename farg_result<T, FArgs...>::type;
+
 template <typename T> struct patch_type
 {
 private:
@@ -376,6 +385,11 @@ template <typename T, typename FwT = convert_to_flowable_t<T>>
 ref<FwT> make_argument(const T& v);
 
 template <typename T> ref<T> make_argument(const ref<T>& x);
+
+template <typename F>
+function_of_time<function_of_time_type_t<F>> make_farg(const F& f);
+
+template <typename T> ref<argument_data_type_t<T>> make_farg(const T& x);
 
 template <typename F,
           typename X,
