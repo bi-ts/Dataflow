@@ -55,7 +55,7 @@ void benchmark::PrintCheckPoint(std::ostream& out,
                                 const std::string& name,
                                 const CheckPoint& check_point)
 {
-  out << std::left << std::setw(36) << name + ':';
+  out << std::left << std::setw(45) << name + ':';
 
   PrintCheckPointWithoutTime(out, check_point);
 }
@@ -72,7 +72,8 @@ void benchmark::PrintCheckPoint(std::ostream& out,
 
   out << std::left << std::setw(12) << name + ':' << std::setw(11) << std::right
       << std::fixed << std::setprecision(2) << (duration_ns / 1000000.0) << ' '
-      << std::setw(11) << (duration_ns / affected_nodes) << " ";
+      << std::setw(11) << (duration_ns / affected_nodes) << " " << std::setw(8)
+      << affected_nodes << " ";
 
   PrintCheckPointWithoutTime(out, check_point);
 }

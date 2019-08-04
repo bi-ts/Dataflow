@@ -164,7 +164,7 @@ ref<int> ConstructBinary(std::size_t exponent, ref<int> x)
 std::pair<ref<int>, std::size_t>
 ConstructBinaryAndPrintDescription(std::size_t exponent, ref<int> x)
 {
-  std::pair<int, std::string> desc[] = {
+  const std::pair<int, std::string> desc[] = {
     {0, "                            f(x)                                "},
     {1, "                             |                                  "},
     {1, "             ,--------------add----------------.          -.    "},
@@ -266,6 +266,8 @@ ConstructLinearSequenceArrayAndPrintDescription(std::size_t exponent,
   std::cout << "      |                           |" << std::endl;
   std::cout << "      `-----" << std::right << std::setw(10)
             << (1 << exponent) - 1 << " times------'" << std::endl;
+  std::cout << std::endl;
+  std::cout << "sizeof(x) = " << sizeof(array_data) << " bytes" << std::endl;
   std::cout << std::endl;
 
   std::cout.fill(prev);
