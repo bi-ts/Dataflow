@@ -130,5 +130,63 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
   BOOST_CHECK_EQUAL(ee.value_or(y).id(), x.id());
 }
 
+BOOST_AUTO_TEST_CASE(test_maybe_Just_FromMaybe)
+{
+  Engine engine;
+
+  const auto x = Var(11);
+  const auto y = Just(x);
+  const auto z = FromMaybe(y);
+  const auto f = *z;
+
+  BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), 11);
+
+  x = 22;
+
+  BOOST_CHECK_EQUAL(f(), 22);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_1_argument)
+{
+  Engine engine;
+
+  const auto x = Nothing<int>();
+  const auto y = FromMaybe(x);
+  const auto f = *y;
+
+  BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
+{
+  Engine engine;
+
+  const auto x = Nothing<int>();
+  const auto y = Var(23);
+  const auto z = FromMaybe(x, y);
+  const auto f = *z;
+
+  BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), 23);
+
+  y = 34;
+
+  BOOST_CHECK_EQUAL(f(), 34);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2nd_argument_literal)
+{
+  Engine engine;
+
+  const auto x = Nothing<std::string>();
+  const auto y = FromMaybe(x, "empty");
+  const auto f = *y;
+
+  BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), "empty");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test

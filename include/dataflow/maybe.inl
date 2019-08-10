@@ -100,3 +100,40 @@ template <typename T> bool maybe<T>::operator!=(const maybe<T>& other) const
   return !(*this == other);
 }
 }
+
+template <typename T> dataflow::ref<dataflow::maybe<T>> dataflow::Nothing()
+{
+  return Const<maybe<T>>();
+}
+
+template <typename T>
+dataflow::ref<dataflow::maybe<T>> dataflow::Just(const ref<T>& x)
+{
+  return Const<maybe<T>>(x);
+}
+
+template <typename T, typename U, typename>
+dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<T>>& x, const U& def)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "from-maybe";
+    }
+    ref<T> calculate(const maybe<T>& x)
+    {
+      return x.value_or(def_);
+    }
+
+    ref<T> def_;
+  };
+
+  return core::LiftSelector(policy{core::make_argument(def)}, x);
+}
+
+template <typename T>
+dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<T>>& x)
+{
+  return FromMaybe(x, Const<T>());
+}

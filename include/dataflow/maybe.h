@@ -62,6 +62,17 @@ std::ostream& operator<<(std::ostream& out, const maybe<T>& value)
   return out;
 }
 
+template <typename T> ref<maybe<T>> Nothing();
+
+template <typename T> ref<maybe<T>> Just(const ref<T>& x);
+
+template <typename T,
+          typename U,
+          typename = core::enable_for_argument_data_type_t<U, T>>
+ref<T> FromMaybe(const ref<maybe<T>>& x, const U& def);
+
+template <typename T> ref<T> FromMaybe(const ref<maybe<T>>& x);
+
 /// \}
 } // dataflow
 
