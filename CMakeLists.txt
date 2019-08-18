@@ -50,6 +50,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core.inl
   include/dataflow/prelude/logical.h
   include/dataflow/prelude/logical.inl
+  include/dataflow/prelude/stateful.h
+  include/dataflow/prelude/stateful.inl
   include/dataflow/string.h
   include/dataflow/string.inl
   include/dataflow/tuple.h
