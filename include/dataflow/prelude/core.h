@@ -44,6 +44,8 @@ template <typename T> struct is_flowable;
 
 using Time = internal::tick_count;
 
+using integer = int;
+
 class DATAFLOW___EXPORT Engine
 {
 public:
