@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -49,7 +49,7 @@ update_status node_snapshot_activator::update_(node_id id,
 
 std::string node_snapshot_activator::label_() const
 {
-  return "snapshot_activator";
+  return "snapshot-activator";
 }
 } // internal
 } // dataflow

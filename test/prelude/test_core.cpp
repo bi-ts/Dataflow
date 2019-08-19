@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
+#include "../tools/graph_invariant.h"
 #include "../tools/io_fixture.h"
 
 #include <dataflow/prelude/core.h>
@@ -297,6 +298,7 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
   const auto y = Main([=](const Time& t0) { return x(t0); });
 
   BOOST_CHECK(!introspect::active_node(x));
+  BOOST_CHECK(graph_invariant_holds());
 
   BOOST_CHECK_EQUAL(y(), 3);
 

@@ -417,6 +417,7 @@ bool introspect::activator_node(dependency_graph::vertex_descriptor v)
   if (l == "state-prev")
     return true;
 
+  // TODO: make this function independent on the label.
   const auto& ending = std::string("-activator");
 
   return l.length() >= ending.length() &&
