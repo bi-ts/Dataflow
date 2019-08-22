@@ -270,7 +270,7 @@ introspect::vertex_range introspect::topological_order()
 
   return std::make_pair(
     dependency_graph::vertex_iterator(std::unique_ptr<iterator_delegate>(
-      new iterator_delegate(++order.begin(), fn))),
+      new iterator_delegate(order.begin(), fn))),
     dependency_graph::vertex_iterator(std::unique_ptr<iterator_delegate>(
       new iterator_delegate(order.end(), fn))));
 }
