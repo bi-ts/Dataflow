@@ -946,6 +946,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;");
 
   capture_output();
@@ -954,6 +955,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;");
 
   capture_output();
@@ -962,6 +964,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;prev = 9;");
 }
 

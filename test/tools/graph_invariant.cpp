@@ -85,37 +85,56 @@ public:
   {
     assert(introspect::active_node(v));
 
-    const auto vs = introspect::consumers(v);
+    const auto actual_activator = find_activator(v, introspect::graph());
 
-    if (vs.first != vs.second)
+    if (introspect::eager_node(v))
     {
-      std::vector<vertex_descriptor> potential_activators;
+      const auto vs = introspect::topological_order();
 
-      std::transform(vs.first,
-                     vs.second,
-                     std::back_inserter(potential_activators),
-                     [v](vertex_descriptor u) {
-                       return implied_activator(u, v, introspect::graph());
-                     });
+      assert(vs.first != vs.second);
 
-      const auto vi =
-        std::min_element(potential_activators.begin(),
-                         potential_activators.end(),
-                         [](vertex_descriptor u, vertex_descriptor w) {
-                           return introspect::update_order(u, w) > 0;
-                         });
+      const vertex_descriptor v_time = *vs.first;
 
-      assert(vi != potential_activators.end());
-
-      if (find_activator(v, introspect::graph()) != *vi)
+      if ((v == v_time && actual_activator != vertex_descriptor()) ||
+          (v != v_time && actual_activator != v_time))
       {
         bad_vertices_.push_back(v);
       }
     }
     else
     {
-      if (!introspect::eager_node(v))
+      const auto vs = introspect::consumers(v);
+
+      if (vs.first == vs.second)
+      {
         bad_vertices_.push_back(v);
+      }
+      else
+      {
+
+        std::vector<vertex_descriptor> potential_activators;
+
+        std::transform(vs.first,
+                       vs.second,
+                       std::back_inserter(potential_activators),
+                       [v](vertex_descriptor u) {
+                         return implied_activator(u, v, introspect::graph());
+                       });
+
+        const auto vi =
+          std::min_element(potential_activators.begin(),
+                           potential_activators.end(),
+                           [](vertex_descriptor u, vertex_descriptor w) {
+                             return introspect::update_order(u, w) > 0;
+                           });
+
+        assert(vi != potential_activators.end());
+
+        const auto expected_activator = *vi;
+
+        if (actual_activator != expected_activator)
+          bad_vertices_.push_back(v);
+      }
     }
   }
 
