@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
+#include "../tools/graph_invariant.h"
 #include "../tools/io_fixture.h"
 
 #include <dataflow/prelude/core.h>
@@ -297,6 +298,7 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
   const auto y = Main([=](const Time& t0) { return x(t0); });
 
   BOOST_CHECK(!introspect::active_node(x));
+  BOOST_CHECK(graph_invariant_holds());
 
   BOOST_CHECK_EQUAL(y(), 3);
 
@@ -892,6 +894,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
@@ -903,6 +906,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;prev = 5;");
 
   capture_output();
@@ -911,6 +915,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;prev = 5;prev = 9;");
 }
 
@@ -927,6 +932,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
@@ -936,6 +942,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "");
 
   capture_output();
@@ -944,6 +951,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;");
 
   capture_output();
@@ -952,6 +960,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;");
 
   capture_output();
@@ -960,6 +969,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;prev = 9;");
 }
 
@@ -1004,6 +1014,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;");
 
   capture_output();
@@ -1012,6 +1023,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;");
 
   capture_output();
@@ -1020,6 +1032,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;");
 
   capture_output();
@@ -1028,6 +1041,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;state = 3;");
 
   capture_output();
@@ -1036,6 +1050,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(),
                     "state = 0;state = 1;state = 2;state = 3;state = 4;");
 }

@@ -270,7 +270,7 @@ introspect::vertex_range introspect::topological_order()
 
   return std::make_pair(
     dependency_graph::vertex_iterator(std::unique_ptr<iterator_delegate>(
-      new iterator_delegate(++order.begin(), fn))),
+      new iterator_delegate(order.begin(), fn))),
     dependency_graph::vertex_iterator(std::unique_ptr<iterator_delegate>(
       new iterator_delegate(order.end(), fn))));
 }
@@ -417,6 +417,7 @@ bool introspect::activator_node(dependency_graph::vertex_descriptor v)
   if (l == "state-prev")
     return true;
 
+  // TODO: make this function independent on the label.
   const auto& ending = std::string("-activator");
 
   return l.length() >= ending.length() &&

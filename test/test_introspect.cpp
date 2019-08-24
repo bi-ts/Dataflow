@@ -181,18 +181,18 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
   std::tie(it, it_end) = introspect::topological_order();
 
-  BOOST_CHECK_EQUAL(std::distance(it, it_end), 0);
+  BOOST_CHECK_EQUAL(std::distance(it, it_end), 1);
 
   {
     const auto z = *y;
 
     std::tie(it, it_end) = introspect::topological_order();
 
-    BOOST_CHECK_EQUAL(std::distance(it, it_end), 6);
+    BOOST_CHECK_EQUAL(std::distance(it, it_end), 7);
 
     BOOST_TEST(vertex_labels(introspect::topological_order()) ==
                  std::vector<std::string>(
-                   {"var", "<", "if-activator", "(-)", "if", "main"}),
+                   {"time", "var", "<", "if-activator", "(-)", "if", "main"}),
                boost::test_tools::per_element());
 
     BOOST_TEST(graph_invariant_holds());
@@ -201,19 +201,20 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 
     std::tie(it, it_end) = introspect::topological_order();
 
-    BOOST_CHECK_EQUAL(std::distance(it, it_end), 7);
+    BOOST_CHECK_EQUAL(std::distance(it, it_end), 8);
 
-    BOOST_TEST(vertex_labels(introspect::topological_order()) ==
-                 std::vector<std::string>(
-                   {"var", "<", "if-activator", "*", "+", "if", "main"}),
-               boost::test_tools::per_element());
+    BOOST_TEST(
+      vertex_labels(introspect::topological_order()) ==
+        std::vector<std::string>(
+          {"time", "var", "<", "if-activator", "*", "+", "if", "main"}),
+      boost::test_tools::per_element());
 
     BOOST_TEST(graph_invariant_holds());
   }
 
   std::tie(it, it_end) = introspect::topological_order();
 
-  BOOST_CHECK_EQUAL(std::distance(it, it_end), 0);
+  BOOST_CHECK_EQUAL(std::distance(it, it_end), 1);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
