@@ -44,7 +44,7 @@ make2(const std::tuple<Trs...> transitions,
       const internal::std14::index_sequence<Is...>& seq)
 {
   return Switch(
-    Case(tr_idx == Const<integer>(Is), std::get<Is>(transitions).second)...,
+    Case(tr_idx == Const<integer>(Is + 1), std::get<Is>(transitions).second)...,
     Default(def));
 }
 };

@@ -33,13 +33,13 @@ namespace
 {
 enum class mode
 {
-  hovering,
-  dragging
+  idle,
+  active
 };
 
 std::ostream& operator<<(std::ostream& out, mode value)
 {
-  out << "mode::" << (value == mode::hovering ? "hovering" : "dragging");
+  out << "mode::" << (value == mode::idle ? "idle" : "active");
   return out;
 }
 
@@ -104,29 +104,30 @@ private:
 ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
                                     const ref<int>& radius,
                                     const ref<point>& mouse_pos,
-                                    const ref<bool>& mouse_pressed,
+                                    const ref<int>& mouse_pressed,
                                     const Time& t0)
 {
-  const auto tf = [=](const ref<tupleE<mode, point, point, point>>& sp) {
-    auto prev_mode = First(sp);
-    auto circle_pos = Second(sp);
-    auto starting_circle_pos = Third(sp);
-    auto starting_mouse_pos = Fourth(sp);
-
-    return If(prev_mode == mode::hovering,
-              If(mouse_pressed && Distance(mouse_pos, circle_pos) < radius,
-                 TupleE(mode::dragging, circle_pos, circle_pos, mouse_pos),
-                 sp),
-              If(!mouse_pressed,
-                 TupleE(mode::hovering, circle_pos, point(), point()),
-                 TupleE(mode::dragging,
-                        starting_circle_pos + (mouse_pos - starting_mouse_pos),
-                        starting_circle_pos,
-                        starting_mouse_pos)));
-  };
+  // TODO: add Diff(d0, x, t0) function
+  const auto mouse_down =
+    mouse_pressed - Prev(mouse_pressed(t0), mouse_pressed, t0);
 
   const auto s = StateMachine(
-    TupleE(mode::hovering, initial_circle_pos, point(), point()), tf, t0);
+    TupleE(mode::idle, initial_circle_pos),
+    [=](const ref<tupleE<mode, point>>& sp) {
+      auto prev_mode = First(sp);
+      auto circle_pos = Second(sp);
+
+      return Transitions(
+        On(prev_mode == mode::idle && mouse_down == 1 &&
+             Distance(mouse_pos, circle_pos) < radius,
+           [=](const Time& t0) {
+             const auto mouse_shift = mouse_pos - mouse_pos(t0);
+             return TupleE(mode::active, circle_pos(t0) + mouse_shift);
+           }),
+        On(prev_mode == mode::active && mouse_down == -1,
+           TupleE(mode::idle, circle_pos)));
+    },
+    t0);
 
   return Second(s);
 }
@@ -137,7 +138,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 {
   Engine engine;
 
-  auto mouse_pressed = Var<bool>(false);
+  auto mouse_pressed = Var<int>(false);
   auto mouse_pos = Var(point(0, 0));
 
   auto f = Main([=](const Time& t0) {
