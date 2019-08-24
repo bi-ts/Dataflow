@@ -894,6 +894,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
@@ -905,6 +906,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;prev = 5;");
 
   capture_output();
@@ -913,6 +915,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;prev = 5;prev = 9;");
 }
 
@@ -929,6 +932,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
@@ -938,6 +942,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "");
 
   capture_output();
@@ -1009,6 +1014,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;");
 
   capture_output();
@@ -1017,6 +1023,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;");
 
   capture_output();
@@ -1025,6 +1032,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;");
 
   capture_output();
@@ -1033,6 +1041,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(), "state = 0;state = 1;state = 2;state = 3;");
 
   capture_output();
@@ -1041,6 +1050,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 
   reset_output();
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(log_string(),
                     "state = 0;state = 1;state = 2;state = 3;state = 4;");
 }
