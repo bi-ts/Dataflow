@@ -17,8 +17,10 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #if !defined(DATAFLOW___STATEFUL_H)
-#error '.inl' file can't be included directly. Use 'conditional.h' instead
+#error '.inl' file can't be included directly. Use 'stateful.h' instead
 #endif
+
+#include "conditional.h"
 
 namespace dataflow
 {

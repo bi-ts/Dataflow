@@ -43,6 +43,7 @@ add_dataflow_test_project(prelude
   prelude/test_comparison.cpp
   prelude/test_conditional.cpp
   prelude/test_logical.cpp
+  prelude/test_stateful.cpp
 )
 
 add_dataflow_test_project(introspect)

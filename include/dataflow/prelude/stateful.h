@@ -21,6 +21,8 @@
 #ifndef DATAFLOW___STATEFUL_H
 #define DATAFLOW___STATEFUL_H
 
+#include "../internal/std_future.h"
+
 #include "core.h"
 
 #include <cstdint>
@@ -38,12 +40,18 @@ template <typename F, typename T> struct is_transitions_function
 {
 private:
   template <typename... FArgs>
-  static std::true_type
-  test_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
+  static internal::std17::conjunction<
+    std::is_same<typename core::farg_data_type<FArgs>::type, T>...>
+  test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
+  static std::false_type test_f_(...);
+
+  template <typename FF>
+  static decltype(test_f_(std::declval<FF>()(std::declval<ref<T>>())))
+  test_(const FF*);
   static std::false_type test_(...);
 
 public:
-  using type = decltype(test_(std::declval<F>()(std::declval<ref<T>>())));
+  using type = decltype(test_(std::declval<const F*>()));
 };
 }
 
