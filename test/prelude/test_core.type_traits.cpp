@@ -16,9 +16,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../tools/io_fixture.h"
-
 #include <dataflow/prelude/core.h>
+
+#include "../tools/io_fixture.h"
 
 #include <boost/mpl/list.hpp>
 #include <boost/test/test_case_template.hpp>

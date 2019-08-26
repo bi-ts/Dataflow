@@ -16,10 +16,10 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
+#include <dataflow/prelude/core.h>
+
 #include "../tools/graph_invariant.h"
 #include "../tools/io_fixture.h"
-
-#include <dataflow/prelude/core.h>
 
 #include <dataflow/introspect.h>
 
