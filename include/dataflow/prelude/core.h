@@ -156,26 +156,14 @@ using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
 template <typename T, typename U = T>
 using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
 
-namespace detail
-{
-template <typename T> struct convert_to_flowable
-{
-private:
-  template <typename U, typename = enable_if_flowable_t<U>>
-  static U test_(const U&);
-
-  static std::string test_(const char*);
-
-  static void test_(...);
-
-public:
-  using type = decltype(test_(std::declval<T>()));
-};
-}
-
 template <typename T>
 struct convert_to_flowable
-: enable_if_flowable<typename detail::convert_to_flowable<T>::type>
+: enable_if_flowable<typename std::conditional<
+    is_flowable<internal::std20::remove_cvref_t<T>>::value,
+    internal::std20::remove_cvref_t<T>,
+    typename std::conditional<std::is_convertible<T, std::string>::value,
+                              std::string,
+                              void>::type>::type>
 {
 };
 
@@ -246,32 +234,39 @@ namespace detail
 template <typename F, typename T> struct type_1_transition_function_result
 {
 private:
-  template <typename FF,
-            typename = typename std::enable_if<std::is_same<
-              data_type_t<typename std::result_of<FF(const ref<T>&)>::type>,
-              T>::value>::type>
-  static T test_(const FF&);
+  template <
+    typename FF,
+    typename TT,
+    typename FwTT = convert_to_flowable_t<TT>,
+    typename = typename std::enable_if<std::is_same<
+      data_type_t<decltype(std::declval<FF>()(std::declval<ref<FwTT>>()))>,
+      T>::value>::type>
+  static T test_(const FF*, const TT*);
 
   static void test_(...);
 
 public:
-  using type = decltype(test_(std::declval<F>()));
+  using type =
+    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
 };
 
 template <typename F, typename T> struct type_2_transition_function_result
 {
 private:
-  template <
-    typename FF,
-    typename = std::enable_if<std::is_same<
-      function_of_time_type_t<typename std::result_of<FF(const ref<T>&)>::type>,
-      T>::value>>
-  static T test_(const FF&);
+  template <typename FF,
+            typename TT,
+            typename FwTT = convert_to_flowable_t<TT>,
+            typename = std::enable_if<
+              std::is_same<function_of_time_type_t<decltype(
+                             std::declval<FF>()(std::declval<ref<FwTT>>()))>,
+                           T>::value>>
+  static T test_(const FF*, const TT*);
 
   static void test_(...);
 
 public:
-  using type = decltype(test_(std::declval<F>()));
+  using type =
+    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
 };
 }
 
