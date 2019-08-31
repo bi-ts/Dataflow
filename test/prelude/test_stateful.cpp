@@ -20,6 +20,8 @@
 
 #include <dataflow/introspect.h>
 
+#include <boost/mpl/list.hpp>
+#include <boost/test/test_case_template.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace dataflow;
@@ -29,31 +31,80 @@ namespace dataflow_test
 
 BOOST_AUTO_TEST_SUITE(test_stateful)
 
-BOOST_AUTO_TEST_CASE(test_is_transitions_function)
+using good_transitions_function_types = boost::mpl::list<
+  std::function<std::tuple<std::pair<ref<bool>, int>>(ref<int>)>,
+  std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<int>)>,
+  std::function<std::tuple<std::pair<ref<bool>, val<int>>>(ref<int>)>,
+  std::function<std::tuple<std::pair<ref<bool>, var<int>>>(ref<int>)>,
+  std::function<std::tuple<
+    std::pair<ref<bool>, std::function<ref<int>(const Time&)>>>(ref<int>)>,
+  std::function<std::tuple<
+    std::pair<ref<bool>, std::function<val<int>(const Time&)>>>(ref<int>)>,
+  std::function<std::tuple<
+    std::pair<ref<bool>, std::function<var<int>(const Time&)>>>(ref<int>)>,
+  std::function<std::tuple<
+    std::pair<ref<bool>, int>,
+    std::pair<ref<bool>, ref<int>>,
+    std::pair<ref<bool>, val<int>>,
+    std::pair<ref<bool>, var<int>>,
+    std::pair<ref<bool>, std::function<ref<int>(const Time&)>>,
+    std::pair<ref<bool>, std::function<val<int>(const Time&)>>,
+    std::pair<ref<bool>, std::function<var<int>(const Time&)>>>(ref<int>)>,
+  std::tuple<std::pair<ref<bool>, int>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, ref<int>>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, val<int>>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, var<int>>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, int>,
+             std::pair<ref<bool>, ref<int>>,
+             std::pair<ref<bool>, val<int>>,
+             std::pair<ref<bool>, var<int>>,
+             std::pair<ref<bool>, ref<int> (*)(const Time&)>,
+             std::pair<ref<bool>, val<int> (*)(const Time&)>,
+             std::pair<ref<bool>, var<int> (*)(const Time&)>> (*)(ref<int>)>;
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transitions_function,
+                              T,
+                              good_transitions_function_types)
 {
-  const auto good_tsf = [](const ref<int>&) {
-    return std::make_tuple(std::make_pair(Const(false), 0));
-  };
+  BOOST_CHECK_EQUAL((is_transitions_function<T, int>::value), true);
 
-  BOOST_CHECK_EQUAL(
-    (dataflow::is_transitions_function<decltype(good_tsf), int>::value), true);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, float>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, const char*>::value), false);
+}
 
-  BOOST_CHECK_EQUAL(
-    (dataflow::is_transitions_function<decltype(good_tsf), float>::value),
-    false);
+using bad_transitions_function_types = boost::mpl::list<
+  std::function<std::tuple<std::pair<ref<bool>, char>>(ref<int>)>,
+  std::function<std::tuple<std::pair<ref<bool>, ref<char>>>(ref<int>)>,
+  std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<char>)>,
+  std::function<std::tuple<std::pair<ref<char>, ref<int>>>(ref<int>)>,
+  std::function<std::tuple<
+    std::pair<ref<bool>, std::function<ref<char>(const Time&)>>>(ref<int>)>,
+  std::function<std::tuple<
+    std::pair<ref<bool>, std::function<ref<int>(const Time&)>>>(ref<char>)>,
+  std::function<std::tuple<
+    std::pair<ref<char>, std::function<ref<int>(const Time&)>>>(ref<int>)>,
+  std::function<std::tuple<std::pair<ref<bool>, ref<int>>,
+                           std::pair<ref<bool>, char>>(ref<int>)>,
+  std::tuple<std::pair<ref<bool>, char>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, ref<char>>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, ref<int>>> (*)(ref<char>),
+  std::tuple<std::pair<ref<char>, var<int>>> (*)(ref<int>),
+  std::tuple<std::pair<ref<bool>, ref<int>>,
+             std::pair<ref<bool>, ref<char>>> (*)(ref<int>),
+  int,
+  void>;
 
-  const auto bad_tsf = [](const ref<int>&) {
-    return std::make_tuple(std::make_pair(Const(false), '0'));
-  };
-
-  BOOST_CHECK_EQUAL(
-    (dataflow::is_transitions_function<decltype(bad_tsf), int>::value), false);
-
-  BOOST_CHECK_EQUAL((dataflow::is_transitions_function<int, int>::value),
-                    false);
-
-  BOOST_CHECK_EQUAL((dataflow::is_transitions_function<void, int>::value),
-                    false);
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transitions_function_false,
+                              T,
+                              bad_transitions_function_types)
+{
+  BOOST_CHECK_EQUAL((is_transitions_function<T, int>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, float>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((is_transitions_function<T, const char*>::value), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

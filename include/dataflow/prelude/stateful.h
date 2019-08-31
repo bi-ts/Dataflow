@@ -45,13 +45,15 @@ private:
   test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
   static std::false_type test_f_(...);
 
-  template <typename FF>
-  static decltype(test_f_(std::declval<FF>()(std::declval<ref<T>>())))
-  test_(const FF*);
+  template <typename FF, typename TT>
+  static decltype(test_f_(
+    std::declval<FF>()(std::declval<ref<core::enable_if_flowable_t<TT>>>())))
+  test_(const FF*, const TT*);
   static std::false_type test_(...);
 
 public:
-  using type = decltype(test_(std::declval<const F*>()));
+  using type =
+    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
 };
 }
 
