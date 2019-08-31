@@ -34,37 +34,22 @@ namespace dataflow
 /// \defgroup stateful
 /// \{
 
+namespace stateful
+{
 namespace detail
 {
-template <typename F, typename T> struct is_transitions_function
-{
-private:
-  template <typename... FArgs>
-  static internal::std17::conjunction<
-    std::is_same<typename core::farg_data_type<FArgs>::type, T>...>
-  test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
-  static std::false_type test_f_(...);
-
-  template <typename FF, typename TT>
-  static decltype(test_f_(
-    std::declval<FF>()(std::declval<ref<core::enable_if_flowable_t<TT>>>())))
-  test_(const FF*, const TT*);
-  static std::false_type test_(...);
-
-public:
-  using type =
-    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
-};
+template <typename F, typename T> struct is_transitions_function;
 }
 
 template <typename F, typename T>
 using is_transitions_function =
   typename detail::is_transitions_function<F, T>::type;
+}
 
 template <typename T,
           typename F,
-          typename =
-            typename std::enable_if<is_transitions_function<F, T>::value>::type>
+          typename = typename std::enable_if<
+            stateful::is_transitions_function<F, T>::value>::type>
 ref<T> StateMachine(const ref<T>& initial, const F& f, const Time& t0);
 
 template <typename... Trs>

@@ -66,12 +66,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transitions_function,
                               T,
                               good_transitions_function_types)
 {
-  BOOST_CHECK_EQUAL((is_transitions_function<T, int>::value), true);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, int>::value), true);
 
-  BOOST_CHECK_EQUAL((is_transitions_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, float>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, const char*>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, float>::value),
+                    false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, const char*>::value),
+                    false);
 }
 
 using bad_transitions_function_types = boost::mpl::list<
@@ -100,11 +102,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transitions_function_false,
                               T,
                               bad_transitions_function_types)
 {
-  BOOST_CHECK_EQUAL((is_transitions_function<T, int>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, float>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((is_transitions_function<T, const char*>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, int>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, float>::value),
+                    false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, const char*>::value),
+                    false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

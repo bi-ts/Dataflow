@@ -24,10 +24,30 @@
 
 namespace dataflow
 {
-namespace detail
-{
 namespace stateful
 {
+namespace detail
+{
+template <typename F, typename T> struct is_transitions_function
+{
+private:
+  template <typename... FArgs>
+  static internal::std17::conjunction<
+    std::is_same<typename core::farg_data_type<FArgs>::type, T>...>
+  test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
+  static std::false_type test_f_(...);
+
+  template <typename FF, typename TT>
+  static decltype(test_f_(
+    std::declval<FF>()(std::declval<ref<core::enable_if_flowable_t<TT>>>())))
+  test_(const FF*, const TT*);
+  static std::false_type test_(...);
+
+public:
+  using type =
+    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
+};
+
 template <typename... Trs, std::size_t... Is>
 static ref<integer> make1(const std::tuple<Trs...> transitions,
                           ref<integer> def,
@@ -66,7 +86,7 @@ dataflow::StateMachine(const ref<T>& initial, const F& f, const Time& t0)
         const auto tr_idx = StateMachine(
           0,
           [=](ref<integer> sp) {
-            return detail::stateful::make1(
+            return stateful::detail::make1(
               transitions,
               sp,
               internal::std14::make_index_sequence<
@@ -74,7 +94,7 @@ dataflow::StateMachine(const ref<T>& initial, const F& f, const Time& t0)
           },
           t0);
 
-        return detail::stateful::make2(
+        return stateful::detail::make2(
           transitions,
           sp,
           tr_idx,
