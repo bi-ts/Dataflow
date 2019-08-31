@@ -255,6 +255,8 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<const var<int>&>::value, true);
 
   BOOST_CHECK_EQUAL(core::is_ref<int>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_ref<void>::value, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
@@ -273,6 +275,8 @@ BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
     core::is_function_of_time<decltype(bad_function_of_time)>::value, false);
 
   BOOST_CHECK_EQUAL(core::is_function_of_time<ref<int>>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
 }
 
 template <typename T>
