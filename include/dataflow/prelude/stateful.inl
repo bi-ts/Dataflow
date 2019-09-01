@@ -28,7 +28,7 @@ namespace stateful
 {
 namespace detail
 {
-template <typename F, typename T> struct is_transitions_function
+template <typename F, typename T> struct is_sm_definition_function
 {
 private:
   template <typename... FArgs>

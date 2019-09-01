@@ -31,7 +31,7 @@ namespace dataflow_test
 
 BOOST_AUTO_TEST_SUITE(test_stateful)
 
-using good_transitions_function_types = boost::mpl::list<
+using good_sm_definition_function_types = boost::mpl::list<
   std::function<std::tuple<std::pair<ref<bool>, int>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, val<int>>>(ref<int>)>,
@@ -62,21 +62,23 @@ using good_transitions_function_types = boost::mpl::list<
              std::pair<ref<bool>, val<int> (*)(const Time&)>,
              std::pair<ref<bool>, var<int> (*)(const Time&)>> (*)(ref<int>)>;
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transitions_function,
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function,
                               T,
-                              good_transitions_function_types)
+                              good_sm_definition_function_types)
 {
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, int>::value), true);
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, int>::value), true);
 
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, float>::value),
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, char>::value),
                     false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, const char*>::value),
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, float>::value),
                     false);
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, void>::value),
+                    false);
+  BOOST_CHECK_EQUAL(
+    (stateful::is_sm_definition_function<T, const char*>::value), false);
 }
 
-using bad_transitions_function_types = boost::mpl::list<
+using bad_sm_definition_function_types = boost::mpl::list<
   std::function<std::tuple<std::pair<ref<bool>, char>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, ref<char>>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<char>)>,
@@ -98,17 +100,20 @@ using bad_transitions_function_types = boost::mpl::list<
   int,
   void>;
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transitions_function_false,
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function_false,
                               T,
-                              bad_transitions_function_types)
+                              bad_sm_definition_function_types)
 {
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, int>::value), false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, float>::value),
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, int>::value),
                     false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((stateful::is_transitions_function<T, const char*>::value),
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, char>::value),
                     false);
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, float>::value),
+                    false);
+  BOOST_CHECK_EQUAL((stateful::is_sm_definition_function<T, void>::value),
+                    false);
+  BOOST_CHECK_EQUAL(
+    (stateful::is_sm_definition_function<T, const char*>::value), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

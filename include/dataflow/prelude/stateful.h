@@ -38,18 +38,18 @@ namespace stateful
 {
 namespace detail
 {
-template <typename F, typename T> struct is_transitions_function;
+template <typename F, typename T> struct is_sm_definition_function;
 }
 
 template <typename F, typename T>
-using is_transitions_function =
-  typename detail::is_transitions_function<F, T>::type;
+using is_sm_definition_function =
+  typename detail::is_sm_definition_function<F, T>::type;
 }
 
 template <typename T,
           typename F,
           typename = typename std::enable_if<
-            stateful::is_transitions_function<F, T>::value>::type>
+            stateful::is_sm_definition_function<F, T>::value>::type>
 ref<T> StateMachine(const ref<T>& initial, const F& f, const Time& t0);
 
 template <typename... Trs>
