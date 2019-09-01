@@ -16,9 +16,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../tools/io_fixture.h"
-
 #include <dataflow/prelude/core.h>
+
+#include "../tools/io_fixture.h"
 
 #include <boost/mpl/list.hpp>
 #include <boost/test/test_case_template.hpp>
@@ -197,16 +197,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_flowable_true, T, flowable_types)
   BOOST_CHECK_EQUAL(core::is_flowable<T>::value, true);
 }
 
-typedef boost::mpl::list<no_default_constructor,
-                         no_copy_constructor,
-                         no_copy_assignment,
-                         no_stream_output,
-                         no_equality_test,
-                         no_inequality_test,
-                         bad_equality_test,
-                         bad_inequality_test,
-                         ref_based>
-  not_flowable_types;
+using not_flowable_types = boost::mpl::list<no_default_constructor,
+                                            no_copy_constructor,
+                                            no_copy_assignment,
+                                            no_stream_output,
+                                            no_equality_test,
+                                            no_inequality_test,
+                                            bad_equality_test,
+                                            bad_inequality_test,
+                                            ref_based>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_flowable_false, T, not_flowable_types)
 {
@@ -256,6 +255,8 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<const var<int>&>::value, true);
 
   BOOST_CHECK_EQUAL(core::is_ref<int>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_ref<void>::value, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
@@ -274,42 +275,75 @@ BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
     core::is_function_of_time<decltype(bad_function_of_time)>::value, false);
 
   BOOST_CHECK_EQUAL(core::is_function_of_time<ref<int>>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
 }
 
-BOOST_AUTO_TEST_CASE(test_is_transition_function)
+template <typename T>
+using transition_function_types =
+  boost::mpl::list<std::function<ref<T>(ref<T>)>,
+                   std::function<val<T>(ref<T>)>,
+                   std::function<var<T>(ref<T>)>,
+                   ref<T> (*)(ref<T>),
+                   val<T> (*)(ref<T>),
+                   var<T> (*)(ref<T>),
+                   std::function<std::function<ref<T>(const Time&)>(ref<T>)>,
+                   std::function<std::function<val<T>(const Time&)>(ref<T>)>,
+                   std::function<std::function<var<T>(const Time&)>(ref<T>)>,
+                   ref<T> (*(*)(ref<T>))(const Time&),
+                   val<T> (*(*)(ref<T>))(const Time&),
+                   var<T> (*(*)(ref<T>))(const Time&)>;
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transition_function_int,
+                              T,
+                              transition_function_types<int>)
 {
-  BOOST_CHECK_EQUAL(
-    (core::is_transition_function<std::function<ref<int>(ref<int>)>,
-                                  int>::value),
-    true);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, int>::value), true);
 
-  BOOST_CHECK_EQUAL(
-    (core::is_transition_function<
-      std::function<std::function<ref<int>(const Time&)>(ref<int>)>,
-      int>::value),
-    true);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, float>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, std::string>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, const char*>::value),
+                    false);
+}
 
-  BOOST_CHECK_EQUAL(
-    (core::is_transition_function<
-      std::function<std::function<val<int>(const Time&)>(ref<int>)>,
-      int>::value),
-    true);
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transition_function_float,
+                              T,
+                              transition_function_types<float>)
+{
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, float>::value), true);
 
-  BOOST_CHECK_EQUAL(
-    (core::is_transition_function<
-      std::function<std::function<var<int>(const Time&)>(ref<int>)>,
-      int>::value),
-    true);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, int>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, std::string>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, const char*>::value),
+                    false);
+}
 
-  BOOST_CHECK_EQUAL(
-    (core::is_transition_function<ref<int> (*)(ref<int>), int>::value), true);
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transition_function_string,
+                              T,
+                              transition_function_types<std::string>)
+{
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, std::string>::value),
+                    true);
 
-  BOOST_CHECK_EQUAL(
-    (core::is_transition_function<std::function<ref<int>(ref<int>)>,
-                                  char>::value),
-    false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, char>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, float>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, void>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, int>::value), false);
+  BOOST_CHECK_EQUAL((core::is_transition_function<T, const char*>::value),
+                    false);
+}
 
+BOOST_AUTO_TEST_CASE(test_is_transition_function_false)
+{
   BOOST_CHECK_EQUAL((core::is_transition_function<int, int>::value), false);
+
+  BOOST_CHECK_EQUAL((core::is_transition_function<void, int>::value), false);
 }
 
 BOOST_AUTO_TEST_CASE(test_patch_type)
