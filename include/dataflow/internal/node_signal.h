@@ -16,43 +16,33 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/prelude/core.h>
+#pragma once
 
-#include "../internal/engine.h"
-
-#include <dataflow/internal/node_signal.h>
+#include "node_t.h"
+#include "ref.h"
 
 namespace dataflow
 {
-Engine::Engine()
+namespace internal
 {
-  internal::engine::start();
-}
-
-Engine::~Engine()
+class DATAFLOW___EXPORT node_signal final : public node_t<bool>
 {
-  internal::engine::stop();
-}
+  friend class nodes_factory;
 
-void sig::emit() const
-{
-  this->schedule_();
-}
+public:
+  static ref create();
 
-sig::sig(const internal::ref& r)
-: ref<bool>(r)
-{
-}
+private:
+  explicit node_signal();
 
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) override;
+
+  virtual std::string label_() const override;
+
+  virtual std::pair<std::size_t, std::size_t> mem_info_() const override;
+};
+} // internal
 } // dataflow
-
-dataflow::ref<std::size_t> dataflow::CurrentTime()
-{
-  return internal::make_ref<ref<std::size_t>>(
-    internal::nodes_factory::get_time());
-}
-
-dataflow::sig dataflow::Signal()
-{
-  return internal::make_ref<sig>(internal::node_signal::create());
-}

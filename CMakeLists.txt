@@ -67,6 +67,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/internal/node_previous.h
   include/dataflow/internal/node_selector.h
   include/dataflow/internal/node_selector_activator.h
+  include/dataflow/internal/node_signal.h
   include/dataflow/internal/node_snapshot.h
   include/dataflow/internal/node_snapshot_activator.h
   include/dataflow/internal/node_state.h
@@ -98,6 +99,7 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/node_compound.cpp
   src/internal/node_if_activator.cpp
   src/internal/node_selector_activator.cpp
+  src/internal/node_signal.cpp
   src/internal/node_snapshot_activator.cpp
   src/internal/node_state.cpp
   src/internal/node_state_prev.cpp

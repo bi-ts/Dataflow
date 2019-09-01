@@ -318,6 +318,71 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), "some text");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
+{
+  const sig x = Signal();
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "signal");
+  BOOST_CHECK(graph_invariant_holds());
+
+  {
+    capture_output();
+
+    auto y = Curr(introspect::Log(x, "x"));
+
+    reset_output();
+
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL(y(), false);
+
+    BOOST_CHECK_EQUAL(log_string(), "x = false;");
+
+    capture_output();
+
+    x.emit();
+
+    reset_output();
+
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL(y(), false);
+
+    BOOST_CHECK_EQUAL(log_string(),
+                      "x = false;x = true;"
+                      "x = false;");
+  }
+
+  {
+    capture_output();
+
+    auto y = Curr(introspect::Log(x, "x"));
+
+    reset_output();
+
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL(y(), false);
+
+    BOOST_CHECK_EQUAL(log_string(),
+                      "x = false;"
+                      "x = true;x = false;"
+                      "x = false;");
+
+    capture_output();
+
+    x.emit();
+
+    reset_output();
+
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL(y(), false);
+
+    BOOST_CHECK_EQUAL(log_string(),
+                      "x = false;"
+                      "x = true;x = false;"
+                      "x = false;"
+                      "x = true;x = false;");
+  }
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 {
   const var<int> x = Var<int>(3);

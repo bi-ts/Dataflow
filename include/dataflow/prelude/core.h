@@ -35,7 +35,19 @@ namespace dataflow
 
 namespace core
 {
-template <typename T> struct is_flowable;
+template <typename T>
+struct is_flowable
+: internal::std17::conjunction<
+    std::is_default_constructible<T>,
+    std::is_copy_constructible<T>,
+    std::is_copy_assignable<T>,
+    internal::is_streamable<T>,
+    internal::is_equality_comparable<T>,
+    internal::std17::negation<std::is_base_of<internal::ref, T>>,
+    internal::std17::negation<std::is_pointer<T>>,
+    internal::std17::negation<std::is_reference<T>>>
+{
+};
 }
 
 /// \defgroup core
@@ -67,6 +79,17 @@ public:
 
 protected:
   explicit ref(const internal::ref& r);
+};
+
+class DATAFLOW___EXPORT sig final : public ref<bool>
+{
+  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
+
+public:
+  void emit() const;
+
+private:
+  explicit sig(const internal::ref& r);
 };
 
 template <typename T> class val final : public ref<T>
@@ -135,20 +158,6 @@ private:
 };
 
 // Type traits
-
-template <typename T>
-struct is_flowable
-: internal::std17::conjunction<
-    std::is_default_constructible<T>,
-    std::is_copy_constructible<T>,
-    std::is_copy_assignable<T>,
-    internal::is_streamable<T>,
-    internal::is_equality_comparable<T>,
-    internal::std17::negation<std::is_base_of<internal::ref, T>>,
-    internal::std17::negation<std::is_pointer<T>>,
-    internal::std17::negation<std::is_reference<T>>>
-{
-};
 
 template <typename T, typename U = T>
 using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
@@ -470,6 +479,8 @@ template <typename T,
           typename... Args,
           typename = core::enable_if_flowable_t<T>>
 ref<T> Const(Args&&... args);
+
+DATAFLOW___EXPORT sig Signal();
 
 template <typename T, typename FwT = core::convert_to_flowable_t<T>>
 var<FwT> Var(const T& v);
