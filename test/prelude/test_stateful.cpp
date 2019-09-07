@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function_false,
     (stateful::is_sm_definition_function<T, const char*>::value), false);
 }
 
-BOOST_AUTO_TEST_CASE(test_StateMachine)
+BOOST_AUTO_TEST_CASE(test_StateMachine_refs)
 {
   Engine engine;
 
@@ -129,6 +129,28 @@ BOOST_AUTO_TEST_CASE(test_StateMachine)
       return Transitions(On(switched_on && toggle, false),
                          On(!switched_on && toggle, true));
     }));
+
+  BOOST_CHECK_EQUAL(light(), false);
+
+  toggle.emit();
+
+  BOOST_CHECK_EQUAL(light(), true);
+
+  toggle.emit();
+
+  BOOST_CHECK_EQUAL(light(), false);
+}
+
+BOOST_AUTO_TEST_CASE(test_StateMachine_fot_ref)
+{
+  Engine engine;
+
+  const auto toggle = Signal();
+
+  const auto light = Main(StateMachine(false, [=](const ref<bool>& sp) {
+    return Transitions(On(toggle, [=](const Time& t0) { return !sp(t0); }),
+                       On(!toggle, sp));
+  }));
 
   BOOST_CHECK_EQUAL(light(), false);
 
