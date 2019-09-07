@@ -124,15 +124,11 @@ BOOST_AUTO_TEST_CASE(test_StateMachine)
 
   const auto toggle = Signal();
 
-  const auto light = Main([=](const Time& t0) {
-    return StateMachine(
-      Const(false),
-      [=](const ref<bool>& switched_on) {
-        return Transitions(On(switched_on && toggle, false),
-                           On(!switched_on && toggle, true));
-      },
-      t0);
-  });
+  const auto light =
+    Main(StateMachine(false, [=](const ref<bool>& switched_on) {
+      return Transitions(On(switched_on && toggle, false),
+                         On(!switched_on && toggle, true));
+    }));
 
   BOOST_CHECK_EQUAL(light(), false);
 

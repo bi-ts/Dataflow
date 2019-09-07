@@ -88,9 +88,9 @@ static ref<T> make2(const std::tuple<Trs...> transitions,
 }
 }
 
-template <typename T, typename F, typename>
+template <typename ArgT, typename T, typename F, typename>
 dataflow::ref<T>
-dataflow::StateMachine(const ref<T>& initial, const F& f, const Time& t0)
+dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
 {
   return StateMachine(
     initial,
@@ -119,6 +119,13 @@ dataflow::StateMachine(const ref<T>& initial, const F& f, const Time& t0)
       };
     },
     t0);
+}
+
+template <typename ArgT, typename T, typename F, typename>
+dataflow::function_of_time<T> dataflow::StateMachine(const ArgT& initial,
+                                                     const F& f)
+{
+  return [=](const Time& t0) { return StateMachine(initial, f, t0); };
 }
 
 template <typename... Trs>

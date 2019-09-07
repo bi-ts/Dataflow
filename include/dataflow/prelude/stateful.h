@@ -46,11 +46,19 @@ using is_sm_definition_function =
   typename detail::is_sm_definition_function<F, T>::type;
 }
 
-template <typename T,
+template <typename ArgT,
+          typename T = core::argument_data_type_t<ArgT>,
           typename F,
           typename = typename std::enable_if<
             stateful::is_sm_definition_function<F, T>::value>::type>
-ref<T> StateMachine(const ref<T>& initial, const F& f, const Time& t0);
+ref<T> StateMachine(const ArgT& initial, const F& f, const Time& t0);
+
+template <typename ArgT,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename F,
+          typename = typename std::enable_if<
+            stateful::is_sm_definition_function<F, T>::value>::type>
+function_of_time<T> StateMachine(const ArgT& initial, const F& f);
 
 template <typename... Trs>
 std::tuple<Trs...> Transitions(const Trs&... transitions);
