@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -25,12 +25,6 @@ namespace dataflow
 
 namespace internal
 {
-ref::ref(node_id id)
-: id_(id)
-{
-  engine::instance().add_ref(converter::convert(id_));
-}
-
 ref::ref(const ref& other)
 : id_(other.id_)
 {
@@ -51,6 +45,12 @@ void ref::schedule_() const
 {
   engine::instance().schedule(converter::convert(id_));
   engine::instance().pump();
+}
+
+ref::ref(node_id id)
+: id_(id)
+{
+  engine::instance().add_ref(converter::convert(id_));
 }
 }
 }
