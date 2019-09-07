@@ -163,6 +163,28 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_fot_ref)
   BOOST_CHECK_EQUAL(light(), false);
 }
 
+BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
+{
+  Engine engine;
+
+  const auto toggle = Signal();
+
+  const auto light = Main(StateMachine(false, [=](const ref<bool>& sp) {
+    return Transitions(On(toggle, [=](const Time& t0) { return !sp(t0); }));
+  }));
+
+  BOOST_CHECK_EQUAL(light(), false);
+
+  toggle.emit();
+
+  BOOST_CHECK_EQUAL(light(), true);
+
+  toggle.emit();
+
+  // TODO: should this be `false`?
+  BOOST_CHECK_EQUAL(light(), true);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } // dataflow_test
