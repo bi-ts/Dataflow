@@ -59,15 +59,30 @@ static ref<integer> make1(const std::tuple<Trs...> transitions,
 }
 
 template <typename T, typename... Trs, std::size_t... Is>
-static std::function<ref<T>(const Time&)>
-make2(const std::tuple<Trs...> transitions,
-      ref<T> def,
-      ref<integer> tr_idx,
-      const internal::std14::index_sequence<Is...>& seq)
+static ref<T> make2(const std::tuple<Trs...> transitions,
+                    ref<T> def,
+                    ref<integer> tr_idx,
+                    const internal::std14::index_sequence<Is...>& seq,
+                    const Time& t0)
 {
-  return Switch(
+  struct helper
+  {
+    static const ref<T>& init(const ref<T>& x, const Time&)
+    {
+      return x;
+    }
+
+    static ref<T> init(const function_of_time<T>& f, const Time& t0)
+    {
+      return f(t0);
+    }
+  };
+
+  const auto x = Switch(
     Case(tr_idx == Const<integer>(Is + 1), std::get<Is>(transitions).second)...,
     Default(def));
+
+  return helper::init(x, t0);
 }
 };
 }
@@ -99,7 +114,8 @@ dataflow::StateMachine(const ref<T>& initial, const F& f, const Time& t0)
           sp,
           tr_idx,
           internal::std14::make_index_sequence<
-            std::tuple_size<decltype(transitions)>::value>())(t0);
+            std::tuple_size<decltype(transitions)>::value>(),
+          t0);
       };
     },
     t0);

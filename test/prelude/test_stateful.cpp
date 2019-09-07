@@ -18,6 +18,8 @@
 
 #include <dataflow/prelude/stateful.h>
 
+#include <dataflow/prelude.h>
+
 #include <dataflow/introspect.h>
 
 #include <boost/mpl/list.hpp>
@@ -114,6 +116,33 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function_false,
                     false);
   BOOST_CHECK_EQUAL(
     (stateful::is_sm_definition_function<T, const char*>::value), false);
+}
+
+BOOST_AUTO_TEST_CASE(test_StateMachine)
+{
+  Engine engine;
+
+  const auto toggle = Signal();
+
+  const auto light = Main([=](const Time& t0) {
+    return StateMachine(
+      Const(false),
+      [=](const ref<bool>& switched_on) {
+        return Transitions(On(switched_on && toggle, false),
+                           On(!switched_on && toggle, true));
+      },
+      t0);
+  });
+
+  BOOST_CHECK_EQUAL(light(), false);
+
+  toggle.emit();
+
+  BOOST_CHECK_EQUAL(light(), true);
+
+  toggle.emit();
+
+  BOOST_CHECK_EQUAL(light(), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
