@@ -63,55 +63,38 @@ public:
   ~Engine();
 };
 
-namespace internal
-{
-template <typename Ref> Ref make_ref(const ref& x);
-}
-
 template <typename T> class ref : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  ref<T> operator()(const Time& t) const;
+  explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
 
-protected:
-  explicit ref(const internal::ref& r);
+  ref<T> operator()(const Time& t) const;
 };
 
 class DATAFLOW___EXPORT sig final : public ref<bool>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  void emit() const;
+  explicit sig(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit sig(const internal::ref& r);
+  void emit() const;
 };
 
 template <typename T> class val final : public ref<T>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  const T& operator()() const;
+  explicit val(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit val(const internal::ref& r);
+  const T& operator()() const;
 };
 
 template <typename T> class var final : public ref<T>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  const var& operator=(const T& v) const;
+  explicit var(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit var(const internal::ref& r);
+  const var& operator=(const T& v) const;
 };
 
 template <typename T>
