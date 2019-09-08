@@ -90,6 +90,14 @@ template <typename T> ref<T> maybe<T>::value_or(const ref<T>& def) const
     return def;
 }
 
+template <typename T> ref<T> maybe<T>::value_or() const
+{
+  if (engaged())
+    return data_.value_;
+  else
+    return Const<T>();
+}
+
 template <typename T> bool maybe<T>::operator==(const maybe<T>& other) const
 {
   return data_.engaged_ == other.data_.engaged_;
@@ -99,6 +107,21 @@ template <typename T> bool maybe<T>::operator!=(const maybe<T>& other) const
 {
   return !(*this == other);
 }
+}
+
+template <typename T>
+std::ostream& dataflow::operator<<(std::ostream& out, const maybe<T>& value)
+{
+  if (value.engaged())
+  {
+    out << "just(" << core::to_string(value.value_or()) << ")";
+  }
+  else
+  {
+    out << "nothing";
+  }
+
+  return out;
 }
 
 template <typename T> dataflow::ref<dataflow::maybe<T>> dataflow::Nothing()

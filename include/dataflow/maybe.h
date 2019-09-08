@@ -38,6 +38,7 @@ public:
   bool engaged() const;
 
   ref<T> value_or(const ref<T>& def) const;
+  ref<T> value_or() const;
 
   bool operator==(const maybe<T>& other) const;
   bool operator!=(const maybe<T>& other) const;
@@ -49,18 +50,7 @@ private:
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& out, const maybe<T>& value)
-{
-  if (value.engaged())
-  {
-  }
-  else
-  {
-    out << "nothing";
-  }
-
-  return out;
-}
+std::ostream& operator<<(std::ostream& out, const maybe<T>& value);
 
 template <typename T> ref<maybe<T>> Nothing();
 

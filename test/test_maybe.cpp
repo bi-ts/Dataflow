@@ -130,6 +130,30 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
   BOOST_CHECK_EQUAL(ee.value_or(y).id(), x.id());
 }
 
+BOOST_AUTO_TEST_CASE(test_maybe_Nothing_to_string)
+{
+  Engine engine;
+
+  const auto x = Nothing<int>();
+  const auto f = *x;
+
+  BOOST_CHECK_EQUAL(introspect::value(x), "nothing");
+}
+
+BOOST_AUTO_TEST_CASE(test_maybe_Just_to_string)
+{
+  Engine engine;
+
+  const auto x = Var(11);
+  const auto y = Just(x);
+  const auto f = *y;
+
+  std::stringstream ss;
+  ss << std::hex << x.id();
+
+  BOOST_CHECK_EQUAL(introspect::value(y), "just(" + ss.str() + ")");
+}
+
 BOOST_AUTO_TEST_CASE(test_maybe_Just_FromMaybe)
 {
   Engine engine;
