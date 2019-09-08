@@ -16,41 +16,33 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/internal/ref.h>
+#pragma once
 
-#include "engine.h"
+#include "node_t.h"
+#include "ref.h"
 
 namespace dataflow
 {
-
 namespace internal
 {
-ref::ref(const ref& other)
-: id_(other.id_)
+class DATAFLOW___EXPORT node_signal final : public node_t<bool>
 {
-  engine::instance().add_ref(converter::convert(id_));
-}
+  friend class nodes_factory;
 
-ref::~ref()
-{
-  engine::instance().release(converter::convert(id_));
-}
+public:
+  static ref create();
 
-const node* ref::get_() const
-{
-  return engine::instance().get_node(converter::convert(id_));
-}
+private:
+  explicit node_signal();
 
-void ref::schedule_() const
-{
-  engine::instance().schedule(converter::convert(id_));
-  engine::instance().pump();
-}
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) override;
 
-ref::ref(node_id id)
-: id_(id)
-{
-  engine::instance().add_ref(converter::convert(id_));
-}
-}
-}
+  virtual std::string label_() const override;
+
+  virtual std::pair<std::size_t, std::size_t> mem_info_() const override;
+};
+} // internal
+} // dataflow

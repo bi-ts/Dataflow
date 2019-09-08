@@ -33,6 +33,12 @@ class DATAFLOW___EXPORT ref
   friend class nodes_factory;
 
 public:
+  enum ctor_guard_t
+  {
+    ctor_guard
+  };
+
+public:
   ref(const ref& other);
 
   ~ref();

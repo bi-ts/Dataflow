@@ -31,14 +31,16 @@ double benchmark::CalculateUpdateDurationSec(const CheckPoints& check_points)
 void benchmark::PrintCheckPoints(std::ostream& out,
                                  const CheckPoints& check_points)
 {
-  out << "-----------------------------------------------------------------"
-      << std::endl;
-  out << "                  Total    Time per      Memory    Nodes count"
-      << std::endl;
-  out << "              time (ms)   node (ns)     (bytes)   active/total"
-      << std::endl;
-  out << "-----------------------------------------------------------------"
-      << std::endl;
+  const std::string table_head[] = {
+    "------------------------------------------------------------------------",
+    "                  Total    Time per Affected      Memory    Nodes count",
+    "              time (ms)   node (ns)    nodes     (bytes)   active/total",
+    "------------------------------------------------------------------------"};
+
+  for (const auto l : table_head)
+  {
+    out << l << std::endl;
+  }
 
   PrintCheckPoint(out, "Initial", check_points.start);
 

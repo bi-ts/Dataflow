@@ -35,7 +35,19 @@ namespace dataflow
 
 namespace core
 {
-template <typename T> struct is_flowable;
+template <typename T>
+struct is_flowable
+: internal::std17::conjunction<
+    std::is_default_constructible<T>,
+    std::is_copy_constructible<T>,
+    std::is_copy_assignable<T>,
+    internal::is_streamable<T>,
+    internal::is_equality_comparable<T>,
+    internal::std17::negation<std::is_base_of<internal::ref, T>>,
+    internal::std17::negation<std::is_pointer<T>>,
+    internal::std17::negation<std::is_reference<T>>>
+{
+};
 }
 
 /// \defgroup core
@@ -51,44 +63,38 @@ public:
   ~Engine();
 };
 
-namespace internal
-{
-template <typename Ref> Ref make_ref(const ref& x);
-}
-
 template <typename T> class ref : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  ref<T> operator()(const Time& t) const;
+  explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
 
-protected:
-  explicit ref(const internal::ref& r);
+  ref<T> operator()(const Time& t) const;
+};
+
+class DATAFLOW___EXPORT sig final : public ref<bool>
+{
+public:
+  explicit sig(const internal::ref& r, internal::ref::ctor_guard_t);
+
+  void emit() const;
 };
 
 template <typename T> class val final : public ref<T>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  const T& operator()() const;
+  explicit val(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit val(const internal::ref& r);
+  const T& operator()() const;
 };
 
 template <typename T> class var final : public ref<T>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  const var& operator=(const T& v) const;
+  explicit var(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit var(const internal::ref& r);
+  const var& operator=(const T& v) const;
 };
 
 template <typename T>
@@ -136,46 +142,20 @@ private:
 
 // Type traits
 
-template <typename T>
-struct is_flowable
-: internal::std17::conjunction<
-    std::is_default_constructible<T>,
-    std::is_copy_constructible<T>,
-    std::is_copy_assignable<T>,
-    internal::is_streamable<T>,
-    internal::is_equality_comparable<T>,
-    internal::std17::negation<std::is_base_of<internal::ref, T>>,
-    internal::std17::negation<std::is_pointer<T>>,
-    internal::std17::negation<std::is_reference<T>>>
-{
-};
-
 template <typename T, typename U = T>
 using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
 
 template <typename T, typename U = T>
 using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
 
-namespace detail
-{
-template <typename T> struct convert_to_flowable
-{
-private:
-  template <typename U, typename = enable_if_flowable_t<U>>
-  static U test_(const U&);
-
-  static std::string test_(const char*);
-
-  static void test_(...);
-
-public:
-  using type = decltype(test_(std::declval<T>()));
-};
-}
-
 template <typename T>
 struct convert_to_flowable
-: enable_if_flowable<typename detail::convert_to_flowable<T>::type>
+: enable_if_flowable<typename std::conditional<
+    is_flowable<internal::std20::remove_cvref_t<T>>::value,
+    internal::std20::remove_cvref_t<T>,
+    typename std::conditional<std::is_convertible<T, std::string>::value,
+                              std::string,
+                              void>::type>::type>
 {
 };
 
@@ -246,32 +226,39 @@ namespace detail
 template <typename F, typename T> struct type_1_transition_function_result
 {
 private:
-  template <typename FF,
-            typename = typename std::enable_if<std::is_same<
-              data_type_t<typename std::result_of<FF(const ref<T>&)>::type>,
-              T>::value>::type>
-  static T test_(const FF&);
+  template <
+    typename FF,
+    typename TT,
+    typename FwTT = convert_to_flowable_t<TT>,
+    typename = typename std::enable_if<std::is_same<
+      data_type_t<decltype(std::declval<FF>()(std::declval<ref<FwTT>>()))>,
+      T>::value>::type>
+  static T test_(const FF*, const TT*);
 
   static void test_(...);
 
 public:
-  using type = decltype(test_(std::declval<F>()));
+  using type =
+    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
 };
 
 template <typename F, typename T> struct type_2_transition_function_result
 {
 private:
-  template <
-    typename FF,
-    typename = std::enable_if<std::is_same<
-      function_of_time_type_t<typename std::result_of<FF(const ref<T>&)>::type>,
-      T>::value>>
-  static T test_(const FF&);
+  template <typename FF,
+            typename TT,
+            typename FwTT = convert_to_flowable_t<TT>,
+            typename = std::enable_if<
+              std::is_same<function_of_time_type_t<decltype(
+                             std::declval<FF>()(std::declval<ref<FwTT>>()))>,
+                           T>::value>>
+  static T test_(const FF*, const TT*);
 
   static void test_(...);
 
 public:
-  using type = decltype(test_(std::declval<F>()));
+  using type =
+    decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
 };
 }
 
@@ -391,6 +378,10 @@ function_of_time<function_of_time_type_t<F>> make_farg(const F& f);
 
 template <typename T> ref<argument_data_type_t<T>> make_farg(const T& x);
 
+template <typename T> std::string to_string(const ref<T>& x);
+template <typename T, typename FwT = convert_to_flowable_t<T>>
+std::string to_string(const T& x);
+
 template <typename F,
           typename X,
           typename T = typename std::result_of<F(const X&)>::type>
@@ -475,6 +466,8 @@ template <typename T,
           typename... Args,
           typename = core::enable_if_flowable_t<T>>
 ref<T> Const(Args&&... args);
+
+DATAFLOW___EXPORT sig Signal();
 
 template <typename T, typename FwT = core::convert_to_flowable_t<T>>
 var<FwT> Var(const T& v);

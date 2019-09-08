@@ -20,6 +20,8 @@
 
 #include "../internal/engine.h"
 
+#include <dataflow/internal/node_signal.h>
+
 namespace dataflow
 {
 Engine::Engine()
@@ -31,10 +33,26 @@ Engine::~Engine()
 {
   internal::engine::stop();
 }
+
+void sig::emit() const
+{
+  this->schedule_();
+}
+
+sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
+: ref<bool>(r, internal::ref::ctor_guard)
+{
+}
+
 } // dataflow
 
 dataflow::ref<std::size_t> dataflow::CurrentTime()
 {
-  return internal::make_ref<ref<std::size_t>>(
-    internal::nodes_factory::get_time());
+  return ref<std::size_t>(internal::nodes_factory::get_time(),
+                          internal::ref::ctor_guard);
+}
+
+dataflow::sig dataflow::Signal()
+{
+  return sig(internal::node_signal::create(), internal::ref::ctor_guard);
 }

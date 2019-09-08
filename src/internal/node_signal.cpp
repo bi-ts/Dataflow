@@ -16,40 +16,46 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/internal/node_snapshot_activator.h>
+#include <dataflow/internal/node_signal.h>
+
 #include <dataflow/internal/nodes_factory.h>
 
-#include "engine.h"
+#include <utility>
 
 namespace dataflow
 {
 namespace internal
 {
-ref node_snapshot_activator::create()
+ref node_signal::create()
 {
-  return nodes_factory::create<node_snapshot_activator>(
-    nullptr, 0, node_flags::none);
+  return nodes_factory::create<node_signal>(nullptr, 0, node_flags::none);
 }
 
-node_snapshot_activator::node_snapshot_activator()
-: node_t<bool>(false)
+node_signal::node_signal()
+: node_t<bool>()
 {
 }
 
-update_status node_snapshot_activator::update_(node_id id,
-                                               bool initialized,
-                                               const node** p_deps,
-                                               std::size_t deps_count)
+update_status node_signal::update_(node_id id,
+                                   bool initialized,
+                                   const node** p_args,
+                                   std::size_t args_count)
 {
-  CHECK_PRECONDITION(deps_count == 0);
+  const auto value = initialized && !this->value();
 
-  return engine::instance().update_node_snapshot_activator(
-    converter::convert(id), initialized);
+  const auto status = this->set_value_(value);
+
+  return value ? status | update_status::updated_next : status;
 }
 
-std::string node_snapshot_activator::label_() const
+std::string node_signal::label_() const
 {
-  return "snapshot-activator";
+  return "signal";
+}
+
+std::pair<std::size_t, std::size_t> node_signal::mem_info_() const
+{
+  return std::make_pair(sizeof(*this), alignof(decltype(*this)));
 }
 } // internal
 } // dataflow
