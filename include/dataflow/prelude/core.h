@@ -378,6 +378,10 @@ function_of_time<function_of_time_type_t<F>> make_farg(const F& f);
 
 template <typename T> ref<argument_data_type_t<T>> make_farg(const T& x);
 
+template <typename T> std::string to_string(const ref<T>& x);
+template <typename T, typename FwT = convert_to_flowable_t<T>>
+std::string to_string(const T& x);
+
 template <typename F,
           typename X,
           typename T = typename std::result_of<F(const X&)>::type>

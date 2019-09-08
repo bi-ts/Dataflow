@@ -37,6 +37,8 @@
 #include "../internal/node_state_prev.h"
 #include "../internal/node_var.h"
 
+#include <sstream>
+
 namespace dataflow
 {
 
@@ -161,6 +163,22 @@ dataflow::ref<dataflow::core::argument_data_type_t<T>>
 dataflow::core::make_farg(const T& x)
 {
   return make_argument(x);
+}
+
+template <typename T>
+std::string dataflow::core::to_string(const dataflow::ref<T>& x)
+{
+  std::stringstream ss;
+  ss << std::hex << x.id();
+  return ss.str();
+}
+
+template <typename T, typename FwT>
+std::string dataflow::core::to_string(const T& x)
+{
+  std::stringstream ss;
+  ss << static_cast<const FwT&>(x);
+  return ss.str();
 }
 
 template <typename F, typename X, typename T>

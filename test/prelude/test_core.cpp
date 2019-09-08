@@ -1254,5 +1254,31 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_selector_on_prev_throws)
   BOOST_CHECK_THROW(Main(main_fn), std::logic_error);
 }
 
+BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
+{
+  Engine engine;
+
+  const auto x = Const(0);
+
+  std::stringstream ss;
+  ss << std::hex << x.id();
+
+  BOOST_CHECK_EQUAL(core::to_string(x), ss.str());
+}
+
+BOOST_AUTO_TEST_CASE(test_core_to_string_flowable)
+{
+  Engine engine;
+
+  BOOST_CHECK_EQUAL(core::to_string(1), "1");
+}
+
+BOOST_AUTO_TEST_CASE(test_core_to_string_convertible_to_flowable)
+{
+  Engine engine;
+
+  BOOST_CHECK_EQUAL(core::to_string("str"), "str");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
