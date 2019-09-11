@@ -112,6 +112,12 @@ template <typename T> union maybe<ref<T>>::data {
 };
 
 template <typename T>
+maybe<T>::maybe(nothing_t)
+: maybe{}
+{
+}
+
+template <typename T>
 maybe<T>::maybe()
 : data_{}
 {
@@ -145,6 +151,12 @@ template <typename T> bool maybe<T>::operator==(const maybe& other) const
 template <typename T> bool maybe<T>::operator!=(const maybe& other) const
 {
   return !(*this == other);
+}
+
+template <typename T>
+maybe<ref<T>>::maybe(nothing_t)
+: maybe{}
+{
 }
 
 template <typename T>

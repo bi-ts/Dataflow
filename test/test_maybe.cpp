@@ -45,6 +45,33 @@ BOOST_AUTO_TEST_CASE(test_maybe_default_ctr)
   BOOST_CHECK_EQUAL(a.value_or(x).id(), x.id());
 }
 
+BOOST_AUTO_TEST_CASE(test_maybe_ctr_from_nothing_t)
+{
+  maybe<int> a = nothing();
+
+  BOOST_CHECK_EQUAL(a.engaged(), false);
+
+  maybe<float> b = nothing();
+
+  BOOST_CHECK_EQUAL(b.engaged(), false);
+
+  maybe<std::string> c = nothing();
+
+  BOOST_CHECK_EQUAL(c.engaged(), false);
+
+  maybe<ref<int>> d = nothing();
+
+  BOOST_CHECK_EQUAL(d.engaged(), false);
+
+  maybe<ref<float>> e = nothing();
+
+  BOOST_CHECK_EQUAL(e.engaged(), false);
+
+  maybe<ref<std::string>> f = nothing();
+
+  BOOST_CHECK_EQUAL(f.engaged(), false);
+}
+
 BOOST_AUTO_TEST_CASE(test_maybe_ctr)
 {
   Engine engine;

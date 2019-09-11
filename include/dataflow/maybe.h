@@ -28,9 +28,15 @@ namespace dataflow
 /// \defgroup maybe
 /// \{
 
+struct nothing_t
+{
+};
+
 template <typename T> class maybe
 {
 public:
+  maybe(nothing_t);
+
   explicit maybe();
 
   explicit maybe(const T& x);
@@ -51,6 +57,8 @@ private:
 template <typename T> class maybe<ref<T>>
 {
 public:
+  maybe(nothing_t);
+
   explicit maybe();
 
   explicit maybe(const ref<T>& x);
@@ -68,6 +76,16 @@ private:
 
   data data_;
 };
+
+template <typename T> maybe<T> just(const T& x)
+{
+  return maybe<T>{x};
+}
+
+nothing_t nothing()
+{
+  return nothing_t{};
+}
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const maybe<T>& value);
