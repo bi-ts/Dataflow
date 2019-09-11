@@ -33,6 +33,26 @@ template <typename T> class maybe
 public:
   explicit maybe();
 
+  explicit maybe(const T& x);
+
+  bool engaged() const;
+
+  T value_or(const T& def = T()) const;
+
+  bool operator==(const maybe& other) const;
+  bool operator!=(const maybe& other) const;
+
+private:
+  union data;
+
+  data data_;
+};
+
+template <typename T> class maybe<ref<T>>
+{
+public:
+  explicit maybe();
+
   explicit maybe(const ref<T>& x);
 
   bool engaged() const;
@@ -40,8 +60,8 @@ public:
   ref<T> value_or(const ref<T>& def) const;
   ref<T> value_or() const;
 
-  bool operator==(const maybe<T>& other) const;
-  bool operator!=(const maybe<T>& other) const;
+  bool operator==(const maybe& other) const;
+  bool operator!=(const maybe& other) const;
 
 private:
   union data;
@@ -52,9 +72,7 @@ private:
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const maybe<T>& value);
 
-template <typename T> ref<maybe<T>> Nothing();
-
-template <typename T> ref<maybe<T>> Just(const ref<T>& x);
+template <typename T> ref<maybe<T>> JustE(const ref<T>& x);
 
 template <typename T,
           typename U,
@@ -62,6 +80,16 @@ template <typename T,
 ref<T> FromMaybe(const ref<maybe<T>>& x, const U& def);
 
 template <typename T> ref<T> FromMaybe(const ref<maybe<T>>& x);
+
+template <typename T> ref<maybe<T>> Nothing();
+
+template <typename T> ref<maybe<ref<T>>> Just(const ref<T>& x);
+template <typename T,
+          typename U,
+          typename = core::enable_for_argument_data_type_t<U, T>>
+ref<T> FromMaybe(const ref<maybe<ref<T>>>& x, const U& def);
+
+template <typename T> ref<T> FromMaybe(const ref<maybe<ref<T>>>& x);
 
 /// \}
 } // dataflow

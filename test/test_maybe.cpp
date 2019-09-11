@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(test_maybe)
 
 BOOST_AUTO_TEST_CASE(test_maybe_flowable)
 {
-  BOOST_CHECK(core::is_flowable<maybe<int>>::value);
+  BOOST_CHECK(core::is_flowable<maybe<ref<int>>>::value);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_default_ctr)
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_default_ctr)
 
   const auto x = Const<int>();
 
-  const maybe<int> a;
+  const maybe<ref<int>> a;
 
   BOOST_CHECK_EQUAL(a.engaged(), false);
   BOOST_CHECK_EQUAL(a.value_or(x).id(), x.id());
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_ctr)
   const auto x = Const<int>();
   const auto y = Const<int>();
 
-  const maybe<int> a{x};
+  const maybe<ref<int>> a{x};
 
   BOOST_CHECK_EQUAL(a.engaged(), true);
   BOOST_CHECK_EQUAL(a.value_or(y).id(), x.id());
@@ -64,19 +64,20 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_ctr)
 
   const auto x = Const<int>();
   const auto y = Const<int>();
+  const auto z = Const<int>();
 
-  const maybe<int> a{};
-  const maybe<int> b{x};
+  const maybe<ref<int>> a{};
+  const maybe<ref<int>> b{x};
 
-  const maybe<int> ca{a};
+  const maybe<ref<int>> ca{a};
 
   BOOST_CHECK_EQUAL(ca.engaged(), false);
-  BOOST_CHECK_EQUAL(ca.value_or(x).id(), x.id());
+  BOOST_CHECK_EQUAL(ca.value_or(z).id(), z.id());
 
-  const maybe<int> cb{b};
+  const maybe<ref<int>> cb{b};
 
   BOOST_CHECK_EQUAL(cb.engaged(), true);
-  BOOST_CHECK_EQUAL(cb.value_or(y).id(), x.id());
+  BOOST_CHECK_EQUAL(cb.value_or(z).id(), x.id());
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
@@ -86,10 +87,10 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
   const auto x = Const<int>();
   const auto y = Const<int>();
 
-  const maybe<int> n{};
-  const maybe<int> e{x};
+  const maybe<ref<int>> n{};
+  const maybe<ref<int>> e{x};
 
-  maybe<int> nn{};
+  maybe<ref<int>> nn{};
 
   BOOST_CHECK_EQUAL(nn.engaged(), false);
   BOOST_CHECK_EQUAL(nn.value_or(y).id(), y.id());
@@ -99,7 +100,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
   BOOST_CHECK_EQUAL(nn.engaged(), false);
   BOOST_CHECK_EQUAL(nn.value_or(y).id(), y.id());
 
-  maybe<int> ne{};
+  maybe<ref<int>> ne{};
 
   BOOST_CHECK_EQUAL(ne.engaged(), false);
   BOOST_CHECK_EQUAL(ne.value_or(y).id(), y.id());
@@ -109,7 +110,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
   BOOST_CHECK_EQUAL(ne.engaged(), true);
   BOOST_CHECK_EQUAL(ne.value_or(y).id(), x.id());
 
-  maybe<int> en{x};
+  maybe<ref<int>> en{x};
 
   BOOST_CHECK_EQUAL(en.engaged(), true);
   BOOST_CHECK_EQUAL(en.value_or(y).id(), x.id());
@@ -119,7 +120,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
   BOOST_CHECK_EQUAL(en.engaged(), false);
   BOOST_CHECK_EQUAL(en.value_or(y).id(), y.id());
 
-  maybe<int> ee{x};
+  maybe<ref<int>> ee{x};
 
   BOOST_CHECK_EQUAL(ee.engaged(), true);
   BOOST_CHECK_EQUAL(ee.value_or(y).id(), x.id());
@@ -175,7 +176,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_1_argument)
 {
   Engine engine;
 
-  const auto x = Nothing<int>();
+  const auto x = Nothing<ref<int>>();
   const auto y = FromMaybe(x);
   const auto f = *y;
 
@@ -184,6 +185,149 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_1_argument)
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
+{
+  Engine engine;
+
+  const auto x = Nothing<ref<int>>();
+  const auto y = Var(23);
+  const auto z = FromMaybe(x, y);
+  const auto f = *z;
+
+  BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), 23);
+
+  y = 34;
+
+  BOOST_CHECK_EQUAL(f(), 34);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2nd_argument_literal)
+{
+  Engine engine;
+
+  const auto x = Nothing<ref<std::string>>();
+  const auto y = FromMaybe(x, "empty");
+  const auto f = *y;
+
+  BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), "empty");
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_flowable)
+{
+  BOOST_CHECK(core::is_flowable<maybe<int>>::value);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_default_ctr)
+{
+  const maybe<int> a;
+
+  BOOST_CHECK_EQUAL(a.engaged(), false);
+  BOOST_CHECK_EQUAL(a.value_or(34), 34);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_ctr)
+{
+  Engine engine;
+
+  const maybe<int> a{56};
+
+  BOOST_CHECK_EQUAL(a.engaged(), true);
+  BOOST_CHECK_EQUAL(a.value_or(78), 56);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_copy_ctr)
+{
+  const maybe<int> a{};
+  const maybe<int> b{11};
+
+  const maybe<int> ca{a};
+
+  BOOST_CHECK_EQUAL(ca.engaged(), false);
+  BOOST_CHECK_EQUAL(ca.value_or(22), 22);
+
+  const maybe<int> cb{b};
+
+  BOOST_CHECK_EQUAL(cb.engaged(), true);
+  BOOST_CHECK_EQUAL(cb.value_or(22), 11);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_copy_assignment)
+{
+  const maybe<int> n{};
+  const maybe<int> e{11};
+
+  maybe<int> nn{};
+
+  BOOST_CHECK_EQUAL(nn.engaged(), false);
+  BOOST_CHECK_EQUAL(nn.value_or(22), 22);
+
+  nn = n;
+
+  BOOST_CHECK_EQUAL(nn.engaged(), false);
+  BOOST_CHECK_EQUAL(nn.value_or(22), 22);
+
+  maybe<int> ne{};
+
+  BOOST_CHECK_EQUAL(ne.engaged(), false);
+  BOOST_CHECK_EQUAL(ne.value_or(22), 22);
+
+  ne = e;
+
+  BOOST_CHECK_EQUAL(ne.engaged(), true);
+  BOOST_CHECK_EQUAL(ne.value_or(22), 11);
+
+  maybe<int> en{33};
+
+  BOOST_CHECK_EQUAL(en.engaged(), true);
+  BOOST_CHECK_EQUAL(en.value_or(22), 33);
+
+  en = n;
+
+  BOOST_CHECK_EQUAL(en.engaged(), false);
+  BOOST_CHECK_EQUAL(en.value_or(22), 22);
+
+  maybe<int> ee{44};
+
+  BOOST_CHECK_EQUAL(ee.engaged(), true);
+  BOOST_CHECK_EQUAL(ee.value_or(22), 44);
+
+  ee = e;
+
+  BOOST_CHECK_EQUAL(ee.engaged(), true);
+  BOOST_CHECK_EQUAL(ee.value_or(22), 11);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_Just_FromMaybe)
+{
+  Engine engine;
+
+  const auto x = Var(11);
+  const auto y = JustE(x);
+  const auto z = FromMaybe(y);
+  const auto f = *z;
+
+  BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), 11);
+
+  x = 22;
+
+  BOOST_CHECK_EQUAL(f(), 22);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_1_argument)
+{
+  Engine engine;
+
+  const auto x = Nothing<int>();
+  const auto y = FromMaybe(x);
+  const auto f = *y;
+
+  BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
+  BOOST_CHECK_EQUAL(f(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2_arguments)
 {
   Engine engine;
 
@@ -200,7 +344,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
   BOOST_CHECK_EQUAL(f(), 34);
 }
 
-BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2nd_argument_literal)
+BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2nd_argument_literal)
 {
   Engine engine;
 

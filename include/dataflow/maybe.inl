@@ -23,6 +23,52 @@
 namespace dataflow
 {
 template <typename T> union maybe<T>::data {
+  std::array<char, sizeof(T) + alignof(T)> raw_;
+
+  struct
+  {
+    char engaged_;
+    T value_;
+  } storage_;
+
+  static_assert(sizeof(decltype(raw_)) == sizeof(decltype(storage_)),
+                "Incompatible sizes");
+
+  explicit data()
+  : raw_{}
+  {
+  }
+
+  explicit data(const T& x)
+  : storage_{true, x}
+  {
+  }
+
+  data(const data& other)
+  : data{}
+  {
+    if (other.storage_.engaged_)
+    {
+      data tmp{other.storage_.value_};
+      std::swap(raw_, tmp.raw_);
+    }
+  }
+
+  data& operator=(data other)
+  {
+    std::swap(raw_, other.raw_);
+
+    return *this;
+  }
+
+  ~data()
+  {
+    if (storage_.engaged_)
+      storage_.value_.~T();
+  }
+};
+
+template <typename T> union maybe<ref<T>>::data {
   std::intptr_t engaged_;
   ref<T> value_;
 
@@ -72,17 +118,53 @@ maybe<T>::maybe()
 }
 
 template <typename T>
-maybe<T>::maybe(const ref<T>& x)
+maybe<T>::maybe(const T& x)
 : data_{x}
 {
 }
 
 template <typename T> bool maybe<T>::engaged() const
 {
+  return data_.storage_.engaged_;
+}
+
+template <typename T> T maybe<T>::value_or(const T& def) const
+{
+  if (engaged())
+    return data_.storage_.value_;
+  else
+    return def;
+}
+
+template <typename T> bool maybe<T>::operator==(const maybe& other) const
+{
+  return engaged() == other.engaged() &&
+         data_.storage_.value_ == other.data_.storage_.value_;
+}
+
+template <typename T> bool maybe<T>::operator!=(const maybe& other) const
+{
+  return !(*this == other);
+}
+
+template <typename T>
+maybe<ref<T>>::maybe()
+: data_{}
+{
+}
+
+template <typename T>
+maybe<ref<T>>::maybe(const ref<T>& x)
+: data_{x}
+{
+}
+
+template <typename T> bool maybe<ref<T>>::engaged() const
+{
   return data_.engaged_;
 }
 
-template <typename T> ref<T> maybe<T>::value_or(const ref<T>& def) const
+template <typename T> ref<T> maybe<ref<T>>::value_or(const ref<T>& def) const
 {
   if (engaged())
     return data_.value_;
@@ -90,7 +172,7 @@ template <typename T> ref<T> maybe<T>::value_or(const ref<T>& def) const
     return def;
 }
 
-template <typename T> ref<T> maybe<T>::value_or() const
+template <typename T> ref<T> maybe<ref<T>>::value_or() const
 {
   if (engaged())
     return data_.value_;
@@ -98,12 +180,12 @@ template <typename T> ref<T> maybe<T>::value_or() const
     return Const<T>();
 }
 
-template <typename T> bool maybe<T>::operator==(const maybe<T>& other) const
+template <typename T> bool maybe<ref<T>>::operator==(const maybe& other) const
 {
   return data_.engaged_ == other.data_.engaged_;
 }
 
-template <typename T> bool maybe<T>::operator!=(const maybe<T>& other) const
+template <typename T> bool maybe<ref<T>>::operator!=(const maybe& other) const
 {
   return !(*this == other);
 }
@@ -120,19 +202,31 @@ std::ostream& dataflow::operator<<(std::ostream& out, const maybe<T>& value)
   {
     out << "nothing";
   }
-
   return out;
 }
 
-template <typename T> dataflow::ref<dataflow::maybe<T>> dataflow::Nothing()
+template <typename T>
+dataflow::ref<dataflow::maybe<T>> dataflow::JustE(const ref<T>& x)
 {
-  return Const<maybe<T>>();
+  struct policy
+  {
+    static std::string label()
+    {
+      return "just";
+    }
+    maybe<T> calculate(const T& x)
+    {
+      return maybe<T>(x);
+    }
+  };
+
+  return core::Lift<policy>(core::make_argument(x));
 }
 
 template <typename T>
-dataflow::ref<dataflow::maybe<T>> dataflow::Just(const ref<T>& x)
+dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<ref<T>>>& x)
 {
-  return Const<maybe<T>>(x);
+  return FromMaybe(x, Const<T>());
 }
 
 template <typename T, typename U, typename>
@@ -144,7 +238,42 @@ dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<T>>& x, const U& def)
     {
       return "from-maybe";
     }
-    ref<T> calculate(const maybe<T>& x)
+    static T calculate(const maybe<T>& x, const T& def)
+    {
+      return x.value_or(def);
+    }
+  };
+
+  return core::Lift<policy>(x, core::make_argument(def));
+}
+
+template <typename T>
+dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<T>>& x)
+{
+  return FromMaybe(x, Const<T>());
+}
+
+template <typename T> dataflow::ref<dataflow::maybe<T>> dataflow::Nothing()
+{
+  return Const<maybe<T>>();
+}
+
+template <typename T>
+dataflow::ref<dataflow::maybe<dataflow::ref<T>>> dataflow::Just(const ref<T>& x)
+{
+  return Const<maybe<ref<T>>>(x);
+}
+
+template <typename T, typename U, typename>
+dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<ref<T>>>& x, const U& def)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "from-maybe";
+    }
+    ref<T> calculate(const maybe<ref<T>>& x)
     {
       return x.value_or(def_);
     }
@@ -153,10 +282,4 @@ dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<T>>& x, const U& def)
   };
 
   return core::LiftSelector(policy{core::make_argument(def)}, x);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::FromMaybe(const ref<maybe<T>>& x)
-{
-  return FromMaybe(x, Const<T>());
 }
