@@ -878,9 +878,9 @@ void engine::pump_()
     {
       ++changed_nodes_count_;
 
-      for (auto v : graph_[v].consumers)
+      for (auto u : graph_[v].consumers)
       {
-        order_.mark(graph_[v].position);
+        order_.mark(graph_[u].position);
       }
     }
 
