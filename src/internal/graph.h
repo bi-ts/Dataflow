@@ -152,9 +152,9 @@ public:
   uint eager : 1;
   uint conditional : 1;
   uint constant : 1;
-  uint straight : 1;
+  const uint straight : 1; // TODO: not used?
   uint initialized : 1;
-  uint hidden : 1;
+  const uint hidden : 1; // TODO: not used?
   uint previous : 1;
 
 private:
