@@ -355,7 +355,7 @@ template <typename T, typename... Args>
 using enable_if_some =
   std::enable_if<internal::std17::disjunction<Args...>::value, T>;
 
-template <typename T = void, typename... Args>
+template <typename T, typename... Args>
 using enable_if_some_t = typename enable_if_some<T, Args...>::type;
 
 template <typename T, typename... Args>
