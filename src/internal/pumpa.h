@@ -32,7 +32,7 @@ namespace dataflow
 {
 namespace internal
 {
-class engine final
+class pumpa final
 {
 public:
   using allocator_type = memory_allocator<char>;
@@ -49,13 +49,13 @@ public:
   const node* get_node(vertex_descriptor v) const;
 
 public:
-  engine(const engine&) = delete;
-  engine& operator=(const engine&) = delete;
+  pumpa(const pumpa&) = delete;
+  pumpa& operator=(const pumpa&) = delete;
 
   static void start();
   static void stop();
 
-  static engine& instance();
+  static pumpa& instance();
 
   bool is_logical_dependency(edge_descriptor e) const;
   bool is_primary_data_dependency(edge_descriptor e) const;
@@ -117,8 +117,8 @@ public:
   update_node_state_prev(vertex_descriptor v, bool initialized);
 
 private:
-  explicit engine();
-  ~engine() noexcept;
+  explicit pumpa();
+  ~pumpa() noexcept;
 
   void schedule_for_next_update_(vertex_descriptor v);
 
@@ -175,7 +175,7 @@ private:
   std::size_t updated_nodes_count_;
 
 private:
-  static engine* gp_engine_;
+  static pumpa* gp_engine_;
 };
 } // internal
 } // dataflow

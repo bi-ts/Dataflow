@@ -29,7 +29,7 @@ namespace internal
 vd_handle::vd_handle(vertex_descriptor v)
 : v_(v)
 {
-  engine::instance().add_ref(v_);
+  pumpa::instance().add_ref(v_);
 }
 
 vd_handle::vd_handle(const vd_handle& other)
@@ -39,7 +39,7 @@ vd_handle::vd_handle(const vd_handle& other)
 
 vd_handle::~vd_handle()
 {
-  engine::instance().release(v_);
+  pumpa::instance().release(v_);
 }
 
 vd_handle::operator vertex_descriptor() const

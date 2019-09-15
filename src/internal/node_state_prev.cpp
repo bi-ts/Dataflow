@@ -25,7 +25,7 @@ namespace dataflow
 std::pair<const internal::node*, internal::update_status>
 internal::update_node_state_prev(node_id id, bool initialized)
 {
-  return engine::instance().update_node_state_prev(converter::convert(id),
-                                                   initialized);
+  return pumpa::instance().update_node_state_prev(converter::convert(id),
+                                                  initialized);
 }
 } // dataflow

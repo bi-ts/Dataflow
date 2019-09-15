@@ -24,6 +24,6 @@ namespace dataflow
 {
 void internal::update_node_state(node_id id)
 {
-  engine::instance().update_node_state(converter::convert(id));
+  pumpa::instance().update_node_state(converter::convert(id));
 }
 } // dataflow

@@ -28,29 +28,29 @@ namespace internal
 ref::ref(const ref& other)
 : id_(other.id_)
 {
-  engine::instance().add_ref(converter::convert(id_));
+  pumpa::instance().add_ref(converter::convert(id_));
 }
 
 ref::~ref()
 {
-  engine::instance().release(converter::convert(id_));
+  pumpa::instance().release(converter::convert(id_));
 }
 
 const node* ref::get_() const
 {
-  return engine::instance().get_node(converter::convert(id_));
+  return pumpa::instance().get_node(converter::convert(id_));
 }
 
 void ref::schedule_() const
 {
-  engine::instance().schedule(converter::convert(id_));
-  engine::instance().pump();
+  pumpa::instance().schedule(converter::convert(id_));
+  pumpa::instance().pump();
 }
 
 ref::ref(node_id id)
 : id_(id)
 {
-  engine::instance().add_ref(converter::convert(id_));
+  pumpa::instance().add_ref(converter::convert(id_));
 }
 }
 }

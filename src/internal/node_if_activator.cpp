@@ -48,10 +48,10 @@ update_status node_if_activator::update_(node_id id,
   const auto new_value = extract_node_value<bool>(p_deps[0]);
 
   const auto result =
-    engine::instance().update_node_if_activator(converter::convert(id),
-                                                initialized,
-                                                std::size_t(new_value),
-                                                std::size_t(this->value()));
+    pumpa::instance().update_node_if_activator(converter::convert(id),
+                                               initialized,
+                                               std::size_t(new_value),
+                                               std::size_t(this->value()));
 
   return this->set_value_(new_value) | result;
 }
