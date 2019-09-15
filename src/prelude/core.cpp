@@ -18,7 +18,7 @@
 
 #include <dataflow/prelude/core.h>
 
-#include "../internal/engine.h"
+#include "../internal/pumpa.h"
 
 #include <dataflow/internal/node_signal.h>
 
@@ -26,12 +26,12 @@ namespace dataflow
 {
 Engine::Engine()
 {
-  internal::engine::start();
+  internal::pumpa::start();
 }
 
 Engine::~Engine()
 {
-  internal::engine::stop();
+  internal::pumpa::stop();
 }
 
 void sig::emit() const

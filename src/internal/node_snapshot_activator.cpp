@@ -19,7 +19,7 @@
 #include <dataflow/internal/node_snapshot_activator.h>
 #include <dataflow/internal/nodes_factory.h>
 
-#include "engine.h"
+#include "pumpa.h"
 
 namespace dataflow
 {
@@ -43,7 +43,7 @@ update_status node_snapshot_activator::update_(node_id id,
 {
   CHECK_PRECONDITION(deps_count == 0);
 
-  return engine::instance().update_node_snapshot_activator(
+  return pumpa::instance().update_node_snapshot_activator(
     converter::convert(id), initialized);
 }
 

@@ -18,7 +18,7 @@
 
 #include <dataflow/introspect.h>
 
-#include "internal/engine.h"
+#include "internal/pumpa.h"
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -53,7 +53,7 @@ public:
     if (e == dependency_graph::edge_descriptor())
       return internal::edge_descriptor();
 
-    const auto& g = internal::engine::instance().graph();
+    const auto& g = internal::pumpa::instance().graph();
     const auto u = convert(e.u);
 
     assert(out_degree(u, g) > e.idx);
@@ -64,7 +64,7 @@ public:
   static dependency_graph::edge_descriptor
   convert(const internal::dependency_graph::out_edge_iterator& ei)
   {
-    const auto& g = internal::engine::instance().graph();
+    const auto& g = internal::pumpa::instance().graph();
 
     const auto u = source(*ei, g);
 
@@ -150,12 +150,12 @@ introspect::out_edges(dependency_graph::vertex_descriptor v,
 
   base_iterator from, to;
   std::tie(from, to) =
-    out_edges(converter::convert(v), internal::engine::instance().graph());
+    out_edges(converter::convert(v), internal::pumpa::instance().graph());
 
   using iterator_delegate =
     iterator_delegate<base_iterator, const dependency_graph::edge_descriptor>;
 
-  const auto& dg = internal::engine::instance().graph();
+  const auto& dg = internal::pumpa::instance().graph();
 
   if (out_degree(converter::convert(v), dg) > 0 &&
       target(*(to - 1), dg) == converter::convert(v))
@@ -178,15 +178,14 @@ introspect::dependency_graph::degree_size_type
 introspect::out_degree(dependency_graph::vertex_descriptor v,
                        const dependency_graph& g)
 {
-  return out_degree(converter::convert(v),
-                    internal::engine::instance().graph());
+  return out_degree(converter::convert(v), internal::pumpa::instance().graph());
 }
 
 // VertexListGraph
 
 introspect::vertex_range introspect::vertices(const dependency_graph& g)
 {
-  const auto vs = vertices(internal::engine::instance().graph());
+  const auto vs = vertices(internal::pumpa::instance().graph());
 
   using base_iterator = boost::filter_iterator<
     std::function<bool(internal::vertex_descriptor)>,
@@ -197,7 +196,7 @@ introspect::vertex_range introspect::vertices(const dependency_graph& g)
 
   std::function<bool(internal::vertex_descriptor)> predicate =
     [](internal::vertex_descriptor v) {
-      return false == internal::engine::instance().graph()[v].hidden;
+      return false == internal::pumpa::instance().graph()[v].hidden;
     };
 
   iterator_delegate::transform_function fn = [](const base_iterator& vi) {
@@ -216,7 +215,7 @@ introspect::vertex_range introspect::vertices(const dependency_graph& g)
 introspect::dependency_graph::vertices_size_type
 introspect::num_vertices(const dependency_graph& g)
 {
-  return num_vertices(internal::engine::instance().graph());
+  return num_vertices(internal::pumpa::instance().graph());
 }
 
 // edge_descriptor
@@ -239,7 +238,7 @@ introspect::source(dependency_graph::edge_descriptor e,
                    const dependency_graph& g)
 {
   return converter::convert(
-    source(converter::convert(e), internal::engine::instance().graph()));
+    source(converter::convert(e), internal::pumpa::instance().graph()));
 }
 
 introspect::dependency_graph::vertex_descriptor
@@ -247,7 +246,7 @@ introspect::target(dependency_graph::edge_descriptor e,
                    const dependency_graph& g)
 {
   return converter::convert(
-    target(converter::convert(e), internal::engine::instance().graph()));
+    target(converter::convert(e), internal::pumpa::instance().graph()));
 }
 
 // Graph properties
@@ -258,7 +257,7 @@ introspect::vertex_range introspect::topological_order()
     iterator_delegate<internal::topological_list::const_iterator,
                       const dependency_graph::vertex_descriptor>;
 
-  const auto& order = internal::engine::instance().order();
+  const auto& order = internal::pumpa::instance().order();
 
   assert(order.size() > 0);
   // assert(order.front() label is "ground");
@@ -277,22 +276,22 @@ introspect::vertex_range introspect::topological_order()
 
 introspect::dependency_graph::vertices_size_type introspect::num_active_nodes()
 {
-  return internal::engine::instance().order().size();
+  return internal::pumpa::instance().order().size();
 }
 
 introspect::dependency_graph::vertices_size_type introspect::num_changed_nodes()
 {
-  return internal::engine::instance().changed_nodes_count();
+  return internal::pumpa::instance().changed_nodes_count();
 }
 
 introspect::dependency_graph::vertices_size_type introspect::num_updated_nodes()
 {
-  return internal::engine::instance().updated_nodes_count();
+  return internal::pumpa::instance().updated_nodes_count();
 }
 
 std::size_t introspect::memory_consumption()
 {
-  return internal::engine::allocator_type::allocated();
+  return internal::pumpa::allocator_type::allocated();
 }
 
 // Vertex properties
@@ -302,23 +301,22 @@ bool introspect::active_node(dependency_graph::vertex_descriptor v)
   if (v == boost::graph_traits<dependency_graph>::null_vertex())
     return false;
 
-  return internal::engine::instance().is_active_node(converter::convert(v));
+  return internal::pumpa::instance().is_active_node(converter::convert(v));
 }
 
 bool introspect::conditional_node(dependency_graph::vertex_descriptor v)
 {
-  return internal::engine::instance().is_conditional_node(
-    converter::convert(v));
+  return internal::pumpa::instance().is_conditional_node(converter::convert(v));
 }
 
 bool introspect::eager_node(dependency_graph::vertex_descriptor v)
 {
-  return internal::engine::instance().is_eager_node(converter::convert(v));
+  return internal::pumpa::instance().is_eager_node(converter::convert(v));
 }
 
 bool introspect::persistent_node(dependency_graph::vertex_descriptor v)
 {
-  return internal::engine::instance().is_persistent_node(converter::convert(v));
+  return internal::pumpa::instance().is_persistent_node(converter::convert(v));
 }
 
 int introspect::update_order(dependency_graph::vertex_descriptor u,
@@ -344,14 +342,14 @@ int introspect::update_order(dependency_graph::vertex_descriptor u,
 
   assert(active_node(u) && active_node(v));
 
-  const auto& g = internal::engine::instance().graph();
+  const auto& g = internal::pumpa::instance().graph();
 
   const auto u_pos = g[converter::convert(u)].position;
   const auto v_pos = g[converter::convert(v)].position;
 
   assert(u_pos != v_pos);
 
-  const int order = internal::engine::instance().order().order(u_pos, v_pos);
+  const int order = internal::pumpa::instance().order().order(u_pos, v_pos);
 
   return (order << 1) - 1;
 }
@@ -369,7 +367,7 @@ introspect::consumers(dependency_graph::vertex_descriptor v)
     };
 
   const auto& consumers =
-    internal::engine::instance().graph()[converter::convert(v)].consumers;
+    internal::pumpa::instance().graph()[converter::convert(v)].consumers;
 
   return std::make_pair(
     dependency_graph::vertex_iterator(std::unique_ptr<iterator_delegate>(
@@ -383,7 +381,7 @@ std::string introspect::label(dependency_graph::vertex_descriptor v)
   if (v == dependency_graph::vertex_descriptor())
     return "";
 
-  return internal::engine::instance()
+  return internal::pumpa::instance()
     .graph()[converter::convert(v)]
     .p_node->label();
 }
@@ -393,9 +391,7 @@ std::size_t introspect::ref_count(dependency_graph::vertex_descriptor v)
   if (v == dependency_graph::vertex_descriptor())
     return 0;
 
-  return internal::engine::instance()
-    .graph()[converter::convert(v)]
-    .ref_count();
+  return internal::pumpa::instance().graph()[converter::convert(v)].ref_count();
 }
 
 std::string introspect::value(dependency_graph::vertex_descriptor v)
@@ -403,7 +399,7 @@ std::string introspect::value(dependency_graph::vertex_descriptor v)
   if (v == dependency_graph::vertex_descriptor())
     return "";
 
-  return internal::engine::instance()
+  return internal::pumpa::instance()
     .graph()[converter::convert(v)]
     .p_node->to_string();
 }
@@ -428,28 +424,27 @@ bool introspect::activator_node(dependency_graph::vertex_descriptor v)
 
 bool introspect::active_dependency(dependency_graph::edge_descriptor e)
 {
-  const auto& engine = internal::engine::instance();
+  const auto& pumpa = internal::pumpa::instance();
   const auto ie = converter::convert(e);
 
-  return engine.is_active_data_dependency(ie) ||
-         engine.is_logical_dependency(ie);
+  return pumpa.is_active_data_dependency(ie) || pumpa.is_logical_dependency(ie);
 }
 
 bool introspect::logical_dependency(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().is_logical_dependency(
+  return internal::pumpa::instance().is_logical_dependency(
     converter::convert(e));
 }
 
 bool introspect::primary_dependency(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().is_primary_data_dependency(
+  return internal::pumpa::instance().is_primary_data_dependency(
     converter::convert(e));
 }
 
 bool introspect::secondary_dependency(dependency_graph::edge_descriptor e)
 {
-  return internal::engine::instance().is_secondary_data_dependency(
+  return internal::pumpa::instance().is_secondary_data_dependency(
     converter::convert(e));
 }
 } // dataflow
