@@ -18,7 +18,7 @@
 
 #include <dataflow/prelude/core.h>
 
-#include "../internal/engine.h"
+#include "../internal/pumpa.h"
 
 #include <dataflow/internal/node_signal.h>
 

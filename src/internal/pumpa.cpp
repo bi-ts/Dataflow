@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include "engine.h"
+#include "pumpa.h"
 #include "config.h"
 #include "node_time.h"
 #include "vd_handle.h"

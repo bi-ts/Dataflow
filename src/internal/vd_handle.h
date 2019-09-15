@@ -21,7 +21,7 @@
 #ifndef DATAFLOW___INTERNAL_VD_HANDLE_H
 #define DATAFLOW___INTERNAL_VD_HANDLE_H
 
-#include "engine.h"
+#include "graph.h"
 
 namespace dataflow
 {

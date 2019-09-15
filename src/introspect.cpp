@@ -18,7 +18,7 @@
 
 #include <dataflow/introspect.h>
 
-#include "internal/engine.h"
+#include "internal/pumpa.h"
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>

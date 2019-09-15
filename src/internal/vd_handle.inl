@@ -20,6 +20,8 @@
 #error '.inl' file can't be included directly. Use 'vd_handle.h' instead
 #endif
 
+#include "pumpa.h"
+
 namespace dataflow
 {
 namespace internal
