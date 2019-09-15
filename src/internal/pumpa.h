@@ -175,7 +175,7 @@ private:
   std::size_t updated_nodes_count_;
 
 private:
-  static pumpa* gp_engine_;
+  static pumpa* gp_pumpa_;
 };
 } // internal
 } // dataflow

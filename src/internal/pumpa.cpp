@@ -30,41 +30,41 @@ namespace dataflow
 {
 namespace internal
 {
-pumpa* pumpa::gp_engine_ = nullptr;
+pumpa* pumpa::gp_pumpa_ = nullptr;
 
 void pumpa::start()
 {
-  CHECK_PRECONDITION(gp_engine_ == nullptr);
+  CHECK_PRECONDITION(gp_pumpa_ == nullptr);
 
-  gp_engine_ = new pumpa();
+  gp_pumpa_ = new pumpa();
 
   const auto p_node = static_cast<node_time*>(dst::memory::allocate_aligned(
-    gp_engine_->get_allocator(), sizeof(node_time), alignof(node_time)));
+    gp_pumpa_->get_allocator(), sizeof(node_time), alignof(node_time)));
 
   new (std::addressof(*p_node)) node_time();
 
-  const auto v = add_vertex(vertex(p_node), gp_engine_->graph_);
+  const auto v = add_vertex(vertex(p_node), gp_pumpa_->graph_);
 
-  gp_engine_->graph_[v].eager = true;
-  gp_engine_->graph_[v].initialized = true;
+  gp_pumpa_->graph_[v].eager = true;
+  gp_pumpa_->graph_[v].initialized = true;
 
-  gp_engine_->add_logical_edge_(v, v);
+  gp_pumpa_->add_logical_edge_(v, v);
 
-  gp_engine_->graph_[v].position =
-    gp_engine_->order_.insert(gp_engine_->order_.end(), v);
+  gp_pumpa_->graph_[v].position =
+    gp_pumpa_->order_.insert(gp_pumpa_->order_.end(), v);
 
-  gp_engine_->add_ref(v);
+  gp_pumpa_->add_ref(v);
 
-  gp_engine_->time_node_v_ = v;
+  gp_pumpa_->time_node_v_ = v;
 }
 
 void pumpa::stop()
 {
-  CHECK_PRECONDITION(gp_engine_ != nullptr);
+  CHECK_PRECONDITION(gp_pumpa_ != nullptr);
 
-  delete gp_engine_;
+  delete gp_pumpa_;
 
-  gp_engine_ = nullptr;
+  gp_pumpa_ = nullptr;
 }
 
 vertex_descriptor pumpa::get_time_node() const

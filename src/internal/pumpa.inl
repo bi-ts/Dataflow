@@ -53,9 +53,9 @@ inline const node* pumpa::get_node(vertex_descriptor v) const
 
 inline pumpa& pumpa::instance()
 {
-  CHECK_PRECONDITION(gp_engine_ != nullptr);
+  CHECK_PRECONDITION(gp_pumpa_ != nullptr);
 
-  return *gp_engine_;
+  return *gp_pumpa_;
 }
 
 inline bool pumpa::is_logical_dependency(edge_descriptor e) const
