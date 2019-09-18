@@ -1254,6 +1254,35 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_selector_on_prev_throws)
   BOOST_CHECK_THROW(Main(main_fn), std::logic_error);
 }
 
+BOOST_AUTO_TEST_CASE(test_dtimestamp_default_ctor)
+{
+  dtimestamp ts;
+
+  BOOST_CHECK_EQUAL(ts, 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
+{
+  Engine engine;
+
+  const auto toggle = Var(true);
+
+  const val<dtimestamp> ts = Main(If(
+    toggle,
+    [=](const Time& t0) { return Const<dtimestamp>(t0); },
+    [=](const Time& t0) { return Const<dtimestamp>(t0); }));
+
+  BOOST_CHECK_EQUAL(ts(), 0);
+
+  toggle = false;
+
+  BOOST_CHECK_EQUAL(ts(), 1);
+
+  toggle = true;
+
+  BOOST_CHECK_EQUAL(ts(), 2);
+}
+
 BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
 {
   Engine engine;

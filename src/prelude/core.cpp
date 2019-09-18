@@ -24,6 +24,35 @@
 
 namespace dataflow
 {
+dtimestamp::dtimestamp()
+: timestamp_()
+{
+}
+
+dtimestamp::dtimestamp(const Time& t)
+: timestamp_([]() {
+  // TODO: simplify getting time stamp
+  return val<std::size_t>(internal::nodes_factory::get_time(),
+                          internal::ref::ctor_guard)();
+}())
+{
+}
+
+dtimestamp::operator std::size_t() const
+{
+  return timestamp_;
+}
+
+bool dtimestamp::operator==(const dtimestamp& other) const
+{
+  return timestamp_ == other.timestamp_;
+}
+
+bool dtimestamp::operator!=(const dtimestamp& other) const
+{
+  return !(*this == other);
+}
+
 Engine::Engine()
 {
   internal::pumpa::start();
@@ -45,6 +74,11 @@ sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
 }
 
 } // dataflow
+
+std::ostream& dataflow::operator<<(std::ostream& out, const dtimestamp& value)
+{
+  return out << value.timestamp_;
+}
 
 dataflow::ref<std::size_t> dataflow::CurrentTime()
 {

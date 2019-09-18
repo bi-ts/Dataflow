@@ -56,6 +56,25 @@ struct is_flowable
 
 using Time = internal::tick_count;
 
+class DATAFLOW___EXPORT dtimestamp final
+{
+public:
+  dtimestamp();
+  dtimestamp(const Time& t);
+
+  operator std::size_t() const;
+
+  bool operator==(const dtimestamp& other) const;
+  bool operator!=(const dtimestamp& other) const;
+
+  friend std::ostream& operator<<(std::ostream&, const dtimestamp&);
+
+private:
+  std::size_t timestamp_;
+};
+
+DATAFLOW___EXPORT std::ostream& operator<<(std::ostream&, const dtimestamp&);
+
 class DATAFLOW___EXPORT Engine
 {
 public:
