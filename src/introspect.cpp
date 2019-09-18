@@ -139,6 +139,13 @@ const introspect::dependency_graph& introspect::graph()
   return g_graph;
 }
 
+std::ostream& introspect::
+operator<<(std::ostream& out, const dependency_graph::vertex_descriptor& v)
+{
+  out << v.id_;
+  return out;
+}
+
 // IncidenceGraph
 
 introspect::out_edge_range
@@ -447,4 +454,61 @@ bool introspect::secondary_dependency(dependency_graph::edge_descriptor e)
   return internal::pumpa::instance().is_secondary_data_dependency(
     converter::convert(e));
 }
+
+void introspect::write_graphviz(std::ostream& out)
+{
+  assert(out);
+
+  const auto delimiter = "\n";
+  const auto indent = "\t";
+
+  out << "digraph G {" << delimiter;
+  out << indent << "edge [dir=back]" << delimiter;
+
+  for (auto vs = vertices(); vs.first != vs.second; ++vs.first)
+  {
+    const auto u = *vs.first;
+    out << indent << u;
+    out << " [label=\"" << label(u) << " (" << value(u) << ")\"";
+    if (!active_node(u))
+    {
+      out << ", color=lightgray";
+    }
+    if (conditional_node(u))
+    {
+    }
+    out << "];" << delimiter;
+  }
+
+  for (auto vs = vertices(); vs.first != vs.second; ++vs.first)
+  {
+    const auto u = *vs.first;
+
+    for (auto es = out_edges(*vs.first, graph()); es.first != es.second;
+         ++es.first)
+    {
+      const auto e = *es.first;
+      const auto v = target(e, graph());
+      out << indent << u << "->" << v;
+
+      if (logical_dependency(e))
+      {
+        out << " [color=gray, weight=0, style=\"dotted\"]";
+      }
+      else if (conditional_node(u) && primary_dependency(e))
+      {
+        out << " [dir=none, weight=100]";
+      }
+      else if (!active_dependency(e))
+      {
+        out << " [color=lightgray, weight=0]";
+      }
+
+      out << delimiter;
+    }
+  }
+
+  out << "}" << delimiter;
+}
+
 } // dataflow
