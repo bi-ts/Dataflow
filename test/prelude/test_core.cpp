@@ -1270,17 +1270,25 @@ BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
   const val<dtimestamp> ts = Main(If(
     toggle,
     [=](const Time& t0) { return Const<dtimestamp>(t0); },
-    [=](const Time& t0) { return Const<dtimestamp>(t0); }));
+    [=](const Time& t0) { return Const<dtimestamp>(); }));
 
   BOOST_CHECK_EQUAL(ts(), 0);
 
   toggle = false;
 
-  BOOST_CHECK_EQUAL(ts(), 1);
+  BOOST_CHECK_EQUAL(ts(), 0);
 
   toggle = true;
 
   BOOST_CHECK_EQUAL(ts(), 2);
+
+  toggle = false;
+
+  BOOST_CHECK_EQUAL(ts(), 0);
+
+  toggle = true;
+
+  BOOST_CHECK_EQUAL(ts(), 4);
 }
 
 BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
