@@ -67,8 +67,6 @@ public:
   bool operator==(const dtimestamp& other) const;
   bool operator!=(const dtimestamp& other) const;
 
-  friend std::ostream& operator<<(std::ostream&, const dtimestamp&);
-
 private:
   std::size_t timestamp_;
 };

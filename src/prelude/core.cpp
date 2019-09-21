@@ -77,7 +77,7 @@ sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
 
 std::ostream& dataflow::operator<<(std::ostream& out, const dtimestamp& value)
 {
-  return out << value.timestamp_;
+  return out << static_cast<std::size_t>(value);
 }
 
 dataflow::ref<std::size_t> dataflow::CurrentTime()
