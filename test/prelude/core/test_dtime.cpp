@@ -42,30 +42,64 @@ BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
 {
   Engine engine;
 
-  const auto toggle = Var(true);
+  const auto x = Var(100);
 
+  struct policy
+  {
+    static std::string label()
+    {
+      return ">=100";
+    }
+    static bool calculate(int v)
+    {
+      return v >= 100;
+    }
+  };
+
+  const auto make_timestamp = core::Lift(policy(), x);
+
+  // t = 0
   const val<dtimestamp> ts = Main(If(
-    toggle,
+    make_timestamp,
     [=](const Time& t0) { return Const<dtimestamp>(t0); },
     [=](const Time& t0) { return Const<dtimestamp>(); }));
 
   BOOST_CHECK_EQUAL(ts(), 0);
 
-  toggle = false;
+  // t = 1
+  x = 0;
 
   BOOST_CHECK_EQUAL(ts(), 0);
 
-  toggle = true;
+  // t = 2
+  x = 110;
 
   BOOST_CHECK_EQUAL(ts(), 2);
 
-  toggle = false;
+  // t = 3
+  x = 10;
 
   BOOST_CHECK_EQUAL(ts(), 0);
 
-  toggle = true;
+  // t = 4
+  x = 120;
 
   BOOST_CHECK_EQUAL(ts(), 4);
+
+  // t = 5
+  x = 130;
+
+  BOOST_CHECK_EQUAL(ts(), 4);
+
+  // t = 6
+  x = 20;
+
+  BOOST_CHECK_EQUAL(ts(), 0);
+
+  // t = 7
+  x = 140;
+
+  BOOST_CHECK_EQUAL(ts(), 7);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
