@@ -32,6 +32,7 @@ function(add_dataflow_test_project name)
 endfunction()
 
 add_dataflow_test_project(core
+  prelude/core/test_dtime.cpp
   prelude/test_core.cpp
   prelude/test_core.patcher.cpp
   prelude/test_core.type_traits.cpp

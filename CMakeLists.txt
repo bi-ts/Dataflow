@@ -48,6 +48,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/conditional.inl
   include/dataflow/prelude/core.h
   include/dataflow/prelude/core.inl
+  include/dataflow/prelude/core/dtime.h
   include/dataflow/prelude/logical.h
   include/dataflow/prelude/logical.inl
   include/dataflow/string.h
@@ -86,6 +87,7 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/comparison.cpp
   src/prelude/conditional.cpp
   src/prelude/core.cpp
+  src/prelude/core/dtime.cpp
   src/prelude/logical.cpp
   src/string.cpp
 
