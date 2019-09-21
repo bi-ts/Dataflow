@@ -321,6 +321,41 @@ update_status pumpa::update_node_snapshot_activator(vertex_descriptor v,
   return update_status::nothing;
 }
 
+update_status pumpa::update_node_since_activator(vertex_descriptor v,
+                                                 bool initialized,
+                                                 std::size_t ti)
+{
+  const auto t = static_cast<std::size_t>(ticks_);
+
+  CHECK_PRECONDITION(t >= ti);
+
+  const auto w = main_consumer_(v);
+
+  if (!initialized)
+  {
+    const auto e = *(out_edges(w, graph_).first + 1);
+
+    activate_subgraph_(e);
+
+    return update_status::updated;
+  }
+  else
+  {
+    if (t == ti)
+    {
+      const auto e = out_edge_at_(w, 1);
+
+      deactivate_subgraph_(e);
+
+      activate_subgraph_(e);
+
+      return update_status::updated;
+    }
+  }
+
+  return update_status::nothing;
+}
+
 void pumpa::update_node_state(vertex_descriptor v)
 {
   CHECK_PRECONDITION(is_active_node(v));

@@ -1280,5 +1280,70 @@ BOOST_AUTO_TEST_CASE(test_core_to_string_convertible_to_flowable)
   BOOST_CHECK_EQUAL(core::to_string("str"), "str");
 }
 
+BOOST_AUTO_TEST_CASE(test_Since)
+{
+  Engine engine;
+
+  const auto x = Var(0);
+  const auto use_since = Var(true);
+
+  struct policy
+  {
+    static std::string label()
+    {
+      return ">=100";
+    }
+    static bool calculate(int v)
+    {
+      return v >= 100;
+    }
+  };
+
+  const auto y = core::Lift(policy(), x);
+
+  // t = 0
+  const auto m = Main([=](const Time& t0) {
+    const auto z = If(
+      y,
+      [](const Time& t0) { return Const(dtimestamp(t0)); },
+      [](const Time& t0) { return Const(dtimestamp(t0)); },
+      t0);
+
+    return If(
+      use_since,
+      Since(z,
+            [](const Time& t0) { return Const<std::size_t>(dtimestamp(t0)); }),
+      std::size_t(101010),
+      t0);
+  });
+
+  BOOST_CHECK_EQUAL(m(), 0);
+
+  // t = 1
+  x = 10;
+
+  BOOST_CHECK_EQUAL(m(), 0);
+
+  // t = 2
+  x = 100;
+
+  BOOST_CHECK_EQUAL(m(), 2);
+
+  // t = 3
+  x = 110;
+
+  BOOST_CHECK_EQUAL(m(), 2);
+
+  // t = 4
+  use_since = false;
+
+  BOOST_CHECK_EQUAL(m(), 101010);
+
+  // t = 5
+  use_since = true;
+
+  BOOST_CHECK_EQUAL(m(), 5);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

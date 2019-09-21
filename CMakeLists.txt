@@ -49,6 +49,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core.h
   include/dataflow/prelude/core.inl
   include/dataflow/prelude/core/dtime.h
+  include/dataflow/prelude/core/internal/node_since.h
+  include/dataflow/prelude/core/internal/node_since_activator.h
   include/dataflow/prelude/logical.h
   include/dataflow/prelude/logical.inl
   include/dataflow/string.h
@@ -88,6 +90,7 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/conditional.cpp
   src/prelude/core.cpp
   src/prelude/core/dtime.cpp
+  src/prelude/core/internal/node_since_activator.cpp
   src/prelude/logical.cpp
   src/string.cpp
 

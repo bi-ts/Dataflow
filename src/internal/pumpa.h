@@ -111,6 +111,10 @@ public:
   update_status update_node_snapshot_activator(vertex_descriptor v,
                                                bool initialized);
 
+  update_status update_node_since_activator(vertex_descriptor v,
+                                            bool initialized,
+                                            std::size_t ti);
+
   void update_node_state(vertex_descriptor v);
 
   std::pair<const node*, update_status>

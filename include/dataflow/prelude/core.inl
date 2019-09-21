@@ -37,6 +37,9 @@
 #include "../internal/node_state_prev.h"
 #include "../internal/node_var.h"
 
+#include "core/internal/node_since.h"
+#include "core/internal/node_since_activator.h"
+
 #include <sstream>
 
 namespace dataflow
@@ -452,4 +455,22 @@ dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 
   return ref<T>(internal::node_state<T>::create(sp, core::make_argument(s0), s),
                 internal::ref::ctor_guard);
+}
+
+template <typename F, typename..., typename T>
+dataflow::ref<T>
+dataflow::Since(const ref<dtimestamp>& ti, const F& f, const Time& t0)
+{
+  return ref<T>(
+    internal::node_since<T>::create(internal::node_since_activator::create(ti),
+                                    detail::ref_from_function_of_time_or_ref(f),
+                                    true),
+    internal::ref::ctor_guard);
+}
+
+template <typename F, typename..., typename T>
+dataflow::function_of_time<T> dataflow::Since(const ref<dtimestamp>& ti,
+                                              const F& f)
+{
+  return [=](const Time& t0) { return Since(ti, f, t0); };
 }

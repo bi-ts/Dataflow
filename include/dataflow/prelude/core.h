@@ -523,6 +523,17 @@ template <
   typename T =
     core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>>
 ref<T> StateMachine(const Arg& s0, F tf, const Time& t0);
+
+template <typename F,
+          typename...,
+          typename T = core::function_of_time_type_t<F>>
+ref<T> Since(const ref<dtimestamp>& ti, const F& f, const Time& t0);
+
+template <typename F,
+          typename...,
+          typename T = core::function_of_time_type_t<F>>
+function_of_time<T> Since(const ref<dtimestamp>& ti, const F& f);
+
 /// \}
 }
 
