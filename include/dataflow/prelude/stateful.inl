@@ -26,12 +26,13 @@ namespace dataflow
 {
 namespace stateful
 {
+// TODO: move to internal? Implementation to .cpp?
 class transition
 {
 public:
   transition() = default;
 
-  transition(integer idx, const Time& t)
+  transition(integer idx, const dtimestamp& t)
   : idx_(idx)
   , t_(t)
   {
@@ -113,19 +114,29 @@ public:
     decltype(test_(std::declval<const F*>(), std::declval<const T*>()));
 };
 
+ref<stateful::transition> inline make_case(integer idx, std::false_type)
+{
+  return Const<stateful::transition>(idx, dtimestamp());
+}
+
+function_of_time<stateful::transition> inline make_case(integer idx,
+                                                        std::true_type)
+{
+  return [=](const Time& t0) { return Const<stateful::transition>(idx, t0); };
+}
+
 template <typename... Trs, std::size_t... Is>
-// static ref<stateful::transition>
-// TODO: avoid returning function_of_time if there is no need for initialization
-static function_of_time<stateful::transition>
+static core::farg_result_t<
+  stateful::transition,
+  decltype(std::get<Is>(std::declval<std::tuple<Trs...>>()).second)...>
 make1(const std::tuple<Trs...> transitions,
       ref<stateful::transition> def,
       const internal::std14::index_sequence<Is...>&)
 {
   return Switch(Case(std::get<Is>(transitions).first,
-                     [=](const Time& t0) {
-                       return Const<stateful::transition>(
-                         static_cast<integer>(Is) + 1, t0);
-                     })...,
+                     make_case(static_cast<integer>(Is) + 1,
+                               core::is_function_of_time<decltype(
+                                 std::get<Is>(transitions).second)>()))...,
                 Default(def));
 }
 
