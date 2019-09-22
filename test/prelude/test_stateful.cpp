@@ -181,8 +181,7 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
 
   toggle.emit();
 
-  // TODO: should this be `false`?
-  BOOST_CHECK_EQUAL(light(), true);
+  BOOST_CHECK_EQUAL(light(), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
