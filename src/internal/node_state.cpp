@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,12 +18,12 @@
 
 #include <dataflow/internal/node_state.h>
 
-#include "engine.h"
+#include "pumpa.h"
 
 namespace dataflow
 {
 void internal::update_node_state(node_id id)
 {
-  engine::instance().update_node_state(converter::convert(id));
+  pumpa::instance().update_node_state(converter::convert(id));
 }
 } // dataflow

@@ -16,40 +16,40 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/internal/node_snapshot_activator.h>
-#include <dataflow/internal/nodes_factory.h>
+#pragma once
 
-#include "pumpa.h"
+#include "dataflow++_export.h"
+
+#include "../../../internal/node_t.h"
+#include "../../../internal/ref.h"
+
+#include <dataflow/prelude/core/dtime.h>
 
 namespace dataflow
 {
 namespace internal
 {
-ref node_snapshot_activator::create()
+class DATAFLOW___EXPORT node_since_activator final : public node_t<dtimestamp>
 {
-  return nodes_factory::create<node_snapshot_activator>(
-    nullptr, 0, node_flags::none);
-}
+  friend class nodes_factory;
 
-node_snapshot_activator::node_snapshot_activator()
-: node_t<bool>(false)
-{
-}
+public:
+  static ref create(const ref& x);
 
-update_status node_snapshot_activator::update_(node_id id,
-                                               bool initialized,
-                                               const node** p_deps,
-                                               std::size_t deps_count)
-{
-  CHECK_PRECONDITION(deps_count == 0);
+private:
+  explicit node_since_activator();
 
-  return pumpa::instance().update_node_snapshot_activator(
-    converter::convert(id), initialized);
-}
+  virtual update_status update_(node_id id,
+                                bool initialized,
+                                const node** p_args,
+                                std::size_t args_count) override;
 
-std::string node_snapshot_activator::label_() const
-{
-  return "snapshot-activator";
-}
+  virtual std::string label_() const override;
+
+  virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
+  {
+    return std::make_pair(sizeof(*this), alignof(decltype(*this)));
+  }
+};
 } // internal
 } // dataflow

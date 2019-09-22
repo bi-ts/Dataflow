@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include "engine.h"
+#include "pumpa.h"
 #include "config.h"
 #include "node_time.h"
 #include "vd_handle.h"
@@ -30,54 +30,54 @@ namespace dataflow
 {
 namespace internal
 {
-engine* engine::gp_engine_ = nullptr;
+pumpa* pumpa::gp_pumpa_ = nullptr;
 
-void engine::start()
+void pumpa::start()
 {
-  CHECK_PRECONDITION(gp_engine_ == nullptr);
+  CHECK_PRECONDITION(gp_pumpa_ == nullptr);
 
-  gp_engine_ = new engine();
+  gp_pumpa_ = new pumpa();
 
   const auto p_node = static_cast<node_time*>(dst::memory::allocate_aligned(
-    gp_engine_->get_allocator(), sizeof(node_time), alignof(node_time)));
+    gp_pumpa_->get_allocator(), sizeof(node_time), alignof(node_time)));
 
   new (std::addressof(*p_node)) node_time();
 
-  const auto v = add_vertex(vertex(p_node), gp_engine_->graph_);
+  const auto v = add_vertex(vertex(p_node), gp_pumpa_->graph_);
 
-  gp_engine_->graph_[v].eager = true;
-  gp_engine_->graph_[v].initialized = true;
+  gp_pumpa_->graph_[v].eager = true;
+  gp_pumpa_->graph_[v].initialized = true;
 
-  gp_engine_->add_logical_edge_(v, v);
+  gp_pumpa_->add_logical_edge_(v, v);
 
-  gp_engine_->graph_[v].position =
-    gp_engine_->order_.insert(gp_engine_->order_.end(), v);
+  gp_pumpa_->graph_[v].position =
+    gp_pumpa_->order_.insert(gp_pumpa_->order_.end(), v);
 
-  gp_engine_->add_ref(v);
+  gp_pumpa_->add_ref(v);
 
-  gp_engine_->time_node_v_ = v;
+  gp_pumpa_->time_node_v_ = v;
 }
 
-void engine::stop()
+void pumpa::stop()
 {
-  CHECK_PRECONDITION(gp_engine_ != nullptr);
+  CHECK_PRECONDITION(gp_pumpa_ != nullptr);
 
-  delete gp_engine_;
+  delete gp_pumpa_;
 
-  gp_engine_ = nullptr;
+  gp_pumpa_ = nullptr;
 }
 
-vertex_descriptor engine::get_time_node() const
+vertex_descriptor pumpa::get_time_node() const
 {
   return time_node_v_;
 }
 
-vertex_descriptor engine::add_node(node* p_node,
-                                   const node_id* p_args,
-                                   std::size_t args_count,
-                                   bool eager,
-                                   bool conditional,
-                                   bool previous)
+vertex_descriptor pumpa::add_node(node* p_node,
+                                  const node_id* p_args,
+                                  std::size_t args_count,
+                                  bool eager,
+                                  bool conditional,
+                                  bool previous)
 {
   CHECK_PRECONDITION(p_node != nullptr);
 
@@ -123,7 +123,7 @@ vertex_descriptor engine::add_node(node* p_node,
   return v;
 }
 
-vertex_descriptor engine::add_persistent_node(node* p_node)
+vertex_descriptor pumpa::add_persistent_node(node* p_node)
 {
   CHECK_PRECONDITION(p_node != nullptr);
 
@@ -138,14 +138,14 @@ vertex_descriptor engine::add_persistent_node(node* p_node)
   return v;
 }
 
-void engine::add_data_edge(vertex_descriptor u, vertex_descriptor v)
+void pumpa::add_data_edge(vertex_descriptor u, vertex_descriptor v)
 {
   CHECK_PRECONDITION(!is_active_node(u));
 
   add_data_edge_(u, v);
 }
 
-void engine::remove_data_edge(vertex_descriptor u, std::size_t idx)
+void pumpa::remove_data_edge(vertex_descriptor u, std::size_t idx)
 {
   CHECK_PRECONDITION(!is_active_node(u));
   CHECK_PRECONDITION(out_degree(u, graph_) > idx);
@@ -158,13 +158,13 @@ void engine::remove_data_edge(vertex_descriptor u, std::size_t idx)
   remove_edge(e, graph_);
 }
 
-void engine::schedule(vertex_descriptor v)
+void pumpa::schedule(vertex_descriptor v)
 {
   if (graph_[v].position != topological_position())
     order_.mark(graph_[v].position);
 }
 
-void engine::pump()
+void pumpa::pump()
 {
   CHECK_PRECONDITION(!pumping_started_);
 
@@ -195,15 +195,15 @@ void engine::pump()
   pumping_started_ = false;
 }
 
-void engine::set_metadata(const node* p_node,
-                          std::shared_ptr<const metadata> p_metadata)
+void pumpa::set_metadata(const node* p_node,
+                         std::shared_ptr<const metadata> p_metadata)
 {
   CHECK_CONDITION(metadata_.find(p_node) == metadata_.end());
 
   metadata_[p_node] = std::move(p_metadata);
 }
 
-const std::shared_ptr<const metadata>& engine::get_metadata(const node* p_node)
+const std::shared_ptr<const metadata>& pumpa::get_metadata(const node* p_node)
 {
   const auto it = metadata_.find(p_node);
 
@@ -213,10 +213,10 @@ const std::shared_ptr<const metadata>& engine::get_metadata(const node* p_node)
   return it->second;
 }
 
-update_status engine::update_node_if_activator(vertex_descriptor v,
-                                               bool initialized,
-                                               std::size_t new_value,
-                                               std::size_t old_value)
+update_status pumpa::update_node_if_activator(vertex_descriptor v,
+                                              bool initialized,
+                                              std::size_t new_value,
+                                              std::size_t old_value)
 {
   const auto w = main_consumer_(v);
 
@@ -246,9 +246,9 @@ update_status engine::update_node_if_activator(vertex_descriptor v,
   return update_status::nothing;
 }
 
-update_status engine::update_node_selector_activator(vertex_descriptor v,
-                                                     vertex_descriptor x,
-                                                     bool initialized)
+update_status pumpa::update_node_selector_activator(vertex_descriptor v,
+                                                    vertex_descriptor x,
+                                                    bool initialized)
 {
   const auto w = main_consumer_(v);
 
@@ -302,8 +302,8 @@ update_status engine::update_node_selector_activator(vertex_descriptor v,
   return update_status::updated;
 }
 
-update_status engine::update_node_snapshot_activator(vertex_descriptor v,
-                                                     bool initialized)
+update_status pumpa::update_node_snapshot_activator(vertex_descriptor v,
+                                                    bool initialized)
 {
   const auto w = main_consumer_(v);
 
@@ -321,17 +321,52 @@ update_status engine::update_node_snapshot_activator(vertex_descriptor v,
   return update_status::nothing;
 }
 
-void engine::update_node_state(vertex_descriptor v)
+update_status pumpa::update_node_since_activator(vertex_descriptor v,
+                                                 bool initialized,
+                                                 std::size_t ti)
+{
+  const auto t = static_cast<std::size_t>(ticks_);
+
+  CHECK_PRECONDITION(t >= ti);
+
+  const auto w = main_consumer_(v);
+
+  if (!initialized)
+  {
+    const auto e = *(out_edges(w, graph_).first + 1);
+
+    activate_subgraph_(e);
+
+    return update_status::updated;
+  }
+  else
+  {
+    if (t == ti)
+    {
+      const auto e = out_edge_at_(w, 1);
+
+      deactivate_subgraph_(e);
+
+      activate_subgraph_(e);
+
+      return update_status::updated;
+    }
+  }
+
+  return update_status::nothing;
+}
+
+void pumpa::update_node_state(vertex_descriptor v)
 {
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(out_degree(v, graph_) == 4);
 
-  engine::instance().schedule_for_next_update_(
+  pumpa::instance().schedule_for_next_update_(
     target(out_edge_at_(v, 0), graph_));
 }
 
 std::pair<const node*, update_status>
-engine::update_node_state_prev(vertex_descriptor v, bool initialized)
+pumpa::update_node_state_prev(vertex_descriptor v, bool initialized)
 {
   const auto u = main_consumer_(v);
 
@@ -371,7 +406,7 @@ engine::update_node_state_prev(vertex_descriptor v, bool initialized)
   return std::make_pair(graph_[u].p_node, status);
 }
 
-engine::engine()
+pumpa::pumpa()
 : allocator_()
 , graph_()
 , order_(allocator_)
@@ -384,7 +419,7 @@ engine::engine()
 {
 }
 
-engine::~engine() noexcept
+pumpa::~pumpa() noexcept
 {
   CHECK_PRECONDITION_NOEXCEPT(num_vertices(graph_) == 1);
 
@@ -398,7 +433,7 @@ engine::~engine() noexcept
   }
 }
 
-void engine::schedule_for_next_update_(vertex_descriptor v)
+void pumpa::schedule_for_next_update_(vertex_descriptor v)
 {
   CHECK_PRECONDITION(pumping_started_);
   CHECK_PRECONDITION(v != vertex_descriptor());
@@ -407,8 +442,8 @@ void engine::schedule_for_next_update_(vertex_descriptor v)
     next_update_.push_back(graph_[v].position);
 }
 
-vertex_descriptor engine::implied_activator_(vertex_descriptor u,
-                                             vertex_descriptor v) const
+vertex_descriptor pumpa::implied_activator_(vertex_descriptor u,
+                                            vertex_descriptor v) const
 {
   CHECK_PRECONDITION(is_active_node(u));
 
@@ -423,8 +458,8 @@ vertex_descriptor engine::implied_activator_(vertex_descriptor u,
   return target(last_out_edge_(u), graph_);
 }
 
-edge_descriptor engine::add_logical_edge_(vertex_descriptor u,
-                                          vertex_descriptor v)
+edge_descriptor pumpa::add_logical_edge_(vertex_descriptor u,
+                                         vertex_descriptor v)
 {
   edge_descriptor new_e = edge_descriptor();
   bool new_edge_added = false;
@@ -436,7 +471,7 @@ edge_descriptor engine::add_logical_edge_(vertex_descriptor u,
   return new_e;
 }
 
-edge_descriptor engine::add_data_edge_(vertex_descriptor u, vertex_descriptor v)
+edge_descriptor pumpa::add_data_edge_(vertex_descriptor u, vertex_descriptor v)
 {
   edge_descriptor new_e = edge_descriptor();
   bool new_edge_added = false;
@@ -450,7 +485,7 @@ edge_descriptor engine::add_data_edge_(vertex_descriptor u, vertex_descriptor v)
   return new_e;
 }
 
-void engine::delete_node_(vertex_descriptor v)
+void pumpa::delete_node_(vertex_descriptor v)
 {
   CHECK_PRECONDITION(!is_active_node(v));
   CHECK_PRECONDITION(graph_[v].p_node);
@@ -467,9 +502,9 @@ void engine::delete_node_(vertex_descriptor v)
   remove_vertex(v, graph_);
 }
 
-void engine::activate_vertex_(vertex_descriptor v,
-                              topological_position pos,
-                              vertex_descriptor w)
+void pumpa::activate_vertex_(vertex_descriptor v,
+                             topological_position pos,
+                             vertex_descriptor w)
 {
   CHECK_PRECONDITION(requires_activation(v));
   CHECK_PRECONDITION(*pos == v);
@@ -485,7 +520,7 @@ void engine::activate_vertex_(vertex_descriptor v,
   CHECK_POSTCONDITION(is_active_node(v));
 }
 
-void engine::deactivate_vertex_partially_(vertex_descriptor v)
+void pumpa::deactivate_vertex_partially_(vertex_descriptor v)
 {
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(graph_[v].initialized);
@@ -503,7 +538,7 @@ void engine::deactivate_vertex_partially_(vertex_descriptor v)
   CHECK_POSTCONDITION(requires_activation(v));
 }
 
-void engine::deactivate_vertex_(vertex_descriptor v)
+void pumpa::deactivate_vertex_(vertex_descriptor v)
 {
   CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
 
@@ -512,7 +547,7 @@ void engine::deactivate_vertex_(vertex_descriptor v)
   remove_edge(last_out_edge_(v), graph_);
 }
 
-void engine::reset_activator_(vertex_descriptor v, vertex_descriptor w)
+void pumpa::reset_activator_(vertex_descriptor v, vertex_descriptor w)
 {
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(is_logical_dependency(last_out_edge_(v)));
@@ -522,7 +557,7 @@ void engine::reset_activator_(vertex_descriptor v, vertex_descriptor w)
   add_logical_edge_(v, w);
 }
 
-void engine::activate_edge_(edge_descriptor e)
+void pumpa::activate_edge_(edge_descriptor e)
 {
   CHECK_PRECONDITION(!is_active_data_dependency(e));
 
@@ -535,7 +570,7 @@ void engine::activate_edge_(edge_descriptor e)
   CHECK_POSTCONDITION(is_active_data_dependency(e));
 }
 
-void engine::deactivate_edge_(edge_descriptor e)
+void pumpa::deactivate_edge_(edge_descriptor e)
 {
   CHECK_PRECONDITION(is_active_data_dependency(e));
   CHECK_PRECONDITION(is_active_node(source(e, graph_)));
@@ -547,7 +582,7 @@ void engine::deactivate_edge_(edge_descriptor e)
   CHECK_POSTCONDITION(!is_active_data_dependency(e));
 }
 
-void engine::activate_subgraph_(edge_descriptor e)
+void pumpa::activate_subgraph_(edge_descriptor e)
 {
   CHECK_PRECONDITION(is_active_node(source(e, graph_)));
   CHECK_PRECONDITION(!is_active_data_dependency(e));
@@ -710,7 +745,7 @@ void engine::activate_subgraph_(edge_descriptor e)
   return;
 }
 
-void engine::deactivate_subgraph_(edge_descriptor e)
+void pumpa::deactivate_subgraph_(edge_descriptor e)
 {
   CHECK_PRECONDITION(is_active_node(source(e, graph_)));
 
@@ -785,7 +820,7 @@ void engine::deactivate_subgraph_(edge_descriptor e)
   }
 }
 
-void engine::remove_subgraph_(vertex_descriptor v)
+void pumpa::remove_subgraph_(vertex_descriptor v)
 {
   std::stack<vertex_descriptor> stack;
 
@@ -825,7 +860,7 @@ void engine::remove_subgraph_(vertex_descriptor v)
   }
 }
 
-void engine::pump_()
+void pumpa::pump_()
 {
   CHECK_PRECONDITION(metadata_.empty());
 
@@ -878,9 +913,9 @@ void engine::pump_()
     {
       ++changed_nodes_count_;
 
-      for (auto v : graph_[v].consumers)
+      for (auto u : graph_[v].consumers)
       {
-        order_.mark(graph_[v].position);
+        order_.mark(graph_[u].position);
       }
     }
 

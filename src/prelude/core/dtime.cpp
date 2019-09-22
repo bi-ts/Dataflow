@@ -16,43 +16,39 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/prelude/core.h>
+#include <dataflow/prelude/core/dtime.h>
 
-#include "../internal/pumpa.h"
-
-#include <dataflow/internal/node_signal.h>
+#include "../../internal/pumpa.h"
 
 namespace dataflow
 {
-Engine::Engine()
-{
-  internal::pumpa::start();
-}
-
-Engine::~Engine()
-{
-  internal::pumpa::stop();
-}
-
-void sig::emit() const
-{
-  this->schedule_();
-}
-
-sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
-: ref<bool>(r, internal::ref::ctor_guard)
+dtimestamp::dtimestamp()
+: timestamp_()
 {
 }
 
+dtimestamp::dtimestamp(const Time& t)
+: timestamp_(internal::pumpa::instance().ticks())
+{
+}
+
+dtimestamp::operator std::size_t() const
+{
+  return timestamp_;
+}
+
+bool dtimestamp::operator==(const dtimestamp& other) const
+{
+  return timestamp_ == other.timestamp_;
+}
+
+bool dtimestamp::operator!=(const dtimestamp& other) const
+{
+  return !(*this == other);
+}
 } // dataflow
 
-dataflow::ref<std::size_t> dataflow::CurrentTime()
+std::ostream& dataflow::operator<<(std::ostream& out, const dtimestamp& value)
 {
-  return ref<std::size_t>(internal::nodes_factory::get_time(),
-                          internal::ref::ctor_guard);
-}
-
-dataflow::sig dataflow::Signal()
-{
-  return sig(internal::node_signal::create(), internal::ref::ctor_guard);
+  return out << static_cast<std::size_t>(value);
 }

@@ -23,6 +23,8 @@
 
 #include "dataflow++_export.h"
 
+#include "core/dtime.h"
+
 #include "../internal/ref.h"
 #include "../internal/std_future.h"
 
@@ -54,8 +56,6 @@ struct is_flowable
 /// \ingroup prelude
 /// \{
 
-using Time = internal::tick_count;
-
 using integer = int;
 
 class DATAFLOW___EXPORT Engine
@@ -65,55 +65,38 @@ public:
   ~Engine();
 };
 
-namespace internal
-{
-template <typename Ref> Ref make_ref(const ref& x);
-}
-
 template <typename T> class ref : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  ref<T> operator()(const Time& t) const;
+  explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
 
-protected:
-  explicit ref(const internal::ref& r);
+  ref<T> operator()(const Time& t) const;
 };
 
 class DATAFLOW___EXPORT sig final : public ref<bool>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  void emit() const;
+  explicit sig(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit sig(const internal::ref& r);
+  void emit() const;
 };
 
 template <typename T> class val final : public ref<T>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  const T& operator()() const;
+  explicit val(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit val(const internal::ref& r);
+  const T& operator()() const;
 };
 
 template <typename T> class var final : public ref<T>
 {
-  template <typename Ref> friend Ref internal::make_ref(const internal::ref&);
-
 public:
-  const var& operator=(const T& v) const;
+  explicit var(const internal::ref& r, internal::ref::ctor_guard_t);
 
-private:
-  explicit var(const internal::ref& r);
+  const var& operator=(const T& v) const;
 };
 
 template <typename T>
@@ -374,7 +357,7 @@ template <typename T, typename... Args>
 using enable_if_some =
   std::enable_if<internal::std17::disjunction<Args...>::value, T>;
 
-template <typename T = void, typename... Args>
+template <typename T, typename... Args>
 using enable_if_some_t = typename enable_if_some<T, Args...>::type;
 
 template <typename T, typename... Args>
@@ -396,6 +379,10 @@ template <typename F>
 function_of_time<function_of_time_type_t<F>> make_farg(const F& f);
 
 template <typename T> ref<argument_data_type_t<T>> make_farg(const T& x);
+
+template <typename T> std::string to_string(const ref<T>& x);
+template <typename T, typename FwT = convert_to_flowable_t<T>>
+std::string to_string(const T& x);
 
 template <typename F,
           typename X,
@@ -538,6 +525,17 @@ template <
   typename T =
     core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>>
 ref<T> StateMachine(const Arg& s0, F tf, const Time& t0);
+
+template <typename F,
+          typename...,
+          typename T = core::function_of_time_type_t<F>>
+ref<T> Since(const ref<dtimestamp>& ti, const F& f, const Time& t0);
+
+template <typename F,
+          typename...,
+          typename T = core::function_of_time_type_t<F>>
+function_of_time<T> Since(const ref<dtimestamp>& ti, const F& f);
+
 /// \}
 }
 

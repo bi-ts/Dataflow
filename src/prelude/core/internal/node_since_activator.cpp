@@ -16,49 +16,46 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/internal/node_if_activator.h>
 #include <dataflow/internal/nodes_factory.h>
+#include <dataflow/prelude/core/internal/node_since_activator.h>
 
-#include "config.h"
-#include "pumpa.h"
+#include "../../../internal/config.h"
+#include "../../../internal/pumpa.h"
 
 namespace dataflow
 {
 namespace internal
 {
-ref node_if_activator::create(const ref& condition)
+ref node_since_activator::create(const ref& x)
 {
-  const auto id = condition.id();
+  const auto id = x.id();
 
-  return nodes_factory::create<node_if_activator>(&id, 1, node_flags::none);
+  return nodes_factory::create<node_since_activator>(&id, 1, node_flags::none);
 }
 
-node_if_activator::node_if_activator()
-: node_t<bool>(false)
+node_since_activator::node_since_activator()
+: node_t<dtimestamp>()
 {
 }
 
-update_status node_if_activator::update_(node_id id,
-                                         bool initialized,
-                                         const node** p_deps,
-                                         std::size_t deps_count)
+update_status node_since_activator::update_(node_id id,
+                                            bool initialized,
+                                            const node** p_deps,
+                                            std::size_t deps_count)
 {
   CHECK_PRECONDITION(p_deps != nullptr && deps_count == 1);
 
-  const auto new_value = extract_node_value<bool>(p_deps[0]);
+  const auto new_value = extract_node_value<dtimestamp>(p_deps[0]);
 
-  const auto result =
-    pumpa::instance().update_node_if_activator(converter::convert(id),
-                                               initialized,
-                                               std::size_t(new_value),
-                                               std::size_t(this->value()));
+  const auto result = pumpa::instance().update_node_since_activator(
+    converter::convert(id), initialized, std::size_t(new_value));
 
   return this->set_value_(new_value) | result;
 }
 
-std::string node_if_activator::label_() const
+std::string node_since_activator::label_() const
 {
-  return "if-activator";
+  return "since-activator";
 }
 } // internal
 } // dataflow

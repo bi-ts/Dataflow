@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,19 +18,19 @@
 
 #include <dataflow/internal/node_selector_activator.h>
 
-#include "engine.h"
+#include "pumpa.h"
 
 namespace dataflow
 {
 bool internal::is_prev(node_id x)
 {
-  return engine::instance().is_previous_node(converter::convert(x));
+  return pumpa::instance().is_previous_node(converter::convert(x));
 }
 
 internal::update_status internal::update_node_selector_activator(
   node_id id, node_id x, bool initialized)
 {
-  return engine::instance().update_node_selector_activator(
+  return pumpa::instance().update_node_selector_activator(
     converter::convert(id), converter::convert(x), initialized);
 }
 } // dataflow
