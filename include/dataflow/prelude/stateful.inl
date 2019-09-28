@@ -22,6 +22,8 @@
 
 #include "conditional.h"
 
+#include <tuple>
+
 namespace dataflow
 {
 namespace stateful
@@ -125,48 +127,50 @@ function_of_time<stateful::transition> inline make_case(integer idx,
   return [=](const Time& t0) { return Const<stateful::transition>(idx, t0); };
 }
 
-template <typename... Trs, std::size_t... Is>
-static core::farg_result_t<
-  stateful::transition,
-  decltype(std::get<Is>(std::declval<std::tuple<Trs...>>()).second)...>
-make1(const std::tuple<Trs...> transitions,
-      ref<stateful::transition> def,
-      const internal::std14::index_sequence<Is...>&)
-{
-  return Switch(Case(std::get<Is>(transitions).first,
-                     make_case(static_cast<integer>(Is) + 1,
-                               core::is_function_of_time<decltype(
-                                 std::get<Is>(transitions).second)>()))...,
-                Default(def));
-}
-
 template <typename T, typename... Trs, std::size_t... Is>
-static ref<T> make2(const std::tuple<Trs...> transitions,
-                    ref<T> def,
-                    ref<integer> tr_idx,
-                    const internal::std14::index_sequence<Is...>& seq,
-                    const Time& t0)
+static ref<T>
+make_state_machine(const std::tuple<Trs...>& transitions,
+                   const internal::std14::index_sequence<Is...>& seq,
+                   const ref<T>& sp,
+                   const Time& t0)
 {
+  const auto tr = StateMachine(
+    stateful::transition(0, t0),
+    [=](ref<stateful::transition> sp) {
+      return Switch(Case(std::get<Is>(transitions).first,
+                         make_case(static_cast<integer>(Is) + 1,
+                                   core::is_function_of_time<decltype(
+                                     std::get<Is>(transitions).second)>()))...,
+                    Default(sp));
+    },
+    t0);
+
   struct helper
   {
-    static const ref<T>& init(const ref<T>& x, const Time&)
+    static const ref<T>&
+    init(const ref<T>& x, const ref<dtimestamp>&, const Time&)
     {
       return x;
     }
 
-    static ref<T> init(const function_of_time<T>& f, const Time& t0)
+    static ref<T> init(const function_of_time<T>& f,
+                       const ref<dtimestamp>& ti,
+                       const Time& t0)
     {
-      return f(t0);
+      return Since(ti, f, t0);
     }
   };
 
-  const auto x = Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
-                             std::get<Is>(transitions).second)...,
-                        Default(def));
+  const auto tr_idx = Index(tr);
 
-  return helper::init(x, t0);
+  const auto& st = Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
+                               std::get<Is>(transitions).second)...,
+                          Default(sp));
+
+  return helper::init(st, Timestamp(tr), t0);
 }
-};
+
+}
 }
 }
 
@@ -180,28 +184,11 @@ dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
       return [=](const Time& t0) {
         const auto transitions = f(sp);
 
-        const auto tr = StateMachine(
-          stateful::transition(0, t0),
-          [=](ref<stateful::transition> sp) {
-            return stateful::detail::make1(
-              transitions,
-              sp,
-              internal::std14::make_index_sequence<
-                std::tuple_size<decltype(transitions)>::value>());
-          },
-          t0);
-
-        return Since(
-          Timestamp(tr),
-          [=](const Time& t0) {
-            return stateful::detail::make2(
-              transitions,
-              sp,
-              Index(tr),
-              internal::std14::make_index_sequence<
-                std::tuple_size<decltype(transitions)>::value>(),
-              t0);
-          },
+        return stateful::detail::make_state_machine(
+          transitions,
+          internal::std14::make_index_sequence<
+            std::tuple_size<decltype(transitions)>::value>(),
+          sp,
           t0);
       };
     },
