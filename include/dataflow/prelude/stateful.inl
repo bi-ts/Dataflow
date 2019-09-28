@@ -128,11 +128,15 @@ function_of_time<stateful::transition> inline make_case(integer idx,
 }
 
 template <typename T, typename... Trs, std::size_t... Is>
-static ref<T>
-make_state_machine(const std::tuple<Trs...>& transitions,
-                   const internal::std14::index_sequence<Is...>& seq,
-                   const ref<T>& sp,
-                   const Time& t0)
+static ref<T> make_state_machine(
+  const std::tuple<Trs...>& transitions,
+  const internal::std14::index_sequence<Is...>& seq,
+  const ref<T>& sp,
+  const Time& t0,
+  const core::enable_if_some_t<
+    void,
+    core::is_function_of_time<decltype(
+      std::get<Is>(std::declval<std::tuple<Trs...>>()).second)>...>* = nullptr)
 {
   const auto tr = StateMachine(
     stateful::transition(0, t0),
@@ -145,29 +149,38 @@ make_state_machine(const std::tuple<Trs...>& transitions,
     },
     t0);
 
-  struct helper
-  {
-    static const ref<T>&
-    init(const ref<T>& x, const ref<dtimestamp>&, const Time&)
-    {
-      return x;
-    }
-
-    static ref<T> init(const function_of_time<T>& f,
-                       const ref<dtimestamp>& ti,
-                       const Time& t0)
-    {
-      return Since(ti, f, t0);
-    }
-  };
-
   const auto tr_idx = Index(tr);
 
-  const auto& st = Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
-                               std::get<Is>(transitions).second)...,
-                          Default(sp));
+  return Since(Timestamp(tr),
+               Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
+                           std::get<Is>(transitions).second)...,
+                      Default(sp)),
+               t0);
+}
 
-  return helper::init(st, Timestamp(tr), t0);
+template <typename T, typename... Trs, std::size_t... Is>
+static ref<T> make_state_machine(
+  const std::tuple<Trs...>& transitions,
+  const internal::std14::index_sequence<Is...>& seq,
+  const ref<T>& sp,
+  const Time& t0,
+  const core::enable_if_none_t<
+    void,
+    core::is_function_of_time<decltype(
+      std::get<Is>(std::declval<std::tuple<Trs...>>()).second)>...>* = nullptr)
+{
+  const auto tr_idx = StateMachine(
+    0,
+    [=](ref<integer> sp) {
+      return Switch(Case(std::get<Is>(transitions).first,
+                         Const(static_cast<integer>(Is) + 1))...,
+                    Default(sp));
+    },
+    t0);
+
+  return Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
+                     std::get<Is>(transitions).second)...,
+                Default(sp));
 }
 
 }
