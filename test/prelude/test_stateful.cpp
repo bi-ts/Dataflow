@@ -118,6 +118,18 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function_false,
     (stateful::is_sm_definition_function<T, const char*>::value), false);
 }
 
+BOOST_AUTO_TEST_CASE(test_StateMachine_minimal)
+{
+  Engine engine;
+
+  const auto m = Main(StateMachine(0, [=](const ref<int>& sp) {
+    // TODO: should be just `return Transitions()` ?;
+    return Transitions(On(Const(false), Const(1)));
+  }));
+
+  BOOST_CHECK_EQUAL(m(), 0);
+}
+
 BOOST_AUTO_TEST_CASE(test_StateMachine_num_vertices_refs)
 {
   Engine engine;
