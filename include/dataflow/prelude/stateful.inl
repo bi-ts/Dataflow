@@ -20,6 +20,8 @@
 #error '.inl' file can't be included directly. Use 'stateful.h' instead
 #endif
 
+#include "stateful/internal/transition.h"
+
 #include "conditional.h"
 
 #include <tuple>
@@ -28,71 +30,6 @@ namespace dataflow
 {
 namespace stateful
 {
-// TODO: move to internal? Implementation to .cpp?
-class transition
-{
-public:
-  transition() = default;
-
-  transition(integer idx, const dtimestamp& t)
-  : idx_(idx)
-  , t_(t)
-  {
-  }
-
-  bool operator==(const transition& other) const
-  {
-    return idx_ == other.idx_ && t_ == other.t_;
-  }
-
-  bool operator!=(const transition& other) const
-  {
-    return !(*this == other);
-  }
-
-  friend std::ostream& operator<<(std::ostream& out, const transition& value)
-  {
-    return out << "transition(" << value.idx_ << "; " << value.t_ << ")";
-  }
-
-  friend ref<integer> Index(const ref<transition>& tr)
-  {
-    struct policy
-    {
-      static std::string label()
-      {
-        return "transition-index";
-      }
-      static integer calculate(const transition& tr)
-      {
-        return tr.idx_;
-      }
-    };
-
-    return core::Lift(policy(), tr);
-  }
-
-  friend ref<dtimestamp> Timestamp(const ref<transition>& tr)
-  {
-    struct policy
-    {
-      static std::string label()
-      {
-        return "transition-timestamp";
-      }
-      static dtimestamp calculate(const transition& tr)
-      {
-        return tr.t_;
-      }
-    };
-
-    return core::Lift(policy(), tr);
-  }
-
-private:
-  integer idx_;
-  dtimestamp t_;
-};
 
 namespace detail
 {
@@ -100,7 +37,7 @@ template <typename F, typename T> struct is_sm_definition_function
 {
 private:
   template <typename... FArgs>
-  static internal::std17::conjunction<
+  static dataflow::internal::std17::conjunction<
     std::is_same<typename core::farg_data_type<FArgs>::type, T>...>
   test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
   static std::false_type test_f_(...);
@@ -119,7 +56,8 @@ public:
 template <typename T, typename... Trs, std::size_t... Is>
 ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
-  const internal::std14::index_sequence<Is...>& seq,
+  // TODO: should std14 move from internal to dataflow namespace?
+  const dataflow::internal::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   const Time& t0,
   const core::enable_if_some_t<
@@ -129,22 +67,22 @@ ref<T> make_state_machine(
 {
   struct helper
   {
-    static ref<stateful::transition> make_case(integer idx, std::false_type)
+    static ref<internal::transition> make_case(integer idx, std::false_type)
     {
-      return Const<stateful::transition>(idx, dtimestamp());
+      return Const<internal::transition>(idx, dtimestamp());
     }
 
-    static function_of_time<stateful::transition> make_case(integer idx,
+    static function_of_time<internal::transition> make_case(integer idx,
                                                             std::true_type)
     {
       return
-        [=](const Time& t0) { return Const<stateful::transition>(idx, t0); };
+        [=](const Time& t0) { return Const<internal::transition>(idx, t0); };
     }
   };
 
   const auto tr = StateMachine(
-    stateful::transition(0, t0),
-    [=](ref<stateful::transition> sp) {
+    internal::transition(0, t0),
+    [=](ref<internal::transition> sp) {
       return Switch(
         Case(std::get<Is>(transitions).first,
              helper::make_case(static_cast<integer>(Is) + 1,
@@ -166,7 +104,7 @@ ref<T> make_state_machine(
 template <typename T, typename... Trs, std::size_t... Is>
 ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
-  const internal::std14::index_sequence<Is...>& seq,
+  const dataflow::internal::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   const Time& t0,
   const core::enable_if_none_t<

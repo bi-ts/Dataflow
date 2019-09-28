@@ -55,6 +55,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/logical.inl
   include/dataflow/prelude/stateful.h
   include/dataflow/prelude/stateful.inl
+  include/dataflow/prelude/stateful/internal/transition.h
   include/dataflow/string.h
   include/dataflow/string.inl
   include/dataflow/tuple.h
@@ -94,6 +95,7 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/core/dtime.cpp
   src/prelude/core/internal/node_since_activator.cpp
   src/prelude/logical.cpp
+  src/prelude/stateful/internal/transition.cpp
   src/string.cpp
 
   src/internal/config.h
