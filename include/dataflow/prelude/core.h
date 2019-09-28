@@ -56,6 +56,8 @@ struct is_flowable
 /// \ingroup prelude
 /// \{
 
+using integer = int;
+
 class DATAFLOW___EXPORT Engine
 {
 public:

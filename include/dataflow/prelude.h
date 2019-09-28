@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -23,3 +23,4 @@
 #include "prelude/conditional.h"
 #include "prelude/core.h"
 #include "prelude/logical.h"
+#include "prelude/stateful.h"
