@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -58,6 +58,14 @@ BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
   const auto e = *(b && false);
 
   BOOST_CHECK_EQUAL(e(), false);
+
+  // Includes stateful
+  const auto f = Main([](const Time& t0) {
+    return StateMachine(
+      0, [](const ref<int>&) { return Transitions(On(true, 1)); }, t0);
+  });
+
+  BOOST_CHECK_EQUAL(f(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
