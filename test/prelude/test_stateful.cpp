@@ -215,6 +215,27 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
   BOOST_CHECK_EQUAL(light(), false);
 }
 
+BOOST_AUTO_TEST_CASE(test_StateMachine_initial_state)
+{
+  Engine engine;
+
+  auto x = Var(0);
+
+  const auto m = Main(StateMachine(x, [=](const ref<int>& sp) {
+    return Transitions(On(Const(false), Const(0)));
+  }));
+
+  BOOST_CHECK_EQUAL(m(), 0);
+
+  x = 11;
+
+  BOOST_CHECK_EQUAL(m(), 11);
+
+  x = 22;
+
+  BOOST_CHECK_EQUAL(m(), 22);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } // dataflow_test

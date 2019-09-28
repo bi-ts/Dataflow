@@ -196,8 +196,10 @@ template <typename ArgT, typename T, typename F, typename>
 dataflow::ref<T>
 dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
 {
+  const auto initial_arg = core::make_argument(initial);
+
   return StateMachine(
-    initial,
+    initial_arg,
     [=](const ref<T>& sp) {
       return [=](const Time& t0) {
         const auto transitions = f(sp);
@@ -206,7 +208,7 @@ dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
           transitions,
           internal::std14::make_index_sequence<
             std::tuple_size<decltype(transitions)>::value>(),
-          sp,
+          initial_arg,
           t0);
       };
     },
