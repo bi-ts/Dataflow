@@ -61,6 +61,15 @@ BOOST_AUTO_TEST_CASE(test_tuple)
   ss << y;
 
   BOOST_CHECK_EQUAL(ss.str().substr(0, 11), "tuple(text;");
+
+  // Equality comparison
+  BOOST_CHECK((y == tuple<std::string, ref<int>, double>("text", x, 3.14)));
+
+  // Inequality comparison
+  BOOST_CHECK((y != tuple<std::string, ref<int>, double>("txt", x, 3.14)));
+
+  BOOST_CHECK(
+    (y != tuple<std::string, ref<int>, double>("text", Const(1), 3.14)));
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleE)

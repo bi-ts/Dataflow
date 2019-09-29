@@ -49,6 +49,38 @@ void print_tuple(std::ostream& out,
 {
   print_tuple_elements(out, get<Is>(v)...);
 }
+
+template <typename T>
+typename std::enable_if<!core::is_ref<T>::value, bool>::type
+compare_elements(const T& lhs, const T& rhs)
+{
+  return lhs == rhs;
+}
+
+template <typename T>
+bool compare_elements(const ref<T>& lhs, const ref<T>& rhs)
+{
+  return lhs.id() == rhs.id();
+}
+
+bool compare_pairs()
+{
+  return true;
+}
+
+template <typename U, typename... Us>
+bool compare_pairs(const std::pair<U, U>& p, const std::pair<Us, Us>&... ps)
+{
+  return compare_elements(p.first, p.second) && compare_pairs(ps...);
+}
+
+template <typename... Us, std::size_t... Is>
+bool compare_tuples(const tuple<Us...>& lhs,
+                    const tuple<Us...>& rhs,
+                    const internal::std14::index_sequence<Is...>&)
+{
+  return compare_pairs(std::make_pair(get<Is>(lhs), get<Is>(rhs))...);
+}
 };
 
 template <typename T, typename... Ts>
@@ -66,7 +98,8 @@ tuple<T, Ts...>::tuple(const T& t, const Ts&... ts)
 template <typename T, typename... Ts>
 bool tuple<T, Ts...>::operator==(const tuple& other) const
 {
-  return *p_data_ == *other.p_data_;
+  return detail::compare_tuples(
+    *this, other, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
 }
 
 template <typename T, typename... Ts>
