@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(test_tupleE)
 {
   Engine engine;
 
-  tuple<std::string, int, double> x = make_tupleE("text", 1, 3.14);
+  const tuple<std::string, int, double> x = make_tuple("text", 1, 3.14);
 
   // Streaming operator
   std::stringstream ss;
@@ -43,8 +43,9 @@ BOOST_AUTO_TEST_CASE(test_tupleE)
   BOOST_CHECK_EQUAL(ss.str(), "tuple(text; 1; 3.14)");
 
   // Equality comparison
-  BOOST_CHECK(x == make_tupleE("text", 1, 3.14));
-  BOOST_CHECK(x != (tuple<std::string, int, double>()));
+  const auto y = x;
+  BOOST_CHECK(x == y);
+  BOOST_CHECK(x == make_tuple("text", 1, 3.14));
 }
 
 BOOST_AUTO_TEST_CASE(test_tuple)
@@ -53,7 +54,7 @@ BOOST_AUTO_TEST_CASE(test_tuple)
 
   const auto x = Const(1);
 
-  tuple<std::string, ref<int>, double> y("text", x, 3.14);
+  tuple<std::string, ref<int>, double> y = make_tuple("text", x, 3.14);
 
   // Streaming operator
   std::stringstream ss;
@@ -63,13 +64,12 @@ BOOST_AUTO_TEST_CASE(test_tuple)
   BOOST_CHECK_EQUAL(ss.str().substr(0, 11), "tuple(text;");
 
   // Equality comparison
-  BOOST_CHECK((y == tuple<std::string, ref<int>, double>("text", x, 3.14)));
+  BOOST_CHECK(y == make_tuple("text", x, 3.14));
 
   // Inequality comparison
-  BOOST_CHECK((y != tuple<std::string, ref<int>, double>("txt", x, 3.14)));
+  BOOST_CHECK(y != make_tuple("txt", x, 3.14));
 
-  BOOST_CHECK(
-    (y != tuple<std::string, ref<int>, double>("text", Const(1), 3.14)));
+  BOOST_CHECK(y != make_tuple("text", Const(1), 3.14));
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleE)
@@ -102,7 +102,11 @@ BOOST_AUTO_TEST_CASE(test_TupleE_Getters)
 
   auto b = *TupleE(Fifth(a), Fourth(a), Third(a), Second(a), First(a));
 
-  BOOST_CHECK_EQUAL(b(), make_tupleE(34, "text", 'c', 20, "str"));
+  BOOST_CHECK_EQUAL((get<0>(b())), 34);
+  BOOST_CHECK_EQUAL((get<1>(b())), "text");
+  BOOST_CHECK_EQUAL((get<2>(b())), 'c');
+  BOOST_CHECK_EQUAL((get<3>(b())), 20);
+  BOOST_CHECK_EQUAL((get<4>(b())), "str");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

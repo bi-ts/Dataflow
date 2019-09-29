@@ -56,8 +56,8 @@ template <typename... Ts>
 std::ostream& operator<<(std::ostream& out, const tuple<Ts...>& value);
 
 template <typename T, typename... Ts>
-tuple<core::convert_to_flowable_t<T>, core::convert_to_flowable_t<Ts>...>
-make_tupleE(const T& t, const Ts&... ts);
+tuple<core::argument_type_t<T>, core::argument_type_t<Ts>...>
+make_tuple(const T& x, const Ts&... xs);
 
 template <std::size_t I, typename... Us>
 const typename std::tuple_element<I, std::tuple<Us...>>::type&

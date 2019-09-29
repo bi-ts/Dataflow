@@ -125,12 +125,12 @@ std::ostream& dataflow::operator<<(std::ostream& out, const tuple<Ts...>& value)
 }
 
 template <typename T, typename... Ts>
-dataflow::tuple<dataflow::core::convert_to_flowable_t<T>,
-                dataflow::core::convert_to_flowable_t<Ts>...>
-dataflow::make_tupleE(const T& t, const Ts&... ts)
+dataflow::tuple<dataflow::core::argument_type_t<T>,
+                dataflow::core::argument_type_t<Ts>...>
+dataflow::make_tuple(const T& x, const Ts&... xs)
 {
-  return tuple<core::convert_to_flowable_t<T>,
-               core::convert_to_flowable_t<Ts>...>(t, ts...);
+  return tuple<dataflow::core::argument_type_t<T>,
+               dataflow::core::argument_type_t<Ts>...>(x, xs...);
 }
 
 template <std::size_t I, typename... Us>
@@ -153,7 +153,7 @@ dataflow::TupleE(const Args&... arguments)
     static tuple<core::argument_data_type_t<Args>...>
     calculate(const core::argument_data_type_t<Args>&... vs)
     {
-      return make_tupleE(vs...);
+      return make_tuple(vs...);
     };
   };
 
