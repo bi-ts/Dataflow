@@ -26,28 +26,28 @@ namespace dataflow
 {
 namespace detail
 {
-template <typename U> void print_tupleE_elements(std::ostream& out, const U& u)
+template <typename U> void print_tuple_elements(std::ostream& out, const U& u)
 {
-  out << u;
+  out << core::to_string(u);
 }
 
 template <typename U, typename V, typename... Vs>
-void print_tupleE_elements(std::ostream& out,
-                           const U& u,
-                           const V& v,
-                           const Vs&... vs)
+void print_tuple_elements(std::ostream& out,
+                          const U& u,
+                          const V& v,
+                          const Vs&... vs)
 {
-  out << u << "; ";
+  out << core::to_string(u) << "; ";
 
-  print_tupleE_elements(out, v, vs...);
+  print_tuple_elements(out, v, vs...);
 }
 
 template <typename... Us, std::size_t... Is>
-void print_tupleE(std::ostream& out,
-                  const tuple<Us...>& v,
-                  const internal::std14::index_sequence<Is...>&)
+void print_tuple(std::ostream& out,
+                 const tuple<Us...>& v,
+                 const internal::std14::index_sequence<Is...>&)
 {
-  print_tupleE_elements(out, get<Is>(v)...);
+  print_tuple_elements(out, get<Is>(v)...);
 }
 };
 
@@ -83,7 +83,7 @@ std::ostream& dataflow::operator<<(std::ostream& out, const tuple<Ts...>& value)
 
   out << "tuple(";
 
-  detail::print_tupleE(
+  detail::print_tuple(
     out, value, internal::std14::make_index_sequence<sizeof...(Ts)>());
 
   out << ")";

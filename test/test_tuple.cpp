@@ -47,6 +47,22 @@ BOOST_AUTO_TEST_CASE(test_tupleE)
   BOOST_CHECK(x != (tuple<std::string, int, double>()));
 }
 
+BOOST_AUTO_TEST_CASE(test_tuple)
+{
+  Engine engine;
+
+  const auto x = Const(1);
+
+  tuple<std::string, ref<int>, double> y("text", x, 3.14);
+
+  // Streaming operator
+  std::stringstream ss;
+
+  ss << y;
+
+  BOOST_CHECK_EQUAL(ss.str().substr(0, 11), "tuple(text;");
+}
+
 BOOST_AUTO_TEST_CASE(test_TupleE)
 {
   Engine engine;
