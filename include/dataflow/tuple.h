@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -31,59 +31,59 @@ namespace dataflow
 /// \defgroup tuple
 /// \{
 
-template <typename T, typename... Ts> class tupleE
+template <typename T, typename... Ts> class tuple
 {
 private:
   using data = std::tuple<T, Ts...>;
 
 public:
-  tupleE();
+  tuple();
 
-  explicit tupleE(const T& t, const Ts&... ts);
+  explicit tuple(const T& t, const Ts&... ts);
 
-  bool operator==(const tupleE& other) const;
-  bool operator!=(const tupleE& other) const;
+  bool operator==(const tuple& other) const;
+  bool operator!=(const tuple& other) const;
 
   template <std::size_t I, typename... Us>
   friend const typename std::tuple_element<I, std::tuple<Us...>>::type&
-  get(const tupleE<Us...>&);
+  get(const tuple<Us...>&);
 
 private:
   std::shared_ptr<data> p_data_;
 };
 
 template <typename... Ts>
-std::ostream& operator<<(std::ostream& out, const tupleE<Ts...>& value);
+std::ostream& operator<<(std::ostream& out, const tuple<Ts...>& value);
 
 template <typename T, typename... Ts>
-tupleE<core::convert_to_flowable_t<T>, core::convert_to_flowable_t<Ts>...>
+tuple<core::convert_to_flowable_t<T>, core::convert_to_flowable_t<Ts>...>
 make_tupleE(const T& t, const Ts&... ts);
 
 template <std::size_t I, typename... Us>
 const typename std::tuple_element<I, std::tuple<Us...>>::type&
-get(const tupleE<Us...>& t);
+get(const tuple<Us...>& t);
 
 template <typename... Args>
-ref<tupleE<core::argument_data_type_t<Args>...>>
+ref<tuple<core::argument_data_type_t<Args>...>>
 TupleE(const Args&... arguments);
 
 template <std::size_t I,
           typename... Us,
           typename T = core::convert_to_flowable_t<
-            decltype(get<I>(std::declval<tupleE<Us...>>()))>>
-ref<T> Get(const ref<tupleE<Us...>>& x);
+            decltype(get<I>(std::declval<tuple<Us...>>()))>>
+ref<T> Get(const ref<tuple<Us...>>& x);
 
 template <typename A, typename... Args>
-ref<A> First(const ref<tupleE<A, Args...>>& x);
+ref<A> First(const ref<tuple<A, Args...>>& x);
 
 template <typename A, typename B, typename... Args>
-ref<B> Second(const ref<tupleE<A, B, Args...>>& x);
+ref<B> Second(const ref<tuple<A, B, Args...>>& x);
 
 template <typename A, typename B, typename C, typename... Args>
-ref<C> Third(const ref<tupleE<A, B, C, Args...>>& x);
+ref<C> Third(const ref<tuple<A, B, C, Args...>>& x);
 
 template <typename A, typename B, typename C, typename D, typename... Args>
-ref<D> Fourth(const ref<tupleE<A, B, C, D, Args...>>& x);
+ref<D> Fourth(const ref<tuple<A, B, C, D, Args...>>& x);
 
 template <typename A,
           typename B,
@@ -91,7 +91,7 @@ template <typename A,
           typename D,
           typename E,
           typename... Args>
-ref<E> Fifth(const ref<tupleE<A, B, C, D, E, Args...>>& x);
+ref<E> Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x);
 
 /// \}
 } // dataflow

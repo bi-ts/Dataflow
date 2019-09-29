@@ -44,7 +44,7 @@ void print_tupleE_elements(std::ostream& out,
 
 template <typename... Us, std::size_t... Is>
 void print_tupleE(std::ostream& out,
-                  const tupleE<Us...>& v,
+                  const tuple<Us...>& v,
                   const internal::std14::index_sequence<Is...>&)
 {
   print_tupleE_elements(out, get<Is>(v)...);
@@ -52,25 +52,25 @@ void print_tupleE(std::ostream& out,
 };
 
 template <typename T, typename... Ts>
-tupleE<T, Ts...>::tupleE()
+tuple<T, Ts...>::tuple()
 : p_data_(std::make_shared<data>())
 {
 }
 
 template <typename T, typename... Ts>
-tupleE<T, Ts...>::tupleE(const T& t, const Ts&... ts)
+tuple<T, Ts...>::tuple(const T& t, const Ts&... ts)
 : p_data_(std::make_shared<data>(t, ts...))
 {
 }
 
 template <typename T, typename... Ts>
-bool tupleE<T, Ts...>::operator==(const tupleE& other) const
+bool tuple<T, Ts...>::operator==(const tuple& other) const
 {
   return *p_data_ == *other.p_data_;
 }
 
 template <typename T, typename... Ts>
-bool tupleE<T, Ts...>::operator!=(const tupleE& other) const
+bool tuple<T, Ts...>::operator!=(const tuple& other) const
 {
   return !(*this == other);
 }
@@ -78,11 +78,10 @@ bool tupleE<T, Ts...>::operator!=(const tupleE& other) const
 } // dataflow
 
 template <typename... Ts>
-std::ostream& dataflow::operator<<(std::ostream& out,
-                                   const tupleE<Ts...>& value)
+std::ostream& dataflow::operator<<(std::ostream& out, const tuple<Ts...>& value)
 {
 
-  out << "tupleE(";
+  out << "tuple(";
 
   detail::print_tupleE(
     out, value, internal::std14::make_index_sequence<sizeof...(Ts)>());
@@ -93,32 +92,32 @@ std::ostream& dataflow::operator<<(std::ostream& out,
 }
 
 template <typename T, typename... Ts>
-dataflow::tupleE<dataflow::core::convert_to_flowable_t<T>,
-                 dataflow::core::convert_to_flowable_t<Ts>...>
+dataflow::tuple<dataflow::core::convert_to_flowable_t<T>,
+                dataflow::core::convert_to_flowable_t<Ts>...>
 dataflow::make_tupleE(const T& t, const Ts&... ts)
 {
-  return tupleE<core::convert_to_flowable_t<T>,
-                core::convert_to_flowable_t<Ts>...>(t, ts...);
+  return tuple<core::convert_to_flowable_t<T>,
+               core::convert_to_flowable_t<Ts>...>(t, ts...);
 }
 
 template <std::size_t I, typename... Us>
 const typename std::tuple_element<I, std::tuple<Us...>>::type&
-dataflow::get(const tupleE<Us...>& t)
+dataflow::get(const tuple<Us...>& t)
 {
   return std::get<I>(*t.p_data_);
 }
 
 template <typename... Args>
-dataflow::ref<dataflow::tupleE<dataflow::core::argument_data_type_t<Args>...>>
+dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Args>...>>
 dataflow::TupleE(const Args&... arguments)
 {
   struct policy
   {
     static std::string label()
     {
-      return "tupleE";
+      return "tuple";
     }
-    static tupleE<core::argument_data_type_t<Args>...>
+    static tuple<core::argument_data_type_t<Args>...>
     calculate(const core::argument_data_type_t<Args>&... vs)
     {
       return make_tupleE(vs...);
@@ -129,7 +128,7 @@ dataflow::TupleE(const Args&... arguments)
 }
 
 template <std::size_t I, typename... Us, typename T>
-dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
+dataflow::ref<T> dataflow::Get(const ref<tuple<Us...>>& x)
 {
   struct policy
   {
@@ -139,7 +138,7 @@ dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
       ss << "get<" << I << ">";
       return ss.str();
     }
-    static const T& calculate(const tupleE<Us...>& v)
+    static const T& calculate(const tuple<Us...>& v)
     {
       return get<I>(v);
     };
@@ -149,25 +148,25 @@ dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
 }
 
 template <typename A, typename... Args>
-dataflow::ref<A> dataflow::First(const ref<tupleE<A, Args...>>& x)
+dataflow::ref<A> dataflow::First(const ref<tuple<A, Args...>>& x)
 {
   return Get<0>(x);
 }
 
 template <typename A, typename B, typename... Args>
-dataflow::ref<B> dataflow::Second(const ref<tupleE<A, B, Args...>>& x)
+dataflow::ref<B> dataflow::Second(const ref<tuple<A, B, Args...>>& x)
 {
   return Get<1>(x);
 }
 
 template <typename A, typename B, typename C, typename... Args>
-dataflow::ref<C> dataflow::Third(const ref<tupleE<A, B, C, Args...>>& x)
+dataflow::ref<C> dataflow::Third(const ref<tuple<A, B, C, Args...>>& x)
 {
   return Get<2>(x);
 }
 
 template <typename A, typename B, typename C, typename D, typename... Args>
-dataflow::ref<D> dataflow::Fourth(const ref<tupleE<A, B, C, D, Args...>>& x)
+dataflow::ref<D> dataflow::Fourth(const ref<tuple<A, B, C, D, Args...>>& x)
 {
   return Get<3>(x);
 }
@@ -178,7 +177,7 @@ template <typename A,
           typename D,
           typename E,
           typename... Args>
-dataflow::ref<E> dataflow::Fifth(const ref<tupleE<A, B, C, D, E, Args...>>& x)
+dataflow::ref<E> dataflow::Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x)
 {
   return Get<4>(x);
 }
