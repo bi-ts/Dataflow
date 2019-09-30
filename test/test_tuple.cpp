@@ -29,11 +29,12 @@ namespace dataflow_test
 
 BOOST_AUTO_TEST_SUITE(test_tuple)
 
-BOOST_AUTO_TEST_CASE(test_tupleE)
+BOOST_AUTO_TEST_CASE(test_tuple_values)
 {
   Engine engine;
 
   const tuple<std::string, int, double> x = make_tuple("text", 1, 3.14);
+  const auto y = x;
 
   // Streaming operator
   std::stringstream ss;
@@ -43,18 +44,21 @@ BOOST_AUTO_TEST_CASE(test_tupleE)
   BOOST_CHECK_EQUAL(ss.str(), "tuple(text; 1; 3.14)");
 
   // Equality comparison
-  const auto y = x;
   BOOST_CHECK(x == y);
   BOOST_CHECK(x == make_tuple("text", 1, 3.14));
 }
 
-BOOST_AUTO_TEST_CASE(test_tuple)
+BOOST_AUTO_TEST_CASE(test_tuple_mixed)
 {
   Engine engine;
 
   const auto x = Const(1);
 
   tuple<std::string, ref<int>, double> y = make_tuple("text", x, 3.14);
+
+  BOOST_CHECK_EQUAL(get<0>(y), "text");
+  BOOST_CHECK_EQUAL(get<1>(y).id(), x.id());
+  BOOST_CHECK_EQUAL(get<2>(y), 3.14);
 
   // Streaming operator
   std::stringstream ss;
@@ -107,6 +111,19 @@ BOOST_AUTO_TEST_CASE(test_TupleE_Getters)
   BOOST_CHECK_EQUAL((get<2>(b())), 'c');
   BOOST_CHECK_EQUAL((get<3>(b())), 20);
   BOOST_CHECK_EQUAL((get<4>(b())), "str");
+}
+
+BOOST_AUTO_TEST_CASE(test_Tuple_Getters)
+{
+  Engine engine;
+
+  const auto a = Const(
+    // TODO: why this is confused with `std::make_tuple`?
+    dataflow::make_tuple(Const("str"), Const(20), Const('c'), Const("text")));
+
+  const auto b = *Third(a);
+
+  BOOST_CHECK_EQUAL(b(), 'c');
 }
 
 BOOST_AUTO_TEST_SUITE_END()

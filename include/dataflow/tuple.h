@@ -45,7 +45,7 @@ public:
   bool operator!=(const tuple& other) const;
 
   template <std::size_t I, typename... Us>
-  friend const typename std::tuple_element<I, std::tuple<Us...>>::type&
+  friend typename std::tuple_element<I, std::tuple<Us...>>::type
   get(const tuple<Us...>&);
 
 private:
@@ -60,30 +60,30 @@ tuple<core::argument_type_t<T>, core::argument_type_t<Ts>...>
 make_tuple(const T& x, const Ts&... xs);
 
 template <std::size_t I, typename... Us>
-const typename std::tuple_element<I, std::tuple<Us...>>::type&
+typename std::tuple_element<I, std::tuple<Us...>>::type
 get(const tuple<Us...>& t);
 
-template <typename... Args>
-ref<tuple<core::argument_data_type_t<Args>...>>
-TupleE(const Args&... arguments);
+template <typename Arg, typename... Args>
+ref<tuple<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
+TupleE(const Arg& arg, const Args&... args);
 
-template <std::size_t I,
-          typename... Us,
-          typename T = core::convert_to_flowable_t<
-            decltype(get<I>(std::declval<tuple<Us...>>()))>>
-ref<T> Get(const ref<tuple<Us...>>& x);
+template <std::size_t I, typename... Us>
+ref<core::argument_data_type_t<
+  typename std::tuple_element<I, std::tuple<Us...>>::type>>
+Get(const ref<tuple<Us...>>& x);
 
 template <typename A, typename... Args>
-ref<A> First(const ref<tuple<A, Args...>>& x);
+ref<core::argument_data_type_t<A>> First(const ref<tuple<A, Args...>>& x);
 
 template <typename A, typename B, typename... Args>
-ref<B> Second(const ref<tuple<A, B, Args...>>& x);
+ref<core::argument_data_type_t<B>> Second(const ref<tuple<A, B, Args...>>& x);
 
 template <typename A, typename B, typename C, typename... Args>
-ref<C> Third(const ref<tuple<A, B, C, Args...>>& x);
+ref<core::argument_data_type_t<C>> Third(const ref<tuple<A, B, C, Args...>>& x);
 
 template <typename A, typename B, typename C, typename D, typename... Args>
-ref<D> Fourth(const ref<tuple<A, B, C, D, Args...>>& x);
+ref<core::argument_data_type_t<D>>
+Fourth(const ref<tuple<A, B, C, D, Args...>>& x);
 
 template <typename A,
           typename B,
@@ -91,7 +91,8 @@ template <typename A,
           typename D,
           typename E,
           typename... Args>
-ref<E> Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x);
+ref<core::argument_data_type_t<E>>
+Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x);
 
 /// \}
 } // dataflow

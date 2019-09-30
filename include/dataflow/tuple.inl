@@ -81,11 +81,71 @@ bool compare_tuples(const tuple<Us...>& lhs,
 {
   return compare_pairs(std::make_pair(get<Is>(lhs), get<Is>(rhs))...);
 }
-};
+
+template <std::size_t I,
+          typename... Us,
+          typename T = typename std::tuple_element<I, std::tuple<Us...>>::type>
+ref<typename std::enable_if<!core::is_ref<T>::value, T>::type>
+tuple_get_element(const ref<tuple<Us...>>& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      std::stringstream ss;
+      ss << "get<" << I << ">";
+      return ss.str();
+    }
+    static T calculate(const tuple<Us...>& v)
+    {
+      return get<I>(v);
+    };
+  };
+
+  return core::Lift<policy>(x);
+}
+
+template <std::size_t I,
+          typename... Us,
+          typename T = typename std::tuple_element<I, std::tuple<Us...>>::type>
+typename std::enable_if<core::is_ref<T>::value, T>::type
+tuple_get_element(const ref<tuple<Us...>>& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      std::stringstream ss;
+      ss << "get<" << I << ">";
+      return ss.str();
+    }
+    static T calculate(const tuple<Us...>& v)
+    {
+      return get<I>(v);
+    }
+  };
+
+  return core::LiftSelector<policy>(x);
+}
+
+template <typename T>
+T default_value(
+  const typename std::enable_if<!core::is_ref<T>::value>::type* = nullptr)
+{
+  return T();
+}
+
+template <typename T>
+T default_value(
+  const typename std::enable_if<core::is_ref<T>::value>::type* = nullptr)
+{
+  return Const<core::argument_data_type_t<T>>();
+}
+}
 
 template <typename T, typename... Ts>
 tuple<T, Ts...>::tuple()
-: p_data_(std::make_shared<data>())
+: p_data_()
 {
 }
 
@@ -134,15 +194,20 @@ dataflow::make_tuple(const T& x, const Ts&... xs)
 }
 
 template <std::size_t I, typename... Us>
-const typename std::tuple_element<I, std::tuple<Us...>>::type&
+typename std::tuple_element<I, std::tuple<Us...>>::type
 dataflow::get(const tuple<Us...>& t)
 {
-  return std::get<I>(*t.p_data_);
+  if (t.p_data_)
+    return std::get<I>(*t.p_data_);
+
+  return detail::default_value<
+    typename std::tuple_element<I, std::tuple<Us...>>::type>();
 }
 
-template <typename... Args>
-dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Args>...>>
-dataflow::TupleE(const Args&... arguments)
+template <typename Arg, typename... Args>
+dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Arg>,
+                              dataflow::core::argument_data_type_t<Args>...>>
+dataflow::TupleE(const Arg& arg, const Args&... args)
 {
   struct policy
   {
@@ -150,56 +215,51 @@ dataflow::TupleE(const Args&... arguments)
     {
       return "tuple";
     }
-    static tuple<core::argument_data_type_t<Args>...>
-    calculate(const core::argument_data_type_t<Args>&... vs)
+    static tuple<dataflow::core::argument_data_type_t<Arg>,
+                 dataflow::core::argument_data_type_t<Args>...>
+    calculate(const dataflow::core::argument_data_type_t<Arg>& v,
+              const dataflow::core::argument_data_type_t<Args>&... vs)
     {
-      return make_tuple(vs...);
+      return make_tuple(v, vs...);
     };
   };
 
-  return core::Lift<policy>(core::make_argument(arguments)...);
+  return core::Lift<policy>(core::make_argument(arg),
+                            core::make_argument(args)...);
 }
 
-template <std::size_t I, typename... Us, typename T>
-dataflow::ref<T> dataflow::Get(const ref<tuple<Us...>>& x)
+template <std::size_t I, typename... Us>
+dataflow::ref<dataflow::core::argument_data_type_t<
+  typename std::tuple_element<I, std::tuple<Us...>>::type>>
+dataflow::Get(const ref<tuple<Us...>>& x)
 {
-  struct policy
-  {
-    static std::string label()
-    {
-      std::stringstream ss;
-      ss << "get<" << I << ">";
-      return ss.str();
-    }
-    static const T& calculate(const tuple<Us...>& v)
-    {
-      return get<I>(v);
-    };
-  };
-
-  return core::Lift<policy>(x);
+  return detail::tuple_get_element<I>(x);
 }
 
 template <typename A, typename... Args>
-dataflow::ref<A> dataflow::First(const ref<tuple<A, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<A>>
+dataflow::First(const ref<tuple<A, Args...>>& x)
 {
   return Get<0>(x);
 }
 
 template <typename A, typename B, typename... Args>
-dataflow::ref<B> dataflow::Second(const ref<tuple<A, B, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<B>>
+dataflow::Second(const ref<tuple<A, B, Args...>>& x)
 {
   return Get<1>(x);
 }
 
 template <typename A, typename B, typename C, typename... Args>
-dataflow::ref<C> dataflow::Third(const ref<tuple<A, B, C, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<C>>
+dataflow::Third(const ref<tuple<A, B, C, Args...>>& x)
 {
   return Get<2>(x);
 }
 
 template <typename A, typename B, typename C, typename D, typename... Args>
-dataflow::ref<D> dataflow::Fourth(const ref<tuple<A, B, C, D, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<D>>
+dataflow::Fourth(const ref<tuple<A, B, C, D, Args...>>& x)
 {
   return Get<3>(x);
 }
@@ -210,7 +270,8 @@ template <typename A,
           typename D,
           typename E,
           typename... Args>
-dataflow::ref<E> dataflow::Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<E>>
+dataflow::Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x)
 {
   return Get<4>(x);
 }
