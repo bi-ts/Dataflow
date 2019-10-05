@@ -35,43 +35,37 @@ namespace dataflow
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<bool> Eq(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<bool> NotEq(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<bool> Gr(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<bool> Less(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<bool> GrEq(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<bool> LessEq(const ArgX& x, const ArgY& y);
 
 // Comparison operators
