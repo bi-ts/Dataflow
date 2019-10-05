@@ -40,15 +40,13 @@ ref<T> Abs(const ArgT& x);
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> Add(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> Sub(const ArgX& x, const ArgY& y);
 
 template <typename ArgT,
@@ -64,22 +62,19 @@ ref<T> Inv(const ArgT& x);
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> Mult(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> Div(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> Mod(const ArgX& x, const ArgY& y);
 
 template <typename ArgT,

@@ -39,7 +39,7 @@ dataflow::ref<T> dataflow::Abs(const ArgT& x)
   return core::Lift<policy>(core::make_argument(x));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T, typename>
+template <typename ArgX, typename ArgY, typename..., typename T>
 dataflow::ref<T> dataflow::Add(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -56,7 +56,7 @@ dataflow::ref<T> dataflow::Add(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T, typename>
+template <typename ArgX, typename ArgY, typename..., typename T>
 dataflow::ref<T> dataflow::Sub(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -107,7 +107,7 @@ dataflow::ref<T> dataflow::Inv(const ArgT& x)
   return core::Lift<policy>(core::make_argument(x));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T, typename>
+template <typename ArgX, typename ArgY, typename..., typename T>
 dataflow::ref<T> dataflow::Mult(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -124,7 +124,7 @@ dataflow::ref<T> dataflow::Mult(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T, typename>
+template <typename ArgX, typename ArgY, typename..., typename T>
 dataflow::ref<T> dataflow::Div(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -141,7 +141,7 @@ dataflow::ref<T> dataflow::Div(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T, typename>
+template <typename ArgX, typename ArgY, typename..., typename T>
 dataflow::ref<T> dataflow::Mod(const ArgX& x, const ArgY& y)
 {
   struct policy
