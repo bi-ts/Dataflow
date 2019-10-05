@@ -525,5 +525,44 @@ BOOST_AUTO_TEST_CASE(test_enable_if_none)
     true);
 }
 
+class common_argument_data_type_helper
+{
+public:
+  template <typename... Args> static bool enabled()
+  {
+    return enabled_<Args...>(0);
+  }
+
+private:
+  template <typename Arg,
+            typename... Args,
+            typename T = core::common_argument_data_type_t<Arg, Args...>>
+  static bool enabled_(int)
+  {
+    return true;
+  }
+
+  template <typename... Args> static bool enabled_(...)
+  {
+    return false;
+  }
+};
+
+BOOST_AUTO_TEST_CASE(test_common_argument_data_type_t)
+{
+  BOOST_CHECK((std::is_same<core::common_argument_data_type_t<decltype(""),
+                                                              ref<std::string>,
+                                                              std::string>,
+                            std::string>::value));
+
+  BOOST_CHECK_EQUAL((common_argument_data_type_helper::
+                       enabled<decltype(""), ref<std::string>, std::string>()),
+                    true);
+
+  BOOST_CHECK_EQUAL(
+    (common_argument_data_type_helper::enabled<std::string, ref<int>>()),
+    false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

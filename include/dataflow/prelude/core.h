@@ -374,6 +374,15 @@ using enable_if_none = std::enable_if<
 template <typename T = void, typename... Args>
 using enable_if_none_t = typename enable_if_none<T, Args...>::type;
 
+template <typename Arg, typename... Args>
+using common_argument_data_type = enable_if_all<
+  argument_data_type_t<Arg>,
+  std::is_same<argument_data_type_t<Arg>, argument_data_type_t<Args>>...>;
+
+template <typename Arg, typename... Args>
+using common_argument_data_type_t =
+  typename common_argument_data_type<Arg, Args...>::type;
+
 // Utility functions
 
 template <typename T, typename FwT = convert_to_flowable_t<T>>
