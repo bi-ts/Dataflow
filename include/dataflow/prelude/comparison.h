@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,12 +32,47 @@ namespace dataflow
 
 // Comparison functions
 
-template <typename T> ref<bool> Eq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> NotEq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> Gr(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> Less(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> GrEq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> LessEq(const ref<T>& x, const ref<T>& y);
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<bool> Eq(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<bool> NotEq(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<bool> Gr(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<bool> Less(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<bool> GrEq(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<bool> LessEq(const ArgX& x, const ArgY& y);
 
 // Comparison operators
 

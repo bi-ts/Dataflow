@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,8 +20,8 @@
 #error '.inl' file can't be included directly. Use 'comparison.h' instead
 #endif
 
-template <typename T>
-dataflow::ref<bool> dataflow::Eq(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
+dataflow::ref<bool> dataflow::Eq(const ArgX& x, const ArgY& y)
 {
   struct policy
   {
@@ -34,11 +34,11 @@ dataflow::ref<bool> dataflow::Eq(const ref<T>& x, const ref<T>& y)
       return x == y;
     }
   };
-  return core::Lift<policy>(x, y);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::NotEq(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
+dataflow::ref<bool> dataflow::NotEq(const ArgX& x, const ArgY& y)
 {
   struct policy
   {
@@ -51,11 +51,11 @@ dataflow::ref<bool> dataflow::NotEq(const ref<T>& x, const ref<T>& y)
       return x != y;
     }
   };
-  return core::Lift<policy>(x, y);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::Gr(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
+dataflow::ref<bool> dataflow::Gr(const ArgX& x, const ArgY& y)
 {
   struct policy
   {
@@ -68,11 +68,11 @@ dataflow::ref<bool> dataflow::Gr(const ref<T>& x, const ref<T>& y)
       return x > y;
     }
   };
-  return core::Lift<policy>(x, y);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::Less(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
+dataflow::ref<bool> dataflow::Less(const ArgX& x, const ArgY& y)
 {
   struct policy
   {
@@ -85,11 +85,11 @@ dataflow::ref<bool> dataflow::Less(const ref<T>& x, const ref<T>& y)
       return x < y;
     }
   };
-  return core::Lift<policy>(x, y);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::GrEq(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
+dataflow::ref<bool> dataflow::GrEq(const ArgX& x, const ArgY& y)
 {
   struct policy
   {
@@ -102,11 +102,11 @@ dataflow::ref<bool> dataflow::GrEq(const ref<T>& x, const ref<T>& y)
       return x >= y;
     }
   };
-  return core::Lift<policy>(x, y);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::LessEq(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
+dataflow::ref<bool> dataflow::LessEq(const ArgX& x, const ArgY& y)
 {
   struct policy
   {
@@ -119,7 +119,7 @@ dataflow::ref<bool> dataflow::LessEq(const ref<T>& x, const ref<T>& y)
       return x <= y;
     }
   };
-  return core::Lift<policy>(x, y);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
 // Equal to
