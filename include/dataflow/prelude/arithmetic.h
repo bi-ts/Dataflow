@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,16 +32,65 @@ namespace dataflow
 
 // Arithmetic functions
 
-template <typename T> ref<T> Abs(const ref<T>& x);
-template <typename T> ref<T> Add(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Sub(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Plus(const ref<T>& x);
-template <typename T> ref<T> Inv(const ref<T>& x);
-template <typename T> ref<T> Mult(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Div(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Mod(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Incr(const ref<T>& x);
-template <typename T> ref<T> Decr(const ref<T>& x);
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>>
+ref<T> Abs(const ArgT& x);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<T> Add(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<T> Sub(const ArgX& x, const ArgY& y);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>>
+ref<T> Plus(const ArgT& x);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>>
+ref<T> Inv(const ArgT& x);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<T> Mult(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<T> Div(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>,
+          typename = core::enable_for_argument_data_type_t<ArgY, T>>
+ref<T> Mod(const ArgX& x, const ArgY& y);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>>
+ref<T> Incr(const ArgT& x);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>>
+ref<T> Decr(const ArgT& x);
 
 // Arithmetic operators
 
