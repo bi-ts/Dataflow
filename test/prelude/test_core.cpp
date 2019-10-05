@@ -318,6 +318,22 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), "some text");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Const_via_ref_ctor, test_core_fixture)
+{
+  std::function<ref<std::string>(const ref<std::string>& x)> fn =
+    [](const ref<std::string>& x) { return x; };
+
+  const ref<std::string> x = fn("some text");
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+  BOOST_CHECK(graph_invariant_holds());
+
+  const auto y = Curr(x);
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(y(), "some text");
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
 {
   const sig x = Signal();

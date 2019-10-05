@@ -72,6 +72,12 @@ template <typename T> class ref : public internal::ref
 public:
   explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
 
+  template <
+    typename U,
+    typename...,
+    typename = typename std::enable_if<std::is_convertible<U, T>::value>::type>
+  ref(U&& value);
+
   ref<T> operator()(const Time& t) const;
 };
 
