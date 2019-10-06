@@ -91,85 +91,76 @@ ref<T> Decr(const ArgT& x);
 
 /// Addition
 ///
-template <typename ArgX,
-          typename ArgY,
-          typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> operator+(const ArgX& x, const ArgY& y);
 
 /// Subtraction
 ///
-template <typename ArgX,
-          typename ArgY,
-          typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> operator-(const ArgX& x, const ArgY& y);
 
 /// Unary plus
 ///
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>>
-ref<T> operator+(const ArgX& x);
+template <typename T> ref<T> operator+(const ref<T>& x);
 
 /// Unary minus (additive inverse)
 ///
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>>
-ref<T> operator-(const ArgX& x);
+template <typename T> ref<T> operator-(const ref<T>& x);
 
 /// Multiplication
 ///
-template <typename ArgX,
-          typename ArgY,
-          typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> operator*(const ArgX& x, const ArgY& y);
 
 /// Division
 ///
-template <typename ArgX,
-          typename ArgY,
-          typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> operator/(const ArgX& x, const ArgY& y);
 
 /// Modulo (integer remainder)
 ///
-template <typename ArgX,
-          typename ArgY,
-          typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
 ref<T> operator%(const ArgX& x, const ArgY& y);
 
 /// Increment
 ///
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>>
-ref<T> operator++(const ArgX& x);
-
-/// Increment (postfix)
-///
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>>
-ref<T> operator++(const ArgX& x, int);
+template <typename T> ref<T> operator++(const ref<T>& x);
+template <typename T> ref<T> operator++(const ref<T>& x, int);
 
 /// Decrement
 ///
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>>
-ref<T> operator--(const ArgX& x);
-
-/// Decrement (postfix)
-///
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>>
-ref<T> operator--(const ArgX& x, int);
+template <typename T> ref<T> operator--(const ref<T>& x);
+template <typename T> ref<T> operator--(const ref<T>& x, int);
 
 /// \}
 } // dataflow

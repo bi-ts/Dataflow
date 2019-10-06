@@ -192,68 +192,64 @@ dataflow::ref<T> dataflow::Decr(const ArgT& x)
   return core::Lift<policy>(core::make_argument(x));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
 dataflow::ref<T> dataflow::operator+(const ArgX& x, const ArgY& y)
 {
   return Add(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
 dataflow::ref<T> dataflow::operator-(const ArgX& x, const ArgY& y)
 {
   return Sub(x, y);
 }
 
-template <typename ArgX, typename..., typename T>
-dataflow::ref<T> dataflow::operator+(const ArgX& x)
+template <typename T> dataflow::ref<T> dataflow::operator+(const ref<T>& x)
 {
   return Plus(x);
 }
 
-template <typename ArgX, typename..., typename T>
-dataflow::ref<T> dataflow::operator-(const ArgX& x)
+template <typename T> dataflow::ref<T> dataflow::operator-(const ref<T>& x)
 {
   return Inv(x);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
 dataflow::ref<T> dataflow::operator*(const ArgX& x, const ArgY& y)
 {
   return Mult(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
 dataflow::ref<T> dataflow::operator/(const ArgX& x, const ArgY& y)
 {
   return Div(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
 dataflow::ref<T> dataflow::operator%(const ArgX& x, const ArgY& y)
 {
   return Mod(x, y);
 }
 
-template <typename ArgX, typename..., typename T>
-dataflow::ref<T> dataflow::operator++(const ArgX& x)
+template <typename T> dataflow::ref<T> dataflow::operator++(const ref<T>& x)
 {
   return Incr(x);
 }
 
-template <typename ArgX, typename..., typename T>
-dataflow::ref<T> dataflow::operator++(const ArgX& x, int)
+template <typename T>
+dataflow::ref<T> dataflow::operator++(const ref<T>& x, int)
 {
   return Incr(x);
 }
 
-template <typename ArgX, typename..., typename T>
-dataflow::ref<T> dataflow::operator--(const ArgX& x)
+template <typename T> dataflow::ref<T> dataflow::operator--(const ref<T>& x)
 {
   return Decr(x);
 }
 
-template <typename ArgX, typename..., typename T>
-dataflow::ref<T> dataflow::operator--(const ArgX& x, int)
+template <typename T>
+dataflow::ref<T> dataflow::operator--(const ref<T>& x, int)
 {
   return Decr(x);
 }
