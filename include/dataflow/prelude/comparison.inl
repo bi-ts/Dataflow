@@ -122,122 +122,38 @@ dataflow::ref<bool> dataflow::LessEq(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-// Equal to
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator==(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
+dataflow::ref<bool> dataflow::operator==(const ArgX& x, const ArgY& y)
 {
   return Eq(x, y);
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::operator==(const ref<T>& x, const T& y)
-{
-  return x == Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator==(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) == y;
-}
-
-// Not equal to
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator!=(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
+dataflow::ref<bool> dataflow::operator!=(const ArgX& x, const ArgY& y)
 {
   return NotEq(x, y);
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::operator!=(const ref<T>& x, const T& y)
-{
-  return x != Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator!=(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) != y;
-}
-
-// Greater than
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator>(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
+dataflow::ref<bool> dataflow::operator>(const ArgX& x, const ArgY& y)
 {
   return Gr(x, y);
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::operator>(const ref<T>& x, const T& y)
-{
-  return x > Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator>(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) > y;
-}
-
-// Less than
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator<(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
+dataflow::ref<bool> dataflow::operator<(const ArgX& x, const ArgY& y)
 {
   return Less(x, y);
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::operator<(const ref<T>& x, const T& y)
-{
-  return x < Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator<(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) < y;
-}
-
-// Greater than or equal to
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator>=(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
+dataflow::ref<bool> dataflow::operator>=(const ArgX& x, const ArgY& y)
 {
   return GrEq(x, y);
 }
 
-template <typename T>
-dataflow::ref<bool> dataflow::operator>=(const ref<T>& x, const T& y)
-{
-  return x >= Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator>=(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) >= y;
-}
-
-// Less than or equal to
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator<=(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename, typename T>
+dataflow::ref<bool> dataflow::operator<=(const ArgX& x, const ArgY& y)
 {
   return LessEq(x, y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator<=(const ref<T>& x, const T& y)
-{
-  return x <= Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<bool> dataflow::operator<=(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) <= y;
 }
