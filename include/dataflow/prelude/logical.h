@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -40,28 +40,25 @@ DATAFLOW___EXPORT ref<bool> OrE(const ref<bool>& x, const ref<bool>& y);
 
 // Logical operators
 
-// Logical negation (`not`)
+/// Logical negation (`not`)
+///
 ref<bool> operator!(const ref<bool>& x);
 
-// Logical `and` (lazy)
+/// Logical `and` (lazy)
+///
 ref<bool> operator&&(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator&&(const ref<bool>& x, const bool& y);
-ref<bool> operator&&(const bool& x, const ref<bool>& y);
 
-// Logical `or` (lazy)
+/// Logical `or` (lazy)
+///
 ref<bool> operator||(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator||(const ref<bool>& x, const bool& y);
-ref<bool> operator||(const bool& x, const ref<bool>& y);
 
-// Logical `and` (eager)
+/// Logical `and` (eager)
+///
 ref<bool> operator&(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator&(const ref<bool>& x, const bool& y);
-ref<bool> operator&(const bool& x, const ref<bool>& y);
 
-// Logical `or` (eager)
+/// Logical `or` (eager)
+///
 ref<bool> operator|(const ref<bool>& x, const ref<bool>& y);
-ref<bool> operator|(const ref<bool>& x, const bool& y);
-ref<bool> operator|(const bool& x, const ref<bool>& y);
 
 /// \}
 } // dataflow

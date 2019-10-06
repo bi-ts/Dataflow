@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,14 +20,10 @@
 #error '.inl' file can't be included directly. Use 'logical.h' instead
 #endif
 
-// Logical negation (`not`)
-
 inline dataflow::ref<bool> dataflow::operator!(const ref<bool>& x)
 {
   return Not(x);
 }
-
-// Logical `and` (lazy)
 
 inline dataflow::ref<bool> dataflow::operator&&(const ref<bool>& x,
                                                 const ref<bool>& y)
@@ -35,39 +31,11 @@ inline dataflow::ref<bool> dataflow::operator&&(const ref<bool>& x,
   return And(x, y);
 }
 
-inline dataflow::ref<bool> dataflow::operator&&(const ref<bool>& x,
-                                                const bool& y)
-{
-  return x && Const<bool>(y);
-}
-
-inline dataflow::ref<bool> dataflow::operator&&(const bool& x,
-                                                const ref<bool>& y)
-{
-  return Const<bool>(x) && y;
-}
-
-// Logical `or` (lazy)
-
 inline dataflow::ref<bool> dataflow::operator||(const ref<bool>& x,
                                                 const ref<bool>& y)
 {
   return Or(x, y);
 }
-
-inline dataflow::ref<bool> dataflow::operator||(const ref<bool>& x,
-                                                const bool& y)
-{
-  return x || Const<bool>(y);
-}
-
-inline dataflow::ref<bool> dataflow::operator||(const bool& x,
-                                                const ref<bool>& y)
-{
-  return Const<bool>(x) || y;
-}
-
-// Logical `and` (eager)
 
 inline dataflow::ref<bool> dataflow::operator&(const ref<bool>& x,
                                                const ref<bool>& y)
@@ -75,34 +43,8 @@ inline dataflow::ref<bool> dataflow::operator&(const ref<bool>& x,
   return AndE(x, y);
 }
 
-inline dataflow::ref<bool> dataflow::operator&(const ref<bool>& x,
-                                               const bool& y)
-{
-  return x & Const<bool>(y);
-}
-
-inline dataflow::ref<bool> dataflow::operator&(const bool& x,
-                                               const ref<bool>& y)
-{
-  return Const<bool>(x) & y;
-}
-
-// Logical `or` (eager)
-
 inline dataflow::ref<bool> dataflow::operator|(const ref<bool>& x,
                                                const ref<bool>& y)
 {
   return OrE(x, y);
-}
-
-inline dataflow::ref<bool> dataflow::operator|(const ref<bool>& x,
-                                               const bool& y)
-{
-  return x | Const<bool>(y);
-}
-
-inline dataflow::ref<bool> dataflow::operator|(const bool& x,
-                                               const ref<bool>& y)
-{
-  return Const<bool>(x) | y;
 }
