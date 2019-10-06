@@ -192,142 +192,68 @@ dataflow::ref<T> dataflow::Decr(const ArgT& x)
   return core::Lift<policy>(core::make_argument(x));
 }
 
-// Addition
-
-template <typename T>
-dataflow::ref<T> dataflow::operator+(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T>
+dataflow::ref<T> dataflow::operator+(const ArgX& x, const ArgY& y)
 {
   return Add(x, y);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator+(const ref<T>& x, const T& y)
-{
-  return x + Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::operator+(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) + y;
-}
-
-// Subtraction
-
-template <typename T>
-dataflow::ref<T> dataflow::operator-(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T>
+dataflow::ref<T> dataflow::operator-(const ArgX& x, const ArgY& y)
 {
   return Sub(x, y);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator-(const ref<T>& x, const T& y)
-{
-  return x - Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::operator-(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) - y;
-}
-
-// Unary plus
-
-template <typename T> dataflow::ref<T> dataflow::operator+(const ref<T>& x)
+template <typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::operator+(const ArgX& x)
 {
   return Plus(x);
 }
 
-// Unary minus (additive inverse)
-
-template <typename T> dataflow::ref<T> dataflow::operator-(const ref<T>& x)
+template <typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::operator-(const ArgX& x)
 {
   return Inv(x);
 }
 
-// Multiplication
-
-template <typename T>
-dataflow::ref<T> dataflow::operator*(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T>
+dataflow::ref<T> dataflow::operator*(const ArgX& x, const ArgY& y)
 {
   return Mult(x, y);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator*(const ref<T>& x, const T& y)
-{
-  return x * Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::operator*(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) * y;
-}
-
-// Division
-
-template <typename T>
-dataflow::ref<T> dataflow::operator/(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T>
+dataflow::ref<T> dataflow::operator/(const ArgX& x, const ArgY& y)
 {
   return Div(x, y);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator/(const ref<T>& x, const T& y)
-{
-  return x / Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::operator/(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) / y;
-}
-
-// Modulo (integer remainder)
-
-template <typename T>
-dataflow::ref<T> dataflow::operator%(const ref<T>& x, const ref<T>& y)
+template <typename ArgX, typename ArgY, typename..., typename T>
+dataflow::ref<T> dataflow::operator%(const ArgX& x, const ArgY& y)
 {
   return Mod(x, y);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator%(const ref<T>& x, const T& y)
-{
-  return x % Const<T>(y);
-}
-
-template <typename T>
-dataflow::ref<T> dataflow::operator%(const T& x, const ref<T>& y)
-{
-  return Const<T>(x) % y;
-}
-
-// Increment
-
-template <typename T> dataflow::ref<T> dataflow::operator++(const ref<T>& x)
+template <typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::operator++(const ArgX& x)
 {
   return Incr(x);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator++(const ref<T>& x, int)
+template <typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::operator++(const ArgX& x, int)
 {
   return Incr(x);
 }
 
-// Decrement
-
-template <typename T> dataflow::ref<T> dataflow::operator--(const ref<T>& x)
+template <typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::operator--(const ArgX& x)
 {
   return Decr(x);
 }
 
-template <typename T>
-dataflow::ref<T> dataflow::operator--(const ref<T>& x, int)
+template <typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::operator--(const ArgX& x, int)
 {
   return Decr(x);
 }

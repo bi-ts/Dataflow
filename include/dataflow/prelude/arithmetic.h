@@ -89,48 +89,87 @@ ref<T> Decr(const ArgT& x);
 
 // Arithmetic operators
 
-// Addition
-template <typename T> ref<T> operator+(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator+(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator+(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<std::string> operator+(const ref<std::string>& x,
-                                             const char* y);
-DATAFLOW___EXPORT ref<std::string> operator+(const char* x,
-                                             const ref<std::string>& y);
+/// Addition
+///
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<T> operator+(const ArgX& x, const ArgY& y);
 
-// Subtraction
-template <typename T> ref<T> operator-(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator-(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator-(const T& x, const ref<T>& y);
+/// Subtraction
+///
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<T> operator-(const ArgX& x, const ArgY& y);
 
-// Unary plus
-template <typename T> ref<T> operator+(const ref<T>& x);
+/// Unary plus
+///
+template <typename ArgX,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>>
+ref<T> operator+(const ArgX& x);
 
-// Unary minus (additive inverse)
-template <typename T> ref<T> operator-(const ref<T>& x);
+/// Unary minus (additive inverse)
+///
+template <typename ArgX,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>>
+ref<T> operator-(const ArgX& x);
 
-// Multiplication
-template <typename T> ref<T> operator*(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator*(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator*(const T& x, const ref<T>& y);
+/// Multiplication
+///
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<T> operator*(const ArgX& x, const ArgY& y);
 
-// Division
-template <typename T> ref<T> operator/(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator/(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator/(const T& x, const ref<T>& y);
+/// Division
+///
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<T> operator/(const ArgX& x, const ArgY& y);
 
-// Modulo (integer remainder)
-template <typename T> ref<T> operator%(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator%(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator%(const T& x, const ref<T>& y);
+/// Modulo (integer remainder)
+///
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<T> operator%(const ArgX& x, const ArgY& y);
 
-// Increment
-template <typename T> ref<T> operator++(const ref<T>& x);
-template <typename T> ref<T> operator++(const ref<T>& x, int);
+/// Increment
+///
+template <typename ArgX,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>>
+ref<T> operator++(const ArgX& x);
 
-// Decrement
-template <typename T> ref<T> operator--(const ref<T>& x);
-template <typename T> ref<T> operator--(const ref<T>& x, int);
+/// Increment (postfix)
+///
+template <typename ArgX,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>>
+ref<T> operator++(const ArgX& x, int);
+
+/// Decrement
+///
+template <typename ArgX,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>>
+ref<T> operator--(const ArgX& x);
+
+/// Decrement (postfix)
+///
+template <typename ArgX,
+          typename...,
+          typename T = core::argument_data_type_t<ArgX>>
+ref<T> operator--(const ArgX& x, int);
 
 /// \}
 } // dataflow
