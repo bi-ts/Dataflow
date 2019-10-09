@@ -34,57 +34,67 @@ namespace dataflow
 
 template <typename ArgT,
           typename...,
-          typename T = core::argument_data_type_t<ArgT>>
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Abs(const ArgT& x);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Add(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Sub(const ArgX& x, const ArgY& y);
 
 template <typename ArgT,
           typename...,
-          typename T = core::argument_data_type_t<ArgT>>
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Plus(const ArgT& x);
 
 template <typename ArgT,
           typename...,
-          typename T = core::argument_data_type_t<ArgT>>
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Inv(const ArgT& x);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Mult(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Div(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Mod(const ArgX& x, const ArgY& y);
 
 template <typename ArgT,
           typename...,
-          typename T = core::argument_data_type_t<ArgT>>
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Incr(const ArgT& x);
 
 template <typename ArgT,
           typename...,
-          typename T = core::argument_data_type_t<ArgT>>
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Decr(const ArgT& x);
 
 // Arithmetic operators
@@ -97,7 +107,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> operator+(const ArgX& x, const ArgY& y);
 
 /// Subtraction
@@ -108,16 +119,23 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> operator-(const ArgX& x, const ArgY& y);
 
 /// Unary plus
 ///
-template <typename T> ref<T> operator+(const ref<T>& x);
+template <typename T,
+          typename...,
+          typename = core::enable_if_regular_data_type_t<T>>
+ref<T> operator+(const ref<T>& x);
 
 /// Unary minus (additive inverse)
 ///
-template <typename T> ref<T> operator-(const ref<T>& x);
+template <typename T,
+          typename...,
+          typename = core::enable_if_regular_data_type_t<T>>
+ref<T> operator-(const ref<T>& x);
 
 /// Multiplication
 ///
@@ -127,7 +145,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> operator*(const ArgX& x, const ArgY& y);
 
 /// Division
@@ -138,7 +157,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> operator/(const ArgX& x, const ArgY& y);
 
 /// Modulo (integer remainder)
@@ -149,18 +169,33 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> operator%(const ArgX& x, const ArgY& y);
 
 /// Increment
 ///
-template <typename T> ref<T> operator++(const ref<T>& x);
-template <typename T> ref<T> operator++(const ref<T>& x, int);
+template <typename T,
+          typename...,
+          typename = core::enable_if_regular_data_type_t<T>>
+ref<T> operator++(const ref<T>& x);
+
+template <typename T,
+          typename...,
+          typename = core::enable_if_regular_data_type_t<T>>
+ref<T> operator++(const ref<T>& x, int);
 
 /// Decrement
 ///
-template <typename T> ref<T> operator--(const ref<T>& x);
-template <typename T> ref<T> operator--(const ref<T>& x, int);
+template <typename T,
+          typename...,
+          typename = core::enable_if_regular_data_type_t<T>>
+ref<T> operator--(const ref<T>& x);
+
+template <typename T,
+          typename...,
+          typename = core::enable_if_regular_data_type_t<T>>
+ref<T> operator--(const ref<T>& x, int);
 
 /// \}
 } // dataflow
