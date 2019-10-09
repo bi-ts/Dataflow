@@ -148,6 +148,14 @@ private:
   Patch patch_;
 };
 
+class aggregate_base
+{
+};
+
+class composite_base
+{
+};
+
 // Type traits
 
 template <typename T, typename U = T>
@@ -155,6 +163,32 @@ using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
 
 template <typename T, typename U = T>
 using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
+
+template <typename T>
+using is_aggregate_data_type =
+  typename internal::std17::conjunction<is_flowable<T>,
+                                        std::is_base_of<aggregate_base, T>>;
+
+template <typename T, typename U = T>
+using enable_if_aggregate_data_type =
+  std::enable_if<is_aggregate_data_type<T>::value, U>;
+
+template <typename T, typename U = T>
+using enable_if_aggregate_data_type_t =
+  typename enable_if_aggregate_data_type<T, U>::type;
+
+template <typename T>
+using is_regular_data_type = typename internal::std17::conjunction<
+  is_flowable<T>,
+  internal::std17::negation<is_aggregate_data_type<T>>>;
+
+template <typename T, typename U = T>
+using enable_if_regular_data_type =
+  std::enable_if<is_regular_data_type<T>::value, U>;
+
+template <typename T, typename U = T>
+using enable_if_regular_data_type_t =
+  typename enable_if_regular_data_type<T, U>::type;
 
 template <typename T>
 struct convert_to_flowable
