@@ -46,13 +46,12 @@ ref nodes_factory::add_(node* p_node,
                         std::size_t args_count,
                         node_flags flags)
 {
-  return ref(converter::convert(pumpa::instance().add_node(
-    p_node,
-    p_args,
-    args_count,
-    (flags & node_flags::eager) != node_flags::none,
-    false,
-    (flags & node_flags::prev) != node_flags::none)));
+  return ref(converter::convert(
+    pumpa::instance().add_node(p_node,
+                               p_args,
+                               args_count,
+                               (flags & node_flags::eager) != node_flags::none,
+                               false)));
 }
 
 ref nodes_factory::add_conditional_(node* p_node,
@@ -60,13 +59,12 @@ ref nodes_factory::add_conditional_(node* p_node,
                                     std::size_t args_count,
                                     node_flags flags)
 {
-  return ref(converter::convert(pumpa::instance().add_node(
-    p_node,
-    p_args,
-    args_count,
-    (flags & node_flags::eager) != node_flags::none,
-    true,
-    (flags & node_flags::prev) != node_flags::none)));
+  return ref(converter::convert(
+    pumpa::instance().add_node(p_node,
+                               p_args,
+                               args_count,
+                               (flags & node_flags::eager) != node_flags::none,
+                               true)));
 }
 
 ref nodes_factory::add_constant_(node* p_node)

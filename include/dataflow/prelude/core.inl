@@ -54,6 +54,13 @@ ref<T>::ref(const internal::ref& r, internal::ref::ctor_guard_t)
   DATAFLOW___CHECK_PRECONDITION(r.is_of_type<T>());
 }
 
+template <typename T>
+template <typename U, typename..., typename>
+ref<T>::ref(U&& value)
+: internal::ref(Const(value))
+{
+}
+
 template <typename T> ref<T> ref<T>::operator()(const Time& t) const
 {
   return ref<T>(internal::node_snapshot<T>::create(
@@ -281,7 +288,7 @@ dataflow::ref<T> dataflow::core::LiftPuller(const ref<X>& x,
   return LiftPuller<Policy>(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
+template <typename Policy, typename X, typename... Xs, typename T, typename>
 dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
                                               const ref<X>& x,
                                               const ref<Xs>&... xs)
@@ -293,7 +300,7 @@ dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
                 internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
+template <typename Policy, typename X, typename... Xs, typename T, typename>
 dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
                                               const ref<Xs>&... xs)
 {
@@ -431,7 +438,7 @@ dataflow::Prev(const ref<T>& v0, const ref<T>& x, const Time& t0)
                 internal::ref::ctor_guard);
 }
 
-template <typename Arg, typename F, typename T>
+template <typename Arg, typename F, typename..., typename T, typename>
 dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 {
   struct helper

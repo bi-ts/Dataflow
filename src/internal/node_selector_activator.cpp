@@ -22,11 +22,6 @@
 
 namespace dataflow
 {
-bool internal::is_prev(node_id x)
-{
-  return pumpa::instance().is_previous_node(converter::convert(x));
-}
-
 internal::update_status internal::update_node_selector_activator(
   node_id id, node_id x, bool initialized)
 {

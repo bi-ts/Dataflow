@@ -72,6 +72,12 @@ template <typename T> class ref : public internal::ref
 public:
   explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
 
+  template <
+    typename U,
+    typename...,
+    typename = typename std::enable_if<std::is_convertible<U, T>::value>::type>
+  ref(U&& value);
+
   ref<T> operator()(const Time& t) const;
 };
 
@@ -142,6 +148,14 @@ private:
   Patch patch_;
 };
 
+class aggregate_base
+{
+};
+
+class composite_base
+{
+};
+
 // Type traits
 
 template <typename T, typename U = T>
@@ -149,6 +163,32 @@ using enable_if_flowable = std::enable_if<is_flowable<T>::value, U>;
 
 template <typename T, typename U = T>
 using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
+
+template <typename T>
+using is_aggregate_data_type =
+  typename internal::std17::conjunction<is_flowable<T>,
+                                        std::is_base_of<aggregate_base, T>>;
+
+template <typename T, typename U = T>
+using enable_if_aggregate_data_type =
+  std::enable_if<is_aggregate_data_type<T>::value, U>;
+
+template <typename T, typename U = T>
+using enable_if_aggregate_data_type_t =
+  typename enable_if_aggregate_data_type<T, U>::type;
+
+template <typename T>
+using is_regular_data_type = typename internal::std17::conjunction<
+  is_flowable<T>,
+  internal::std17::negation<is_aggregate_data_type<T>>>;
+
+template <typename T, typename U = T>
+using enable_if_regular_data_type =
+  std::enable_if<is_regular_data_type<T>::value, U>;
+
+template <typename T, typename U = T>
+using enable_if_regular_data_type_t =
+  typename enable_if_regular_data_type<T, U>::type;
 
 template <typename T>
 struct convert_to_flowable
@@ -360,6 +400,24 @@ public:
 
 template <typename T> using patch_type_t = typename patch_type<T>::type;
 
+namespace detail
+{
+template <typename Patch> struct is_generic_patch : std::false_type
+{
+};
+
+template <typename T> struct is_generic_patch<generic_patch<T>> : std::true_type
+{
+};
+}
+
+template <typename Patch>
+using is_generic_patch =
+  detail::is_generic_patch<typename std::remove_cv<Patch>::type>;
+
+template <typename T>
+using is_trivially_patcheable = is_generic_patch<typename patch_type<T>::type>;
+
 template <typename T> struct diff_type
 {
   using type = diff<T, patch_type_t<T>>;
@@ -388,6 +446,15 @@ using enable_if_none = std::enable_if<
 
 template <typename T = void, typename... Args>
 using enable_if_none_t = typename enable_if_none<T, Args...>::type;
+
+template <typename Arg, typename... Args>
+using common_argument_data_type = enable_if_all<
+  argument_data_type_t<Arg>,
+  std::is_same<argument_data_type_t<Arg>, argument_data_type_t<Args>>...>;
+
+template <typename Arg, typename... Args>
+using common_argument_data_type_t =
+  typename common_argument_data_type<Arg, Args...>::type;
 
 // Utility functions
 
@@ -452,7 +519,8 @@ template <typename Policy,
           typename X,
           typename... Xs,
           typename T = data_type_t<decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>>
+            std::declval<X>(), std::declval<Xs>()...))>,
+          typename = enable_if_aggregate_data_type_t<X>>
 ref<T>
 LiftSelector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
@@ -460,7 +528,8 @@ template <typename Policy,
           typename X,
           typename... Xs,
           typename T = data_type_t<decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>>
+            std::declval<X>(), std::declval<Xs>()...))>,
+          typename = enable_if_aggregate_data_type_t<X>>
 ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 
 template <typename Policy,
@@ -543,8 +612,10 @@ ref<T> Prev(const ref<T>& v0, const ref<T>& x, const Time& t0);
 template <
   typename Arg,
   typename F,
+  typename...,
   typename T =
-    core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>>
+    core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> StateMachine(const Arg& s0, F tf, const Time& t0);
 
 template <typename F,

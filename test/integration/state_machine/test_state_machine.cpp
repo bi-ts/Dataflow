@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   auto f = Main([=](const Time& t0) {
     return AdjustableCirclePosition(
-      Const(point(100, 100)), Const(30), mouse_pos, mouse_pressed, t0);
+      point(100, 100), 30, mouse_pos, mouse_pressed, t0);
   });
 
   BOOST_CHECK(graph_invariant_holds());

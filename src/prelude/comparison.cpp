@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,87 +17,3 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/prelude/comparison.h>
-
-// Equal to
-
-dataflow::ref<bool> dataflow::operator==(const ref<std::string>& x,
-                                         const char* y)
-{
-  return x == Const<std::string>(y);
-}
-
-dataflow::ref<bool> dataflow::operator==(const char* x,
-                                         const ref<std::string>& y)
-{
-  return Const<std::string>(x) == y;
-}
-
-// Not equal to
-
-dataflow::ref<bool> dataflow::operator!=(const ref<std::string>& x,
-                                         const char* y)
-{
-  return x != Const<std::string>(y);
-}
-
-dataflow::ref<bool> dataflow::operator!=(const char* x,
-                                         const ref<std::string>& y)
-{
-  return Const<std::string>(x) != y;
-}
-
-// Greater than
-
-dataflow::ref<bool> dataflow::operator>(const ref<std::string>& x,
-                                        const char* y)
-{
-  return x > Const<std::string>(y);
-}
-
-dataflow::ref<bool> dataflow::operator>(const char* x,
-                                        const ref<std::string>& y)
-{
-  return Const<std::string>(x) > y;
-}
-
-// Less than
-
-dataflow::ref<bool> dataflow::operator<(const ref<std::string>& x,
-                                        const char* y)
-{
-  return x < Const<std::string>(y);
-}
-
-dataflow::ref<bool> dataflow::operator<(const char* x,
-                                        const ref<std::string>& y)
-{
-  return Const<std::string>(x) < y;
-}
-
-// Greater than or equal to
-
-dataflow::ref<bool> dataflow::operator>=(const ref<std::string>& x,
-                                         const char* y)
-{
-  return x >= Const<std::string>(y);
-}
-
-dataflow::ref<bool> dataflow::operator>=(const char* x,
-                                         const ref<std::string>& y)
-{
-  return Const<std::string>(x) >= y;
-}
-
-// Less than or equal to
-
-dataflow::ref<bool> dataflow::operator<=(const ref<std::string>& x,
-                                         const char* y)
-{
-  return x <= Const<std::string>(y);
-}
-
-dataflow::ref<bool> dataflow::operator<=(const char* x,
-                                         const ref<std::string>& y)
-{
-  return Const<std::string>(x) <= y;
-}

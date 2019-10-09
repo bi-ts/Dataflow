@@ -11,6 +11,7 @@ add_library(testing_utilities STATIC
   tools/graph_invariant.h
   tools/io_fixture.cpp
   tools/io_fixture.h
+  tools/test_tools.h
 )
 
 target_include_directories(testing_utilities PUBLIC "${Boost_INCLUDE_DIRS}")
@@ -30,6 +31,8 @@ function(add_dataflow_test_project name)
 
   add_test(NAME test_${name} COMMAND test_${name})
 endfunction()
+
+add_dataflow_test_project(test_tools)
 
 add_dataflow_test_project(core
   prelude/core/test_dtime.cpp

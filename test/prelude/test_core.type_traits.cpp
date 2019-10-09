@@ -19,6 +19,7 @@
 #include <dataflow/prelude/core.h>
 
 #include "../tools/io_fixture.h"
+#include "../tools/test_tools.h"
 
 #include <boost/mpl/list.hpp>
 #include <boost/test/test_case_template.hpp>
@@ -364,6 +365,44 @@ BOOST_AUTO_TEST_CASE(test_patch_type)
     (std::is_same<core::patch_type_t<int>, core::generic_patch<int>>::value));
 }
 
+BOOST_AUTO_TEST_CASE(test_is_generic_patch)
+{
+  struct custom_patch_type
+  {
+  };
+
+  BOOST_CHECK_EQUAL((core::is_generic_patch<custom_patch_type>::value), false);
+
+  BOOST_CHECK_EQUAL((core::is_generic_patch<core::generic_patch<int>>::value),
+                    true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<const core::generic_patch<int>>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<volatile core::generic_patch<int>>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<const volatile core::generic_patch<int>>::value),
+    true);
+}
+
+BOOST_AUTO_TEST_CASE(test_is_trivially_patcheable)
+{
+  struct custom_patch_type
+  {
+  };
+
+  struct custom_type
+  {
+    using patch_type = custom_patch_type;
+  };
+
+  BOOST_CHECK_EQUAL((core::is_trivially_patcheable<int>::value), true);
+
+  BOOST_CHECK_EQUAL((core::is_trivially_patcheable<custom_type>::value), false);
+}
+
 struct enable_if_test_helper
 {
   template <typename... Args>
@@ -523,6 +562,131 @@ BOOST_AUTO_TEST_CASE(test_enable_if_none)
                                             std::false_type,
                                             std::false_type>(0)),
     true);
+}
+
+class common_argument_data_type_helper
+{
+public:
+  template <typename... Args> static bool enabled()
+  {
+    return enabled_<Args...>(0);
+  }
+
+private:
+  template <typename Arg,
+            typename... Args,
+            typename T = core::common_argument_data_type_t<Arg, Args...>>
+  static bool enabled_(int)
+  {
+    return true;
+  }
+
+  template <typename... Args> static bool enabled_(...)
+  {
+    return false;
+  }
+};
+
+BOOST_AUTO_TEST_CASE(test_common_argument_data_type_t)
+{
+  BOOST_CHECK((std::is_same<core::common_argument_data_type_t<decltype(""),
+                                                              ref<std::string>,
+                                                              std::string>,
+                            std::string>::value));
+
+  BOOST_CHECK_EQUAL((common_argument_data_type_helper::
+                       enabled<decltype(""), ref<std::string>, std::string>()),
+                    true);
+
+  BOOST_CHECK_EQUAL(
+    (common_argument_data_type_helper::enabled<std::string, ref<int>>()),
+    false);
+}
+
+class aggregate final : public core::aggregate_base
+{
+public:
+  bool operator==(const aggregate&) const;
+  bool operator!=(const aggregate&) const;
+
+  friend std::ostream& operator<<(std::ostream&, const aggregate&);
+};
+
+BOOST_AUTO_TEST_CASE(test_is_aggregate_data_type)
+{
+  BOOST_CHECK_EQUAL(core::is_aggregate_data_type<int>::value, false);
+  BOOST_CHECK_EQUAL(core::is_aggregate_data_type<flowable>::value, false);
+  BOOST_CHECK_EQUAL(core::is_aggregate_data_type<aggregate>::value, true);
+}
+
+BOOST_AUTO_TEST_CASE(test_enable_if_aggregate_data_type)
+{
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_aggregate_data_type,
+                                     int>()),
+    false);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_aggregate_data_type,
+                                     flowable>()),
+    false);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_aggregate_data_type,
+                                     aggregate>()),
+    true);
+}
+
+BOOST_AUTO_TEST_CASE(test_enable_if_aggregate_data_type_t)
+{
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_aggregate_data_type_t,
+                                     int>()),
+    false);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_aggregate_data_type_t,
+                                     flowable>()),
+    false);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_aggregate_data_type_t,
+                                     aggregate>()),
+    true);
+}
+
+BOOST_AUTO_TEST_CASE(test_is_regular_data_type)
+{
+  BOOST_CHECK_EQUAL(core::is_regular_data_type<int>::value, true);
+  BOOST_CHECK_EQUAL(core::is_regular_data_type<flowable>::value, true);
+  BOOST_CHECK_EQUAL(core::is_regular_data_type<aggregate>::value, false);
+}
+
+BOOST_AUTO_TEST_CASE(test_enable_if_regular_data_type)
+{
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_regular_data_type, int>()),
+    true);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_regular_data_type,
+                                     flowable>()),
+    true);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_regular_data_type,
+                                     aggregate>()),
+    false);
+}
+
+BOOST_AUTO_TEST_CASE(test_enable_if_regular_data_type_t)
+{
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_regular_data_type_t,
+                                     int>()),
+    true);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_regular_data_type_t,
+                                     flowable>()),
+    true);
+  BOOST_CHECK_EQUAL(
+    (test_tools::is_enabled_for_type<core::enable_if_regular_data_type_t,
+                                     aggregate>()),
+    false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

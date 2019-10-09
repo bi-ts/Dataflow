@@ -114,7 +114,6 @@ public:
   , straight(false)
   , initialized(false)
   , hidden(false)
-  , previous(false)
   , ref_count_(0)
   , position()
   , p_node(p_node)
@@ -155,7 +154,6 @@ public:
   const uint straight : 1; // TODO: not used?
   uint initialized : 1;
   const uint hidden : 1; // TODO: not used?
-  uint previous : 1;
 
 private:
   uint ref_count_;
