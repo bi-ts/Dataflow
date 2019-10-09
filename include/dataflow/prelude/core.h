@@ -379,6 +379,24 @@ public:
 
 template <typename T> using patch_type_t = typename patch_type<T>::type;
 
+namespace detail
+{
+template <typename Patch> struct is_generic_patch : std::false_type
+{
+};
+
+template <typename T> struct is_generic_patch<generic_patch<T>> : std::true_type
+{
+};
+}
+
+template <typename Patch>
+using is_generic_patch =
+  detail::is_generic_patch<typename std::remove_cv<Patch>::type>;
+
+template <typename T>
+using is_trivially_patcheable = is_generic_patch<typename patch_type<T>::type>;
+
 template <typename T> struct diff_type
 {
   using type = diff<T, patch_type_t<T>>;

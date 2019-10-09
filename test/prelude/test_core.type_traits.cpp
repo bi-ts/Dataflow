@@ -365,6 +365,44 @@ BOOST_AUTO_TEST_CASE(test_patch_type)
     (std::is_same<core::patch_type_t<int>, core::generic_patch<int>>::value));
 }
 
+BOOST_AUTO_TEST_CASE(test_is_generic_patch)
+{
+  struct custom_patch_type
+  {
+  };
+
+  BOOST_CHECK_EQUAL((core::is_generic_patch<custom_patch_type>::value), false);
+
+  BOOST_CHECK_EQUAL((core::is_generic_patch<core::generic_patch<int>>::value),
+                    true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<const core::generic_patch<int>>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<volatile core::generic_patch<int>>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<const volatile core::generic_patch<int>>::value),
+    true);
+}
+
+BOOST_AUTO_TEST_CASE(test_is_trivially_patcheable)
+{
+  struct custom_patch_type
+  {
+  };
+
+  struct custom_type
+  {
+    using patch_type = custom_patch_type;
+  };
+
+  BOOST_CHECK_EQUAL((core::is_trivially_patcheable<int>::value), true);
+
+  BOOST_CHECK_EQUAL((core::is_trivially_patcheable<custom_type>::value), false);
+}
+
 struct enable_if_test_helper
 {
   template <typename... Args>
