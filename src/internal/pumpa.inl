@@ -129,13 +129,6 @@ inline bool pumpa::is_persistent_node(vertex_descriptor v) const
   return graph_[v].constant;
 }
 
-inline bool pumpa::is_previous_node(vertex_descriptor v) const
-{
-  CHECK_PRECONDITION(v != vertex_descriptor());
-
-  return graph_[v].previous;
-}
-
 inline std::size_t pumpa::changed_nodes_count() const
 {
   CHECK_PRECONDITION(!pumping_started_);

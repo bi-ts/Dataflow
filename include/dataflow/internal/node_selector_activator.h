@@ -30,8 +30,6 @@ namespace dataflow
 {
 namespace internal
 {
-DATAFLOW___EXPORT bool is_prev(node_id x);
-
 DATAFLOW___EXPORT update_status
 update_node_selector_activator(node_id id, node_id x, bool initialized);
 
@@ -45,9 +43,6 @@ public:
   {
     DATAFLOW___CHECK_PRECONDITION(check_all_of(
       x.template is_of_type<X>(), xs.template is_of_type<Xs>()...));
-
-    if (is_prev(x.id()))
-      throw std::logic_error("Field selection is not allowed on 'prev' values");
 
     const std::array<node_id, 1 + sizeof...(Xs)> args = {{x.id(), xs.id()...}};
 
