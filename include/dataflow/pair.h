@@ -30,7 +30,7 @@ namespace dataflow
 /// \defgroup pair
 /// \{
 
-template <typename T, typename U> class pair final
+template <typename T, typename U> class pair final : public core::aggregate_base
 {
 private:
   using impl = std::pair<ref<T>, ref<U>>;

@@ -30,7 +30,7 @@ using namespace dataflow;
 namespace dataflow_test
 {
 
-template <typename T> class box final
+template <typename T> class box final : core::aggregate_base
 {
 private:
   struct data
@@ -1251,23 +1251,6 @@ BOOST_AUTO_TEST_CASE(
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), 1);
-}
-
-BOOST_AUTO_TEST_CASE(test_StateMachine_selector_on_prev_throws)
-{
-  Engine engine;
-
-  const auto main_fn = [=](const Time& t0) {
-    const auto s = StateMachine(
-      Box(Const(0)),
-      [=](const ref<box<int>>& sp) { return Box(Boxed(sp)); },
-      t0);
-
-    return Boxed(s);
-  };
-
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_THROW(Main(main_fn), std::logic_error);
 }
 
 BOOST_AUTO_TEST_CASE(test_core_to_string_ref)

@@ -480,7 +480,8 @@ template <typename Policy,
           typename X,
           typename... Xs,
           typename T = data_type_t<decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>>
+            std::declval<X>(), std::declval<Xs>()...))>,
+          typename = enable_if_aggregate_data_type_t<X>>
 ref<T>
 LiftSelector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
@@ -488,7 +489,8 @@ template <typename Policy,
           typename X,
           typename... Xs,
           typename T = data_type_t<decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>>
+            std::declval<X>(), std::declval<Xs>()...))>,
+          typename = enable_if_aggregate_data_type_t<X>>
 ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 
 template <typename Policy,
@@ -571,8 +573,10 @@ ref<T> Prev(const ref<T>& v0, const ref<T>& x, const Time& t0);
 template <
   typename Arg,
   typename F,
+  typename...,
   typename T =
-    core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>>
+    core::enable_if_transition_function_t<F, core::argument_data_type_t<Arg>>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<T> StateMachine(const Arg& s0, F tf, const Time& t0);
 
 template <typename F,

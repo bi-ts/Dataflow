@@ -288,7 +288,7 @@ dataflow::ref<T> dataflow::core::LiftPuller(const ref<X>& x,
   return LiftPuller<Policy>(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
+template <typename Policy, typename X, typename... Xs, typename T, typename>
 dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
                                               const ref<X>& x,
                                               const ref<Xs>&... xs)
@@ -300,7 +300,7 @@ dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
                 internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
+template <typename Policy, typename X, typename... Xs, typename T, typename>
 dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
                                               const ref<Xs>&... xs)
 {
@@ -438,7 +438,7 @@ dataflow::Prev(const ref<T>& v0, const ref<T>& x, const Time& t0)
                 internal::ref::ctor_guard);
 }
 
-template <typename Arg, typename F, typename T>
+template <typename Arg, typename F, typename..., typename T, typename>
 dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 {
   struct helper
