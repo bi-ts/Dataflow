@@ -35,37 +35,43 @@ namespace dataflow
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> Eq(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> NotEq(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> Gr(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> Less(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> GrEq(const ArgX& x, const ArgY& y);
 
 template <typename ArgX,
           typename ArgY,
           typename...,
-          typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> LessEq(const ArgX& x, const ArgY& y);
 
 // Comparison operators
@@ -78,7 +84,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> operator==(const ArgX& x, const ArgY& y);
 
 /// Not equal to
@@ -89,7 +96,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> operator!=(const ArgX& x, const ArgY& y);
 
 /// Greater than
@@ -100,7 +108,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> operator>(const ArgX& x, const ArgY& y);
 
 /// Less than
@@ -111,7 +120,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> operator<(const ArgX& x, const ArgY& y);
 
 /// Greater than or equal to
@@ -122,7 +132,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> operator>=(const ArgX& x, const ArgY& y);
 
 /// Less than or equal to
@@ -133,7 +144,8 @@ template <
   typename...,
   typename =
     core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>>
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_regular_data_type_t<T>>
 ref<bool> operator<=(const ArgX& x, const ArgY& y);
 
 /// \}

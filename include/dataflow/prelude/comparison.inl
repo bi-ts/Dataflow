@@ -20,7 +20,7 @@
 #error '.inl' file can't be included directly. Use 'comparison.h' instead
 #endif
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
 dataflow::ref<bool> dataflow::Eq(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -37,7 +37,7 @@ dataflow::ref<bool> dataflow::Eq(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
 dataflow::ref<bool> dataflow::NotEq(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -54,7 +54,7 @@ dataflow::ref<bool> dataflow::NotEq(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
 dataflow::ref<bool> dataflow::Gr(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -71,7 +71,7 @@ dataflow::ref<bool> dataflow::Gr(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
 dataflow::ref<bool> dataflow::Less(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -88,7 +88,7 @@ dataflow::ref<bool> dataflow::Less(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
 dataflow::ref<bool> dataflow::GrEq(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -105,7 +105,7 @@ dataflow::ref<bool> dataflow::GrEq(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename T>
+template <typename ArgX, typename ArgY, typename..., typename T, typename>
 dataflow::ref<bool> dataflow::LessEq(const ArgX& x, const ArgY& y)
 {
   struct policy
@@ -122,37 +122,67 @@ dataflow::ref<bool> dataflow::LessEq(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename ArgY, typename..., typename, typename T>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename T,
+          typename>
 dataflow::ref<bool> dataflow::operator==(const ArgX& x, const ArgY& y)
 {
   return Eq(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename, typename T>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename T,
+          typename>
 dataflow::ref<bool> dataflow::operator!=(const ArgX& x, const ArgY& y)
 {
   return NotEq(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename, typename T>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename T,
+          typename>
 dataflow::ref<bool> dataflow::operator>(const ArgX& x, const ArgY& y)
 {
   return Gr(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename, typename T>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename T,
+          typename>
 dataflow::ref<bool> dataflow::operator<(const ArgX& x, const ArgY& y)
 {
   return Less(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename, typename T>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename T,
+          typename>
 dataflow::ref<bool> dataflow::operator>=(const ArgX& x, const ArgY& y)
 {
   return GrEq(x, y);
 }
 
-template <typename ArgX, typename ArgY, typename..., typename, typename T>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename T,
+          typename>
 dataflow::ref<bool> dataflow::operator<=(const ArgX& x, const ArgY& y)
 {
   return LessEq(x, y);
