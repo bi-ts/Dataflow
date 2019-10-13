@@ -292,3 +292,10 @@ dataflow::ref<bool> dataflow::operator==(const ref<tuple<T, Ts...>>& x,
   return detail::make_equality_comparison(
     x, y, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
 }
+
+template <typename T, typename... Ts>
+dataflow::ref<bool> dataflow::operator!=(const ref<tuple<T, Ts...>>& x,
+                                         const ref<tuple<T, Ts...>>& y)
+{
+  return !(x == y);
+}
