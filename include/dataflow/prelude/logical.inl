@@ -20,6 +20,37 @@
 #error '.inl' file can't be included directly. Use 'logical.h' instead
 #endif
 
+namespace dataflow
+{
+namespace logical
+{
+namespace detail
+{
+inline ref<bool> And(const ref<bool>& x)
+{
+  return x;
+}
+
+inline ref<bool> And(const ref<bool>& x, const ref<bool>& y)
+{
+  return If(x, y, false);
+};
+
+template <typename ArgX, typename ArgY, typename ArgZ, typename... Args>
+ref<bool> And(const ArgX& x, const ArgY& y, const ArgZ& z, const Args&... args)
+{
+  return And(x, And(y, z, args...));
+}
+}
+}
+}
+
+template <typename Arg, typename... Args, typename>
+dataflow::ref<bool> dataflow::And(const Arg& arg, const Args&... args)
+{
+  return logical::detail::And(arg, args...);
+}
+
 inline dataflow::ref<bool> dataflow::operator!(const ref<bool>& x)
 {
   return Not(x);

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,11 +32,6 @@ dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
     }
   };
   return core::Lift<policy>(x);
-}
-
-dataflow::ref<bool> dataflow::And(const ref<bool>& x, const ref<bool>& y)
-{
-  return If(x, y, false);
 }
 
 dataflow::ref<bool> dataflow::Or(const ref<bool>& x, const ref<bool>& y)

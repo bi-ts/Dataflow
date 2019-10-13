@@ -33,7 +33,14 @@ namespace dataflow
 // Logical functions
 
 DATAFLOW___EXPORT ref<bool> Not(const ref<bool>& x);
-DATAFLOW___EXPORT ref<bool> And(const ref<bool>& x, const ref<bool>& y);
+
+template <typename Arg,
+          typename... Args,
+          typename = core::enable_for_argument_data_type_t<
+            bool,
+            core::common_argument_data_type_t<Arg, Args...>>>
+ref<bool> And(const Arg& arg, const Args&... args);
+
 DATAFLOW___EXPORT ref<bool> Or(const ref<bool>& x, const ref<bool>& y);
 DATAFLOW___EXPORT ref<bool> AndE(const ref<bool>& x, const ref<bool>& y);
 DATAFLOW___EXPORT ref<bool> OrE(const ref<bool>& x, const ref<bool>& y);
