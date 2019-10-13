@@ -141,6 +141,15 @@ T default_value(
 {
   return Const<core::argument_data_type_t<T>>();
 }
+
+template <typename... Ts, std::size_t... Is>
+ref<bool> make_equality_comparison(
+  const ref<tuple<Ts...>>& x,
+  const ref<tuple<Ts...>>& y,
+  const dataflow::internal::std14::index_sequence<Is...>& seq)
+{
+  return And(Get<Is>(x) == Get<Is>(y)...);
+}
 }
 
 template <typename T, typename... Ts>
@@ -274,4 +283,12 @@ dataflow::ref<dataflow::core::argument_data_type_t<E>>
 dataflow::Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x)
 {
   return Get<4>(x);
+}
+
+template <typename T, typename... Ts>
+dataflow::ref<bool> dataflow::operator==(const ref<tuple<T, Ts...>>& x,
+                                         const ref<tuple<T, Ts...>>& y)
+{
+  return detail::make_equality_comparison(
+    x, y, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
 }

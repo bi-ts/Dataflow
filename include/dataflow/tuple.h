@@ -102,6 +102,9 @@ template <typename A,
 ref<core::argument_data_type_t<E>>
 Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x);
 
+template <typename T, typename... Ts>
+ref<bool> operator==(const ref<tuple<T, Ts...>>& x,
+                     const ref<tuple<T, Ts...>>& y);
 /// \}
 } // dataflow
 
