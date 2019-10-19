@@ -102,7 +102,7 @@ template <typename T> class var final : public ref<T>
 public:
   explicit var(const internal::ref& r, internal::ref::ctor_guard_t);
 
-  const var& operator=(const T& v) const;
+  const var& operator=(const T& v);
 };
 
 template <typename T>

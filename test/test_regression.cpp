@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(test_Mod)
 {
   Engine engine;
 
-  const var<int> y = Var<int>(1);
+  var<int> y = Var<int>(1);
 
   auto z = Mod(Const(60), y);
 
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(test_regression_StateMachine_independent_on_previous_state)
 {
   Engine engine;
 
-  const auto x = Var<int>(1);
+  auto x = Var<int>(1);
 
   const auto tf = [=](const ref<int>&) { return x; };
 
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(test_regression_compound_deactivation)
 {
   Engine engine;
 
-  const auto x = Var<bool>(true);
+  auto x = Var<bool>(true);
 
   const auto y = If(
     x,

@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
 {
   Engine engine;
 
-  const auto x = Var(100);
+  auto x = Var(100);
 
   struct policy
   {

@@ -89,7 +89,7 @@ var<T>::var(const internal::ref& r, internal::ref::ctor_guard_t)
 {
 }
 
-template <typename T> const var<T>& var<T>::operator=(const T& v) const
+template <typename T> const var<T>& var<T>::operator=(const T& v)
 {
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));

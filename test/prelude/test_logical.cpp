@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(test_Not)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = Not(x);
 
@@ -58,8 +58,8 @@ BOOST_AUTO_TEST_CASE(test_And)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = And(x, y);
 
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(test_And_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = And(false, y);
 
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(test_And_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = And(x, true);
 
@@ -140,8 +140,8 @@ BOOST_AUTO_TEST_CASE(test_Or)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = Or(x, y);
 
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(test_Or_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = Or(false, y);
 
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(test_Or_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = Or(x, true);
 
@@ -222,8 +222,8 @@ BOOST_AUTO_TEST_CASE(test_AndE)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = AndE(x, y);
 
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = AndE(false, y);
 
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = AndE(x, true);
 
@@ -306,8 +306,8 @@ BOOST_AUTO_TEST_CASE(test_OrE)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = OrE(x, y);
 
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = OrE(false, y);
 
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = OrE(x, true);
 
@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(test_Not_operator)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = !x;
 
@@ -411,8 +411,8 @@ BOOST_AUTO_TEST_CASE(test_And_operator)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = x && y;
 
@@ -453,7 +453,7 @@ BOOST_AUTO_TEST_CASE(test_And_operator_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = false && y;
 
@@ -472,7 +472,7 @@ BOOST_AUTO_TEST_CASE(test_And_operator_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = x && true;
 
@@ -493,8 +493,8 @@ BOOST_AUTO_TEST_CASE(test_Or_operator)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = x || y;
 
@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(test_Or_operator_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = false || y;
 
@@ -554,7 +554,7 @@ BOOST_AUTO_TEST_CASE(test_Or_operator_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = x || true;
 
@@ -575,8 +575,8 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = x & y;
 
@@ -617,7 +617,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = false & y;
 
@@ -636,7 +636,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = x & true;
 
@@ -657,8 +657,8 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = x | y;
 
@@ -699,7 +699,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator_lhs_literal)
 {
   Engine engine;
 
-  const auto y = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = false | y;
 
@@ -718,7 +718,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator_rhs_literal)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = x | true;
 

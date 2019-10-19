@@ -298,7 +298,7 @@ void Benchmark(
   {
     check_points.start = make_check_point();
 
-    const auto x = Var<T>(initial_x);
+    auto x = Var<T>(initial_x);
     const auto info = constructor(exponent, x);
     const auto y = info.first;
     const auto constructed_nodes_count = info.second;
@@ -448,7 +448,7 @@ static void Update_Unary_Incr_Int(benchmark::State& state)
 {
   Engine engine;
 
-  const auto x = Var(1);
+  auto x = Var(1);
 
   std::vector<ref<int>> tmp(1, x);
 
