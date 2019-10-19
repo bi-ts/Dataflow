@@ -252,6 +252,12 @@ BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
   BOOST_CHECK_EQUAL(x(), 0);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_ref, test_core_fixture)
+{
+  BOOST_CHECK_EQUAL((std::is_copy_assignable<ref<int>>::value), false);
+  BOOST_CHECK_EQUAL((std::is_copy_constructible<ref<int>>::value), true);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
 {
   const ref<int> x = Const(17);
