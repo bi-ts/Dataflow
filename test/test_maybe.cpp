@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_to_string)
 {
   Engine engine;
 
-  const auto x = Var(11);
+  auto x = Var(11);
   const auto y = JustE(x);
   const auto f = *y;
 
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Just_FromMaybe)
 {
   Engine engine;
 
-  const auto x = Var(11);
+  auto x = Var(11);
   const auto y = Just(x);
   const auto z = FromMaybe(y);
   const auto f = *z;
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
   Engine engine;
 
   const auto x = Nothing<ref<int>>();
-  const auto y = Var(23);
+  auto y = Var(23);
   const auto z = FromMaybe(x, y);
   const auto f = *z;
 
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_FromMaybe)
 {
   Engine engine;
 
-  const auto x = Var(11);
+  auto x = Var(11);
   const auto y = JustE(x);
   const auto z = FromMaybe(y);
   const auto f = *z;
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2_arguments)
   Engine engine;
 
   const auto x = Nothing<int>();
-  const auto y = Var(23);
+  auto y = Var(23);
   const auto z = FromMaybe(x, y);
   const auto f = *z;
 

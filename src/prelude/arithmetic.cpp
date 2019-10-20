@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,17 +17,3 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/prelude/arithmetic.h>
-
-// Addition
-
-dataflow::ref<std::string> dataflow::operator+(const ref<std::string>& x,
-                                               const char* y)
-{
-  return x + Const<std::string>(y);
-}
-
-dataflow::ref<std::string> dataflow::operator+(const char* x,
-                                               const ref<std::string>& y)
-{
-  return Const<std::string>(x) + y;
-}

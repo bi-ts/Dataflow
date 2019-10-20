@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,7 +20,7 @@
 #include <dataflow/internal/nodes_factory.h>
 
 #include "config.h"
-#include "engine.h"
+#include "pumpa.h"
 
 namespace dataflow
 {
@@ -48,10 +48,10 @@ update_status node_if_activator::update_(node_id id,
   const auto new_value = extract_node_value<bool>(p_deps[0]);
 
   const auto result =
-    engine::instance().update_node_if_activator(converter::convert(id),
-                                                initialized,
-                                                std::size_t(new_value),
-                                                std::size_t(this->value()));
+    pumpa::instance().update_node_if_activator(converter::convert(id),
+                                               initialized,
+                                               std::size_t(new_value),
+                                               std::size_t(this->value()));
 
   return this->set_value_(new_value) | result;
 }

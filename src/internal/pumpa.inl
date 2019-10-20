@@ -16,8 +16,8 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined(DATAFLOW___INTERNAL_ENGINE_H)
-#error '.inl' file can't be included directly. Use 'engine.h' instead
+#if !defined(DATAFLOW___INTERNAL_PUMPA_H)
+#error '.inl' file can't be included directly. Use 'pumpa.h' instead
 #endif
 
 #include "config.h"
@@ -26,39 +26,39 @@ namespace dataflow
 {
 namespace internal
 {
-inline engine::allocator_type engine::get_allocator() const
+inline pumpa::allocator_type pumpa::get_allocator() const
 {
   return allocator_;
 }
 
-inline const dependency_graph& engine::graph() const
+inline const dependency_graph& pumpa::graph() const
 {
   return graph_;
 }
 
-inline const topological_list& engine::order() const
+inline const topological_list& pumpa::order() const
 {
   return order_;
 }
 
-inline const tick_count& engine::ticks() const
+inline const tick_count& pumpa::ticks() const
 {
   return ticks_;
 }
 
-inline const node* engine::get_node(vertex_descriptor v) const
+inline const node* pumpa::get_node(vertex_descriptor v) const
 {
   return graph_[v].p_node;
 }
 
-inline engine& engine::instance()
+inline pumpa& pumpa::instance()
 {
-  CHECK_PRECONDITION(gp_engine_ != nullptr);
+  CHECK_PRECONDITION(gp_pumpa_ != nullptr);
 
-  return *gp_engine_;
+  return *gp_pumpa_;
 }
 
-inline bool engine::is_logical_dependency(edge_descriptor e) const
+inline bool pumpa::is_logical_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
@@ -72,7 +72,7 @@ inline bool engine::is_logical_dependency(edge_descriptor e) const
   return false;
 }
 
-inline bool engine::is_primary_data_dependency(edge_descriptor e) const
+inline bool pumpa::is_primary_data_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
@@ -82,7 +82,7 @@ inline bool engine::is_primary_data_dependency(edge_descriptor e) const
          (!is_conditional_node(u) || out_edge_at_(u, 0) == e);
 }
 
-inline bool engine::is_secondary_data_dependency(edge_descriptor e) const
+inline bool pumpa::is_secondary_data_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
@@ -92,14 +92,14 @@ inline bool engine::is_secondary_data_dependency(edge_descriptor e) const
          out_edge_at_(u, 0) != e;
 }
 
-inline bool engine::is_active_data_dependency(edge_descriptor e) const
+inline bool pumpa::is_active_data_dependency(edge_descriptor e) const
 {
   CHECK_PRECONDITION(e != edge_descriptor());
 
   return graph_[e] != active_edge_ticket();
 }
 
-inline bool engine::is_active_node(vertex_descriptor v) const
+inline bool pumpa::is_active_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
@@ -108,63 +108,56 @@ inline bool engine::is_active_node(vertex_descriptor v) const
   return position != topological_position() && *position == v;
 }
 
-inline bool engine::is_conditional_node(vertex_descriptor v) const
+inline bool pumpa::is_conditional_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].conditional;
 }
 
-inline bool engine::is_eager_node(vertex_descriptor v) const
+inline bool pumpa::is_eager_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].eager;
 }
 
-inline bool engine::is_persistent_node(vertex_descriptor v) const
+inline bool pumpa::is_persistent_node(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].constant;
 }
 
-inline bool engine::is_previous_node(vertex_descriptor v) const
-{
-  CHECK_PRECONDITION(v != vertex_descriptor());
-
-  return graph_[v].previous;
-}
-
-inline std::size_t engine::changed_nodes_count() const
+inline std::size_t pumpa::changed_nodes_count() const
 {
   CHECK_PRECONDITION(!pumping_started_);
 
   return changed_nodes_count_;
 }
 
-inline std::size_t engine::updated_nodes_count() const
+inline std::size_t pumpa::updated_nodes_count() const
 {
   CHECK_PRECONDITION(!pumping_started_);
 
   return updated_nodes_count_;
 }
 
-inline bool engine::requires_activation(vertex_descriptor v) const
+inline bool pumpa::requires_activation(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   return graph_[v].position == topological_position() && !graph_[v].constant;
 }
 
-inline void engine::add_ref(vertex_descriptor v)
+inline void pumpa::add_ref(vertex_descriptor v)
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
   graph_[v].add_ref();
 }
 
-inline void engine::release(vertex_descriptor v)
+inline void pumpa::release(vertex_descriptor v)
 {
   CHECK_PRECONDITION(v != vertex_descriptor());
 
@@ -174,8 +167,8 @@ inline void engine::release(vertex_descriptor v)
   }
 }
 
-inline edge_descriptor engine::out_edge_at_(vertex_descriptor v,
-                                            std::size_t idx) const
+inline edge_descriptor pumpa::out_edge_at_(vertex_descriptor v,
+                                           std::size_t idx) const
 {
   CHECK_PRECONDITION(out_degree(v, graph_) > idx);
 
@@ -186,14 +179,14 @@ inline edge_descriptor engine::out_edge_at_(vertex_descriptor v,
   return *ei;
 }
 
-inline edge_descriptor engine::last_out_edge_(vertex_descriptor v) const
+inline edge_descriptor pumpa::last_out_edge_(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
 
   return *(out_edges(v, graph_).second - 1);
 }
 
-inline vertex_descriptor engine::main_consumer_(vertex_descriptor v) const
+inline vertex_descriptor pumpa::main_consumer_(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(!graph_[v].consumers.empty());
@@ -205,7 +198,7 @@ inline vertex_descriptor engine::main_consumer_(vertex_descriptor v) const
   return u;
 }
 
-inline vertex_descriptor engine::activator_(vertex_descriptor v) const
+inline vertex_descriptor pumpa::activator_(vertex_descriptor v) const
 {
   CHECK_PRECONDITION(is_active_node(v));
 

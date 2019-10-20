@@ -18,8 +18,8 @@
 
 #pragma once
 
-#ifndef DATAFLOW___INTERNAL_ENGINE_H
-#define DATAFLOW___INTERNAL_ENGINE_H
+#ifndef DATAFLOW___INTERNAL_PUMPA_H
+#define DATAFLOW___INTERNAL_PUMPA_H
 
 #include "converter.h"
 #include "graph.h"
@@ -32,7 +32,7 @@ namespace dataflow
 {
 namespace internal
 {
-class engine final
+class pumpa final
 {
 public:
   using allocator_type = memory_allocator<char>;
@@ -49,13 +49,13 @@ public:
   const node* get_node(vertex_descriptor v) const;
 
 public:
-  engine(const engine&) = delete;
-  engine& operator=(const engine&) = delete;
+  pumpa(const pumpa&) = delete;
+  pumpa& operator=(const pumpa&) = delete;
 
   static void start();
   static void stop();
 
-  static engine& instance();
+  static pumpa& instance();
 
   bool is_logical_dependency(edge_descriptor e) const;
   bool is_primary_data_dependency(edge_descriptor e) const;
@@ -66,7 +66,6 @@ public:
   bool is_conditional_node(vertex_descriptor v) const;
   bool is_eager_node(vertex_descriptor v) const;
   bool is_persistent_node(vertex_descriptor v) const;
-  bool is_previous_node(vertex_descriptor v) const;
 
   std::size_t changed_nodes_count() const;
   std::size_t updated_nodes_count() const;
@@ -82,8 +81,7 @@ public:
                              const node_id* p_args,
                              std::size_t args_count,
                              bool eager,
-                             bool conditional = false,
-                             bool previous = false);
+                             bool conditional = false);
 
   vertex_descriptor add_persistent_node(node* p_node);
 
@@ -111,14 +109,18 @@ public:
   update_status update_node_snapshot_activator(vertex_descriptor v,
                                                bool initialized);
 
+  update_status update_node_since_activator(vertex_descriptor v,
+                                            bool initialized,
+                                            std::size_t ti);
+
   void update_node_state(vertex_descriptor v);
 
   std::pair<const node*, update_status>
   update_node_state_prev(vertex_descriptor v, bool initialized);
 
 private:
-  explicit engine();
-  ~engine() noexcept;
+  explicit pumpa();
+  ~pumpa() noexcept;
 
   void schedule_for_next_update_(vertex_descriptor v);
 
@@ -175,11 +177,11 @@ private:
   std::size_t updated_nodes_count_;
 
 private:
-  static engine* gp_engine_;
+  static pumpa* gp_pumpa_;
 };
 } // internal
 } // dataflow
 
-#include "engine.inl"
+#include "pumpa.inl"
 
-#endif // DATAFLOW___INTERNAL_ENGINE_H
+#endif // DATAFLOW___INTERNAL_PUMPA_H

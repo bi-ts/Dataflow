@@ -32,7 +32,7 @@ struct nothing_t
 {
 };
 
-template <typename T> class maybe
+template <typename T> class maybe : public core::composite_base
 {
 public:
   maybe(nothing_t);
@@ -54,7 +54,7 @@ private:
   data data_;
 };
 
-template <typename T> class maybe<ref<T>>
+template <typename T> class maybe<ref<T>> : public core::aggregate_base
 {
 public:
   maybe(nothing_t);

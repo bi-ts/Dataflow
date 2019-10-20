@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,61 +32,212 @@ namespace dataflow
 
 // Arithmetic functions
 
-template <typename T> ref<T> Abs(const ref<T>& x);
-template <typename T> ref<T> Add(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Sub(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Plus(const ref<T>& x);
-template <typename T> ref<T> Inv(const ref<T>& x);
-template <typename T> ref<T> Mult(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Div(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Mod(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> Incr(const ref<T>& x);
-template <typename T> ref<T> Decr(const ref<T>& x);
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Abs(const ArgT& x);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Add(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Sub(const ArgX& x, const ArgY& y);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Plus(const ArgT& x);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Inv(const ArgT& x);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Mult(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Div(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Mod(const ArgX& x, const ArgY& y);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Incr(const ArgT& x);
+
+template <typename ArgT,
+          typename...,
+          typename T = core::argument_data_type_t<ArgT>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> Decr(const ArgT& x);
 
 // Arithmetic operators
 
-// Addition
-template <typename T> ref<T> operator+(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator+(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator+(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<std::string> operator+(const ref<std::string>& x,
-                                             const char* y);
-DATAFLOW___EXPORT ref<std::string> operator+(const char* x,
-                                             const ref<std::string>& y);
+/// Addition
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator+(const ArgX& x, const ArgY& y);
 
-// Subtraction
-template <typename T> ref<T> operator-(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator-(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator-(const T& x, const ref<T>& y);
+/// Subtraction
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator-(const ArgX& x, const ArgY& y);
 
-// Unary plus
-template <typename T> ref<T> operator+(const ref<T>& x);
+/// Unary plus
+///
+template <typename T,
+          typename...,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> operator+(const ref<T>& x);
 
-// Unary minus (additive inverse)
-template <typename T> ref<T> operator-(const ref<T>& x);
+/// Unary minus (additive inverse)
+///
+template <typename T,
+          typename...,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> operator-(const ref<T>& x);
 
-// Multiplication
-template <typename T> ref<T> operator*(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator*(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator*(const T& x, const ref<T>& y);
+/// Multiplication
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator*(const ArgX& x, const ArgY& y);
 
-// Division
-template <typename T> ref<T> operator/(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator/(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator/(const T& x, const ref<T>& y);
+/// Division
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator/(const ArgX& x, const ArgY& y);
 
-// Modulo (integer remainder)
-template <typename T> ref<T> operator%(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<T> operator%(const ref<T>& x, const T& y);
-template <typename T> ref<T> operator%(const T& x, const ref<T>& y);
+/// Modulo (integer remainder)
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator%(const ArgX& x, const ArgY& y);
 
-// Increment
-template <typename T> ref<T> operator++(const ref<T>& x);
-template <typename T> ref<T> operator++(const ref<T>& x, int);
+/// Increment
+///
+template <typename T,
+          typename...,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> operator++(const ref<T>& x);
 
-// Decrement
-template <typename T> ref<T> operator--(const ref<T>& x);
-template <typename T> ref<T> operator--(const ref<T>& x, int);
+template <typename T,
+          typename...,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> operator++(const ref<T>& x, int);
+
+/// Decrement
+///
+template <typename T,
+          typename...,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> operator--(const ref<T>& x);
+
+template <typename T,
+          typename...,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<T> operator--(const ref<T>& x, int);
 
 /// \}
 } // dataflow

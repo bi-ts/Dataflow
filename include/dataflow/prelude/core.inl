@@ -37,6 +37,9 @@
 #include "../internal/node_state_prev.h"
 #include "../internal/node_var.h"
 
+#include "core/internal/node_since.h"
+#include "core/internal/node_since_activator.h"
+
 #include <sstream>
 
 namespace dataflow
@@ -49,6 +52,13 @@ ref<T>::ref(const internal::ref& r, internal::ref::ctor_guard_t)
 : internal::ref(r)
 {
   DATAFLOW___CHECK_PRECONDITION(r.is_of_type<T>());
+}
+
+template <typename T>
+template <typename U, typename..., typename>
+ref<T>::ref(U&& value)
+: internal::ref(Const(value))
+{
 }
 
 template <typename T> ref<T> ref<T>::operator()(const Time& t) const
@@ -76,11 +86,26 @@ template <typename T> const T& val<T>::operator()() const
 template <typename T>
 var<T>::var(const internal::ref& r, internal::ref::ctor_guard_t)
 : ref<T>(r, internal::ref::ctor_guard)
+, readonly_(false)
 {
 }
 
-template <typename T> const var<T>& var<T>::operator=(const T& v) const
+template <typename T>
+var<T>::var(const var& other)
+: ref<T>(other)
+, readonly_(true)
 {
+}
+
+template <typename T> var<T>::var(var& other) = default;
+
+template <typename T> var<T>::var(var&& other) = default;
+
+template <typename T> const var<T>& var<T>::operator=(const T& v)
+{
+  if (readonly_)
+    throw std::logic_error("variable is readonly");
+
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
 
@@ -278,7 +303,7 @@ dataflow::ref<T> dataflow::core::LiftPuller(const ref<X>& x,
   return LiftPuller<Policy>(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
+template <typename Policy, typename X, typename... Xs, typename T, typename>
 dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
                                               const ref<X>& x,
                                               const ref<Xs>&... xs)
@@ -290,7 +315,7 @@ dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
                 internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
+template <typename Policy, typename X, typename... Xs, typename T, typename>
 dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
                                               const ref<Xs>&... xs)
 {
@@ -428,7 +453,7 @@ dataflow::Prev(const ref<T>& v0, const ref<T>& x, const Time& t0)
                 internal::ref::ctor_guard);
 }
 
-template <typename Arg, typename F, typename T>
+template <typename Arg, typename F, typename..., typename T, typename>
 dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 {
   struct helper
@@ -452,4 +477,22 @@ dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
 
   return ref<T>(internal::node_state<T>::create(sp, core::make_argument(s0), s),
                 internal::ref::ctor_guard);
+}
+
+template <typename F, typename..., typename T>
+dataflow::ref<T>
+dataflow::Since(const ref<dtimestamp>& ti, const F& f, const Time& t0)
+{
+  return ref<T>(
+    internal::node_since<T>::create(internal::node_since_activator::create(ti),
+                                    detail::ref_from_function_of_time_or_ref(f),
+                                    true),
+    internal::ref::ctor_guard);
+}
+
+template <typename F, typename..., typename T>
+dataflow::function_of_time<T> dataflow::Since(const ref<dtimestamp>& ti,
+                                              const F& f)
+{
+  return [=](const Time& t0) { return Since(ti, f, t0); };
 }

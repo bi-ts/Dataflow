@@ -90,6 +90,8 @@ public:
   class DATAFLOW___EXPORT vertex_descriptor
   {
     friend class converter;
+    DATAFLOW___EXPORT friend std::ostream&
+    operator<<(std::ostream& out, const vertex_descriptor& v);
 
   public:
     vertex_descriptor();
@@ -156,6 +158,9 @@ using vertex_range = std::pair<dependency_graph::vertex_iterator,
                                dependency_graph::vertex_iterator>;
 
 DATAFLOW___EXPORT const dependency_graph& graph();
+
+DATAFLOW___EXPORT std::ostream&
+operator<<(std::ostream& out, const dependency_graph::vertex_descriptor& v);
 
 // IncidenceGraph
 DATAFLOW___EXPORT out_edge_range out_edges(
@@ -241,6 +246,8 @@ secondary_dependency(dependency_graph::edge_descriptor e);
 
 template <typename T>
 ref<T> Log(const ref<T>& x, const std::string& label = "");
+
+void DATAFLOW___EXPORT write_graphviz(std::ostream& out);
 
 } // introspect
 } // dataflow

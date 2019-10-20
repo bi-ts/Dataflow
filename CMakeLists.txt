@@ -50,8 +50,14 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/conditional.inl
   include/dataflow/prelude/core.h
   include/dataflow/prelude/core.inl
+  include/dataflow/prelude/core/dtime.h
+  include/dataflow/prelude/core/internal/node_since.h
+  include/dataflow/prelude/core/internal/node_since_activator.h
   include/dataflow/prelude/logical.h
   include/dataflow/prelude/logical.inl
+  include/dataflow/prelude/stateful.h
+  include/dataflow/prelude/stateful.inl
+  include/dataflow/prelude/stateful/internal/transition.h
   include/dataflow/string.h
   include/dataflow/string.inl
   include/dataflow/tuple.h
@@ -88,14 +94,14 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/comparison.cpp
   src/prelude/conditional.cpp
   src/prelude/core.cpp
+  src/prelude/core/dtime.cpp
+  src/prelude/core/internal/node_since_activator.cpp
   src/prelude/logical.cpp
+  src/prelude/stateful/internal/transition.cpp
   src/string.cpp
 
   src/internal/config.h
   src/internal/converter.h
-  src/internal/engine.cpp
-  src/internal/engine.h
-  src/internal/engine.inl
   src/internal/graph.h
   src/internal/node.cpp
   src/internal/node_compound.cpp
@@ -107,6 +113,9 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/node_state_prev.cpp
   src/internal/node_time.h
   src/internal/nodes_factory.cpp
+  src/internal/pumpa.cpp
+  src/internal/pumpa.h
+  src/internal/pumpa.inl
   src/internal/ref.cpp
   src/internal/tick_count.h
   src/internal/vd_handle.h

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,64 +32,145 @@ namespace dataflow
 
 // Comparison functions
 
-template <typename T> ref<bool> Eq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> NotEq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> Gr(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> Less(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> GrEq(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> LessEq(const ref<T>& x, const ref<T>& y);
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<bool> Eq(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<bool> NotEq(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<bool> Gr(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<bool> Less(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<bool> GrEq(const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
+ref<bool> LessEq(const ArgX& x, const ArgY& y);
 
 // Comparison operators
 
-// Equal to
-template <typename T> ref<bool> operator==(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator==(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator==(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<bool> operator==(const ref<std::string>& x,
-                                       const char* y);
-DATAFLOW___EXPORT ref<bool> operator==(const char* x,
-                                       const ref<std::string>& y);
+/// Equal to
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<bool> operator==(const ArgX& x, const ArgY& y);
 
-// Not equal to
-template <typename T> ref<bool> operator!=(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator!=(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator!=(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<bool> operator!=(const ref<std::string>& x,
-                                       const char* y);
-DATAFLOW___EXPORT ref<bool> operator!=(const char* x,
-                                       const ref<std::string>& y);
+/// Not equal to
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<bool> operator!=(const ArgX& x, const ArgY& y);
 
-// Greater than
-template <typename T> ref<bool> operator>(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator>(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator>(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<bool> operator>(const ref<std::string>& x, const char* y);
-DATAFLOW___EXPORT ref<bool> operator>(const char* x, const ref<std::string>& y);
+/// Greater than
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<bool> operator>(const ArgX& x, const ArgY& y);
 
-// Less than
-template <typename T> ref<bool> operator<(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator<(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator<(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<bool> operator<(const ref<std::string>& x, const char* y);
-DATAFLOW___EXPORT ref<bool> operator<(const char* x, const ref<std::string>& y);
+/// Less than
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<bool> operator<(const ArgX& x, const ArgY& y);
 
-// Greater than or equal to
-template <typename T> ref<bool> operator>=(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator>=(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator>=(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<bool> operator>=(const ref<std::string>& x,
-                                       const char* y);
-DATAFLOW___EXPORT ref<bool> operator>=(const char* x,
-                                       const ref<std::string>& y);
+/// Greater than or equal to
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<bool> operator>=(const ArgX& x, const ArgY& y);
 
-// Less than or equal to
-template <typename T> ref<bool> operator<=(const ref<T>& x, const ref<T>& y);
-template <typename T> ref<bool> operator<=(const ref<T>& x, const T& y);
-template <typename T> ref<bool> operator<=(const T& x, const ref<T>& y);
-DATAFLOW___EXPORT ref<bool> operator<=(const ref<std::string>& x,
-                                       const char* y);
-DATAFLOW___EXPORT ref<bool> operator<=(const char* x,
-                                       const ref<std::string>& y);
+/// Less than or equal to
+///
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<bool> operator<=(const ArgX& x, const ArgY& y);
 
 /// \}
 } // dataflow

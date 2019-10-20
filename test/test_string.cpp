@@ -93,7 +93,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_string_basic)
 BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_string_basic)
 {
   auto x = Var<int>(42);
-  auto y = Var<float>(42.5);
+  auto y = Var<float>(42.5f);
   auto z = ToString(x, " != ", y);
   auto f = *z;
 
