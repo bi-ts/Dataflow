@@ -23,20 +23,15 @@
 namespace dataflow
 {
 template <typename T> union maybe<T>::data {
-  std::array<char, sizeof(T) + alignof(T)> raw_;
-
   struct
   {
     char engaged_;
     T value_;
   } storage_;
 
-  static_assert(sizeof(decltype(raw_)) == sizeof(decltype(storage_)),
-                "Incompatible sizes");
-
   explicit data()
-  : raw_{}
   {
+    new (&storage_.engaged_) char{};
   }
 
   explicit data(const T& x)
@@ -45,18 +40,26 @@ template <typename T> union maybe<T>::data {
   }
 
   data(const data& other)
-  : data{}
   {
-    if (other.storage_.engaged_)
+    new (&storage_.engaged_) char{other.storage_.engaged_};
+
+    if (storage_.engaged_)
     {
-      data tmp{other.storage_.value_};
-      std::swap(raw_, tmp.raw_);
+      new (&storage_.value_) T{other.storage_.value_};
     }
   }
 
-  data& operator=(data other)
+  data& operator=(const data& other)
   {
-    std::swap(raw_, other.raw_);
+    if (storage_.engaged_)
+      storage_.value_.~T();
+
+    storage_.engaged_ = other.storage_.engaged_;
+
+    if (storage_.engaged_)
+    {
+      new (&storage_.value_) T{other.storage_.value_};
+    }
 
     return *this;
   }

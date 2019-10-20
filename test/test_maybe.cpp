@@ -21,6 +21,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <stdexcept>
+
 using namespace dataflow;
 
 namespace dataflow_test
@@ -91,7 +93,6 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_ctr)
 
   const auto x = Const<int>();
   const auto y = Const<int>();
-  const auto z = Const<int>();
 
   const maybe<ref<int>> a{};
   const maybe<ref<int>> b{x};
@@ -99,12 +100,12 @@ BOOST_AUTO_TEST_CASE(test_maybe_copy_ctr)
   const maybe<ref<int>> ca{a};
 
   BOOST_CHECK_EQUAL(ca.engaged(), false);
-  BOOST_CHECK_EQUAL(ca.value_or(z).id(), z.id());
+  BOOST_CHECK_EQUAL(ca.value_or(y).id(), y.id());
 
   const maybe<ref<int>> cb{b};
 
   BOOST_CHECK_EQUAL(cb.engaged(), true);
-  BOOST_CHECK_EQUAL(cb.value_or(z).id(), x.id());
+  BOOST_CHECK_EQUAL(cb.value_or(y).id(), x.id());
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_copy_assignment)
@@ -406,6 +407,113 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2nd_argument_literal)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
   BOOST_CHECK_EQUAL(f(), "empty");
+}
+
+class not_relocatable
+{
+public:
+  not_relocatable(int value = 0)
+  : p_this_(this)
+  , value_(value)
+  {
+  }
+
+  not_relocatable(const not_relocatable& other)
+  : p_this_(this)
+  , value_(other.value_)
+  {
+  }
+
+  ~not_relocatable() noexcept(false)
+  {
+    if (p_this_ != this)
+      throw std::logic_error("Object was relocated");
+  }
+
+  not_relocatable& operator=(const not_relocatable& other)
+  {
+    value_ = other.value_;
+    return *this;
+  }
+
+  bool operator==(const not_relocatable& other) const
+  {
+    return value_ == other.value_;
+  }
+
+  bool operator!=(const not_relocatable& other) const
+  {
+    return !(*this == other);
+  }
+
+  friend std::ostream& operator<<(std::ostream& out, const not_relocatable& val)
+  {
+    return out << "not_relocatable{ " << val.value_ << " }";
+  }
+
+private:
+  not_relocatable* p_this_;
+  int value_;
+};
+
+BOOST_AUTO_TEST_CASE(test_not_relocatable)
+{
+  BOOST_CHECK(core::is_flowable<not_relocatable>::value);
+
+  const not_relocatable x(11);
+  const not_relocatable y(12);
+
+  BOOST_CHECK_EQUAL(x, not_relocatable(11));
+
+  BOOST_CHECK(x != y);
+
+  const auto size = sizeof(x);
+
+  std::unique_ptr<not_relocatable> p_z(new not_relocatable(33));
+
+  char tmp[size];
+
+  std::copy(reinterpret_cast<char*>(p_z.get()),
+            reinterpret_cast<char*>(p_z.get()) + size,
+            tmp);
+
+  BOOST_CHECK_THROW(reinterpret_cast<not_relocatable*>(tmp)->~not_relocatable(),
+                    std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_copy_ctr_not_relocatable)
+{
+  const maybe<not_relocatable> a{11};
+
+  const maybe<not_relocatable> b{a};
+
+  BOOST_CHECK_EQUAL(b.engaged(), true);
+  BOOST_CHECK_EQUAL(b.value_or(22), 11);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeE_copy_assignment_not_relocatable)
+{
+  const maybe<not_relocatable> e{11};
+
+  maybe<not_relocatable> ne{};
+
+  BOOST_CHECK_EQUAL(ne.engaged(), false);
+  BOOST_CHECK_EQUAL(ne.value_or(22), 22);
+
+  ne = e;
+
+  BOOST_CHECK_EQUAL(ne.engaged(), true);
+  BOOST_CHECK_EQUAL(ne.value_or(22), 11);
+
+  maybe<not_relocatable> ee{44};
+
+  BOOST_CHECK_EQUAL(ee.engaged(), true);
+  BOOST_CHECK_EQUAL(ee.value_or(22), 44);
+
+  ee = e;
+
+  BOOST_CHECK_EQUAL(ee.engaged(), true);
+  BOOST_CHECK_EQUAL(ee.value_or(22), 11);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
