@@ -216,7 +216,7 @@ dataflow::get(const tuple<Us...>& t)
 template <typename Arg, typename... Args>
 dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Arg>,
                               dataflow::core::argument_data_type_t<Args>...>>
-dataflow::TupleE(const Arg& arg, const Args&... args)
+dataflow::TupleC(const Arg& arg, const Args&... args)
 {
   struct policy
   {

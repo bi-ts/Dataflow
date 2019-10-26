@@ -73,7 +73,7 @@ get(const tuple<Us...>& t);
 
 template <typename Arg, typename... Args>
 ref<tuple<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
-TupleE(const Arg& arg, const Args&... args);
+TupleC(const Arg& arg, const Args&... args);
 
 template <std::size_t I, typename... Us>
 ref<core::argument_data_type_t<

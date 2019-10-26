@@ -76,14 +76,14 @@ BOOST_AUTO_TEST_CASE(test_tuple_mixed)
   BOOST_CHECK(y != make_tuple("text", Const(1), 3.14));
 }
 
-BOOST_AUTO_TEST_CASE(test_TupleE)
+BOOST_AUTO_TEST_CASE(test_TupleC)
 {
   Engine engine;
 
   auto a = Var(2.017);
   auto b = Var("text");
 
-  auto c = TupleE("Friday", 13, a, b, "other text");
+  auto c = TupleC("Friday", 13, a, b, "other text");
 
   auto d = Get<3>(c);
 
@@ -98,13 +98,13 @@ BOOST_AUTO_TEST_CASE(test_TupleE)
   BOOST_CHECK_EQUAL(e(), "abc");
 }
 
-BOOST_AUTO_TEST_CASE(test_TupleE_Getters)
+BOOST_AUTO_TEST_CASE(test_TupleC_Getters)
 {
   Engine engine;
 
-  auto a = TupleE("str", 20, 'c', "text", 34, 0, 1, 2);
+  auto a = TupleC("str", 20, 'c', "text", 34, 0, 1, 2);
 
-  auto b = *TupleE(Fifth(a), Fourth(a), Third(a), Second(a), First(a));
+  auto b = *TupleC(Fifth(a), Fourth(a), Third(a), Second(a), First(a));
 
   BOOST_CHECK_EQUAL((get<0>(b())), 34);
   BOOST_CHECK_EQUAL((get<1>(b())), "text");
