@@ -76,26 +76,64 @@ BOOST_AUTO_TEST_CASE(test_tuple_mixed)
   BOOST_CHECK(y != make_tupleB("text", Const(1), 3.14));
 }
 
-BOOST_AUTO_TEST_CASE(test_TupleC)
+BOOST_AUTO_TEST_CASE(test_TupleA_Get)
+{
+  Engine engine;
+
+  auto a = Var(2.019);
+  auto b = Var("26");
+  auto c = Var("text");
+
+  auto d = TupleA("Saturday", 13, a, b, c);
+
+  BOOST_CHECK_EQUAL(introspect::label(d), "const");
+
+  auto e = Get<3>(d);
+
+  BOOST_CHECK_EQUAL(introspect::label(e), "get<3>");
+
+  const auto f = Get<0>(d) + ", " + e;
+
+  auto g = *f;
+
+  BOOST_CHECK_EQUAL(g(), "Saturday, 26");
+  BOOST_CHECK_EQUAL(introspect::active_node(a), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(b), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(c), false);
+
+  b = "27";
+
+  BOOST_CHECK_EQUAL(g(), "Saturday, 27");
+}
+
+BOOST_AUTO_TEST_CASE(test_TupleC_Get)
 {
   Engine engine;
 
   auto a = Var(2.017);
-  auto b = Var("text");
+  auto b = Var("13");
+  auto c = Var("text");
 
-  auto c = TupleC("Friday", 13, a, b, "other text");
+  auto d = TupleC("Friday", 13, a, b, c);
 
-  auto d = Get<3>(c);
+  BOOST_CHECK_EQUAL(introspect::label(d), "tuple");
 
-  BOOST_CHECK_EQUAL(introspect::label(d), "get<3>");
+  auto e = Get<3>(d);
 
-  auto e = *d;
+  BOOST_CHECK_EQUAL(introspect::label(e), "get<3>");
 
-  BOOST_CHECK_EQUAL(e(), "text");
+  const auto f = Get<0>(d) + ", " + e;
 
-  b = "abc";
+  auto g = *f;
 
-  BOOST_CHECK_EQUAL(e(), "abc");
+  BOOST_CHECK_EQUAL(g(), "Friday, 13");
+  BOOST_CHECK_EQUAL(introspect::active_node(a), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(b), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(c), true);
+
+  b = "15";
+
+  BOOST_CHECK_EQUAL(g(), "Friday, 15");
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleC_Getters)

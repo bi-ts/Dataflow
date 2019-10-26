@@ -214,6 +214,16 @@ dataflow::get(const tuple<Us...>& t)
 }
 
 template <typename Arg, typename... Args>
+dataflow::ref<
+  dataflow::tuple<dataflow::ref<dataflow::core::argument_data_type_t<Arg>>,
+                  dataflow::ref<dataflow::core::argument_data_type_t<Args>>...>>
+dataflow::TupleA(const Arg& arg, const Args&... args)
+{
+  return Const(
+    make_tupleB(core::make_argument(arg), core::make_argument(args)...));
+}
+
+template <typename Arg, typename... Args>
 dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Arg>,
                               dataflow::core::argument_data_type_t<Args>...>>
 dataflow::TupleC(const Arg& arg, const Args&... args)

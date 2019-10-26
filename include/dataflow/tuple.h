@@ -72,6 +72,11 @@ typename std::tuple_element<I, std::tuple<Us...>>::type
 get(const tuple<Us...>& t);
 
 template <typename Arg, typename... Args>
+ref<tuple<ref<core::argument_data_type_t<Arg>>,
+          ref<core::argument_data_type_t<Args>>...>>
+TupleA(const Arg& arg, const Args&... args);
+
+template <typename Arg, typename... Args>
 ref<tuple<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
 TupleC(const Arg& arg, const Args&... args);
 
