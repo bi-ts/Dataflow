@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(test_And_1_arg)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
+  auto x = Var<bool>();
 
   const auto a = And(x);
 
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(test_And_4_mixed_arguments)
 {
   Engine engine;
 
-  const auto x = Var<bool>();
-  const auto y = Var<bool>();
+  auto x = Var<bool>();
+  auto y = Var<bool>();
 
   const auto a = And(x, true, y, true);
 

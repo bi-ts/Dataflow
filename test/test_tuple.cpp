@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison)
 {
   Engine engine;
 
-  const auto x = Var(10);
-  const auto y = Var(20.19);
+  auto x = Var(10);
+  auto y = Var(20.19);
 
   const auto a = Const(dataflow::make_tuple("13", Const(10), Const(20.19)));
   const auto b = Const(dataflow::make_tuple("13", x, y));
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison_minimal_tuple)
 {
   Engine engine;
 
-  const auto x = Var("13");
+  auto x = Var("13");
   const auto y = Const(dataflow::make_tuple(Const("13")));
   const auto z = Const(dataflow::make_tuple(x));
 
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison)
 {
   Engine engine;
 
-  const auto x = Var(10);
+  auto x = Var(10);
   const auto y = Var(20.19);
 
   const auto a = Const(dataflow::make_tuple("13", Const(10), Const(20.19)));
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison_minimal_tuple)
 {
   Engine engine;
 
-  const auto x = Var("13");
+  auto x = Var("13");
   const auto y = Const(dataflow::make_tuple(Const("13")));
   const auto z = Const(dataflow::make_tuple(x));
 
