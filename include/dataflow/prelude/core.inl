@@ -119,7 +119,7 @@ template <typename T> const var<T>& var<T>::operator=(const T& v)
 namespace core
 {
 template <typename T>
-generic_patch<T>::generic_patch(const T& curr, const T& prev)
+generic_patch<T>::generic_patch(const T& curr, const T&)
 : curr_(curr)
 {
 }

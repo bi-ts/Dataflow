@@ -127,7 +127,7 @@ public:
 public:
   explicit generic_patch(const T& curr, const T& prev);
 
-  T apply(const T&) const;
+  T apply(const T& prev) const;
 
 private:
   T curr_;
