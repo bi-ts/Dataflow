@@ -174,7 +174,7 @@ BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
 
 BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
 {
-  const auto x = Var<int>(-42);
+  auto x = Var<int>(-42);
 
   const auto y = If(x < 0, -x, 2 * x + 1);
 

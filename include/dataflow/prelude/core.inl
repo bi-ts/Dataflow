@@ -86,11 +86,26 @@ template <typename T> const T& val<T>::operator()() const
 template <typename T>
 var<T>::var(const internal::ref& r, internal::ref::ctor_guard_t)
 : ref<T>(r, internal::ref::ctor_guard)
+, readonly_(false)
 {
 }
 
-template <typename T> const var<T>& var<T>::operator=(const T& v) const
+template <typename T>
+var<T>::var(const var& other)
+: ref<T>(other)
+, readonly_(true)
 {
+}
+
+template <typename T> var<T>::var(var& other) = default;
+
+template <typename T> var<T>::var(var&& other) = default;
+
+template <typename T> const var<T>& var<T>::operator=(const T& v)
+{
+  if (readonly_)
+    throw std::logic_error("variable is readonly");
+
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
 

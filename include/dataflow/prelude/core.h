@@ -101,8 +101,17 @@ template <typename T> class var final : public ref<T>
 {
 public:
   explicit var(const internal::ref& r, internal::ref::ctor_guard_t);
+  var(const var& other);
+  var(var& other);
+  var(var&& other);
 
-  const var& operator=(const T& v) const;
+  /**
+   * \throws std::logic_error in case the variable reference is readonly.
+   */
+  const var& operator=(const T& v);
+
+private:
+  bool readonly_;
 };
 
 template <typename T>

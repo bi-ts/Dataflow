@@ -252,6 +252,12 @@ BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
   BOOST_CHECK_EQUAL(x(), 0);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_ref, test_core_fixture)
+{
+  BOOST_CHECK_EQUAL((std::is_copy_assignable<ref<int>>::value), false);
+  BOOST_CHECK_EQUAL((std::is_copy_constructible<ref<int>>::value), true);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
 {
   const ref<int> x = Const(17);
@@ -401,7 +407,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 {
-  const var<int> x = Var<int>(3);
+  var<int> x = Var<int>(3);
 
   const auto y = Main([=](const Time& t0) { return x(t0); });
 
@@ -424,7 +430,7 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
 {
-  const var<int> x = Var(17);
+  var<int> x = Var(17);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
@@ -457,7 +463,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args, test_core_fixture)
 {
   const auto a = Const(1);
   const auto b = Const(2);
-  const auto x = Var<box<int>>(a);
+  auto x = Var<box<int>>(a);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
@@ -485,7 +491,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args_to_string_constructor,
 
 BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
 {
-  const var<std::string> x = Var("some text");
+  var<std::string> x = Var("some text");
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
@@ -519,7 +525,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Main, test_core_fixture)
 {
-  const var<int> x = Var<int>(6);
+  var<int> x = Var<int>(6);
 
   const auto y = Main([=](const Time& t) { return x; });
 
@@ -872,7 +878,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
 {
   const var<int> x = Var<int>('C');
-  const var<bool> y = Var<bool>(true);
+  var<bool> y = Var<bool>(true);
 
   struct policy
   {
@@ -906,8 +912,8 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
 {
-  const auto x = Var<char>('B');
-  const auto y = Var<int>(4);
+  auto x = Var<char>('B');
+  auto y = Var<int>(4);
 
   const auto z = core::Lift(
     "multiply", x, y, [](char c, int n) { return std::string(n, c); });
@@ -932,8 +938,8 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
 {
-  const auto x = Var<char>('C');
-  const auto y = Var<int>(3);
+  auto x = Var<char>('C');
+  auto y = Var<int>(3);
 
   struct tool
   {
@@ -965,10 +971,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
 {
-  const var<std::string> a = Var("text");
-  const var<char> b = Var('A');
-  const var<int> c = Var(4);
-  const var<double> d = Var(3.14);
+  var<std::string> a = Var("text");
+  var<char> b = Var('A');
+  var<int> c = Var(4);
+  var<double> d = Var(3.14);
 
   struct policy
   {
@@ -1061,7 +1067,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 {
   const ref<int> v0 = Var<int>(1);
-  const var<int> x = Var<int>(3);
+  var<int> x = Var<int>(3);
 
   capture_output();
 
@@ -1098,8 +1104,8 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 {
   const ref<int> v0 = Var<int>(1);
-  const var<int> x = Var<int>(3);
-  const var<bool> b = Var<bool>(false);
+  var<int> x = Var<int>(3);
+  var<bool> b = Var<bool>(false);
 
   capture_output();
 
@@ -1151,7 +1157,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 {
-  const var<char> x = Var<char>('a');
+  var<char> x = Var<char>('a');
 
   capture_output();
 
@@ -1236,7 +1242,7 @@ BOOST_AUTO_TEST_CASE(
 {
   Engine engine;
 
-  const auto x = Var<int>(1);
+  auto x = Var<int>(1);
 
   const auto tf = [=](const ref<int>&) {
     return [=](const Time& t0) { return x(t0); };
@@ -1283,8 +1289,8 @@ BOOST_AUTO_TEST_CASE(test_Since)
 {
   Engine engine;
 
-  const auto x = Var(0);
-  const auto use_since = Var(true);
+  auto x = Var(0);
+  auto use_since = Var(true);
 
   struct policy
   {

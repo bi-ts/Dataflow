@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(test_Abs_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Abs(x);
 
@@ -62,8 +62,8 @@ BOOST_AUTO_TEST_CASE(test_Add_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>();
+  auto x = Var<int>();
+  auto y = Var<int>();
 
   const auto a = Add(x, y);
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(test_Add_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = Add(2, y);
 
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(test_Add_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Add(x, 2);
 
@@ -164,8 +164,8 @@ BOOST_AUTO_TEST_CASE(test_Sub_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>();
+  auto x = Var<int>();
+  auto y = Var<int>();
 
   const auto a = Sub(x, y);
 
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = Sub(2, y);
 
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Sub(x, 2);
 
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(test_Plus_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Plus(x);
 
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(test_Inv_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Inv(x);
 
@@ -320,8 +320,8 @@ BOOST_AUTO_TEST_CASE(test_Mult_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>();
+  auto x = Var<int>();
+  auto y = Var<int>();
 
   const auto a = Mult(x, y);
 
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = Mult(2, y);
 
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Mult(x, 2);
 
@@ -422,8 +422,8 @@ BOOST_AUTO_TEST_CASE(test_Div_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>(1);
+  auto x = Var<int>();
+  auto y = Var<int>(1);
 
   const auto a = Div(x, y);
 
@@ -478,7 +478,7 @@ BOOST_AUTO_TEST_CASE(test_Div_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = Div(2, y);
 
@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE(test_Div_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Div(x, 2);
 
@@ -524,8 +524,8 @@ BOOST_AUTO_TEST_CASE(test_Mod_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>(1);
+  auto x = Var<int>();
+  auto y = Var<int>(1);
 
   const auto a = Mod(x, y);
 
@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = Mod(2, y);
 
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Mod(x, 2);
 
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE(test_Incr_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Incr(x);
 
@@ -653,7 +653,7 @@ BOOST_AUTO_TEST_CASE(test_Decr_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = Decr(x);
 
@@ -680,8 +680,8 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>();
+  auto x = Var<int>();
+  auto y = Var<int>();
 
   const auto a = x + y;
 
@@ -734,8 +734,8 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>("aa1bb");
-  const auto y = Var<std::string>("aa1bb");
+  auto x = Var<std::string>("aa1bb");
+  auto y = Var<std::string>("aa1bb");
 
   const auto a = x + y;
 
@@ -784,7 +784,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = 2 + y;
 
@@ -805,7 +805,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = x + 2;
 
@@ -828,7 +828,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_lhs_literal_string)
 {
   Engine engine;
 
-  const auto y = Var<std::string>("aa1bb");
+  auto y = Var<std::string>("aa1bb");
 
   const auto a = "aa2bb" + y;
 
@@ -849,7 +849,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_rhs_literal_string)
 {
   Engine engine;
 
-  const auto x = Var<std::string>("aa1bb");
+  auto x = Var<std::string>("aa1bb");
 
   const auto a = x + "aa2bb";
 
@@ -872,8 +872,8 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>();
+  auto x = Var<int>();
+  auto y = Var<int>();
 
   const auto a = x - y;
 
@@ -926,7 +926,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = 2 - y;
 
@@ -947,7 +947,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = x - 2;
 
@@ -972,7 +972,7 @@ BOOST_AUTO_TEST_CASE(test_Plus_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = +x;
 
@@ -997,7 +997,7 @@ BOOST_AUTO_TEST_CASE(test_Inv_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = -x;
 
@@ -1022,8 +1022,8 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>();
+  auto x = Var<int>();
+  auto y = Var<int>();
 
   const auto a = x * y;
 
@@ -1076,7 +1076,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = 2 * y;
 
@@ -1097,7 +1097,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = x * 2;
 
@@ -1122,8 +1122,8 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>(1);
+  auto x = Var<int>();
+  auto y = Var<int>(1);
 
   const auto a = x / y;
 
@@ -1176,7 +1176,7 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = 2 / y;
 
@@ -1197,7 +1197,7 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = x / 2;
 
@@ -1222,8 +1222,8 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
-  const auto y = Var<int>(1);
+  auto x = Var<int>();
+  auto y = Var<int>(1);
 
   const auto a = x % y;
 
@@ -1276,7 +1276,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_lhs_literal_int)
 {
   Engine engine;
 
-  const auto y = Var<int>(-3);
+  auto y = Var<int>(-3);
 
   const auto a = 2 % y;
 
@@ -1297,7 +1297,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_rhs_literal_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = x % 2;
 
@@ -1322,7 +1322,7 @@ BOOST_AUTO_TEST_CASE(test_Incr_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = ++x;
 
@@ -1347,7 +1347,7 @@ BOOST_AUTO_TEST_CASE(test_Decr_operator_int)
 {
   Engine engine;
 
-  const auto x = Var<int>();
+  auto x = Var<int>();
 
   const auto a = --x;
 
