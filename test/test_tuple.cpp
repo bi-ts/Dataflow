@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(test_tuple_values)
 {
   Engine engine;
 
-  const tuple<std::string, int, double> x = make_tuple("text", 1, 3.14);
+  const tuple<std::string, int, double> x = make_tupleB("text", 1, 3.14);
   const auto y = x;
 
   // Streaming operator
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(test_tuple_values)
 
   // Equality comparison
   BOOST_CHECK(x == y);
-  BOOST_CHECK(x == make_tuple("text", 1, 3.14));
+  BOOST_CHECK(x == make_tupleB("text", 1, 3.14));
 }
 
 BOOST_AUTO_TEST_CASE(test_tuple_mixed)
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(test_tuple_mixed)
 
   const auto x = Const(1);
 
-  tuple<std::string, ref<int>, double> y = make_tuple("text", x, 3.14);
+  tuple<std::string, ref<int>, double> y = make_tupleB("text", x, 3.14);
 
   BOOST_CHECK_EQUAL(get<0>(y), "text");
   BOOST_CHECK_EQUAL(get<1>(y).id(), x.id());
@@ -68,12 +68,12 @@ BOOST_AUTO_TEST_CASE(test_tuple_mixed)
   BOOST_CHECK_EQUAL(ss.str().substr(0, 11), "tuple(text;");
 
   // Equality comparison
-  BOOST_CHECK(y == make_tuple("text", x, 3.14));
+  BOOST_CHECK(y == make_tupleB("text", x, 3.14));
 
   // Inequality comparison
-  BOOST_CHECK(y != make_tuple("txt", x, 3.14));
+  BOOST_CHECK(y != make_tupleB("txt", x, 3.14));
 
-  BOOST_CHECK(y != make_tuple("text", Const(1), 3.14));
+  BOOST_CHECK(y != make_tupleB("text", Const(1), 3.14));
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleC)
@@ -117,9 +117,8 @@ BOOST_AUTO_TEST_CASE(test_Tuple_Getters)
 {
   Engine engine;
 
-  const auto a = Const(
-    // TODO: why this is confused with `std::make_tuple`?
-    dataflow::make_tuple(Const("str"), Const(20), Const('c'), Const("text")));
+  const auto a =
+    Const(make_tupleB(Const("str"), Const(20), Const('c'), Const("text")));
 
   const auto b = *Third(a);
 
@@ -133,8 +132,8 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison)
   auto x = Var(10);
   auto y = Var(20.19);
 
-  const auto a = Const(dataflow::make_tuple("13", Const(10), Const(20.19)));
-  const auto b = Const(dataflow::make_tuple("13", x, y));
+  const auto a = Const(make_tupleB("13", Const(10), Const(20.19)));
+  const auto b = Const(make_tupleB("13", x, y));
 
   const auto c = *(a == b);
 
@@ -150,8 +149,8 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison_minimal_tuple)
   Engine engine;
 
   auto x = Var("13");
-  const auto y = Const(dataflow::make_tuple(Const("13")));
-  const auto z = Const(dataflow::make_tuple(x));
+  const auto y = Const(make_tupleB(Const("13")));
+  const auto z = Const(make_tupleB(x));
 
   const auto f = *(z == y);
 
@@ -169,8 +168,8 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison)
   auto x = Var(10);
   const auto y = Var(20.19);
 
-  const auto a = Const(dataflow::make_tuple("13", Const(10), Const(20.19)));
-  const auto b = Const(dataflow::make_tuple("13", x, y));
+  const auto a = Const(make_tupleB("13", Const(10), Const(20.19)));
+  const auto b = Const(make_tupleB("13", x, y));
 
   const auto c = *(a != b);
 
@@ -186,8 +185,8 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison_minimal_tuple)
   Engine engine;
 
   auto x = Var("13");
-  const auto y = Const(dataflow::make_tuple(Const("13")));
-  const auto z = Const(dataflow::make_tuple(x));
+  const auto y = Const(make_tupleB(Const("13")));
+  const auto z = Const(make_tupleB(x));
 
   const auto f = *(z != y);
 

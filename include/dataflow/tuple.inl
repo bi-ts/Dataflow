@@ -196,7 +196,7 @@ std::ostream& dataflow::operator<<(std::ostream& out, const tuple<Ts...>& value)
 template <typename T, typename... Ts>
 dataflow::tuple<dataflow::core::argument_type_t<T>,
                 dataflow::core::argument_type_t<Ts>...>
-dataflow::make_tuple(const T& x, const Ts&... xs)
+dataflow::make_tupleB(const T& x, const Ts&... xs)
 {
   return tuple<dataflow::core::argument_type_t<T>,
                dataflow::core::argument_type_t<Ts>...>(x, xs...);
@@ -229,7 +229,7 @@ dataflow::TupleC(const Arg& arg, const Args&... args)
     calculate(const dataflow::core::argument_data_type_t<Arg>& v,
               const dataflow::core::argument_data_type_t<Args>&... vs)
     {
-      return make_tuple(v, vs...);
+      return make_tupleB(v, vs...);
     };
   };
 

@@ -65,7 +65,7 @@ std::ostream& operator<<(std::ostream& out, const tuple<Ts...>& value);
 
 template <typename T, typename... Ts>
 tuple<core::argument_type_t<T>, core::argument_type_t<Ts>...>
-make_tuple(const T& x, const Ts&... xs);
+make_tupleB(const T& x, const Ts&... xs);
 
 template <std::size_t I, typename... Us>
 typename std::tuple_element<I, std::tuple<Us...>>::type
