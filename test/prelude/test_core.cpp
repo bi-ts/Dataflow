@@ -1155,6 +1155,31 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
   BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;prev = 9;");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Prev_overloads, test_core_fixture)
+{
+  var<int> x = Var<int>(3);
+
+  capture_output();
+
+  const auto z = Main([=](const Time& t0) {
+    return introspect::Log(Prev(x, Prev(33, x, t0), t0));
+  });
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(log_string(), "prev = 3;prev = 33;prev = 3;");
+
+  capture_output();
+
+  x = 10;
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(log_string(), "prev = 3;prev = 33;prev = 3;prev = 10;");
+}
+
 BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 {
   var<char> x = Var<char>('a');

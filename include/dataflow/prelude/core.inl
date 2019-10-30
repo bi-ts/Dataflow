@@ -445,12 +445,13 @@ dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 
 // Stateful functions
 
-template <typename T>
-dataflow::ref<T>
-dataflow::Prev(const ref<T>& v0, const ref<T>& x, const Time& t0)
+template <typename ArgV0, typename ArgX, typename FwT, typename>
+dataflow::ref<FwT>
+dataflow::Prev(const ArgV0& v0, const ArgX& x, const Time& t0)
 {
-  return ref<T>(internal::node_previous<T>::create(v0(t0), x),
-                internal::ref::ctor_guard);
+  return ref<FwT>(
+    internal::node_previous<FwT>::create(core::make_argument(v0)(t0), x),
+    internal::ref::ctor_guard);
 }
 
 template <typename Arg, typename F, typename..., typename T, typename>
