@@ -333,6 +333,27 @@ using argument_data_type = typename std::
 template <typename T>
 using argument_data_type_t = typename argument_data_type<T>::type;
 
+namespace detail
+{
+template <typename T> struct ref_type
+{
+private:
+  template <typename U> static ref<U> test_(const ref<U>*);
+  static void test_(...);
+
+public:
+  using type =
+    decltype(test_(std::declval<typename std::remove_reference<T>::type*>()));
+};
+}
+
+template <typename T>
+using argument_type = typename std::conditional<is_ref<T>::value,
+                                                detail::ref_type<T>,
+                                                convert_to_flowable<T>>::type;
+
+template <typename T> using argument_type_t = typename argument_type<T>::type;
+
 template <typename T,
           typename U,
           typename V = typename argument_data_type<T>::type>

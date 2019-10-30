@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -31,59 +31,72 @@ namespace dataflow
 /// \defgroup tuple
 /// \{
 
-template <typename T, typename... Ts> class tupleE
+template <typename T, typename... Ts>
+class tuple final
+: public std::conditional<
+    internal::std17::disjunction<core::is_ref<T>,
+                                 core::is_aggregate_data_type<T>,
+                                 core::is_ref<Ts>...,
+                                 core::is_aggregate_data_type<Ts>...>::value,
+    core::aggregate_base,
+    core::composite_base>::type
 {
 private:
   using data = std::tuple<T, Ts...>;
 
 public:
-  tupleE();
+  tuple();
 
-  explicit tupleE(const T& t, const Ts&... ts);
+  explicit tuple(const T& t, const Ts&... ts);
 
-  bool operator==(const tupleE& other) const;
-  bool operator!=(const tupleE& other) const;
+  bool operator==(const tuple& other) const;
+  bool operator!=(const tuple& other) const;
 
   template <std::size_t I, typename... Us>
-  friend const typename std::tuple_element<I, std::tuple<Us...>>::type&
-  get(const tupleE<Us...>&);
+  friend typename std::tuple_element<I, std::tuple<Us...>>::type
+  get(const tuple<Us...>&);
 
 private:
   std::shared_ptr<data> p_data_;
 };
 
 template <typename... Ts>
-std::ostream& operator<<(std::ostream& out, const tupleE<Ts...>& value);
+std::ostream& operator<<(std::ostream& out, const tuple<Ts...>& value);
 
 template <typename T, typename... Ts>
-tupleE<core::convert_to_flowable_t<T>, core::convert_to_flowable_t<Ts>...>
-make_tupleE(const T& t, const Ts&... ts);
+tuple<core::argument_type_t<T>, core::argument_type_t<Ts>...>
+make_tupleB(const T& x, const Ts&... xs);
 
 template <std::size_t I, typename... Us>
-const typename std::tuple_element<I, std::tuple<Us...>>::type&
-get(const tupleE<Us...>& t);
+typename std::tuple_element<I, std::tuple<Us...>>::type
+get(const tuple<Us...>& t);
 
-template <typename... Args>
-ref<tupleE<core::argument_data_type_t<Args>...>>
-TupleE(const Args&... arguments);
+template <typename Arg, typename... Args>
+ref<tuple<ref<core::argument_data_type_t<Arg>>,
+          ref<core::argument_data_type_t<Args>>...>>
+TupleA(const Arg& arg, const Args&... args);
 
-template <std::size_t I,
-          typename... Us,
-          typename T = core::convert_to_flowable_t<
-            decltype(get<I>(std::declval<tupleE<Us...>>()))>>
-ref<T> Get(const ref<tupleE<Us...>>& x);
+template <typename Arg, typename... Args>
+ref<tuple<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
+TupleC(const Arg& arg, const Args&... args);
+
+template <std::size_t I, typename... Us>
+ref<core::argument_data_type_t<
+  typename std::tuple_element<I, std::tuple<Us...>>::type>>
+Get(const ref<tuple<Us...>>& x);
 
 template <typename A, typename... Args>
-ref<A> First(const ref<tupleE<A, Args...>>& x);
+ref<core::argument_data_type_t<A>> First(const ref<tuple<A, Args...>>& x);
 
 template <typename A, typename B, typename... Args>
-ref<B> Second(const ref<tupleE<A, B, Args...>>& x);
+ref<core::argument_data_type_t<B>> Second(const ref<tuple<A, B, Args...>>& x);
 
 template <typename A, typename B, typename C, typename... Args>
-ref<C> Third(const ref<tupleE<A, B, C, Args...>>& x);
+ref<core::argument_data_type_t<C>> Third(const ref<tuple<A, B, C, Args...>>& x);
 
 template <typename A, typename B, typename C, typename D, typename... Args>
-ref<D> Fourth(const ref<tupleE<A, B, C, D, Args...>>& x);
+ref<core::argument_data_type_t<D>>
+Fourth(const ref<tuple<A, B, C, D, Args...>>& x);
 
 template <typename A,
           typename B,
@@ -91,8 +104,16 @@ template <typename A,
           typename D,
           typename E,
           typename... Args>
-ref<E> Fifth(const ref<tupleE<A, B, C, D, E, Args...>>& x);
+ref<core::argument_data_type_t<E>>
+Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x);
 
+template <typename T, typename... Ts>
+ref<bool> operator==(const ref<tuple<T, Ts...>>& x,
+                     const ref<tuple<T, Ts...>>& y);
+
+template <typename T, typename... Ts>
+ref<bool> operator!=(const ref<tuple<T, Ts...>>& x,
+                     const ref<tuple<T, Ts...>>& y);
 /// \}
 } // dataflow
 

@@ -112,8 +112,8 @@ ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
     mouse_pressed - Prev(mouse_pressed(t0), mouse_pressed, t0);
 
   const auto s = StateMachine(
-    TupleE(mode::idle, initial_circle_pos),
-    [=](const ref<tupleE<mode, point>>& sp) {
+    TupleC(mode::idle, initial_circle_pos),
+    [=](const ref<tuple<mode, point>>& sp) {
       auto prev_mode = First(sp);
       auto circle_pos = Second(sp);
 
@@ -122,10 +122,10 @@ ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
              Distance(mouse_pos, circle_pos) < radius,
            [=](const Time& t0) {
              const auto mouse_shift = mouse_pos - mouse_pos(t0);
-             return TupleE(mode::active, circle_pos(t0) + mouse_shift);
+             return TupleC(mode::active, circle_pos(t0) + mouse_shift);
            }),
         On(prev_mode == mode::active && mouse_down == -1,
-           TupleE(mode::idle, circle_pos)));
+           TupleC(mode::idle, circle_pos)));
     },
     t0);
 

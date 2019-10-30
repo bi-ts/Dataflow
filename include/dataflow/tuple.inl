@@ -26,110 +26,67 @@ namespace dataflow
 {
 namespace detail
 {
-template <typename U> void print_tupleE_elements(std::ostream& out, const U& u)
+template <typename U> void print_tuple_elements(std::ostream& out, const U& u)
 {
-  out << u;
+  out << core::to_string(u);
 }
 
 template <typename U, typename V, typename... Vs>
-void print_tupleE_elements(std::ostream& out,
-                           const U& u,
-                           const V& v,
-                           const Vs&... vs)
+void print_tuple_elements(std::ostream& out,
+                          const U& u,
+                          const V& v,
+                          const Vs&... vs)
 {
-  out << u << "; ";
+  out << core::to_string(u) << "; ";
 
-  print_tupleE_elements(out, v, vs...);
+  print_tuple_elements(out, v, vs...);
 }
 
 template <typename... Us, std::size_t... Is>
-void print_tupleE(std::ostream& out,
-                  const tupleE<Us...>& v,
-                  const internal::std14::index_sequence<Is...>&)
+void print_tuple(std::ostream& out,
+                 const tuple<Us...>& v,
+                 const internal::std14::index_sequence<Is...>&)
 {
-  print_tupleE_elements(out, get<Is>(v)...);
-}
-};
-
-template <typename T, typename... Ts>
-tupleE<T, Ts...>::tupleE()
-: p_data_(std::make_shared<data>())
-{
+  print_tuple_elements(out, get<Is>(v)...);
 }
 
-template <typename T, typename... Ts>
-tupleE<T, Ts...>::tupleE(const T& t, const Ts&... ts)
-: p_data_(std::make_shared<data>(t, ts...))
+template <typename T>
+typename std::enable_if<!core::is_ref<T>::value, bool>::type
+compare_elements(const T& lhs, const T& rhs)
 {
+  return lhs == rhs;
 }
 
-template <typename T, typename... Ts>
-bool tupleE<T, Ts...>::operator==(const tupleE& other) const
+template <typename T>
+bool compare_elements(const ref<T>& lhs, const ref<T>& rhs)
 {
-  return *p_data_ == *other.p_data_;
+  return lhs.id() == rhs.id();
 }
 
-template <typename T, typename... Ts>
-bool tupleE<T, Ts...>::operator!=(const tupleE& other) const
+bool compare_pairs()
 {
-  return !(*this == other);
+  return true;
 }
 
-} // dataflow
-
-template <typename... Ts>
-std::ostream& dataflow::operator<<(std::ostream& out,
-                                   const tupleE<Ts...>& value)
+template <typename U, typename... Us>
+bool compare_pairs(const std::pair<U, U>& p, const std::pair<Us, Us>&... ps)
 {
-
-  out << "tupleE(";
-
-  detail::print_tupleE(
-    out, value, internal::std14::make_index_sequence<sizeof...(Ts)>());
-
-  out << ")";
-
-  return out;
+  return compare_elements(p.first, p.second) && compare_pairs(ps...);
 }
 
-template <typename T, typename... Ts>
-dataflow::tupleE<dataflow::core::convert_to_flowable_t<T>,
-                 dataflow::core::convert_to_flowable_t<Ts>...>
-dataflow::make_tupleE(const T& t, const Ts&... ts)
+template <typename... Us, std::size_t... Is>
+bool compare_tuples(const tuple<Us...>& lhs,
+                    const tuple<Us...>& rhs,
+                    const internal::std14::index_sequence<Is...>&)
 {
-  return tupleE<core::convert_to_flowable_t<T>,
-                core::convert_to_flowable_t<Ts>...>(t, ts...);
+  return compare_pairs(std::make_pair(get<Is>(lhs), get<Is>(rhs))...);
 }
 
-template <std::size_t I, typename... Us>
-const typename std::tuple_element<I, std::tuple<Us...>>::type&
-dataflow::get(const tupleE<Us...>& t)
-{
-  return std::get<I>(*t.p_data_);
-}
-
-template <typename... Args>
-dataflow::ref<dataflow::tupleE<dataflow::core::argument_data_type_t<Args>...>>
-dataflow::TupleE(const Args&... arguments)
-{
-  struct policy
-  {
-    static std::string label()
-    {
-      return "tupleE";
-    }
-    static tupleE<core::argument_data_type_t<Args>...>
-    calculate(const core::argument_data_type_t<Args>&... vs)
-    {
-      return make_tupleE(vs...);
-    };
-  };
-
-  return core::Lift<policy>(core::make_argument(arguments)...);
-}
-
-template <std::size_t I, typename... Us, typename T>
-dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
+template <std::size_t I,
+          typename... Us,
+          typename T = typename std::tuple_element<I, std::tuple<Us...>>::type>
+ref<typename std::enable_if<!core::is_ref<T>::value, T>::type>
+tuple_get_element(const ref<tuple<Us...>>& x)
 {
   struct policy
   {
@@ -139,7 +96,7 @@ dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
       ss << "get<" << I << ">";
       return ss.str();
     }
-    static const T& calculate(const tupleE<Us...>& v)
+    static T calculate(const tuple<Us...>& v)
     {
       return get<I>(v);
     };
@@ -148,26 +105,180 @@ dataflow::ref<T> dataflow::Get(const ref<tupleE<Us...>>& x)
   return core::Lift<policy>(x);
 }
 
+template <std::size_t I,
+          typename... Us,
+          typename T = typename std::tuple_element<I, std::tuple<Us...>>::type>
+typename std::enable_if<core::is_ref<T>::value, T>::type
+tuple_get_element(const ref<tuple<Us...>>& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      std::stringstream ss;
+      ss << "get<" << I << ">";
+      return ss.str();
+    }
+    static T calculate(const tuple<Us...>& v)
+    {
+      return get<I>(v);
+    }
+  };
+
+  return core::LiftSelector<policy>(x);
+}
+
+template <typename T>
+T default_value(
+  const typename std::enable_if<!core::is_ref<T>::value>::type* = nullptr)
+{
+  return T();
+}
+
+template <typename T>
+T default_value(
+  const typename std::enable_if<core::is_ref<T>::value>::type* = nullptr)
+{
+  return Const<core::argument_data_type_t<T>>();
+}
+
+template <typename... Ts, std::size_t... Is>
+ref<bool> make_equality_comparison(
+  const ref<tuple<Ts...>>& x,
+  const ref<tuple<Ts...>>& y,
+  const dataflow::internal::std14::index_sequence<Is...>& seq)
+{
+  return And(Get<Is>(x) == Get<Is>(y)...);
+}
+}
+
+template <typename T, typename... Ts>
+tuple<T, Ts...>::tuple()
+: p_data_()
+{
+}
+
+template <typename T, typename... Ts>
+tuple<T, Ts...>::tuple(const T& t, const Ts&... ts)
+: p_data_(std::make_shared<data>(t, ts...))
+{
+}
+
+template <typename T, typename... Ts>
+bool tuple<T, Ts...>::operator==(const tuple& other) const
+{
+  return detail::compare_tuples(
+    *this, other, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
+}
+
+template <typename T, typename... Ts>
+bool tuple<T, Ts...>::operator!=(const tuple& other) const
+{
+  return !(*this == other);
+}
+
+} // dataflow
+
+template <typename... Ts>
+std::ostream& dataflow::operator<<(std::ostream& out, const tuple<Ts...>& value)
+{
+
+  out << "tuple(";
+
+  detail::print_tuple(
+    out, value, internal::std14::make_index_sequence<sizeof...(Ts)>());
+
+  out << ")";
+
+  return out;
+}
+
+template <typename T, typename... Ts>
+dataflow::tuple<dataflow::core::argument_type_t<T>,
+                dataflow::core::argument_type_t<Ts>...>
+dataflow::make_tupleB(const T& x, const Ts&... xs)
+{
+  return tuple<dataflow::core::argument_type_t<T>,
+               dataflow::core::argument_type_t<Ts>...>(x, xs...);
+}
+
+template <std::size_t I, typename... Us>
+typename std::tuple_element<I, std::tuple<Us...>>::type
+dataflow::get(const tuple<Us...>& t)
+{
+  if (t.p_data_)
+    return std::get<I>(*t.p_data_);
+
+  return detail::default_value<
+    typename std::tuple_element<I, std::tuple<Us...>>::type>();
+}
+
+template <typename Arg, typename... Args>
+dataflow::ref<
+  dataflow::tuple<dataflow::ref<dataflow::core::argument_data_type_t<Arg>>,
+                  dataflow::ref<dataflow::core::argument_data_type_t<Args>>...>>
+dataflow::TupleA(const Arg& arg, const Args&... args)
+{
+  return Const(
+    make_tupleB(core::make_argument(arg), core::make_argument(args)...));
+}
+
+template <typename Arg, typename... Args>
+dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Arg>,
+                              dataflow::core::argument_data_type_t<Args>...>>
+dataflow::TupleC(const Arg& arg, const Args&... args)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "tuple";
+    }
+    static tuple<dataflow::core::argument_data_type_t<Arg>,
+                 dataflow::core::argument_data_type_t<Args>...>
+    calculate(const dataflow::core::argument_data_type_t<Arg>& v,
+              const dataflow::core::argument_data_type_t<Args>&... vs)
+    {
+      return make_tupleB(v, vs...);
+    };
+  };
+
+  return core::Lift<policy>(core::make_argument(arg),
+                            core::make_argument(args)...);
+}
+
+template <std::size_t I, typename... Us>
+dataflow::ref<dataflow::core::argument_data_type_t<
+  typename std::tuple_element<I, std::tuple<Us...>>::type>>
+dataflow::Get(const ref<tuple<Us...>>& x)
+{
+  return detail::tuple_get_element<I>(x);
+}
+
 template <typename A, typename... Args>
-dataflow::ref<A> dataflow::First(const ref<tupleE<A, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<A>>
+dataflow::First(const ref<tuple<A, Args...>>& x)
 {
   return Get<0>(x);
 }
 
 template <typename A, typename B, typename... Args>
-dataflow::ref<B> dataflow::Second(const ref<tupleE<A, B, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<B>>
+dataflow::Second(const ref<tuple<A, B, Args...>>& x)
 {
   return Get<1>(x);
 }
 
 template <typename A, typename B, typename C, typename... Args>
-dataflow::ref<C> dataflow::Third(const ref<tupleE<A, B, C, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<C>>
+dataflow::Third(const ref<tuple<A, B, C, Args...>>& x)
 {
   return Get<2>(x);
 }
 
 template <typename A, typename B, typename C, typename D, typename... Args>
-dataflow::ref<D> dataflow::Fourth(const ref<tupleE<A, B, C, D, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<D>>
+dataflow::Fourth(const ref<tuple<A, B, C, D, Args...>>& x)
 {
   return Get<3>(x);
 }
@@ -178,7 +289,23 @@ template <typename A,
           typename D,
           typename E,
           typename... Args>
-dataflow::ref<E> dataflow::Fifth(const ref<tupleE<A, B, C, D, E, Args...>>& x)
+dataflow::ref<dataflow::core::argument_data_type_t<E>>
+dataflow::Fifth(const ref<tuple<A, B, C, D, E, Args...>>& x)
 {
   return Get<4>(x);
+}
+
+template <typename T, typename... Ts>
+dataflow::ref<bool> dataflow::operator==(const ref<tuple<T, Ts...>>& x,
+                                         const ref<tuple<T, Ts...>>& y)
+{
+  return detail::make_equality_comparison(
+    x, y, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
+}
+
+template <typename T, typename... Ts>
+dataflow::ref<bool> dataflow::operator!=(const ref<tuple<T, Ts...>>& x,
+                                         const ref<tuple<T, Ts...>>& y)
+{
+  return !(x == y);
 }
