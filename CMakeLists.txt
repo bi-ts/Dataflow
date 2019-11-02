@@ -37,6 +37,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/introspect.inl
   include/dataflow/io.h
   include/dataflow/io.inl
+  include/dataflow/list.h
+  include/dataflow/list.inl
   include/dataflow/maybe.h
   include/dataflow/maybe.inl
   include/dataflow/pair.h
@@ -89,6 +91,7 @@ add_library(${PROJECT_NAME} SHARED
 
   src/introspect.cpp
   src/io.cpp
+  src/list.cpp
   src/pair.cpp
   src/prelude/arithmetic.cpp
   src/prelude/comparison.cpp
