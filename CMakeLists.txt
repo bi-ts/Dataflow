@@ -26,6 +26,9 @@ endif()
 include(get_google_benchmark)
 get_google_benchmark(1.5.0 1af48846917b9730bee1848f6e38f563)
 
+include(get_immer)
+get_immer(0.6.2 4e3b26e398de68ec3bc67aece43b1db3)
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
   set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")

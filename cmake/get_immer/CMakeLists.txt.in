@@ -1,0 +1,17 @@
+
+cmake_minimum_required(VERSION 3.4)
+
+project(get-immer LANGUAGES NONE)
+
+include(ExternalProject)
+
+ExternalProject_add(immer
+  PREFIX "@EXT_PROJECTS_DIR@/immer"
+  URL "https://github.com/arximboldi/immer/archive/v@IMMER_VERSION@.zip"
+  URL_MD5 @IMMER_PACKAGE_MD5@
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+  )
+
