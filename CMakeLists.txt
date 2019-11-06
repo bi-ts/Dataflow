@@ -128,7 +128,7 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/vd_handle.inl
 )
 
-target_link_libraries(${PROJECT_NAME} dst)
+target_link_libraries(${PROJECT_NAME} dst immer)
 
 generate_export_header(${PROJECT_NAME})
 
