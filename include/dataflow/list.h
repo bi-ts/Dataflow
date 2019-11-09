@@ -35,7 +35,7 @@ namespace dataflow
 template <typename T> class list final
 {
 private:
-  using data = std::list<ref<T>>;
+  using data = std::list<T>;
 
 public:
   list() = default;
@@ -67,18 +67,20 @@ private:
   std::shared_ptr<data> p_data_;
 };
 
+template <typename T> using listA = list<ref<T>>;
+
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const list<T>& value);
 
-template <typename U,
-          typename... Us,
-          typename T = core::argument_data_type_t<U>>
-list<T> make_list(const U& x, const Us&... xs);
+template <typename Arg,
+          typename... Args,
+          typename T = core::common_argument_data_type_t<Arg, Args...>>
+listA<T> make_listA(const Arg& x, const Args&... xs);
 
-template <typename U,
-          typename... Us,
-          typename T = core::argument_data_type_t<U>>
-ref<list<T>> List(const U& x, const Us&... xs);
+template <typename Arg,
+          typename... Args,
+          typename T = core::common_argument_data_type_t<Arg, Args...>>
+ref<listA<T>> ListA(const Arg& x, const Args&... xs);
 
 /// \}
 } // dataflow

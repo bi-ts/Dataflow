@@ -27,26 +27,36 @@ namespace dataflow_test
 {
 BOOST_AUTO_TEST_SUITE(test_list)
 
-BOOST_AUTO_TEST_CASE(test_construction)
+BOOST_AUTO_TEST_CASE(test_listA_ctor)
 {
   Engine engine;
 
-  var<std::string> a = Var("third");
-  ref<std::string> b = Var("fifth");
-
-  const auto xs = list<std::string>{"first", std::string("second"), a};
-
-  const auto ys = make_list("first", std::string("second"), a, "fourth", b);
+  const auto a = listA<std::string>{
+    "first", std::string("second"), Var("third"), Const("fourth")};
 }
 
-BOOST_AUTO_TEST_CASE(test_List_Length)
+BOOST_AUTO_TEST_CASE(test_listA_make_listA)
+{
+  Engine engine;
+
+  const auto b =
+    make_listA("first", std::string("second"), Var("third"), Const("fourth"));
+  const auto c =
+    make_listA(Const("first"), std::string("second"), Var("third"), "fourth");
+  const auto d =
+    make_listA(Var("first"), std::string("second"), "third", Const("fourth"));
+  const auto e =
+    make_listA(std::string("first"), "second", Var("third"), Const("fourth"));
+}
+
+BOOST_AUTO_TEST_CASE(test_ListA_Length)
 {
   Engine engine;
 
   var<std::string> a = Var("third");
   ref<std::string> b = Var("fifth");
 
-  const auto c = List("first", std::string("second"), a, "fourth", b);
+  const auto c = ListA("first", std::string("second"), a, "fourth", b);
 
   const auto d = Length(c);
 

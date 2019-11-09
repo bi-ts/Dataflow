@@ -49,14 +49,15 @@ std::ostream& dataflow::operator<<(std::ostream& out, const list<T>& value)
   return out;
 }
 
-template <typename U, typename... Us, typename T>
-dataflow::list<T> dataflow::make_list(const U& x, const Us&... xs)
+template <typename Arg, typename... Args, typename T>
+dataflow::listA<T> dataflow::make_listA(const Arg& x, const Args&... xs)
 {
-  return list<T>(x, xs...);
+  return listA<T>(x, xs...);
 }
 
-template <typename U, typename... Us, typename T>
-dataflow::ref<dataflow::list<T>> dataflow::List(const U& x, const Us&... xs)
+template <typename Arg, typename... Args, typename T>
+dataflow::ref<dataflow::listA<T>> dataflow::ListA(const Arg& x,
+                                                  const Args&... xs)
 {
-  return Const(make_list(x, xs...));
+  return Const(make_listA(x, xs...));
 }
