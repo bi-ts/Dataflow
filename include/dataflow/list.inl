@@ -25,14 +25,14 @@ namespace dataflow
 template <typename T>
 template <typename U, typename... Us>
 list<T>::list(const U& x, const Us&... xs)
-: p_data_(std::make_shared<data>(
-    data{{core::make_argument(x), core::make_argument(xs)...}}))
+: data_({static_cast<core::ref_base>(core::make_argument(x)),
+         static_cast<core::ref_base>(core::make_argument(xs))...})
 {
 }
 
 template <typename T> bool list<T>::operator==(const list& other) const
 {
-  return p_data_ == other.p_data_;
+  return data_ == other.data_;
 }
 
 template <typename T> bool list<T>::operator!=(const list& other) const

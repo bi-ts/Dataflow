@@ -65,6 +65,11 @@ public:
   ~Engine();
 };
 
+namespace core
+{
+using ref_base = internal::ref;
+}
+
 template <typename T> class ref : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
