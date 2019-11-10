@@ -49,6 +49,36 @@ BOOST_AUTO_TEST_CASE(test_listA_make_listA)
     make_listA(std::string("first"), "second", Var("third"), Const("fourth"));
 }
 
+BOOST_AUTO_TEST_CASE(test_listA_equality_inequality_test)
+{
+  Engine engine;
+
+  BOOST_CHECK_EQUAL((listA<int>() == listA<int>()), true);
+  BOOST_CHECK_EQUAL((listA<int>() == listA<int>(1)), false);
+  BOOST_CHECK_EQUAL((listA<int>(2) == listA<int>()), false);
+
+  BOOST_CHECK_EQUAL((listA<int>() != listA<int>()), false);
+  BOOST_CHECK_EQUAL((listA<int>() != listA<int>(1)), true);
+  BOOST_CHECK_EQUAL((listA<int>(2) != listA<int>()), true);
+
+  const auto c1 = Const(1);
+  const auto c2 = Const(2);
+  const auto c3 = Const(3);
+  const auto c4 = Const(4);
+
+  const auto a = listA<int>(c1, c2, c3, c4);
+  const auto b = a;
+  const auto c = listA<int>(1, 2, 3, 4);
+  const auto d = listA<int>(c1, c2, c3, c4);
+
+  BOOST_CHECK_EQUAL((a == b), true);
+  BOOST_CHECK_EQUAL((a != b), false);
+  BOOST_CHECK_EQUAL((a == c), false);
+  BOOST_CHECK_EQUAL((a != c), true);
+  BOOST_CHECK_EQUAL((a == d), true);
+  BOOST_CHECK_EQUAL((a != d), false);
+}
+
 BOOST_AUTO_TEST_CASE(test_ListA_Length)
 {
   Engine engine;
