@@ -57,7 +57,7 @@ template <typename T> bool list<T>::operator!=(const list& other) const
 
 template <typename T> integer list<T>::size() const
 {
-  return data_.size();
+  return static_cast<integer>(data_.size());
 }
 } // dataflow
 
