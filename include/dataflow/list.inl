@@ -22,11 +22,26 @@
 
 namespace dataflow
 {
+namespace list_detail
+{
+template <typename T, typename U>
+core::ref_base make_list_element(std::true_type, const U& x)
+{
+  return static_cast<core::ref_base>(core::make_argument(x));
+}
+
+template <typename T, typename U>
+T make_list_element(std::false_type, const U& x)
+{
+  return x;
+}
+}
+
 template <typename T>
 template <typename U, typename... Us>
 list<T>::list(const U& x, const Us&... xs)
-: data_({static_cast<core::ref_base>(core::make_argument(x)),
-         static_cast<core::ref_base>(core::make_argument(xs))...})
+: data_({list_detail::make_list_element<T>(core::is_ref<T>(), x),
+         list_detail::make_list_element<T>(core::is_ref<T>(), xs)...})
 {
 }
 

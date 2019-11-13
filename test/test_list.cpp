@@ -35,6 +35,13 @@ BOOST_AUTO_TEST_CASE(test_listA_ctor)
     "first", std::string("second"), Var("third"), Const("fourth")};
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_ctor)
+{
+  Engine engine;
+
+  const auto a = listC<std::string>{"first", std::string("second")};
+}
+
 BOOST_AUTO_TEST_CASE(test_listA_make_listA)
 {
   Engine engine;

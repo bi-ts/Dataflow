@@ -25,6 +25,9 @@
 
 #include "prelude.h"
 
+#include <immer/vector.hpp>
+#include <immer/vector_transient.hpp>
+
 namespace dataflow
 {
 /// \defgroup list
@@ -53,6 +56,22 @@ private:
   list_data_impl* p_impl_;
 };
 
+template <typename T> class select_list_data
+{
+private:
+  using immer_policy = immer::memory_policy<immer::heap_policy<immer::cpp_heap>,
+                                            immer::default_refcount_policy>;
+
+public:
+  using type = immer::vector<T, immer_policy>;
+};
+
+template <typename T> class select_list_data<ref<T>>
+{
+public:
+  using type = list_data;
+};
+
 }
 
 template <typename T>
@@ -75,10 +94,12 @@ public:
   integer size() const;
 
 private:
-  list_internal::list_data data_;
+  typename list_internal::select_list_data<T>::type data_;
 };
 
 template <typename T> using listA = list<ref<T>>;
+
+template <typename T> using listC = list<T>;
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const list<T>& value);
