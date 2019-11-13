@@ -40,6 +40,10 @@ template <typename T> bool list<T>::operator!=(const list& other) const
   return !(*this == other);
 }
 
+template <typename T> integer list<T>::size() const
+{
+  return data_.size();
+}
 } // dataflow
 
 template <typename T>
@@ -60,4 +64,22 @@ dataflow::ref<dataflow::listA<T>> dataflow::ListA(const Arg& x,
                                                   const Args&... xs)
 {
   return Const(make_listA(x, xs...));
+}
+
+template <typename T>
+dataflow::ref<dataflow::integer> dataflow::Length(const ref<list<T>>& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "length";
+    }
+    static integer calculate(const list<T>& v)
+    {
+      return v.size();
+    }
+  };
+
+  return core::Lift<policy>(x);
 }

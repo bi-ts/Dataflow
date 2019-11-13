@@ -72,22 +72,7 @@ public:
   bool operator==(const list& other) const;
   bool operator!=(const list& other) const;
 
-  friend ref<std::size_t> Length(const ref<list>& x)
-  {
-    struct policy
-    {
-      static std::string label()
-      {
-        return "length";
-      }
-      static std::size_t calculate(const list& v)
-      {
-        return v.data_.size();
-      }
-    };
-
-    return core::Lift<policy>(x);
-  }
+  integer size() const;
 
 private:
   list_internal::list_data data_;
@@ -107,6 +92,8 @@ template <typename Arg,
           typename... Args,
           typename T = core::common_argument_data_type_t<Arg, Args...>>
 ref<listA<T>> ListA(const Arg& x, const Args&... xs);
+
+template <typename T> ref<integer> Length(const ref<list<T>>& x);
 
 /// \}
 } // dataflow
