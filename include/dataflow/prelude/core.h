@@ -70,7 +70,7 @@ namespace core
 using ref_base = internal::ref;
 }
 
-template <typename T> class ref : public internal::ref
+template <typename T> class ref : public core::ref_base
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
