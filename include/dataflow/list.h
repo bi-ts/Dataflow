@@ -111,6 +111,11 @@ listA<T> make_listA(const Arg& x, const Args&... xs);
 
 template <typename Arg,
           typename... Args,
+          typename T = core::common_data_type_t<Arg, Args...>>
+listC<T> make_listC(const Arg& x, const Args&... xs);
+
+template <typename Arg,
+          typename... Args,
           typename T = core::common_argument_data_type_t<Arg, Args...>>
 ref<listA<T>> ListA(const Arg& x, const Args&... xs);
 

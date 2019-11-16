@@ -75,6 +75,12 @@ dataflow::listA<T> dataflow::make_listA(const Arg& x, const Args&... xs)
 }
 
 template <typename Arg, typename... Args, typename T>
+dataflow::listC<T> dataflow::make_listC(const Arg& x, const Args&... xs)
+{
+  return listC<T>(x, xs...);
+}
+
+template <typename Arg, typename... Args, typename T>
 dataflow::ref<dataflow::listA<T>> dataflow::ListA(const Arg& x,
                                                   const Args&... xs)
 {

@@ -47,14 +47,28 @@ BOOST_AUTO_TEST_CASE(test_listA_make_listA)
 {
   Engine engine;
 
-  const auto b =
+  const listA<std::string> b =
     make_listA("first", std::string("second"), Var("third"), Const("fourth"));
-  const auto c =
+  const listA<std::string> c =
     make_listA(Const("first"), std::string("second"), Var("third"), "fourth");
-  const auto d =
+  const listA<std::string> d =
     make_listA(Var("first"), std::string("second"), "third", Const("fourth"));
-  const auto e =
+  const listA<std::string> e =
     make_listA(std::string("first"), "second", Var("third"), Const("fourth"));
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_make_listC)
+{
+  Engine engine;
+
+  const listC<std::string> b =
+    make_listC("first", std::string("second"), "third");
+  const listC<std::string> c =
+    make_listC(std::string("first"), std::string("second"), "third");
+  const listC<std::string> d =
+    make_listC("first", std::string("second"), std::string("third"));
+  const listC<std::string> e =
+    make_listC(std::string("first"), "second", std::string("third"));
 }
 
 BOOST_AUTO_TEST_CASE(test_listA_equality_inequality_test)
