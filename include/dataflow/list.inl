@@ -88,7 +88,7 @@ dataflow::ref<dataflow::integer> dataflow::Length(const ref<list<T>>& x)
   {
     static std::string label()
     {
-      return "length";
+      return "list-length";
     }
     static integer calculate(const list<T>& v)
     {

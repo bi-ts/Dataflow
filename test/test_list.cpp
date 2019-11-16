@@ -97,6 +97,8 @@ BOOST_AUTO_TEST_CASE(test_ListA_Length)
 
   const auto d = Length(c);
 
+  BOOST_CHECK_EQUAL(introspect::label(d), "list-length");
+
   const auto e = *d;
 
   BOOST_CHECK_EQUAL(e(), 5);
