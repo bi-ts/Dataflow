@@ -119,5 +119,46 @@ BOOST_AUTO_TEST_CASE(test_ListA_Length)
   BOOST_CHECK_EQUAL(e(), 5);
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_Get)
+{
+  Engine engine;
+
+  auto lst = Var<listC<std::string>>();
+  auto idx = Var<integer>(0);
+
+  auto x =
+    Main([=](const Time& t0) { return FromMaybe(Get(lst, idx), "default"); });
+
+  BOOST_CHECK_EQUAL(x(), "default");
+
+  lst = make_listC("first");
+
+  BOOST_CHECK_EQUAL(x(), "first");
+
+  idx = 1;
+
+  BOOST_CHECK_EQUAL(x(), "default");
+
+  lst = make_listC("first", "second");
+
+  BOOST_CHECK_EQUAL(x(), "second");
+
+  lst = make_listC("first", "second", "third", "fourth");
+
+  BOOST_CHECK_EQUAL(x(), "second");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(x(), "third");
+
+  idx = 3;
+
+  BOOST_CHECK_EQUAL(x(), "fourth");
+
+  idx = 4;
+
+  BOOST_CHECK_EQUAL(x(), "default");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test

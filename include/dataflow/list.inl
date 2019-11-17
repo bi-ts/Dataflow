@@ -55,6 +55,11 @@ template <typename T> bool list<T>::operator!=(const list& other) const
   return !(*this == other);
 }
 
+template <typename T> T list<T>::operator[](integer idx) const
+{
+  return data_.at(static_cast<std::size_t>(idx));
+}
+
 template <typename T> integer list<T>::size() const
 {
   return static_cast<integer>(data_.size());
@@ -103,4 +108,37 @@ dataflow::ref<dataflow::integer> dataflow::Length(const ref<list<T>>& x)
   };
 
   return core::Lift<policy>(x);
+}
+
+namespace dataflow
+{
+namespace list_internal
+{
+template <typename T>
+ref<maybe<T>> list_get(const ref<listC<T>>& lst, ref<integer> idx)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "list-get";
+    }
+
+    static maybe<T> calculate(const list<T>& x, integer idx)
+    {
+      return idx < x.size() ? just(x[idx]) : nothing();
+    }
+  };
+
+  return core::Lift<policy>(lst, idx);
+}
+}
+}
+
+template <typename ArgL, typename ArgI, typename T, typename>
+dataflow::ref<dataflow::maybe<T>> dataflow::Get(const ArgL& lst,
+                                                const ArgI& idx)
+{
+  return list_internal::list_get(core::make_argument(lst),
+                                 core::make_argument(idx));
 }

@@ -23,6 +23,7 @@
 
 #include "dataflow++_export.h"
 
+#include "maybe.h"
 #include "prelude.h"
 
 #include <immer/vector.hpp>
@@ -50,28 +51,29 @@ public:
   bool operator==(const listA_data& other) const;
   bool operator!=(const listA_data& other) const;
 
+  core::ref_base at(std::size_t idx) const;
+
   std::size_t size() const;
 
 private:
   list_data_impl* p_impl_;
 };
 
-template <typename T> class select_list_data
-{
-private:
-  using immer_policy = immer::memory_policy<immer::heap_policy<immer::cpp_heap>,
-                                            immer::default_refcount_policy>;
+template <typename T>
+using listC_data =
+  immer::vector<T,
+                immer::memory_policy<immer::heap_policy<immer::cpp_heap>,
+                                     immer::default_refcount_policy>>;
 
-public:
-  using type = immer::vector<T, immer_policy>;
+template <typename T> struct select_list_data
+{
+  using type = listC_data<T>;
 };
 
-template <typename T> class select_list_data<ref<T>>
+template <typename T> struct select_list_data<ref<T>>
 {
-public:
   using type = listA_data;
 };
-
 }
 
 template <typename T>
@@ -90,6 +92,8 @@ public:
 
   bool operator==(const list& other) const;
   bool operator!=(const list& other) const;
+
+  T operator[](integer idx) const;
 
   integer size() const;
 
@@ -114,12 +118,30 @@ template <typename Arg,
           typename T = core::common_data_type_t<Arg, Args...>>
 listC<T> make_listC(const Arg& x, const Args&... xs);
 
+template <typename T> struct list_element_type
+{
+};
+
+template <typename T> struct list_element_type<list<T>>
+{
+  using type = T;
+};
+
+template <typename T>
+using list_element_type_t = typename list_element_type<T>::type;
+
 template <typename Arg,
           typename... Args,
           typename T = core::common_argument_data_type_t<Arg, Args...>>
 ref<listA<T>> ListA(const Arg& x, const Args&... xs);
 
 template <typename T> ref<integer> Length(const ref<list<T>>& x);
+
+template <typename ArgL,
+          typename ArgI,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename = core::enable_for_argument_data_type_t<ArgI, integer>>
+ref<maybe<T>> Get(const ArgL& lst, const ArgI& idx);
 
 /// \}
 } // dataflow

@@ -43,6 +43,12 @@ public:
     return !(*this == other);
   }
 
+  const core::ref_base& get() const
+  {
+    return x_;
+  }
+
+private:
   core::ref_base x_;
 };
 
@@ -138,6 +144,11 @@ bool listA_data::operator==(const listA_data& other) const
 bool listA_data::operator!=(const listA_data& other) const
 {
   return !(*this == other);
+}
+
+core::ref_base listA_data::at(std::size_t idx) const
+{
+  return p_impl_->data_.at(idx).get();
 }
 
 std::size_t listA_data::size() const
