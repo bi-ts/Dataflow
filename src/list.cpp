@@ -84,13 +84,13 @@ private:
   std::size_t ref_counter_;
 };
 
-list_data::list_data()
+listA_data::listA_data()
 : p_impl_(new list_data_impl({}))
 {
   p_impl_->retain();
 }
 
-list_data::list_data(const std::initializer_list<core::ref_base>& init)
+listA_data::listA_data(const std::initializer_list<core::ref_base>& init)
 : p_impl_(new list_data_impl(init))
 {
   DATAFLOW___CHECK_PRECONDITION(p_impl_ != nullptr);
@@ -98,7 +98,7 @@ list_data::list_data(const std::initializer_list<core::ref_base>& init)
   p_impl_->retain();
 }
 
-list_data::list_data(const list_data& other)
+listA_data::listA_data(const listA_data& other)
 : p_impl_(other.p_impl_)
 {
   DATAFLOW___CHECK_PRECONDITION(p_impl_ != nullptr);
@@ -106,14 +106,14 @@ list_data::list_data(const list_data& other)
   p_impl_->retain();
 }
 
-list_data::~list_data()
+listA_data::~listA_data()
 {
   DATAFLOW___CHECK_PRECONDITION(p_impl_ != nullptr);
 
   p_impl_->release();
 }
 
-list_data& list_data::operator=(const list_data& other)
+listA_data& listA_data::operator=(const listA_data& other)
 {
   DATAFLOW___CHECK_PRECONDITION(p_impl_ != nullptr);
   DATAFLOW___CHECK_PRECONDITION(other.p_impl_ != nullptr);
@@ -127,7 +127,7 @@ list_data& list_data::operator=(const list_data& other)
   return *this;
 }
 
-bool list_data::operator==(const list_data& other) const
+bool listA_data::operator==(const listA_data& other) const
 {
   DATAFLOW___CHECK_PRECONDITION(p_impl_ != nullptr);
   DATAFLOW___CHECK_PRECONDITION(other.p_impl_ != nullptr);
@@ -135,12 +135,12 @@ bool list_data::operator==(const list_data& other) const
   return p_impl_->data_ == other.p_impl_->data_;
 }
 
-bool list_data::operator!=(const list_data& other) const
+bool listA_data::operator!=(const listA_data& other) const
 {
   return !(*this == other);
 }
 
-std::size_t list_data::size() const
+std::size_t listA_data::size() const
 {
   DATAFLOW___CHECK_PRECONDITION(p_impl_ != nullptr);
 

@@ -37,18 +37,18 @@ namespace list_internal
 {
 class list_data_impl;
 
-class DATAFLOW___EXPORT list_data
+class DATAFLOW___EXPORT listA_data
 {
 public:
-  explicit list_data();
-  explicit list_data(const std::initializer_list<core::ref_base>& init);
-  list_data(const list_data& other);
-  ~list_data();
+  explicit listA_data();
+  explicit listA_data(const std::initializer_list<core::ref_base>& init);
+  listA_data(const listA_data& other);
+  ~listA_data();
 
-  list_data& operator=(const list_data& other);
+  listA_data& operator=(const listA_data& other);
 
-  bool operator==(const list_data& other) const;
-  bool operator!=(const list_data& other) const;
+  bool operator==(const listA_data& other) const;
+  bool operator!=(const listA_data& other) const;
 
   std::size_t size() const;
 
@@ -69,7 +69,7 @@ public:
 template <typename T> class select_list_data<ref<T>>
 {
 public:
-  using type = list_data;
+  using type = listA_data;
 };
 
 }
