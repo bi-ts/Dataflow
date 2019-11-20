@@ -417,12 +417,12 @@ struct enable_if_test_helper
   }
 
   template <typename... Args>
-  static core::enable_if_some_t<bool, Args...> enabled_if_some(int)
+  static core::enable_if_any_t<bool, Args...> enabled_if_any(int)
   {
     return true;
   }
 
-  template <typename... Args> static bool enabled_if_some(...)
+  template <typename... Args> static bool enabled_if_any(...)
   {
     return false;
   }
@@ -478,47 +478,43 @@ BOOST_AUTO_TEST_CASE(test_enable_if_all)
                     false);
 }
 
-BOOST_AUTO_TEST_CASE(test_enable_if_some)
+BOOST_AUTO_TEST_CASE(test_enable_if_any)
 {
   BOOST_CHECK_EQUAL(
-    (enable_if_test_helper::enabled_if_some<std::true_type, std::true_type>(0)),
+    (enable_if_test_helper::enabled_if_any<std::true_type, std::true_type>(0)),
     true);
 
-  BOOST_CHECK_EQUAL((enable_if_test_helper::enabled_if_some<std::true_type,
-                                                            std::true_type,
-                                                            std::true_type,
-                                                            std::true_type>(0)),
+  BOOST_CHECK_EQUAL((enable_if_test_helper::enabled_if_any<std::true_type,
+                                                           std::true_type,
+                                                           std::true_type,
+                                                           std::true_type>(0)),
                     true);
 
   BOOST_CHECK_EQUAL(
-    (enable_if_test_helper::enabled_if_some<std::true_type, std::false_type>(
-      0)),
+    (enable_if_test_helper::enabled_if_any<std::true_type, std::false_type>(0)),
     true);
 
   BOOST_CHECK_EQUAL(
-    (enable_if_test_helper::enabled_if_some<std::false_type, std::true_type>(
-      0)),
+    (enable_if_test_helper::enabled_if_any<std::false_type, std::true_type>(0)),
     true);
 
-  BOOST_CHECK_EQUAL((enable_if_test_helper::enabled_if_some<std::true_type,
-                                                            std::true_type,
-                                                            std::false_type,
-                                                            std::true_type>(0)),
+  BOOST_CHECK_EQUAL((enable_if_test_helper::enabled_if_any<std::true_type,
+                                                           std::true_type,
+                                                           std::false_type,
+                                                           std::true_type>(0)),
                     true);
 
-  BOOST_CHECK_EQUAL(
-    (enable_if_test_helper::enabled_if_some<std::true_type,
-                                            std::true_type,
-                                            std::true_type,
-                                            std::false_type>(0)),
-    true);
+  BOOST_CHECK_EQUAL((enable_if_test_helper::enabled_if_any<std::true_type,
+                                                           std::true_type,
+                                                           std::true_type,
+                                                           std::false_type>(0)),
+                    true);
 
-  BOOST_CHECK_EQUAL(
-    (enable_if_test_helper::enabled_if_some<std::false_type,
-                                            std::false_type,
-                                            std::false_type,
-                                            std::false_type>(0)),
-    false);
+  BOOST_CHECK_EQUAL((enable_if_test_helper::enabled_if_any<std::false_type,
+                                                           std::false_type,
+                                                           std::false_type,
+                                                           std::false_type>(0)),
+                    false);
 }
 
 BOOST_AUTO_TEST_CASE(test_enable_if_none)

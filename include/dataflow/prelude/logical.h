@@ -70,42 +70,38 @@ ref<bool> operator!(const ref<bool>& x);
 
 /// Logical `and` (lazy)
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
 ref<bool> operator&&(const ArgX& x, const ArgY& y);
 
 /// Logical `or` (lazy)
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
 ref<bool> operator||(const ArgX& x, const ArgY& y);
 
 /// Logical `and` (eager)
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
 ref<bool> operator&(const ArgX& x, const ArgY& y);
 
 /// Logical `or` (eager)
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
 ref<bool> operator|(const ArgX& x, const ArgY& y);
 
 /// \}

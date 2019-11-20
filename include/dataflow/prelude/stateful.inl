@@ -60,7 +60,7 @@ ref<T> make_state_machine(
   const dataflow::internal::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   const Time& t0,
-  const core::enable_if_some_t<
+  const core::enable_if_any_t<
     void,
     core::is_function_of_time<decltype(
       std::get<Is>(std::declval<std::tuple<Trs...>>()).second)>...>* = nullptr)

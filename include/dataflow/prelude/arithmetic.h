@@ -121,30 +121,28 @@ ref<T> Decr(const ArgT& x);
 
 /// Addition
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
-  typename = core::enable_if_all_t<void,
-                                   core::is_regular_data_type<T>,
-                                   core::is_trivially_patcheable<T>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
 ref<T> operator+(const ArgX& x, const ArgY& y);
 
 /// Subtraction
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
-  typename = core::enable_if_all_t<void,
-                                   core::is_regular_data_type<T>,
-                                   core::is_trivially_patcheable<T>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
 ref<T> operator-(const ArgX& x, const ArgY& y);
 
 /// Unary plus
@@ -167,44 +165,41 @@ ref<T> operator-(const ref<T>& x);
 
 /// Multiplication
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
-  typename = core::enable_if_all_t<void,
-                                   core::is_regular_data_type<T>,
-                                   core::is_trivially_patcheable<T>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
 ref<T> operator*(const ArgX& x, const ArgY& y);
 
 /// Division
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
-  typename = core::enable_if_all_t<void,
-                                   core::is_regular_data_type<T>,
-                                   core::is_trivially_patcheable<T>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
 ref<T> operator/(const ArgX& x, const ArgY& y);
 
 /// Modulo (integer remainder)
 ///
-template <
-  typename ArgX,
-  typename ArgY,
-  typename...,
-  typename =
-    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
-  typename T = core::common_argument_data_type_t<ArgX, ArgY>,
-  typename = core::enable_if_all_t<void,
-                                   core::is_regular_data_type<T>,
-                                   core::is_trivially_patcheable<T>>>
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>,
+          typename T = core::common_argument_data_type_t<ArgX, ArgY>,
+          typename = core::enable_if_all_t<void,
+                                           core::is_regular_data_type<T>,
+                                           core::is_trivially_patcheable<T>>>
 ref<T> operator%(const ArgX& x, const ArgY& y);
 
 /// Increment

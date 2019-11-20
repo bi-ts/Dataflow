@@ -453,11 +453,11 @@ template <typename T, typename... Args>
 using enable_if_all_t = typename enable_if_all<T, Args...>::type;
 
 template <typename T, typename... Args>
-using enable_if_some =
+using enable_if_any =
   std::enable_if<internal::std17::disjunction<Args...>::value, T>;
 
 template <typename T, typename... Args>
-using enable_if_some_t = typename enable_if_some<T, Args...>::type;
+using enable_if_any_t = typename enable_if_any<T, Args...>::type;
 
 template <typename T, typename... Args>
 using enable_if_none = std::enable_if<
@@ -624,18 +624,18 @@ template <typename FArgT,
           typename FArgU,
           typename T = core::farg_data_type_t<FArgT>,
           typename = core::enable_for_farg_data_type_t<FArgU, T>,
-          typename = core::enable_if_some_t<void,
-                                            core::is_function_of_time<FArgT>,
-                                            core::is_function_of_time<FArgU>>>
+          typename = core::enable_if_any_t<void,
+                                           core::is_function_of_time<FArgT>,
+                                           core::is_function_of_time<FArgU>>>
 ref<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z, const Time& t0);
 
 template <typename FArgT,
           typename FArgU,
           typename T = core::farg_data_type_t<FArgT>,
           typename = core::enable_for_farg_data_type_t<FArgU, T>,
-          typename = core::enable_if_some_t<void,
-                                            core::is_function_of_time<FArgT>,
-                                            core::is_function_of_time<FArgU>>>
+          typename = core::enable_if_any_t<void,
+                                           core::is_function_of_time<FArgT>,
+                                           core::is_function_of_time<FArgU>>>
 function_of_time<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
 
 // Stateful functions
