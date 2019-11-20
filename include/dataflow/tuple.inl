@@ -217,16 +217,15 @@ template <typename Arg, typename... Args>
 dataflow::ref<
   dataflow::tuple<dataflow::ref<dataflow::core::argument_data_type_t<Arg>>,
                   dataflow::ref<dataflow::core::argument_data_type_t<Args>>...>>
-dataflow::TupleA(const Arg& arg, const Args&... args)
+dataflow::TupleA(const Arg& x, const Args&... xs)
 {
-  return Const(
-    make_tupleB(core::make_argument(arg), core::make_argument(args)...));
+  return Const(make_tupleB(core::make_argument(x), core::make_argument(xs)...));
 }
 
 template <typename Arg, typename... Args>
 dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Arg>,
                               dataflow::core::argument_data_type_t<Args>...>>
-dataflow::TupleC(const Arg& arg, const Args&... args)
+dataflow::TupleC(const Arg& x, const Args&... xs)
 {
   struct policy
   {
@@ -243,8 +242,7 @@ dataflow::TupleC(const Arg& arg, const Args&... args)
     };
   };
 
-  return core::Lift<policy>(core::make_argument(arg),
-                            core::make_argument(args)...);
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(xs)...);
 }
 
 template <std::size_t I, typename... Us>
