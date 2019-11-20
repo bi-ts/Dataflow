@@ -39,7 +39,7 @@ template <typename Arg,
           typename = core::enable_for_argument_data_type_t<
             bool,
             core::common_argument_data_type_t<Arg, Args...>>>
-ref<bool> And(const Arg& arg, const Args&... args);
+ref<bool> And(const Arg& x, const Args&... xs);
 
 DATAFLOW___EXPORT ref<bool> Or(const arg<bool>& x, const arg<bool>& y);
 DATAFLOW___EXPORT ref<bool> AndE(const arg<bool>& x, const arg<bool>& y);
@@ -53,19 +53,43 @@ ref<bool> operator!(const ref<bool>& x);
 
 /// Logical `and` (lazy)
 ///
-ref<bool> operator&&(const arg<bool>& x, const arg<bool>& y);
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+ref<bool> operator&&(const ArgX& x, const ArgY& y);
 
 /// Logical `or` (lazy)
 ///
-ref<bool> operator||(const arg<bool>& x, const arg<bool>& y);
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+ref<bool> operator||(const ArgX& x, const ArgY& y);
 
 /// Logical `and` (eager)
 ///
-ref<bool> operator&(const arg<bool>& x, const arg<bool>& y);
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+ref<bool> operator&(const ArgX& x, const ArgY& y);
 
 /// Logical `or` (eager)
 ///
-ref<bool> operator|(const arg<bool>& x, const arg<bool>& y);
+template <
+  typename ArgX,
+  typename ArgY,
+  typename...,
+  typename =
+    core::enable_if_some_t<void, core::is_ref<ArgX>, core::is_ref<ArgY>>>
+ref<bool> operator|(const ArgX& x, const ArgY& y);
 
 /// \}
 } // dataflow
