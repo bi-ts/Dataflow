@@ -101,10 +101,10 @@ private:
 };
 }
 
-ref<point> AdjustableCirclePosition(const ref<point>& initial_circle_pos,
-                                    const ref<int>& radius,
-                                    const ref<point>& mouse_pos,
-                                    const ref<int>& mouse_pressed,
+ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
+                                    const arg<int>& radius,
+                                    const arg<point>& mouse_pos,
+                                    const arg<int>& mouse_pressed,
                                     const Time& t0)
 {
   // TODO: add Diff(d0, x, t0) function

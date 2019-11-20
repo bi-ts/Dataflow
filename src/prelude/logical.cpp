@@ -18,7 +18,7 @@
 
 #include <dataflow/prelude/logical.h>
 
-dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
+dataflow::ref<bool> dataflow::Not(const arg<bool>& x)
 {
   struct policy
   {
@@ -34,12 +34,12 @@ dataflow::ref<bool> dataflow::Not(const ref<bool>& x)
   return core::Lift<policy>(x);
 }
 
-dataflow::ref<bool> dataflow::Or(const ref<bool>& x, const ref<bool>& y)
+dataflow::ref<bool> dataflow::Or(const arg<bool>& x, const arg<bool>& y)
 {
   return If(x, true, y);
 }
 
-dataflow::ref<bool> dataflow::AndE(const ref<bool>& x, const ref<bool>& y)
+dataflow::ref<bool> dataflow::AndE(const arg<bool>& x, const arg<bool>& y)
 {
   struct policy
   {
@@ -55,7 +55,7 @@ dataflow::ref<bool> dataflow::AndE(const ref<bool>& x, const ref<bool>& y)
   return core::Lift<policy>(x, y);
 }
 
-dataflow::ref<bool> dataflow::OrE(const ref<bool>& x, const ref<bool>& y)
+dataflow::ref<bool> dataflow::OrE(const arg<bool>& x, const arg<bool>& y)
 {
   struct policy
   {

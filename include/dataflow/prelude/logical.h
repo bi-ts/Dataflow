@@ -32,7 +32,7 @@ namespace dataflow
 
 // Logical functions
 
-DATAFLOW___EXPORT ref<bool> Not(const ref<bool>& x);
+DATAFLOW___EXPORT ref<bool> Not(const arg<bool>& x);
 
 template <typename Arg,
           typename... Args,
@@ -41,9 +41,9 @@ template <typename Arg,
             core::common_argument_data_type_t<Arg, Args...>>>
 ref<bool> And(const Arg& arg, const Args&... args);
 
-DATAFLOW___EXPORT ref<bool> Or(const ref<bool>& x, const ref<bool>& y);
-DATAFLOW___EXPORT ref<bool> AndE(const ref<bool>& x, const ref<bool>& y);
-DATAFLOW___EXPORT ref<bool> OrE(const ref<bool>& x, const ref<bool>& y);
+DATAFLOW___EXPORT ref<bool> Or(const arg<bool>& x, const arg<bool>& y);
+DATAFLOW___EXPORT ref<bool> AndE(const arg<bool>& x, const arg<bool>& y);
+DATAFLOW___EXPORT ref<bool> OrE(const arg<bool>& x, const arg<bool>& y);
 
 // Logical operators
 
@@ -53,19 +53,19 @@ ref<bool> operator!(const ref<bool>& x);
 
 /// Logical `and` (lazy)
 ///
-ref<bool> operator&&(const ref<bool>& x, const ref<bool>& y);
+ref<bool> operator&&(const arg<bool>& x, const arg<bool>& y);
 
 /// Logical `or` (lazy)
 ///
-ref<bool> operator||(const ref<bool>& x, const ref<bool>& y);
+ref<bool> operator||(const arg<bool>& x, const arg<bool>& y);
 
 /// Logical `and` (eager)
 ///
-ref<bool> operator&(const ref<bool>& x, const ref<bool>& y);
+ref<bool> operator&(const arg<bool>& x, const arg<bool>& y);
 
 /// Logical `or` (eager)
 ///
-ref<bool> operator|(const ref<bool>& x, const ref<bool>& y);
+ref<bool> operator|(const arg<bool>& x, const arg<bool>& y);
 
 /// \}
 } // dataflow

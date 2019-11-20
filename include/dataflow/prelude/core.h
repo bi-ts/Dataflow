@@ -77,13 +77,19 @@ template <typename T> class ref : public core::ref_base
 public:
   explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
 
+  ref<T> operator()(const Time& t) const;
+};
+
+template <typename T> class arg : public ref<T>
+{
+public:
+  arg(const ref<T>& x);
+
   template <
     typename U,
     typename...,
     typename = typename std::enable_if<std::is_convertible<U, T>::value>::type>
-  ref(U&& value);
-
-  ref<T> operator()(const Time& t) const;
+  arg(U&& value);
 };
 
 class DATAFLOW___EXPORT sig final : public ref<bool>

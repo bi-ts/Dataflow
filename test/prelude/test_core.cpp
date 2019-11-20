@@ -324,10 +324,10 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(y(), "some text");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_via_ref_ctor, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Const_via_arg_ctor, test_core_fixture)
 {
-  std::function<ref<std::string>(const ref<std::string>& x)> fn =
-    [](const ref<std::string>& x) { return x; };
+  std::function<ref<std::string>(const arg<std::string>& x)> fn =
+    [](const arg<std::string>& x) { return x; };
 
   const ref<std::string> x = fn("some text");
 

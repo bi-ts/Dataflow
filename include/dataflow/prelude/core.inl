@@ -54,18 +54,26 @@ ref<T>::ref(const internal::ref& r, internal::ref::ctor_guard_t)
   DATAFLOW___CHECK_PRECONDITION(r.is_of_type<T>());
 }
 
-template <typename T>
-template <typename U, typename..., typename>
-ref<T>::ref(U&& value)
-: internal::ref(Const(value))
-{
-}
-
 template <typename T> ref<T> ref<T>::operator()(const Time& t) const
 {
   return ref<T>(internal::node_snapshot<T>::create(
                   internal::node_snapshot_activator::create(), *this),
                 internal::ref::ctor_guard);
+}
+
+// arg
+
+template <typename T>
+arg<T>::arg(const ref<T>& x)
+: ref<T>(x)
+{
+}
+
+template <typename T>
+template <typename U, typename..., typename>
+arg<T>::arg(U&& value)
+: arg(Const(value))
+{
 }
 
 // val

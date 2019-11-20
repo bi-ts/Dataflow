@@ -48,7 +48,8 @@ ref<bool> And(const ArgX& x, const ArgY& y, const ArgZ& z, const Args&... args)
 template <typename Arg, typename... Args, typename>
 dataflow::ref<bool> dataflow::And(const Arg& arg, const Args&... args)
 {
-  return logical::detail::And(arg, args...);
+  return logical::detail::And(core::make_argument(arg),
+                              core::make_argument(args)...);
 }
 
 inline dataflow::ref<bool> dataflow::operator!(const ref<bool>& x)
@@ -56,26 +57,26 @@ inline dataflow::ref<bool> dataflow::operator!(const ref<bool>& x)
   return Not(x);
 }
 
-inline dataflow::ref<bool> dataflow::operator&&(const ref<bool>& x,
-                                                const ref<bool>& y)
+inline dataflow::ref<bool> dataflow::operator&&(const arg<bool>& x,
+                                                const arg<bool>& y)
 {
   return And(x, y);
 }
 
-inline dataflow::ref<bool> dataflow::operator||(const ref<bool>& x,
-                                                const ref<bool>& y)
+inline dataflow::ref<bool> dataflow::operator||(const arg<bool>& x,
+                                                const arg<bool>& y)
 {
   return Or(x, y);
 }
 
-inline dataflow::ref<bool> dataflow::operator&(const ref<bool>& x,
-                                               const ref<bool>& y)
+inline dataflow::ref<bool> dataflow::operator&(const arg<bool>& x,
+                                               const arg<bool>& y)
 {
   return AndE(x, y);
 }
 
-inline dataflow::ref<bool> dataflow::operator|(const ref<bool>& x,
-                                               const ref<bool>& y)
+inline dataflow::ref<bool> dataflow::operator|(const arg<bool>& x,
+                                               const arg<bool>& y)
 {
   return OrE(x, y);
 }
