@@ -33,35 +33,3 @@ dataflow::ref<bool> dataflow::Not(const arg<bool>& x)
   };
   return core::Lift<policy>(x);
 }
-
-dataflow::ref<bool> dataflow::AndE(const arg<bool>& x, const arg<bool>& y)
-{
-  struct policy
-  {
-    static std::string label()
-    {
-      return "&";
-    }
-    bool calculate(const bool& x, const bool& y)
-    {
-      return x && y;
-    }
-  };
-  return core::Lift<policy>(x, y);
-}
-
-dataflow::ref<bool> dataflow::OrE(const arg<bool>& x, const arg<bool>& y)
-{
-  struct policy
-  {
-    static std::string label()
-    {
-      return "|";
-    }
-    bool calculate(const bool& x, const bool& y)
-    {
-      return x || y;
-    }
-  };
-  return core::Lift<policy>(x, y);
-}

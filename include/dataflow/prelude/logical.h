@@ -48,8 +48,19 @@ template <typename Arg,
             core::common_argument_data_type_t<Arg, Args...>>>
 ref<bool> Or(const Arg& x, const Args&... xs);
 
-DATAFLOW___EXPORT ref<bool> AndE(const arg<bool>& x, const arg<bool>& y);
-DATAFLOW___EXPORT ref<bool> OrE(const arg<bool>& x, const arg<bool>& y);
+template <typename Arg,
+          typename... Args,
+          typename = core::enable_for_argument_data_type_t<
+            bool,
+            core::common_argument_data_type_t<Arg, Args...>>>
+ref<bool> AndE(const Arg& x, const Args&... xs);
+
+template <typename Arg,
+          typename... Args,
+          typename = core::enable_for_argument_data_type_t<
+            bool,
+            core::common_argument_data_type_t<Arg, Args...>>>
+ref<bool> OrE(const Arg& x, const Args&... xs);
 
 // Logical operators
 

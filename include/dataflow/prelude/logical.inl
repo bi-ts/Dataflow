@@ -57,6 +57,30 @@ ref<bool> Or(const ArgX& x, const ArgY& y, const ArgZ& z, const Args&... args)
 {
   return Or(x, Or(y, z, args...));
 }
+
+template <typename T> using bool_type_t = bool;
+
+inline bool all_of()
+{
+  return true;
+}
+
+template <typename Arg, typename... Args>
+bool all_of(const Arg& x, const Args&... args)
+{
+  return static_cast<bool>(x) && all_of(args...);
+}
+
+inline bool any_of()
+{
+  return false;
+}
+
+template <typename Arg, typename... Args>
+bool any_of(const Arg& x, const Args&... args)
+{
+  return static_cast<bool>(x) || any_of(args...);
+}
 }
 }
 }
@@ -73,6 +97,40 @@ dataflow::ref<bool> dataflow::Or(const Arg& x, const Args&... xs)
 {
   return logical::detail::Or(core::make_argument(x),
                              core::make_argument(xs)...);
+}
+
+template <typename Arg, typename... Args, typename>
+dataflow::ref<bool> dataflow::AndE(const Arg& x, const Args&... xs)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "&";
+    }
+    bool calculate(bool x, logical::detail::bool_type_t<Args>... xs)
+    {
+      return logical::detail::all_of(x, xs...);
+    }
+  };
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(xs)...);
+}
+
+template <typename Arg, typename... Args, typename>
+dataflow::ref<bool> dataflow::OrE(const Arg& x, const Args&... xs)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "|";
+    }
+    bool calculate(bool x, logical::detail::bool_type_t<Args>... xs)
+    {
+      return logical::detail::any_of(x, xs...);
+    }
+  };
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(xs)...);
 }
 
 inline dataflow::ref<bool> dataflow::operator!(const ref<bool>& x)
