@@ -41,7 +41,13 @@ template <typename Arg,
             core::common_argument_data_type_t<Arg, Args...>>>
 ref<bool> And(const Arg& x, const Args&... xs);
 
-DATAFLOW___EXPORT ref<bool> Or(const arg<bool>& x, const arg<bool>& y);
+template <typename Arg,
+          typename... Args,
+          typename = core::enable_for_argument_data_type_t<
+            bool,
+            core::common_argument_data_type_t<Arg, Args...>>>
+ref<bool> Or(const Arg& x, const Args&... xs);
+
 DATAFLOW___EXPORT ref<bool> AndE(const arg<bool>& x, const arg<bool>& y);
 DATAFLOW___EXPORT ref<bool> OrE(const arg<bool>& x, const arg<bool>& y);
 

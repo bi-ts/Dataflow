@@ -34,11 +34,6 @@ dataflow::ref<bool> dataflow::Not(const arg<bool>& x)
   return core::Lift<policy>(x);
 }
 
-dataflow::ref<bool> dataflow::Or(const arg<bool>& x, const arg<bool>& y)
-{
-  return If(x, true, y);
-}
-
 dataflow::ref<bool> dataflow::AndE(const arg<bool>& x, const arg<bool>& y)
 {
   struct policy

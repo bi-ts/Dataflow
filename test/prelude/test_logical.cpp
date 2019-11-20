@@ -201,6 +201,29 @@ BOOST_AUTO_TEST_CASE(test_And_4_mixed_arguments)
 
 // Logical `or` (lazy)
 
+BOOST_AUTO_TEST_CASE(test_Or_1_arg)
+{
+  Engine engine;
+
+  auto x = Var<bool>();
+
+  const auto a = Or(x);
+
+  const auto f = Curr(a);
+
+  x = true;
+
+  BOOST_CHECK_EQUAL(f(), true);
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), false);
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+}
+
 BOOST_AUTO_TEST_CASE(test_Or)
 {
   Engine engine;
@@ -279,6 +302,48 @@ BOOST_AUTO_TEST_CASE(test_Or_rhs_literal)
   x = false;
 
   BOOST_CHECK_EQUAL(f(), (false || true));
+}
+
+BOOST_AUTO_TEST_CASE(test_Or_4_mixed_arguments)
+{
+  Engine engine;
+
+  auto x = Var<bool>();
+  auto y = Var<bool>();
+
+  const auto a = Or(x, false, y, false);
+
+  const auto f = Curr(a);
+
+  x = true;
+
+  y = true;
+
+  BOOST_CHECK_EQUAL(f(), (true || false || true || true));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(f(), (false || false || true || false));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+
+  y = false;
+
+  BOOST_CHECK_EQUAL(f(), (false || false || false || false));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), true);
+
+  x = true;
+
+  BOOST_CHECK_EQUAL(f(), (true || false || false || false));
+
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 }
 
 // Logical `and` (eager)
