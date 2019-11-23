@@ -84,16 +84,13 @@ template <typename T> integer list<T>::size() const
   return static_cast<integer>(data_.size());
 }
 
-template <typename T>
-ref<list<T>>::ref(const core::ref_base& r, core::ref_ctor_guard_t)
-: core::ref_base(r)
+namespace core
 {
+template <typename T>
+ref<maybe<T>> ref_mixin<list<T>>::operator[](const ref<integer>& idx) const
+{
+  return Get(static_cast<const ref<list<T>>&>(*this), idx);
 }
-
-template <typename T>
-ref<maybe<T>> ref<list<T>>::operator[](const ref<integer>& idx) const
-{
-  return Get(*this, idx);
 }
 } // dataflow
 

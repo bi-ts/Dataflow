@@ -130,13 +130,14 @@ template <typename T> struct list_element_type<list<T>>
 template <typename T>
 using list_element_type_t = typename list_element_type<T>::type;
 
-template <typename T> class ref<list<T>> : public core::ref_base
+namespace core
+{
+template <typename T> class ref_mixin<list<T>>
 {
 public:
-  explicit ref(const core::ref_base& r, core::ref_ctor_guard_t);
-
   ref<maybe<T>> operator[](const ref<integer>& idx) const;
 };
+}
 
 template <typename Arg,
           typename... Args,
