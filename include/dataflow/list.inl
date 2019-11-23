@@ -55,9 +55,28 @@ template <typename T> bool list<T>::operator!=(const list& other) const
   return !(*this == other);
 }
 
+namespace list_detail
+{
+template <typename Elem, typename..., typename T = core::data_type_t<Elem>>
+ref<T> list_element_convert(const core::ref_base& x)
+{
+  return core::unsafe_ref_cast<T>(x);
+}
+
+template <typename Elem,
+          typename...,
+          typename T = core::enable_if_flowable_t<Elem>>
+T list_element_convert(const T& v)
+{
+  return v;
+}
+
+}
+
 template <typename T> T list<T>::operator[](integer idx) const
 {
-  return data_.at(static_cast<std::size_t>(idx));
+  return list_detail::list_element_convert<T>(
+    data_.at(static_cast<std::size_t>(idx)));
 }
 
 template <typename T> integer list<T>::size() const
@@ -122,12 +141,9 @@ dataflow::ref<dataflow::integer> dataflow::Length(const ref<list<T>>& x)
   return core::Lift<policy>(x);
 }
 
-namespace dataflow
-{
-namespace list_internal
-{
-template <typename T>
-ref<maybe<T>> list_get(const ref<listC<T>>& lst, ref<integer> idx)
+template <typename ArgL, typename ArgI, typename T, typename>
+dataflow::ref<dataflow::maybe<T>> dataflow::Get(const ArgL& lst,
+                                                const ArgI& idx)
 {
   struct policy
   {
@@ -138,19 +154,9 @@ ref<maybe<T>> list_get(const ref<listC<T>>& lst, ref<integer> idx)
 
     static maybe<T> calculate(const list<T>& x, integer idx)
     {
-      return idx < x.size() ? just(x[idx]) : nothing();
+      return idx < static_cast<integer>(x.size()) ? just(x[idx]) : nothing();
     }
   };
 
-  return core::Lift<policy>(lst, idx);
-}
-}
-}
-
-template <typename ArgL, typename ArgI, typename T, typename>
-dataflow::ref<dataflow::maybe<T>> dataflow::Get(const ArgL& lst,
-                                                const ArgI& idx)
-{
-  return list_internal::list_get(core::make_argument(lst),
-                                 core::make_argument(idx));
+  return core::Lift<policy>(core::make_argument(lst), core::make_argument(idx));
 }

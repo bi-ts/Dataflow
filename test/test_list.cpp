@@ -119,6 +119,95 @@ BOOST_AUTO_TEST_CASE(test_ListA_Length)
   BOOST_CHECK_EQUAL(e(), 5);
 }
 
+BOOST_AUTO_TEST_CASE(test_listA_Get)
+{
+  Engine engine;
+
+  auto lst = Var<listA<std::string>>();
+  auto idx = Var<integer>(0);
+
+  auto vd = Var("default");
+  auto v1 = Var("first");
+  auto v2 = Var("second");
+  auto v3 = Var("third");
+
+  auto x = Main([=](const Time& t0) { return FromMaybe(Get(lst, idx), vd); });
+
+  BOOST_CHECK_EQUAL(x(), "default");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+
+  lst = make_listA(v1);
+
+  BOOST_CHECK_EQUAL(x(), "first");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+
+  idx = 1;
+
+  BOOST_CHECK_EQUAL(x(), "default");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+
+  lst = make_listA(v1, v2);
+
+  BOOST_CHECK_EQUAL(x(), "second");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+
+  v2 = "2nd";
+
+  BOOST_CHECK_EQUAL(x(), "2nd");
+
+  lst = make_listA(v1, "second", v3, "fourth");
+
+  BOOST_CHECK_EQUAL(x(), "second");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(x(), "third");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), true);
+
+  idx = 3;
+
+  BOOST_CHECK_EQUAL(x(), "fourth");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+
+  idx = 4;
+
+  BOOST_CHECK_EQUAL(x(), "default");
+
+  BOOST_CHECK_EQUAL(introspect::active_node(vd), true);
+  BOOST_CHECK_EQUAL(introspect::active_node(v1), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v2), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Get)
 {
   Engine engine;
