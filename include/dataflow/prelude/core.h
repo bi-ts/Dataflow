@@ -68,6 +68,8 @@ public:
 namespace core
 {
 using ref_base = internal::ref;
+
+using ref_ctor_guard_t = internal::ref::ctor_guard_t;
 }
 
 template <typename T> class ref : public core::ref_base
