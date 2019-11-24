@@ -72,7 +72,9 @@ public:
   bool operator==(const list& other) const;
   bool operator!=(const list& other) const;
 
-  list insert(const integer& idx, const T& v) const;
+  list insert(integer idx, const T& v) const;
+
+  list erase(integer idx) const;
 
   T operator[](integer idx) const;
 
@@ -151,6 +153,12 @@ template <typename ArgL,
           typename = core::enable_for_argument_data_type_t<ArgI, integer>,
           typename = core::enable_for_argument_data_type_t<ArgX, T>>
 ref<list<T>> Insert(const ArgL& l, const ArgI& idx, const ArgX& x);
+
+template <typename ArgL,
+          typename ArgI,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename = core::enable_for_argument_data_type_t<ArgI, integer>>
+ref<list<T>> Erase(const ArgL& l, const ArgI& idx);
 
 /// \}
 } // dataflow

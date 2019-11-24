@@ -87,13 +87,22 @@ template <typename T> bool list<T>::operator!=(const list& other) const
   return !(*this == other);
 }
 
-template <typename T>
-list<T> list<T>::insert(const integer& idx, const T& v) const
+template <typename T> list<T> list<T>::insert(integer idx, const T& v) const
 {
   // TODO: std17::clamp?
   return data_.insert(static_cast<std::size_t>(std::max(
                         std::min(idx, static_cast<integer>(data_.size())), 0)),
                       v);
+}
+
+template <typename T> list<T> list<T>::erase(integer idx) const
+{
+  if (data_.empty())
+    return *this;
+
+  // TODO: std17::clamp?
+  return data_.erase(static_cast<std::size_t>(
+    std::max(std::min(idx, static_cast<integer>(data_.size() - 1)), 0)));
 }
 
 template <typename T> T list<T>::operator[](integer idx) const
@@ -236,4 +245,23 @@ dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
 
   return core::Lift<policy>(
     core::make_argument(l), core::make_argument(idx), core::make_argument(x));
+}
+
+template <typename ArgL, typename ArgI, typename T, typename>
+dataflow::ref<dataflow::list<T>> dataflow::Erase(const ArgL& l, const ArgI& idx)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "list-erase";
+    }
+
+    list<T> calculate(const list<T>& l, integer idx)
+    {
+      return l.erase(idx);
+    }
+  };
+
+  return core::Lift<policy>(core::make_argument(l), core::make_argument(idx));
 }

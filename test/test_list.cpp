@@ -400,5 +400,82 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Insert_out_of_range)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(100 0 1 2)");
 }
 
+BOOST_AUTO_TEST_CASE(test_ListC_Erase)
+{
+  Engine engine;
+
+  auto x1 = Var(1);
+  auto x2 = Var(2);
+  auto x3 = Var(3);
+
+  auto idx = Var(1);
+
+  auto xs = ListC(x1, x2, x3);
+
+  auto ys = Erase(xs, idx);
+
+  auto f = *ys;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 3)");
+
+  x1 = 111;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(111 3)");
+
+  x3 = 333;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(111 333)");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(111 2)");
+
+  x2 = 222;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(111 222)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_Var_Erase_out_of_range)
+{
+  Engine engine;
+
+  auto xs = Var<listC<int>>(0, 1, 2, 3);
+  auto idx = Var(3);
+
+  auto ys = Erase(xs, idx);
+
+  auto f = *ys;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2)");
+
+  idx = 4;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2)");
+
+  idx = 5;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2)");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 3)");
+
+  idx = 1;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 2 3)");
+
+  idx = 0;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
+
+  idx = -1;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
+
+  idx = -2;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test
