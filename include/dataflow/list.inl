@@ -20,6 +20,8 @@
 #error '.inl' file can't be included directly. Use 'list.h' instead
 #endif
 
+#include <algorithm>
+
 namespace dataflow
 {
 namespace list_internal
@@ -85,6 +87,15 @@ template <typename T> bool list<T>::operator!=(const list& other) const
   return !(*this == other);
 }
 
+template <typename T>
+list<T> list<T>::insert(const integer& idx, const T& v) const
+{
+  // TODO: std17::clamp?
+  return data_.insert(static_cast<std::size_t>(std::max(
+                        std::min(idx, static_cast<integer>(data_.size())), 0)),
+                      v);
+}
+
 template <typename T> T list<T>::operator[](integer idx) const
 {
   return data_.at(static_cast<std::size_t>(idx));
@@ -108,7 +119,18 @@ ref<maybe<T>> ref_mixin<list<T>>::operator[](const ref<integer>& idx) const
 template <typename T>
 std::ostream& dataflow::operator<<(std::ostream& out, const list<T>& value)
 {
-  out << "list";
+  out << "list(";
+
+  if (value.size() > 0)
+    out << core::to_string(value[0]);
+
+  for (integer i = 1; i < value.size(); ++i)
+  {
+    out << " " << core::to_string(value[i]);
+  }
+
+  out << ")";
+
   return out;
 }
 
@@ -129,6 +151,27 @@ dataflow::ref<dataflow::listA<T>> dataflow::ListA(const Arg& x,
                                                   const Args&... xs)
 {
   return Const(make_listA(x, xs...));
+}
+
+template <typename Arg, typename... Args, typename T>
+dataflow::ref<dataflow::listC<T>> dataflow::ListC(const Arg& x,
+                                                  const Args&... xs)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "listC";
+    }
+
+    static list<T> calculate(const core::argument_data_type_t<Arg>& x,
+                             const core::argument_data_type_t<Args>&... xs)
+    {
+      return make_listC(x, xs...);
+    }
+  };
+
+  return core::Lift<policy>(core::make_argument(x), core::make_argument(xs)...);
 }
 
 template <typename T>
@@ -167,4 +210,30 @@ dataflow::ref<dataflow::maybe<T>> dataflow::Get(const ArgL& lst,
   };
 
   return core::Lift<policy>(core::make_argument(lst), core::make_argument(idx));
+}
+
+template <typename ArgL,
+          typename ArgI,
+          typename ArgX,
+          typename T,
+          typename,
+          typename>
+dataflow::ref<dataflow::list<T>>
+dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "list-insert";
+    }
+
+    list<T> calculate(const list<T>& l, integer idx, const T& x)
+    {
+      return l.insert(idx, x);
+    }
+  };
+
+  return core::Lift<policy>(
+    core::make_argument(l), core::make_argument(idx), core::make_argument(x));
 }

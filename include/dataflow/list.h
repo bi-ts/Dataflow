@@ -26,8 +26,8 @@
 #include "maybe.h"
 #include "prelude.h"
 
-#include <immer/vector.hpp>
-#include <immer/vector_transient.hpp>
+#include <immer/flex_vector.hpp>
+#include <immer/flex_vector_transient.hpp>
 
 namespace dataflow
 {
@@ -40,9 +40,9 @@ template <typename T> class element_wrapper;
 
 template <typename T>
 using list_data =
-  immer::vector<T,
-                immer::memory_policy<immer::heap_policy<immer::cpp_heap>,
-                                     immer::default_refcount_policy>>;
+  immer::flex_vector<T,
+                     immer::memory_policy<immer::heap_policy<immer::cpp_heap>,
+                                          immer::default_refcount_policy>>;
 
 template <typename T> struct select_list_data
 {
@@ -72,9 +72,17 @@ public:
   bool operator==(const list& other) const;
   bool operator!=(const list& other) const;
 
+  list insert(const integer& idx, const T& v) const;
+
   T operator[](integer idx) const;
 
   integer size() const;
+
+private:
+  list(typename list_internal::select_list_data<T>::type data)
+  : data_(std::move(data))
+  {
+  }
 
 private:
   typename list_internal::select_list_data<T>::type data_;
@@ -123,6 +131,11 @@ template <typename Arg,
           typename T = core::common_argument_data_type_t<Arg, Args...>>
 ref<listA<T>> ListA(const Arg& x, const Args&... xs);
 
+template <typename Arg,
+          typename... Args,
+          typename T = core::common_argument_data_type_t<Arg, Args...>>
+ref<listC<T>> ListC(const Arg& x, const Args&... xs);
+
 template <typename T> ref<integer> Length(const ref<list<T>>& x);
 
 template <typename ArgL,
@@ -130,6 +143,14 @@ template <typename ArgL,
           typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
           typename = core::enable_for_argument_data_type_t<ArgI, integer>>
 ref<maybe<T>> Get(const ArgL& lst, const ArgI& idx);
+
+template <typename ArgL,
+          typename ArgI,
+          typename ArgX,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename = core::enable_for_argument_data_type_t<ArgI, integer>,
+          typename = core::enable_for_argument_data_type_t<ArgX, T>>
+ref<list<T>> Insert(const ArgL& l, const ArgI& idx, const ArgX& x);
 
 /// \}
 } // dataflow

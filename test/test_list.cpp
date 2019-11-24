@@ -101,6 +101,40 @@ BOOST_AUTO_TEST_CASE(test_listA_equality_inequality_test)
   BOOST_CHECK_EQUAL((a != d), false);
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_insert_into_empty)
+{
+  Engine engine;
+
+  auto xs = listC<std::string>{};
+
+  BOOST_CHECK_EQUAL(xs.size(), 0);
+
+  xs = xs.insert(0, "first");
+
+  BOOST_CHECK_EQUAL(xs.size(), 1);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(first)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_insert)
+{
+  Engine engine;
+
+  auto xs = list<std::string>{"1", "2", "3"};
+
+  BOOST_CHECK_EQUAL(xs.size(), 3);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 2 3)");
+
+  xs = xs.insert(2, ",");
+
+  BOOST_CHECK_EQUAL(xs.size(), 4);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 2 , 3)");
+
+  xs = xs.insert(1, ",");
+
+  BOOST_CHECK_EQUAL(xs.size(), 5);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 , 2 , 3)");
+}
+
 BOOST_AUTO_TEST_CASE(test_ListA_Length)
 {
   Engine engine;
@@ -287,6 +321,83 @@ BOOST_AUTO_TEST_CASE(test_ListC_Get_via_subscript_operator)
   idx = 4;
 
   BOOST_CHECK_EQUAL(x(), "default");
+}
+
+BOOST_AUTO_TEST_CASE(test_ListC_Insert)
+{
+  Engine engine;
+
+  auto x1 = Var(1);
+  auto x2 = Var(2);
+  auto x3 = Var(3);
+
+  auto idx = Var(1);
+
+  auto xs = ListC(x1, x2, x3);
+
+  auto ys = Insert(xs, idx, 11);
+
+  auto f = *ys;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 11 2 3)");
+
+  x2 = 0;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 11 0 3)");
+
+  idx = 3;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 0 3 11)");
+
+  x3 = 333;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 0 333 11)");
+
+  x1 = 111;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(111 0 333 11)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_Var_Insert_out_of_range)
+{
+  Engine engine;
+
+  const auto xs = Var<list<int>>(0, 1, 2);
+  auto idx = Var(3);
+
+  auto ys = Insert(xs, idx, 100);
+
+  auto f = *ys;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 100)");
+
+  idx = 4;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 100)");
+
+  idx = 5;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 100)");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 100 2)");
+
+  idx = 1;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 100 1 2)");
+
+  idx = 0;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(100 0 1 2)");
+
+  idx = -1;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(100 0 1 2)");
+
+  idx = -2;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(100 0 1 2)");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
