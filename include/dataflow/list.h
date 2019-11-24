@@ -29,6 +29,8 @@
 #include <immer/flex_vector.hpp>
 #include <immer/flex_vector_transient.hpp>
 
+#include <vector>
+
 namespace dataflow
 {
 /// \defgroup list
@@ -55,6 +57,8 @@ template <typename T> struct select_list_data<ref<T>>
 };
 }
 
+template <typename T> class list_patch;
+
 template <typename T>
 class list final
 : public std::conditional<
@@ -63,6 +67,9 @@ class list final
     core::aggregate_base,
     core::composite_base>::type
 {
+public:
+  using patch_type = list_patch<T>;
+
 public:
   list() = default;
 
@@ -88,6 +95,40 @@ private:
 
 private:
   typename list_internal::select_list_data<T>::type data_;
+};
+
+template <typename T> class list_patch
+{
+private:
+  enum class change_type
+  {
+    insert,
+    erase
+  };
+
+  class change_data;
+
+public:
+  using data_type = list<T>;
+
+public:
+  explicit list_patch();
+
+  explicit list_patch(const list<T>&, const list<T>&);
+
+  void insert(integer idx, const T& v);
+
+  void erase(integer idx);
+
+  template <typename Insert, typename Erase>
+  void apply(const Insert& insert, const Erase& erase) const;
+
+  list<T> apply(list<T> v) const;
+
+  bool empty() const;
+
+private:
+  std::vector<change_data> changes_;
 };
 
 template <typename T> using listA = list<ref<T>>;

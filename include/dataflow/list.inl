@@ -115,6 +115,64 @@ template <typename T> integer list<T>::size() const
   return static_cast<integer>(data_.size());
 }
 
+template <typename T> class list_patch<T>::change_data
+{
+public:
+  change_type type;
+  integer idx;
+  std::vector<T> args;
+};
+
+template <typename T> list_patch<T>::list_patch()
+{
+}
+
+template <typename T>
+list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
+{
+  // TODO: not implemented
+  DATAFLOW___CHECK_NOT_REACHABLE();
+}
+
+template <typename T> void list_patch<T>::insert(integer idx, const T& v)
+{
+  changes_.push_back({change_type::insert, idx, {v}});
+}
+
+template <typename T> void list_patch<T>::erase(integer idx)
+{
+  changes_.push_back({change_type::erase, idx, {}});
+}
+
+template <typename T>
+template <typename Insert, typename Erase>
+void list_patch<T>::apply(const Insert& insert, const Erase& erase) const
+{
+  for (const auto& act : changes_)
+  {
+    if (act.type == change_type::insert)
+    {
+      insert(act.idx, act.args.front());
+    }
+    else if (act.type == change_type::erase)
+    {
+      erase(act.idx);
+    }
+  }
+}
+
+template <typename T> list<T> list_patch<T>::apply(list<T> v) const
+{
+  apply([&](const integer& idx, const T& x) { v = v.insert(idx, x); },
+        [&](const integer& idx) { v = v.erase(idx); });
+  return v;
+}
+
+template <typename T> bool list_patch<T>::empty() const
+{
+  return changes_.empty();
+}
+
 namespace core
 {
 template <typename T>

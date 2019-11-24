@@ -28,6 +28,33 @@ namespace dataflow_test
 {
 BOOST_AUTO_TEST_SUITE(test_list)
 
+BOOST_AUTO_TEST_CASE(test_list)
+{
+  BOOST_CHECK_EQUAL(core::is_trivially_patcheable<listA<int>>::value, false);
+  BOOST_CHECK_EQUAL(core::is_trivially_patcheable<listC<int>>::value, false);
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_patch)
+{
+  Engine engine;
+
+  const auto a = make_listC(1, 2, 3, 4, 5);
+
+  list_patch<int> patch;
+
+  BOOST_CHECK(patch.empty());
+
+  BOOST_CHECK_EQUAL(core::to_string(patch.apply(a)), "list(1 2 3 4 5)");
+
+  patch.insert(2, 0);
+
+  BOOST_CHECK_EQUAL(core::to_string(patch.apply(a)), "list(1 2 0 3 4 5)");
+
+  patch.erase(4);
+
+  BOOST_CHECK_EQUAL(core::to_string(patch.apply(a)), "list(1 2 0 3 5)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listA_ctor)
 {
   Engine engine;
