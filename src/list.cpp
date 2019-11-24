@@ -17,7 +17,3 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/list.h>
-
-namespace dataflow
-{
-}
