@@ -36,43 +36,22 @@ namespace dataflow
 
 namespace list_internal
 {
-class list_data_impl;
-
-class DATAFLOW___EXPORT listA_data
-{
-public:
-  explicit listA_data();
-  explicit listA_data(const std::initializer_list<core::ref_base>& init);
-  listA_data(const listA_data& other);
-  ~listA_data();
-
-  listA_data& operator=(const listA_data& other);
-
-  bool operator==(const listA_data& other) const;
-  bool operator!=(const listA_data& other) const;
-
-  core::ref_base at(std::size_t idx) const;
-
-  std::size_t size() const;
-
-private:
-  list_data_impl* p_impl_;
-};
+template <typename T> class element_wrapper;
 
 template <typename T>
-using listC_data =
+using list_data =
   immer::vector<T,
                 immer::memory_policy<immer::heap_policy<immer::cpp_heap>,
                                      immer::default_refcount_policy>>;
 
 template <typename T> struct select_list_data
 {
-  using type = listC_data<T>;
+  using type = list_data<T>;
 };
 
 template <typename T> struct select_list_data<ref<T>>
 {
-  using type = listA_data;
+  using type = list_data<element_wrapper<T>>;
 };
 }
 

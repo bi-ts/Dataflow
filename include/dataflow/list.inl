@@ -22,12 +22,42 @@
 
 namespace dataflow
 {
+namespace list_internal
+{
+template <typename T> class element_wrapper
+{
+public:
+  element_wrapper(const ref<T>& x)
+  : x_(x)
+  {
+  }
+
+  bool operator==(const element_wrapper& other) const
+  {
+    return x_.id() == other.x_.id();
+  }
+
+  bool operator!=(const element_wrapper& other) const
+  {
+    return !(*this == other);
+  }
+
+  operator const ref<T>&() const
+  {
+    return x_;
+  }
+
+private:
+  ref<T> x_;
+};
+}
+
 namespace list_detail
 {
 template <typename T, typename U>
-core::ref_base make_list_element(std::true_type, const U& x)
+T make_list_element(std::true_type, const U& x)
 {
-  return static_cast<core::ref_base>(core::make_argument(x));
+  return core::make_argument(x);
 }
 
 template <typename T, typename U>
@@ -55,28 +85,9 @@ template <typename T> bool list<T>::operator!=(const list& other) const
   return !(*this == other);
 }
 
-namespace list_detail
-{
-template <typename Elem, typename..., typename T = core::data_type_t<Elem>>
-ref<T> list_element_convert(const core::ref_base& x)
-{
-  return core::unsafe_ref_cast<T>(x);
-}
-
-template <typename Elem,
-          typename...,
-          typename T = core::enable_if_flowable_t<Elem>>
-T list_element_convert(const T& v)
-{
-  return v;
-}
-
-}
-
 template <typename T> T list<T>::operator[](integer idx) const
 {
-  return list_detail::list_element_convert<T>(
-    data_.at(static_cast<std::size_t>(idx)));
+  return data_.at(static_cast<std::size_t>(idx));
 }
 
 template <typename T> integer list<T>::size() const

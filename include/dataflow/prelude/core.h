@@ -137,11 +137,6 @@ using function_of_time = std::function<ref<T>(const Time&)>;
 
 namespace core
 {
-template <typename T> ref<T> unsafe_ref_cast(const ref_base& x)
-{
-  return ref<T>(x, internal::ref::ctor_guard);
-}
-
 template <typename T> class generic_patch
 {
 public:
