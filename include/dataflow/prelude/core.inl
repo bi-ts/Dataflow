@@ -92,24 +92,24 @@ template <typename T> const T& val<T>::operator()() const
 // var
 
 template <typename T>
-var<T>::var(const internal::ref& r, internal::ref::ctor_guard_t)
+var_base<T>::var_base(const internal::ref& r, internal::ref::ctor_guard_t)
 : ref<T>(r, internal::ref::ctor_guard)
 , readonly_(false)
 {
 }
 
+template <typename T> var_base<T>::var_base(var_base&& other) = default;
+
 template <typename T>
-var<T>::var(const var& other)
+var_base<T>::var_base(const var_base& other)
 : ref<T>(other)
 , readonly_(true)
 {
 }
 
-template <typename T> var<T>::var(var& other) = default;
+template <typename T> var_base<T>::var_base(var_base& other) = default;
 
-template <typename T> var<T>::var(var&& other) = default;
-
-template <typename T> const var<T>& var<T>::operator=(const T& v)
+template <typename T> void var_base<T>::set_value_(const T& v)
 {
   if (readonly_)
     throw std::logic_error("variable is readonly");
@@ -120,8 +120,6 @@ template <typename T> const var<T>& var<T>::operator=(const T& v)
   static_cast<const internal::node_var<T>*>(this->get_())->set_next_value(v);
 
   this->schedule_();
-
-  return *this;
 }
 
 namespace core
@@ -370,8 +368,8 @@ dataflow::ref<T> dataflow::Const(Args&&... args)
 
 template <typename T, typename FwT> dataflow::var<FwT> dataflow::Var(const T& v)
 {
-  return var<FwT>(internal::node_var<FwT>::create(v),
-                  internal::ref::ctor_guard);
+  return var_base<FwT>(internal::node_var<FwT>::create(v),
+                       internal::ref::ctor_guard);
 }
 
 template <typename T, typename... Args, typename>

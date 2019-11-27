@@ -111,21 +111,39 @@ public:
   const T& operator()() const;
 };
 
-template <typename T> class var final : public ref<T>
+template <typename T> class var_base : public ref<T>
 {
 public:
-  explicit var(const internal::ref& r, internal::ref::ctor_guard_t);
-  var(const var& other);
-  var(var& other);
-  var(var&& other);
+  explicit var_base(const internal::ref& r, internal::ref::ctor_guard_t);
+  var_base(var_base&& other);
+
+protected:
+  var_base(const var_base& other);
+  var_base(var_base& other);
 
   /**
    * \throws std::logic_error in case the variable reference is readonly.
    */
-  const var& operator=(const T& v);
+  void set_value_(const T& v);
 
 private:
   bool readonly_;
+};
+
+template <typename T> class var final : public var_base<T>
+{
+public:
+  var(var_base<T> base)
+  : var_base<T>(std::move(base))
+  {
+  }
+
+  var& operator=(const T& v)
+  {
+    var_base<T>::set_value_(v);
+
+    return *this;
+  }
 };
 
 template <typename T>
