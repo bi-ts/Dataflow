@@ -67,17 +67,13 @@ public:
 
 namespace core
 {
-using ref_base = internal::ref;
-
-using ref_ctor_guard_t = internal::ref::ctor_guard_t;
-
 template <typename T> class ref_mixin
 {
 };
 }
 
 template <typename T>
-class ref : public core::ref_base, public core::ref_mixin<T>
+class ref : public internal::ref, public core::ref_mixin<T>
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
