@@ -130,8 +130,51 @@ template <typename T> list_patch<T>::list_patch()
 template <typename T>
 list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
 {
-  // TODO: not implemented
-  DATAFLOW___CHECK_NOT_REACHABLE();
+  const auto& m = curr.size();
+  const auto& n = prev.size();
+
+  std::vector<int> table_data((m + 1) * (n + 1));
+
+  const auto table = [&](int i, int j) -> int& {
+    return table_data.at(i * (n + 1) + j);
+  };
+
+  for (int i = 0; i <= m; ++i)
+    table(i, 0) = 0;
+
+  for (int j = 0; j <= n; ++j)
+    table(0, j) = 0;
+
+  for (int i = 1; i <= m; ++i)
+  {
+    for (int j = 1; j <= n; ++j)
+    {
+      if (curr[i - 1] == prev[j - 1])
+        table(i, j) = table(i - 1, j - 1) + 1;
+      else
+        table(i, j) = std::max(table(i, j - 1), table(i - 1, j));
+    }
+  }
+
+  for (int i = m, j = n; i > 0 || j > 0;)
+  {
+    if (i > 0 && j > 0 && curr[i - 1] == prev[j - 1])
+    {
+      --i, --j;
+    }
+    else if (j > 0 && (i == 0 || table(i, j - 1) >= table(i - 1, j)))
+    {
+      changes_.push_back({change_type::erase, j - 1, {}});
+
+      --j;
+    }
+    else if (i > 0 && (j == 0 || table(i, j - 1) < table(i - 1, j)))
+    {
+      changes_.push_back({change_type::insert, j, {curr[i - 1]}});
+
+      --i;
+    }
+  }
 }
 
 template <typename T> void list_patch<T>::insert(integer idx, const T& v)
