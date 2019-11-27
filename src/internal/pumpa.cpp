@@ -191,6 +191,8 @@ void pumpa::pump()
   }
 
   pumping_started_ = false;
+
+  CHECK_POSTCONDITION(metadata_.empty());
 }
 
 void pumpa::set_metadata(const node* p_node,
@@ -860,8 +862,6 @@ void pumpa::remove_subgraph_(vertex_descriptor v)
 
 void pumpa::pump_()
 {
-  CHECK_PRECONDITION(metadata_.empty());
-
   ++ticks_;
   changed_nodes_count_ = 0;
   updated_nodes_count_ = 0;

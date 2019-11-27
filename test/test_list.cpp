@@ -264,6 +264,69 @@ BOOST_AUTO_TEST_CASE(test_ListA_Length)
   BOOST_CHECK_EQUAL(e(), 5);
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_Var_Length)
+{
+  Engine engine;
+
+  auto a = Var<list<std::string>>();
+
+  auto b = Main([=](const Time& t0) { return Length(a); });
+
+  BOOST_CHECK_EQUAL(b(), 0);
+
+  a.insert(0, "0");
+
+  BOOST_CHECK_EQUAL(b(), 1);
+
+  a.insert(1, "2");
+
+  BOOST_CHECK_EQUAL(b(), 2);
+
+  a.insert(2, "3");
+
+  BOOST_CHECK_EQUAL(b(), 3);
+
+  a.erase(0);
+
+  BOOST_CHECK_EQUAL(b(), 2);
+
+  a.erase(0);
+
+  BOOST_CHECK_EQUAL(b(), 1);
+
+  a.erase(0);
+
+  BOOST_CHECK_EQUAL(b(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_Var_insert_inactive)
+{
+  Engine engine;
+
+  auto xs = Var<list<int>>();
+
+  xs.insert(0, 2);
+  xs.insert(0, 1);
+
+  auto f = *xs;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_Var_erase_inactive)
+{
+  Engine engine;
+
+  auto xs = Var<list<int>>(1, 2, 3, 4);
+
+  xs.erase(2);
+  xs.erase(1);
+
+  auto f = *xs;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 4)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listA_Get)
 {
   Engine engine;

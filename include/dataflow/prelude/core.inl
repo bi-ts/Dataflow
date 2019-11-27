@@ -122,6 +122,26 @@ template <typename T> void var_base<T>::set_value_(const T& v)
   this->schedule_();
 }
 
+template <typename T>
+template <typename Patch>
+void var_base<T>::set_patch_(const Patch& patch)
+{
+  if (readonly_)
+    throw std::logic_error("variable is readonly");
+
+  DATAFLOW___CHECK_PRECONDITION(
+    dynamic_cast<const internal::node_var<T>*>(this->get_()));
+
+  const auto p_var = static_cast<const internal::node_var<T>*>(this->get_());
+
+  p_var->set_next_value(patch.apply(p_var->next_value()));
+
+  this->set_metadata(std::unique_ptr<const internal::metadata>(
+    new internal::patch_metadata<Patch>{patch}));
+
+  this->schedule_();
+}
+
 namespace core
 {
 template <typename T>

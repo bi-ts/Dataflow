@@ -169,6 +169,18 @@ public:
 };
 }
 
+template <typename T> class var<list<T>> final : public var_base<list<T>>
+{
+public:
+  var(var_base<list<T>> base);
+
+  var& operator=(const list<T>& v);
+
+  void insert(integer idx, const T& v);
+
+  void erase(integer idx);
+};
+
 template <typename Arg,
           typename... Args,
           typename T = core::common_argument_data_type_t<Arg, Args...>>

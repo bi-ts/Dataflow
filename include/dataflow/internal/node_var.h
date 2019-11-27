@@ -44,6 +44,11 @@ public:
     next_value_ = v;
   }
 
+  const T& next_value() const
+  {
+    return next_value_;
+  }
+
 private:
   explicit node_var(const T& v)
   : node_t<T>(v)

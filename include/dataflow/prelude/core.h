@@ -126,6 +126,11 @@ protected:
    */
   void set_value_(const T& v);
 
+  /**
+   * \throws std::logic_error in case the variable reference is readonly.
+   */
+  template <typename Patch> void set_patch_(const Patch& patch);
+
 private:
   bool readonly_;
 };

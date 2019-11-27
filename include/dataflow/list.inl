@@ -67,6 +67,12 @@ T make_list_element(std::false_type, const U& x)
 {
   return x;
 }
+
+template <typename T> integer erase_index(const list<T>& lst, integer idx)
+{
+  // TODO: std17::clamp?
+  return std::max(std::min(idx, static_cast<integer>(lst.size() - 1)), 0);
+}
 }
 
 template <typename T>
@@ -100,9 +106,8 @@ template <typename T> list<T> list<T>::erase(integer idx) const
   if (data_.empty())
     return *this;
 
-  // TODO: std17::clamp?
-  return data_.erase(static_cast<std::size_t>(
-    std::max(std::min(idx, static_cast<integer>(data_.size() - 1)), 0)));
+  return data_.erase(
+    static_cast<std::size_t>(list_detail::erase_index(*this, idx)));
 }
 
 template <typename T> T list<T>::operator[](integer idx) const
@@ -224,6 +229,38 @@ ref<maybe<T>> ref_mixin<list<T>>::operator[](const ref<integer>& idx) const
   return Get(static_cast<const ref<list<T>>&>(*this), idx);
 }
 }
+
+template <typename T> var<list<T>>& var<list<T>>::operator=(const list<T>& v)
+{
+  var_base<list<T>>::set_value_(v);
+
+  return *this;
+}
+
+template <typename T>
+var<list<T>>::var(var_base<list<T>> base)
+: var_base<list<T>>(std::move(base))
+{
+}
+
+template <typename T> void var<list<T>>::insert(integer idx, const T& v)
+{
+  list_patch<T> patch;
+
+  patch.insert(idx, v);
+
+  this->set_patch_(patch);
+}
+
+template <typename T> void var<list<T>>::erase(integer idx)
+{
+  list_patch<T> patch;
+
+  patch.erase(idx);
+
+  this->set_patch_(patch);
+}
+
 } // dataflow
 
 template <typename T>
@@ -342,9 +379,28 @@ dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
     {
       return l.insert(idx, x);
     }
+
+    list_patch<T> prepare_patch(const core::diff_type_t<list<T>>& diff_l,
+                                const core::diff_type_t<integer>& diff_idx,
+                                const core::diff_type_t<T>& diff_x)
+    {
+      DATAFLOW___CHECK_CONDITION((diff_l.curr() == diff_l.prev()) ==
+                                 diff_l.patch().empty());
+
+      list_patch<T> patch;
+      patch.erase(diff_idx.prev());
+
+      diff_l.patch().apply(
+        [&](const integer& idx, const T& x) { patch.insert(idx, x); },
+        [&](const integer& idx) { patch.erase(idx); });
+
+      patch.insert(diff_idx.curr(), diff_x.curr());
+
+      return patch;
+    }
   };
 
-  return core::Lift<policy>(
+  return core::LiftPatcher<policy>(
     core::make_argument(l), core::make_argument(idx), core::make_argument(x));
 }
 
@@ -362,7 +418,30 @@ dataflow::ref<dataflow::list<T>> dataflow::Erase(const ArgL& l, const ArgI& idx)
     {
       return l.erase(idx);
     }
+
+    list_patch<T> prepare_patch(const core::diff_type_t<list<T>>& diff_l,
+                                const core::diff_type_t<integer>& diff_idx)
+    {
+      DATAFLOW___CHECK_CONDITION((diff_l.curr() == diff_l.prev()) ==
+                                 diff_l.patch().empty());
+
+      const auto& erased_element =
+        diff_l.prev()[list_detail::erase_index(diff_l.prev(), diff_idx.prev())];
+
+      list_patch<T> patch;
+
+      patch.insert(diff_idx.prev(), erased_element);
+
+      diff_l.patch().apply(
+        [&](const integer& idx, const T& x) { patch.insert(idx, x); },
+        [&](const integer& idx) { patch.erase(idx); });
+
+      patch.erase(diff_idx.curr());
+
+      return patch;
+    }
   };
 
-  return core::Lift<policy>(core::make_argument(l), core::make_argument(idx));
+  return core::LiftPatcher<policy>(core::make_argument(l),
+                                   core::make_argument(idx));
 }

@@ -53,6 +53,8 @@ protected:
 
   void schedule_() const;
 
+  void set_metadata(std::shared_ptr<const metadata> p_metadata);
+
 private:
   explicit ref(node_id id);
 
