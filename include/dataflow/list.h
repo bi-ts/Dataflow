@@ -170,10 +170,10 @@ public:
   ref<maybe<T>> operator[](const ref<integer>& idx) const;
 };
 
-template <typename T> class var<list<T>> final : public var_base<list<T>>
+template <typename T> class var<list<T>> final : public core::var_base<list<T>>
 {
 public:
-  var(var_base<list<T>> base);
+  var(core::var_base<list<T>> base);
 
   var& operator=(const list<T>& v);
 

@@ -121,6 +121,8 @@ public:
   const T& operator()() const;
 };
 
+namespace core
+{
 template <typename T> class var_base : public ref<T>
 {
 public:
@@ -144,18 +146,19 @@ protected:
 private:
   bool readonly_;
 };
+}
 
-template <typename T> class var final : public var_base<T>
+template <typename T> class var final : public core::var_base<T>
 {
 public:
-  var(var_base<T> base)
-  : var_base<T>(std::move(base))
+  var(core::var_base<T> base)
+  : core::var_base<T>(std::move(base))
   {
   }
 
   var& operator=(const T& v)
   {
-    var_base<T>::set_value_(v);
+    core::var_base<T>::set_value_(v);
 
     return *this;
   }

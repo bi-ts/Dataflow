@@ -240,14 +240,14 @@ ref<maybe<T>> ref<list<T>>::operator[](const ref<integer>& idx) const
 
 template <typename T> var<list<T>>& var<list<T>>::operator=(const list<T>& v)
 {
-  var_base<list<T>>::set_value_(v);
+  core::var_base<list<T>>::set_value_(v);
 
   return *this;
 }
 
 template <typename T>
-var<list<T>>::var(var_base<list<T>> base)
-: var_base<list<T>>(std::move(base))
+var<list<T>>::var(core::var_base<list<T>> base)
+: core::var_base<list<T>>(std::move(base))
 {
 }
 

@@ -91,6 +91,8 @@ template <typename T> const T& val<T>::operator()() const
   return this->template value<T>();
 }
 
+namespace core
+{
 // var
 
 template <typename T>
@@ -144,8 +146,6 @@ void var_base<T>::set_patch_(const Patch& patch)
   this->schedule_();
 }
 
-namespace core
-{
 template <typename T>
 generic_patch<T>::generic_patch(const T& curr, const T&)
 : curr_(curr)
@@ -391,8 +391,8 @@ dataflow::ref<T> dataflow::Const(Args&&... args)
 
 template <typename T, typename FwT> dataflow::var<FwT> dataflow::Var(const T& v)
 {
-  return var_base<FwT>(internal::node_var<FwT>::create(v),
-                       internal::ref::ctor_guard);
+  return core::var_base<FwT>(internal::node_var<FwT>::create(v),
+                             internal::ref::ctor_guard);
 }
 
 template <typename T, typename... Args, typename>
