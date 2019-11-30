@@ -221,13 +221,21 @@ template <typename T> bool list_patch<T>::empty() const
   return changes_.empty();
 }
 
-namespace core
-{
 template <typename T>
-ref<maybe<T>> ref_mixin<list<T>>::operator[](const ref<integer>& idx) const
+ref<list<T>>::ref(core::ref_base<list<T>> base)
+: core::ref_base<list<T>>(base)
+{
+}
+
+template <typename T> ref<T> ref<list<T>>::operator()(const Time& t) const
+{
+  return this->snapshot_(t);
+}
+
+template <typename T>
+ref<maybe<T>> ref<list<T>>::operator[](const ref<integer>& idx) const
 {
   return Get(static_cast<const ref<list<T>>&>(*this), idx);
-}
 }
 
 template <typename T> var<list<T>>& var<list<T>>::operator=(const list<T>& v)

@@ -67,20 +67,30 @@ public:
 
 namespace core
 {
-template <typename T> class ref_mixin
-{
-};
-}
-
-template <typename T>
-class ref : public internal::ref, public core::ref_mixin<T>
+template <typename T> class ref_base : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
 
 public:
-  explicit ref(const internal::ref& r, internal::ref::ctor_guard_t);
+  explicit ref_base(const internal::ref& r, internal::ref::ctor_guard_t);
 
-  ref<T> operator()(const Time& t) const;
+protected:
+  ref_base<T> snapshot_(const Time& t) const;
+};
+}
+
+template <typename T> class ref : public core::ref_base<T>
+{
+public:
+  ref(core::ref_base<T> base)
+  : core::ref_base<T>(base)
+  {
+  }
+
+  ref<T> operator()(const Time& t) const
+  {
+    return this->snapshot_(t);
+  }
 };
 
 template <typename T> class arg : public ref<T>

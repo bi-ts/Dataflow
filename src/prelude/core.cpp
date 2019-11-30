@@ -40,7 +40,7 @@ void sig::emit() const
 }
 
 sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
-: ref<bool>(r, internal::ref::ctor_guard)
+: ref<bool>(core::ref_base<bool>(r, internal::ref::ctor_guard))
 {
 }
 
@@ -48,8 +48,8 @@ sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
 
 dataflow::ref<std::size_t> dataflow::CurrentTime()
 {
-  return ref<std::size_t>(internal::nodes_factory::get_time(),
-                          internal::ref::ctor_guard);
+  return core::ref_base<std::size_t>(internal::nodes_factory::get_time(),
+                                     internal::ref::ctor_guard);
 }
 
 dataflow::sig dataflow::Signal()

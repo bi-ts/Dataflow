@@ -160,14 +160,15 @@ template <typename T> struct list_element_type<list<T>>
 template <typename T>
 using list_element_type_t = typename list_element_type<T>::type;
 
-namespace core
-{
-template <typename T> class ref_mixin<list<T>>
+template <typename T> class ref<list<T>> : public core::ref_base<list<T>>
 {
 public:
+  ref(core::ref_base<list<T>> base);
+
+  ref<T> operator()(const Time& t) const;
+
   ref<maybe<T>> operator[](const ref<integer>& idx) const;
 };
-}
 
 template <typename T> class var<list<T>> final : public var_base<list<T>>
 {
