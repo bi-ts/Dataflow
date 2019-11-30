@@ -52,6 +52,17 @@ public:
 private:
   ref<T> x_;
 };
+
+template <typename T> bool is_valid_erase_index(const list<T>& lst, integer idx)
+{
+  return idx >= 0 && idx < lst.size();
+}
+
+template <typename T> integer insert_index(const list<T>& lst, integer idx)
+{
+  // TODO: std17::clamp?
+  return std::max(std::min(idx, static_cast<integer>(lst.size())), 0);
+}
 }
 
 namespace list_detail
@@ -66,12 +77,6 @@ template <typename T, typename U>
 T make_list_element(std::false_type, const U& x)
 {
   return x;
-}
-
-template <typename T> integer erase_index(const list<T>& lst, integer idx)
-{
-  // TODO: std17::clamp?
-  return std::max(std::min(idx, static_cast<integer>(lst.size() - 1)), 0);
 }
 }
 
@@ -95,19 +100,15 @@ template <typename T> bool list<T>::operator!=(const list& other) const
 
 template <typename T> list<T> list<T>::insert(integer idx, const T& v) const
 {
-  // TODO: std17::clamp?
-  return data_.insert(static_cast<std::size_t>(std::max(
-                        std::min(idx, static_cast<integer>(data_.size())), 0)),
-                      v);
+  return data_.insert(list_internal::insert_index(*this, idx), v);
 }
 
 template <typename T> list<T> list<T>::erase(integer idx) const
 {
-  if (data_.empty())
+  if (data_.empty() || !list_internal::is_valid_erase_index(*this, idx))
     return *this;
 
-  return data_.erase(
-    static_cast<std::size_t>(list_detail::erase_index(*this, idx)));
+  return data_.erase(idx);
 }
 
 template <typename T> T list<T>::operator[](integer idx) const
@@ -395,8 +396,11 @@ dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
       DATAFLOW___CHECK_CONDITION((diff_l.curr() == diff_l.prev()) ==
                                  diff_l.patch().empty());
 
+      const auto ins_idx =
+        list_internal::insert_index(diff_l.prev(), diff_idx.prev());
+
       list_patch<T> patch;
-      patch.erase(diff_idx.prev());
+      patch.erase(ins_idx);
 
       diff_l.patch().apply(
         [&](const integer& idx, const T& x) { patch.insert(idx, x); },
@@ -433,12 +437,10 @@ dataflow::ref<dataflow::list<T>> dataflow::Erase(const ArgL& l, const ArgI& idx)
       DATAFLOW___CHECK_CONDITION((diff_l.curr() == diff_l.prev()) ==
                                  diff_l.patch().empty());
 
-      const auto& erased_element =
-        diff_l.prev()[list_detail::erase_index(diff_l.prev(), diff_idx.prev())];
-
       list_patch<T> patch;
 
-      patch.insert(diff_idx.prev(), erased_element);
+      if (list_internal::is_valid_erase_index(diff_l.prev(), diff_idx.prev()))
+        patch.insert(diff_idx.prev(), diff_l.prev()[diff_idx.prev()]);
 
       diff_l.patch().apply(
         [&](const integer& idx, const T& x) { patch.insert(idx, x); },

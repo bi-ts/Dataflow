@@ -539,9 +539,9 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Insert_out_of_range)
   const auto xs = Var<list<int>>(0, 1, 2);
   auto idx = Var(3);
 
-  auto ys = Insert(xs, idx, 100);
+  const auto ys = Insert(xs, idx, 100);
 
-  auto f = *ys;
+  const auto f = *ys;
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 100)");
 
@@ -584,11 +584,11 @@ BOOST_AUTO_TEST_CASE(test_ListC_Erase)
 
   auto idx = Var(1);
 
-  auto xs = ListC(x1, x2, x3);
+  const auto xs = ListC(x1, x2, x3);
 
-  auto ys = Erase(xs, idx);
+  const auto ys = Erase(xs, idx);
 
-  auto f = *ys;
+  const auto f = *ys;
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 3)");
 
@@ -609,11 +609,11 @@ BOOST_AUTO_TEST_CASE(test_ListC_Erase)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(111 222)");
 }
 
-BOOST_AUTO_TEST_CASE(test_listC_Var_Erase_out_of_range)
+BOOST_AUTO_TEST_CASE(test_listC_Erase_out_of_range)
 {
   Engine engine;
 
-  auto xs = Var<listC<int>>(0, 1, 2, 3);
+  const auto xs = Var<listC<int>>(0, 1, 2, 3);
   auto idx = Var(3);
 
   auto ys = Erase(xs, idx);
@@ -624,11 +624,11 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Erase_out_of_range)
 
   idx = 4;
 
-  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2)");
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 3)");
 
   idx = 5;
 
-  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2)");
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 3)");
 
   idx = 2;
 
@@ -644,11 +644,29 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Erase_out_of_range)
 
   idx = -1;
 
-  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 3)");
 
   idx = -2;
 
-  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 3)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_Erase_in_empty)
+{
+  Engine engine;
+
+  const auto xs = Var<listC<int>>();
+  auto idx = Var(3);
+
+  auto ys = Erase(xs, idx);
+
+  auto f = *ys;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list()");
+
+  idx = 4;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list()");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
