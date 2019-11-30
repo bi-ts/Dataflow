@@ -141,6 +141,48 @@ BOOST_AUTO_TEST_CASE(test_listC_insert)
   BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 , 2 , 3)");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_erase)
+{
+  Engine engine;
+
+  auto xs = make_listC("1", "2", "3", "4", "5");
+
+  BOOST_CHECK_EQUAL(xs.size(), 5);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 2 3 4 5)");
+
+  xs = xs.erase(1);
+
+  BOOST_CHECK_EQUAL(xs.size(), 4);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 3 4 5)");
+
+  xs = xs.erase(3);
+
+  BOOST_CHECK_EQUAL(xs.size(), 3);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 3 4)");
+
+  xs = xs.erase(3);
+
+  BOOST_CHECK_EQUAL(xs.size(), 3);
+  BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 3 4)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_subscript)
+{
+  Engine engine;
+
+  auto xs = make_listC("0", "1", "2", "3", "4", "5", "6", "7");
+
+  const auto& cxs = xs;
+
+  BOOST_CHECK_EQUAL(xs[3], "3");
+  BOOST_CHECK_EQUAL(xs[5], "5");
+  BOOST_CHECK_EQUAL(xs[7], "7");
+
+  BOOST_CHECK_EQUAL(cxs[3], "3");
+  BOOST_CHECK_EQUAL(cxs[5], "5");
+  BOOST_CHECK_EQUAL(cxs[7], "7");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_patch_apply)
 {
   Engine engine;
