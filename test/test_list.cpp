@@ -711,5 +711,86 @@ BOOST_AUTO_TEST_CASE(test_listC_Erase_in_empty)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list()");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_Var_Map)
+{
+  Engine engine;
+
+  auto xs = Var<list<int>>(0, 1, 2, 3, 4, 5);
+  auto y = Var<int>(100);
+
+  int calls_count = 0;
+
+  const auto zs = Map(
+    xs,
+    [&](int x, int y) {
+      ++calls_count;
+      return x + y;
+    },
+    y);
+
+  BOOST_CHECK_EQUAL(calls_count, 0);
+
+  auto f = *zs;
+
+  BOOST_CHECK_EQUAL(calls_count, 6);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(100 101 102 103 104 105)");
+
+  y = 33;
+
+  BOOST_CHECK_EQUAL(calls_count, 12);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(33 34 35 36 37 38)");
+
+  xs.insert(3, 22);
+
+  BOOST_CHECK_EQUAL(calls_count, 13);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(33 34 35 55 36 37 38)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_ListC_Map)
+{
+  Engine engine;
+
+  auto x0 = Var(1);
+  auto x1 = Var(2);
+  auto x2 = Var(3);
+
+  auto y = Var(100);
+
+  auto xs = ListC(x0, x1, x2);
+
+  int calls_count = 0;
+
+  const auto zs = Map(
+    xs,
+    [&](int x, int y) {
+      ++calls_count;
+      return x + y;
+    },
+    y);
+
+  BOOST_CHECK_EQUAL(calls_count, 0);
+
+  auto f = *zs;
+
+  BOOST_CHECK_EQUAL(calls_count, 3);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(101 102 103)");
+
+  y = 33;
+
+  BOOST_CHECK_EQUAL(calls_count, 6);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(34 35 36)");
+
+  x1 = 11;
+
+  BOOST_CHECK_EQUAL(calls_count, 7);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(34 44 36)");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test

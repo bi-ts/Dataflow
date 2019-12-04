@@ -78,6 +78,17 @@ T make_list_element(std::false_type, const U& x)
 {
   return x;
 }
+
+inline bool any_changed()
+{
+  return false;
+}
+
+template <typename Diff, typename... Diffs>
+bool any_changed(const Diff& diff, const Diffs&... diffs)
+{
+  return diff.curr() != diff.prev() || any_changed(diffs...);
+}
 }
 
 template <typename T>
@@ -454,4 +465,76 @@ dataflow::ref<dataflow::list<T>> dataflow::Erase(const ArgL& l, const ArgI& idx)
 
   return core::LiftPatcher<policy>(core::make_argument(l),
                                    core::make_argument(idx));
+}
+
+template <typename ArgL, typename... Args, typename F, typename T, typename U>
+dataflow::ref<dataflow::list<U>>
+dataflow::Map(const ArgL& x, const F& f, const Args&... args)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "list-map";
+    }
+
+    list<U> calculate(const list<T>& v,
+                      const core::argument_data_type_t<Args>&... xs)
+    {
+      list<U> u;
+
+      for (integer i = 0; i < v.size(); ++i)
+      {
+        u = u.insert(i, f(v[i], xs...));
+      }
+
+      return u;
+    }
+
+    list_patch<U> prepare_patch(
+      const core::diff_type_t<list<T>>& diff_l,
+      const core::diff_type_t<core::argument_data_type_t<Args>>&... xs)
+    {
+      DATAFLOW___CHECK_CONDITION((diff_l.curr() == diff_l.prev()) ==
+                                 diff_l.patch().empty());
+
+      list_patch<U> patch;
+
+      if (list_detail::any_changed(xs...))
+      {
+        const auto& curr = diff_l.curr();
+        const auto& prev = diff_l.prev();
+
+        for (integer idx = 0; idx < curr.size(); ++idx)
+        {
+          const auto& x = f(curr[idx], xs.curr()...);
+
+          if (idx < prev.size() && x != prev[idx])
+          {
+            patch.erase(idx);
+            patch.insert(idx, x);
+          }
+        }
+
+        for (integer idx = curr.size(); idx < prev.size(); ++idx)
+        {
+          patch.erase(idx);
+        }
+      }
+      else
+      {
+        diff_l.patch().apply(
+          [&](const integer& idx, const T& x) {
+            patch.insert(idx, f(x, xs.curr()...));
+          },
+          [&](const integer& idx) { patch.erase(idx); });
+      }
+
+      return patch;
+    }
+
+    F f;
+  };
+
+  return core::LiftPatcher<policy>(policy{f}, x, core::make_argument(args)...);
 }

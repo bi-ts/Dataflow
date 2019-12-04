@@ -214,6 +214,15 @@ template <typename ArgL,
           typename = core::enable_for_argument_data_type_t<ArgI, integer>>
 ref<list<T>> Erase(const ArgL& l, const ArgI& idx);
 
+template <typename ArgL,
+          typename... Args,
+          typename F,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename U = core::convert_to_flowable_t<decltype(std::declval<F>()(
+            std::declval<const T&>(),
+            std::declval<const core::argument_data_type_t<Args>&>()...))>>
+ref<list<U>> Map(const ArgL& x, const F& f, const Args&... args);
+
 /// \}
 } // dataflow
 
