@@ -56,7 +56,11 @@ add_dataflow_test_project(maybe)
 add_dataflow_test_project(pair)
 add_dataflow_test_project(string)
 add_dataflow_test_project(tuple)
-add_dataflow_test_project(list)
+
+add_dataflow_test_project(list
+  test_list.cpp
+  list/test_list_patch.cpp
+)
 
 add_dataflow_test_project(regression)
 

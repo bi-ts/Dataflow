@@ -253,13 +253,6 @@ void list_patch<T>::apply(const Insert& insert, const Erase& erase) const
 
 template <typename T> list<T> list_patch<T>::apply(list<T> v) const
 {
-  DATAFLOW___CHECK_PRECONDITION_DEBUG(
-    std::is_sorted(changes_.begin(),
-                   changes_.end(),
-                   [](const change_data& lhs, const change_data& rhs) {
-                     return lhs.idx < rhs.idx;
-                   }));
-
   apply([&](const integer& idx, const T& x) { v = v.insert(idx, x); },
         [&](const integer& idx) { v = v.erase(idx); });
 
