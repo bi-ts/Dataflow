@@ -82,7 +82,7 @@ template <typename T> maybe<T> just(const T& x)
   return maybe<T>{x};
 }
 
-nothing_t nothing()
+inline nothing_t nothing()
 {
   return nothing_t{};
 }
