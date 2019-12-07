@@ -32,7 +32,10 @@ struct nothing_t
 {
 };
 
-template <typename T> class maybe : public core::composite_base
+template <typename T>
+class maybe : public std::conditional<core::is_aggregate_data_type<T>::value,
+                                      core::aggregate_base,
+                                      core::composite_base>::type
 {
 public:
   maybe(nothing_t);

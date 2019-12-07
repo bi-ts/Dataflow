@@ -30,9 +30,13 @@ namespace dataflow_test
 
 BOOST_AUTO_TEST_SUITE(test_maybe)
 
-BOOST_AUTO_TEST_CASE(test_maybe_flowable)
+BOOST_AUTO_TEST_CASE(test_maybe_traits)
 {
-  BOOST_CHECK(core::is_flowable<maybe<ref<int>>>::value);
+  BOOST_CHECK_EQUAL(core::is_flowable<maybe<ref<int>>>::value, true);
+  BOOST_CHECK_EQUAL(core::is_aggregate_data_type<maybe<maybe<ref<int>>>>::value,
+                    true);
+  BOOST_CHECK_EQUAL(core::is_aggregate_data_type<maybe<ref<int>>>::value, true);
+  BOOST_CHECK_EQUAL(core::is_aggregate_data_type<maybe<int>>::value, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_default_ctr)
