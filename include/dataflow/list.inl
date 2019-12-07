@@ -192,16 +192,46 @@ list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
       --i;
     }
   }
+
+  std::reverse(changes_.begin(), changes_.end());
+
+  integer shift = 0;
+  for (auto& hunk : changes_)
+  {
+    hunk.idx += shift;
+    if (hunk.type == change_type::insert)
+      ++shift;
+    else if (hunk.type == change_type::erase)
+      --shift;
+  }
 }
 
 template <typename T> void list_patch<T>::insert(integer idx, const T& v)
 {
-  changes_.push_back({change_type::insert, idx, {v}});
+  const auto it_lower_bound = std::lower_bound(
+    changes_.begin(),
+    changes_.end(),
+    idx,
+    [](const change_data& hunk, integer idx) { return hunk.idx <= idx; });
+
+  for (auto it = it_lower_bound; it != changes_.end(); ++it)
+    ++it->idx;
+
+  changes_.insert(it_lower_bound, {change_type::insert, idx, {v}});
 }
 
 template <typename T> void list_patch<T>::erase(integer idx)
 {
-  changes_.push_back({change_type::erase, idx, {}});
+  const auto it_lower_bound = std::lower_bound(
+    changes_.begin(),
+    changes_.end(),
+    idx,
+    [](const change_data& hunk, integer idx) { return hunk.idx <= idx; });
+
+  for (auto it = it_lower_bound; it != changes_.end(); ++it)
+    --it->idx;
+
+  changes_.insert(it_lower_bound, {change_type::erase, idx, {}});
 }
 
 template <typename T>
@@ -223,8 +253,16 @@ void list_patch<T>::apply(const Insert& insert, const Erase& erase) const
 
 template <typename T> list<T> list_patch<T>::apply(list<T> v) const
 {
+  DATAFLOW___CHECK_PRECONDITION_DEBUG(
+    std::is_sorted(changes_.begin(),
+                   changes_.end(),
+                   [](const change_data& lhs, const change_data& rhs) {
+                     return lhs.idx < rhs.idx;
+                   }));
+
   apply([&](const integer& idx, const T& x) { v = v.insert(idx, x); },
         [&](const integer& idx) { v = v.erase(idx); });
+
   return v;
 }
 
