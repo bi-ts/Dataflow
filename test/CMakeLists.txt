@@ -59,6 +59,7 @@ add_dataflow_test_project(tuple)
 
 add_dataflow_test_project(list
   test_list.cpp
+  list/test_list_list.cpp
   list/test_list_patch.cpp
 )
 
