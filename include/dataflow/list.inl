@@ -20,6 +20,8 @@
 #error '.inl' file can't be included directly. Use 'list.h' instead
 #endif
 
+#include <dataflow/list/internal/list_diff.h>
+
 #include <algorithm>
 
 namespace dataflow
@@ -178,32 +180,32 @@ list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
   for (int j = 0; j <= n; ++j)
     table(0, j) = 0;
 
-  for (int i = 1; i <= m; ++i)
-  {
-    for (int j = 1; j <= n; ++j)
-    {
-      if (curr[i - 1] == prev[j - 1])
-        table(i, j) = table(i - 1, j - 1) + 1;
-      else
-        table(i, j) = std::max(table(i, j - 1), table(i - 1, j));
-    }
-  }
+  const auto table_info = list_internal::fill_table(curr.begin(),
+                                                    curr.end(),
+                                                    curr.size(),
+                                                    prev.begin(),
+                                                    prev.end(),
+                                                    prev.size(),
+                                                    table_data.data(),
+                                                    n + 1);
 
-  for (int i = m, j = n; i > 0 || j > 0;)
+  const auto skip = static_cast<integer>(table_info.skip);
+
+  for (int i = table_info.rows - 1, j = table_info.cols - 1; i > 0 || j > 0;)
   {
-    if (i > 0 && j > 0 && curr[i - 1] == prev[j - 1])
+    if (i > 0 && j > 0 && curr[skip + i - 1] == prev[skip + j - 1])
     {
       --i, --j;
     }
     else if (j > 0 && (i == 0 || table(i, j - 1) >= table(i - 1, j)))
     {
-      changes_.push_back({change_type::erase, j - 1, {}});
+      changes_.push_back({change_type::erase, skip + j - 1, {}});
 
       --j;
     }
     else if (i > 0 && (j == 0 || table(i, j - 1) < table(i - 1, j)))
     {
-      changes_.push_back({change_type::insert, j, {curr[i - 1]}});
+      changes_.push_back({change_type::insert, skip + j, {curr[skip + i - 1]}});
 
       --i;
     }

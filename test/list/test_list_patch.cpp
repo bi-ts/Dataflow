@@ -39,6 +39,82 @@ bool list_patch_invariant_holds(const list_patch<T>& patch)
 
 BOOST_AUTO_TEST_SUITE(test_list_patch)
 
+BOOST_AUTO_TEST_CASE(test_list_internal_fill_table)
+{
+  const auto cols = 10;
+  const auto rows = 10;
+  int table[rows][cols] = {{0}};
+
+  std::string s0 = "";
+  std::string s4 = "abcd";
+  std::string s5 = "abxde";
+
+  const auto result_s0_s4 = list_internal::fill_table(s0.begin(),
+                                                      s0.end(),
+                                                      s0.size(),
+                                                      s4.begin(),
+                                                      s4.end(),
+                                                      s4.size(),
+                                                      &table[0][0],
+                                                      cols);
+
+  BOOST_CHECK_EQUAL(result_s0_s4.skip, 0);
+  BOOST_CHECK_EQUAL(result_s0_s4.rows, 1);
+  BOOST_CHECK_EQUAL(result_s0_s4.cols, 5);
+
+  const auto result_s4_s0 = list_internal::fill_table(s4.begin(),
+                                                      s4.end(),
+                                                      s4.size(),
+                                                      s0.begin(),
+                                                      s0.end(),
+                                                      s0.size(),
+                                                      &table[0][0],
+                                                      cols);
+
+  BOOST_CHECK_EQUAL(result_s4_s0.skip, 0);
+  BOOST_CHECK_EQUAL(result_s4_s0.rows, 5);
+  BOOST_CHECK_EQUAL(result_s4_s0.cols, 1);
+
+  const auto result_s4_s4 = list_internal::fill_table(s4.begin(),
+                                                      s4.end(),
+                                                      s4.size(),
+                                                      s4.begin(),
+                                                      s4.end(),
+                                                      s4.size(),
+                                                      &table[0][0],
+                                                      cols);
+
+  BOOST_CHECK_EQUAL(result_s4_s4.skip, 4);
+  BOOST_CHECK_EQUAL(result_s4_s4.rows, 1);
+  BOOST_CHECK_EQUAL(result_s4_s4.cols, 1);
+
+  const auto result_s4_s5 = list_internal::fill_table(s4.begin(),
+                                                      s4.end(),
+                                                      s4.size(),
+                                                      s5.begin(),
+                                                      s5.end(),
+                                                      s5.size(),
+                                                      &table[0][0],
+                                                      cols);
+
+  BOOST_CHECK_EQUAL(result_s4_s5.skip, 2);
+  BOOST_CHECK_EQUAL(result_s4_s5.rows, 3);
+  BOOST_CHECK_EQUAL(result_s4_s5.cols, 4);
+
+  const auto result_s5_s4 = list_internal::fill_table(s5.begin(),
+                                                      s5.end(),
+                                                      s5.size(),
+                                                      s4.begin(),
+                                                      s4.end(),
+                                                      s4.size(),
+                                                      &table[0][0],
+                                                      cols);
+
+  BOOST_CHECK_EQUAL(result_s5_s4.skip, 2);
+  BOOST_CHECK_EQUAL(result_s5_s4.rows, 4);
+  BOOST_CHECK_EQUAL(result_s5_s4.cols, 3);
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_patch_apply)
 {
   Engine engine;

@@ -42,6 +42,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/io.inl
   include/dataflow/list.h
   include/dataflow/list.inl
+  include/dataflow/list/internal/list_diff.h
   include/dataflow/maybe.h
   include/dataflow/maybe.inl
   include/dataflow/pair.h
