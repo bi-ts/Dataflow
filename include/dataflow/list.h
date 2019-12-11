@@ -67,8 +67,14 @@ class list final
     core::aggregate_base,
     core::composite_base>::type
 {
+private:
+  using data_type = typename list_internal::select_list_data<T>::type;
+
 public:
   using patch_type = list_patch<T>;
+
+  using iterator = typename data_type::iterator;
+  using const_iterator = iterator;
 
 public:
   list() = default;
@@ -87,14 +93,14 @@ public:
 
   integer size() const;
 
-private:
-  list(typename list_internal::select_list_data<T>::type data)
-  : data_(std::move(data))
-  {
-  }
+  const_iterator begin() const;
+  const_iterator end() const;
 
 private:
-  typename list_internal::select_list_data<T>::type data_;
+  list(data_type data);
+
+private:
+  data_type data_;
 };
 
 template <typename T> class list_patch

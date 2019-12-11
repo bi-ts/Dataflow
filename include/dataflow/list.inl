@@ -132,6 +132,22 @@ template <typename T> integer list<T>::size() const
   return static_cast<integer>(data_.size());
 }
 
+template <typename T> typename list<T>::const_iterator list<T>::begin() const
+{
+  return data_.begin();
+}
+
+template <typename T> typename list<T>::const_iterator list<T>::end() const
+{
+  return data_.end();
+}
+
+template <typename T>
+list<T>::list(data_type data)
+: data_(std::move(data))
+{
+}
+
 template <typename T> class list_patch<T>::change_data
 {
 public:

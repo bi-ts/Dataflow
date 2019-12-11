@@ -181,5 +181,19 @@ BOOST_AUTO_TEST_CASE(test_listC_subscript)
   BOOST_CHECK_EQUAL(cxs[7], "7");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_begin_end)
+{
+  Engine engine;
+
+  const auto xs = make_listC(0, 1, 2, 3, 4, 5, 6, 7);
+
+  std::vector<int> tmp;
+
+  std::copy(xs.begin(), xs.end(), std::back_inserter(tmp));
+
+  BOOST_TEST(tmp == std::vector<int>({0, 1, 2, 3, 4, 5, 6, 7}),
+             boost::test_tools::per_element());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test
