@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(test_listC_subscript)
 {
   Engine engine;
 
-  auto xs = make_listC("0", "1", "2", "3", "4", "5", "6", "7");
+  /*no const*/ auto xs = make_listC("0", "1", "2", "3", "4", "5", "6", "7");
 
   const auto& cxs = xs;
 
