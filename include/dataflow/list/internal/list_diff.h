@@ -18,9 +18,11 @@
 
 #pragma once
 
-#include <assert.h>
-
 #include <algorithm>
+#include <iomanip>
+#include <ostream>
+#include <sstream>
+#include <string>
 #include <utility>
 
 namespace dataflow
@@ -45,6 +47,11 @@ public:
   }
 
   T* operator[](Size idx)
+  {
+    return p_data_ + idx * stride_;
+  }
+
+  const T* operator[](Size idx) const
   {
     return p_data_ + idx * stride_;
   }
@@ -104,5 +111,96 @@ private:
   Size rows_;
   Size cols_;
 };
+
+template <typename ForwardIterator, typename T, typename Size>
+void print_table(std::ostream& out,
+                 ForwardIterator seq_a_from,
+                 ForwardIterator seq_a_to,
+                 ForwardIterator seq_b_from,
+                 ForwardIterator seq_b_to,
+                 const table<T, Size>& table)
+{
+  using value_type = typename ForwardIterator::value_type;
+
+  class helper
+  {
+  public:
+    static std::size_t str_length(const value_type& v)
+    {
+      std::stringstream ss;
+      ss << v;
+      return ss.str().size();
+    }
+
+    static bool cmp_length(const value_type& lhs, const value_type& rhs)
+    {
+      return str_length(lhs) < str_length(rhs);
+    }
+
+    static std::size_t max_length(const ForwardIterator& from,
+                                  const ForwardIterator& to)
+    {
+      const auto it = std::max_element(from, to, cmp_length);
+
+      if (it == to)
+        return 0;
+
+      return str_length(*it);
+    }
+  };
+
+  const auto original_seq_a_from = seq_a_from;
+
+  std::tie(seq_a_from, seq_b_from) =
+    std::mismatch(seq_a_from, seq_a_to, seq_b_from, seq_b_to);
+
+  out << std::endl;
+  out << std::string(80, '-') << std::endl;
+
+  if (original_seq_a_from != seq_a_from)
+  {
+    out << "Common prefix: ";
+    for (auto it = original_seq_a_from; it != seq_a_from; ++it)
+    {
+      out << *it << " ";
+    }
+    out << std::endl;
+    out << std::endl;
+  }
+
+  const auto width_a = helper::max_length(seq_a_from, seq_a_to);
+  const auto width_b = helper::max_length(seq_b_from, seq_b_to);
+
+  out << std::string(width_a + width_b + 2, ' ');
+
+  for (auto it = seq_b_from; it != seq_b_to; ++it)
+    out << std::setw(width_b) << *it << " ";
+
+  out << std::endl;
+
+  out << std::string(width_a + 1, ' ');
+
+  for (int j = 0; j < table.cols(); ++j)
+  {
+    out << std::setw(width_b) << table[0][j] << " ";
+  }
+
+  out << std::endl;
+
+  auto it = seq_a_from;
+  for (int i = 1; i < table.rows(); ++i, ++it)
+  {
+    out << std::setw(width_a) << *it << " ";
+
+    for (int j = 0; j < table.cols(); ++j)
+    {
+      out << std::setw(width_b) << table[i][j] << " ";
+    }
+
+    out << std::endl;
+  }
+
+  out << std::string(80, '-') << std::endl;
+}
 } // list_internal
 } // dataflow
