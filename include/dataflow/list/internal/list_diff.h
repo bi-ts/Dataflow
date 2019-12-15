@@ -143,7 +143,7 @@ void print_table(std::ostream& out,
       const auto it = std::max_element(from, to, cmp_length);
 
       if (it == to)
-        return 0;
+        return 1;
 
       return str_length(*it);
     }
@@ -155,7 +155,7 @@ void print_table(std::ostream& out,
     std::mismatch(seq_a_from, seq_a_to, seq_b_from, seq_b_to);
 
   out << std::endl;
-  out << std::string(80, '-') << std::endl;
+  out << std::string(72, '-') << std::endl;
 
   if (original_seq_a_from != seq_a_from)
   {
@@ -171,18 +171,23 @@ void print_table(std::ostream& out,
   const auto width_a = helper::max_length(seq_a_from, seq_a_to);
   const auto width_b = helper::max_length(seq_b_from, seq_b_to);
 
-  out << std::string(width_a + width_b + 2, ' ');
+  out << std::string(width_a, ' ') << "|" << std::string(width_b + 1, ' ');
 
+  std::stringstream ss;
   for (auto it = seq_b_from; it != seq_b_to; ++it)
-    out << std::setw(width_b) << *it << " ";
+  {
+    ss << std::setw(width_b) << " " << *it;
+  }
+  out << ss.str() << std::endl;
 
-  out << std::endl;
+  out << std::string(width_a, '-') << "+" << std::string(width_b + 1, '-')
+      << std::string(ss.str().size(), '-') << std::endl;
 
-  out << std::string(width_a + 1, ' ');
+  out << std::string(width_a, ' ') << "|";
 
   for (int j = 0; j < table.cols(); ++j)
   {
-    out << std::setw(width_b) << table[0][j] << " ";
+    out << std::setw(width_b) << " " << table[0][j];
   }
 
   out << std::endl;
@@ -190,17 +195,17 @@ void print_table(std::ostream& out,
   auto it = seq_a_from;
   for (int i = 1; i < table.rows(); ++i, ++it)
   {
-    out << std::setw(width_a) << *it << " ";
+    out << std::setw(width_a) << *it << "|";
 
     for (int j = 0; j < table.cols(); ++j)
     {
-      out << std::setw(width_b) << table[i][j] << " ";
+      out << std::setw(width_b) << " " << table[i][j];
     }
 
     out << std::endl;
   }
 
-  out << std::string(80, '-') << std::endl;
+  out << std::string(72, '-') << std::endl;
 }
 } // list_internal
 } // dataflow

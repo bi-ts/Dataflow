@@ -24,6 +24,9 @@
 
 #include <algorithm>
 
+// TODO: remove when debugging finished
+// #include <iostream>
+
 namespace dataflow
 {
 namespace list_internal
@@ -179,6 +182,10 @@ list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
                                prev.end(),
                                curr.size(),
                                prev.size());
+
+  // TODO: remove when finished
+  // list_internal::print_table(
+  //   std::cout, curr.begin(), curr.end(), prev.begin(), prev.end(), table);
 
   for (int i = table.rows() - 1, j = table.cols() - 1; i > 0 || j > 0;)
   {
