@@ -27,56 +27,82 @@ namespace dataflow
 {
 namespace list_internal
 {
-struct fill_table_result
+template <typename T, typename Size> class table
 {
-  std::size_t skip;
-  std::size_t rows;
-  std::size_t cols;
-};
-
-template <typename ForwardIterator, typename T>
-fill_table_result fill_table(ForwardIterator seq_a_from,
-                             ForwardIterator seq_a_to,
-                             std::size_t seq_a_length,
-                             ForwardIterator seq_b_from,
-                             ForwardIterator seq_b_to,
-                             std::size_t seq_b_length,
-                             T* p_table,
-                             std::size_t stride)
-{
-  assert((std::distance(seq_b_from, seq_b_to) + 1) <= stride);
-
-  assert(std::all_of(p_table, p_table + stride, [](T v) { return v == 0; }));
-
-  std::size_t skip = 0;
-  while (seq_a_from != seq_a_to && seq_b_from != seq_b_to &&
-         *seq_a_from == *seq_b_from)
+public:
+  explicit table(T* p_data, Size stride, Size size)
+  : p_data_(p_data)
+  , stride_(stride)
+  , size_(size)
+  , rows_(1)
+  , cols_(1)
   {
-    ++seq_a_from;
-    ++seq_b_from;
-    ++skip;
+    for (Size i = 0; i < size; i += stride)
+      p_data_[i] = 0;
+
+    for (Size i = 0; i < stride; ++i)
+      p_data_[i] = 0;
   }
 
-  const auto table = [&](int i, int j) -> T& {
-    return p_table[i * stride + j];
-  };
-
-  std::size_t i = 1;
-  for (auto it_i = seq_a_from; it_i != seq_a_to; ++it_i, ++i)
+  T* operator[](Size idx)
   {
-    assert(table(i, 0) == 0);
+    return p_data_ + idx * stride_;
+  }
 
-    std::size_t j = 1;
-    for (auto it_j = seq_b_from; it_j != seq_b_to; ++it_j, ++j)
+  Size rows() const
+  {
+    return rows_;
+  }
+
+  Size cols() const
+  {
+    return cols_;
+  }
+
+  template <typename ForwardIterator>
+  Size fill(ForwardIterator seq_a_from,
+            ForwardIterator seq_a_to,
+            ForwardIterator seq_b_from,
+            ForwardIterator seq_b_to,
+            Size seq_a_length,
+            Size seq_b_length)
+  {
+    Size skip = 0;
+    while (seq_a_from != seq_a_to && seq_b_from != seq_b_to &&
+           *seq_a_from == *seq_b_from)
     {
-      if (*it_i == *it_j)
-        table(i, j) = table(i - 1, j - 1) + 1;
-      else
-        table(i, j) = std::max(table(i, j - 1), table(i - 1, j));
+      ++seq_a_from;
+      ++seq_b_from;
+      ++skip;
     }
+
+    auto& table = *this;
+
+    Size i = 1;
+    for (auto it_i = seq_a_from; it_i != seq_a_to; ++it_i, ++i)
+    {
+      Size j = 1;
+      for (auto it_j = seq_b_from; it_j != seq_b_to; ++it_j, ++j)
+      {
+        if (*it_i == *it_j)
+          table[i][j] = table[i - 1][j - 1] + 1;
+        else
+          table[i][j] = std::max(table[i][j - 1], table[i - 1][j]);
+      }
+    }
+
+    rows_ = seq_a_length - skip + 1;
+    cols_ = seq_b_length - skip + 1;
+
+    return skip;
   }
 
-  return {skip, seq_a_length - skip + 1, seq_b_length - skip + 1};
-}
+private:
+  T* p_data_;
+  Size stride_;
+  Size size_;
+  Size rows_;
+  Size cols_;
+};
 } // list_internal
 } // dataflow

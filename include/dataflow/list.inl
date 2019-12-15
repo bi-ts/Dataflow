@@ -170,40 +170,29 @@ list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
 
   std::vector<int> table_data((m + 1) * (n + 1));
 
-  const auto table = [&](int i, int j) -> int& {
-    return table_data.at(i * (n + 1) + j);
-  };
+  list_internal::table<int, integer> table(
+    table_data.data(), n + 1, table_data.size());
 
-  for (int i = 0; i <= m; ++i)
-    table(i, 0) = 0;
+  const auto skip = table.fill(curr.begin(),
+                               curr.end(),
+                               prev.begin(),
+                               prev.end(),
+                               curr.size(),
+                               prev.size());
 
-  for (int j = 0; j <= n; ++j)
-    table(0, j) = 0;
-
-  const auto table_info = list_internal::fill_table(curr.begin(),
-                                                    curr.end(),
-                                                    curr.size(),
-                                                    prev.begin(),
-                                                    prev.end(),
-                                                    prev.size(),
-                                                    table_data.data(),
-                                                    n + 1);
-
-  const auto skip = static_cast<integer>(table_info.skip);
-
-  for (int i = table_info.rows - 1, j = table_info.cols - 1; i > 0 || j > 0;)
+  for (int i = table.rows() - 1, j = table.cols() - 1; i > 0 || j > 0;)
   {
     if (i > 0 && j > 0 && curr[skip + i - 1] == prev[skip + j - 1])
     {
       --i, --j;
     }
-    else if (j > 0 && (i == 0 || table(i, j - 1) >= table(i - 1, j)))
+    else if (j > 0 && (i == 0 || table[i][j - 1] >= table[i - 1][j]))
     {
       changes_.push_back({change_type::erase, skip + j - 1, {}});
 
       --j;
     }
-    else if (i > 0 && (j == 0 || table(i, j - 1) < table(i - 1, j)))
+    else if (i > 0 && (j == 0 || table[i][j - 1] < table[i - 1][j]))
     {
       changes_.push_back({change_type::insert, skip + j, {curr[skip + i - 1]}});
 
