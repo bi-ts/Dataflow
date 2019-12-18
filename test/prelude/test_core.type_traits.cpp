@@ -385,6 +385,28 @@ BOOST_AUTO_TEST_CASE(test_is_generic_patch)
   BOOST_CHECK_EQUAL(
     (core::is_generic_patch<const volatile core::generic_patch<int>>::value),
     true);
+
+  BOOST_CHECK_EQUAL((core::is_generic_patch<core::generic_patch<int>&>::value),
+                    true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<const core::generic_patch<int>&>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<volatile core::generic_patch<int>&>::value), true);
+
+  BOOST_CHECK_EQUAL(
+    (core::is_generic_patch<const volatile core::generic_patch<int>&>::value),
+    true);
+
+  BOOST_CHECK_EQUAL(
+    (std::is_same<core::is_generic_patch<core::generic_patch<int>>,
+                  std::true_type>::value),
+    true);
+
+  BOOST_CHECK_EQUAL((std::is_same<core::is_generic_patch<custom_patch_type>,
+                                  std::false_type>::value),
+                    true);
 }
 
 BOOST_AUTO_TEST_CASE(test_is_trivially_patcheable)

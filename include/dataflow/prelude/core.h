@@ -461,18 +461,27 @@ template <typename T> using patch_type_t = typename patch_type<T>::type;
 
 namespace detail
 {
-template <typename Patch> struct is_generic_patch : std::false_type
+template <typename Patch> struct is_generic_patch
 {
+  using type = std::false_type;
 };
 
-template <typename T> struct is_generic_patch<generic_patch<T>> : std::true_type
+template <typename T> struct is_generic_patch<generic_patch<T>>
 {
+  using type = std::true_type;
 };
 }
 
+/**
+ * A type trait that checks whether type `Patch` is a generic patch. It is
+ * `std::true_type`, if type `Patch` is an instance of `generic_patch<T>` class
+ * template (possibly cv-qualified) or a reference thereto. Otherwise, it is
+ * `std::false_type`.
+ */
 template <typename Patch>
 using is_generic_patch =
-  detail::is_generic_patch<typename std::remove_cv<Patch>::type>;
+  typename detail::is_generic_patch<typename std::remove_cv<
+    typename std::remove_reference<Patch>::type>::type>::type;
 
 template <typename T>
 using is_trivially_patcheable = is_generic_patch<typename patch_type<T>::type>;
