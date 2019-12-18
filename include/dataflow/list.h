@@ -89,7 +89,11 @@ public:
 
   list erase(integer idx) const;
 
+  list concat(list other) const;
+
   T operator[](integer idx) const;
+
+  list operator+(list other) const;
 
   integer size() const;
 
@@ -219,6 +223,21 @@ template <typename ArgL,
           typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
           typename = core::enable_for_argument_data_type_t<ArgI, integer>>
 ref<list<T>> Erase(const ArgL& l, const ArgI& idx);
+
+template <typename ArgL,
+          typename ArgR,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename = core::enable_for_argument_data_type_t<ArgR, list<T>>>
+ref<list<T>> Concat(const ArgL& lhs, const ArgR& rhs);
+
+template <typename ArgL,
+          typename ArgR,
+          typename...,
+          typename =
+            core::enable_if_any_t<void, core::is_ref<ArgL>, core::is_ref<ArgR>>,
+          typename T =
+            list_element_type_t<core::common_argument_data_type_t<ArgL, ArgR>>>
+ref<list<T>> operator+(const ArgL& lhs, const ArgR& rhs);
 
 template <typename ArgL,
           typename... Args,

@@ -127,9 +127,19 @@ template <typename T> list<T> list<T>::erase(integer idx) const
   return data_.erase(idx);
 }
 
+template <typename T> list<T> list<T>::concat(list<T> other) const
+{
+  return data_ + std::move(other.data_);
+}
+
 template <typename T> T list<T>::operator[](integer idx) const
 {
   return data_.at(static_cast<std::size_t>(idx));
+}
+
+template <typename T> list<T> list<T>::operator+(list<T> other) const
+{
+  return concat(std::move(other));
 }
 
 template <typename T> integer list<T>::size() const
@@ -510,6 +520,57 @@ dataflow::ref<dataflow::list<T>> dataflow::Erase(const ArgL& l, const ArgI& idx)
 
   return core::LiftPatcher<policy>(core::make_argument(l),
                                    core::make_argument(idx));
+}
+
+template <typename ArgL, typename ArgR, typename T, typename>
+dataflow::ref<dataflow::list<T>> dataflow::Concat(const ArgL& lhs,
+                                                  const ArgR& rhs)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "list-concat";
+    }
+
+    list<T> calculate(const list<T>& x, const list<T>& y)
+    {
+      return x.concat(y);
+    }
+
+    list_patch<T> prepare_patch(const core::diff_type_t<list<T>>& diff_x,
+                                const core::diff_type_t<list<T>>& diff_y)
+    {
+      DATAFLOW___CHECK_CONDITION((diff_x.curr() == diff_x.prev()) ==
+                                 diff_x.patch().empty());
+      DATAFLOW___CHECK_CONDITION((diff_y.curr() == diff_y.prev()) ==
+                                 diff_y.patch().empty());
+
+      list_patch<T> patch;
+
+      diff_x.patch().apply(
+        [&](const integer& idx, const T& x) { patch.insert(idx, x); },
+        [&](const integer& idx) { patch.erase(idx); });
+
+      const auto offset = diff_x.curr().size();
+
+      diff_y.patch().apply(
+        [&](const integer& idx, const T& x) { patch.insert(offset + idx, x); },
+        [&](const integer& idx) { patch.erase(offset + idx); });
+
+      return patch;
+    }
+  };
+
+  return core::LiftPatcher<policy>(core::make_argument(lhs),
+                                   core::make_argument(rhs));
+}
+
+template <typename ArgL, typename ArgR, typename..., typename, typename T>
+dataflow::ref<dataflow::list<T>> dataflow::operator+(const ArgL& lhs,
+                                                     const ArgR& rhs)
+{
+  return Concat(lhs, rhs);
 }
 
 template <typename ArgL, typename... Args, typename F, typename T, typename U>
