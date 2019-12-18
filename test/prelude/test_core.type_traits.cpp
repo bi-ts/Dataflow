@@ -65,6 +65,10 @@ struct flowable
   friend std::ostream& operator<<(std::ostream&, const flowable&);
 };
 
+struct not_flowable
+{
+};
+
 struct no_default_constructor
 {
   no_default_constructor() = delete;
@@ -582,6 +586,19 @@ BOOST_AUTO_TEST_CASE(test_enable_if_none)
     true);
 }
 
+BOOST_AUTO_TEST_CASE(test_common_argument_data_type_t)
+{
+  BOOST_CHECK((std::is_same<core::common_argument_data_type_t<decltype(""),
+                                                              ref<std::string>,
+                                                              std::string>,
+                            std::string>::value));
+
+  BOOST_CHECK((std::is_same<core::common_argument_data_type_t<std::string,
+                                                              ref<std::string>,
+                                                              decltype("")>,
+                            std::string>::value));
+}
+
 class common_argument_data_type_helper
 {
 public:
@@ -605,19 +622,21 @@ private:
   }
 };
 
-BOOST_AUTO_TEST_CASE(test_common_argument_data_type_t)
+BOOST_AUTO_TEST_CASE(test_common_argument_data_type_t_sfinae_friendly)
 {
-  BOOST_CHECK((std::is_same<core::common_argument_data_type_t<decltype(""),
-                                                              ref<std::string>,
-                                                              std::string>,
-                            std::string>::value));
-
   BOOST_CHECK_EQUAL((common_argument_data_type_helper::
                        enabled<decltype(""), ref<std::string>, std::string>()),
                     true);
 
   BOOST_CHECK_EQUAL(
     (common_argument_data_type_helper::enabled<std::string, ref<int>>()),
+    false);
+
+  BOOST_CHECK_EQUAL((common_argument_data_type_helper::enabled<not_flowable>()),
+                    false);
+
+  BOOST_CHECK_EQUAL(
+    (common_argument_data_type_helper::enabled<std::string, not_flowable>()),
     false);
 }
 
