@@ -18,7 +18,7 @@
 
 #include <dataflow/internal/node.h>
 
-#include "pumpa.h"
+#include "engine.h"
 
 namespace dataflow
 {

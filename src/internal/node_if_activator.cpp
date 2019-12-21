@@ -20,7 +20,7 @@
 #include <dataflow/internal/nodes_factory.h>
 
 #include "config.h"
-#include "pumpa.h"
+#include "engine.h"
 
 namespace dataflow
 {

@@ -20,7 +20,7 @@
 #include <dataflow/prelude/core/internal/node_since_activator.h>
 
 #include "../../../internal/config.h"
-#include "../../../internal/pumpa.h"
+#include "../../../internal/engine.h"
 
 namespace dataflow
 {

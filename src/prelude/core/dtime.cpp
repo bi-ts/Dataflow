@@ -18,7 +18,7 @@
 
 #include <dataflow/prelude/core/dtime.h>
 
-#include "../../internal/pumpa.h"
+#include "../../internal/engine.h"
 
 namespace dataflow
 {

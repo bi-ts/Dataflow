@@ -18,8 +18,8 @@
 
 #pragma once
 
-#ifndef DATAFLOW___INTERNAL_PUMPA_H
-#define DATAFLOW___INTERNAL_PUMPA_H
+#ifndef DATAFLOW___INTERNAL_ENGINE_H
+#define DATAFLOW___INTERNAL_ENGINE_H
 
 #include "converter.h"
 #include "graph.h"
@@ -182,6 +182,6 @@ private:
 } // internal
 } // dataflow
 
-#include "pumpa.inl"
+#include "engine.inl"
 
-#endif // DATAFLOW___INTERNAL_PUMPA_H
+#endif // DATAFLOW___INTERNAL_ENGINE_H

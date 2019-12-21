@@ -109,6 +109,9 @@ add_library(${PROJECT_NAME} SHARED
 
   src/internal/config.h
   src/internal/converter.h
+  src/internal/engine.cpp
+  src/internal/engine.h
+  src/internal/engine.inl
   src/internal/graph.h
   src/internal/node.cpp
   src/internal/node_compound.cpp
@@ -120,9 +123,6 @@ add_library(${PROJECT_NAME} SHARED
   src/internal/node_state_prev.cpp
   src/internal/node_time.h
   src/internal/nodes_factory.cpp
-  src/internal/pumpa.cpp
-  src/internal/pumpa.h
-  src/internal/pumpa.inl
   src/internal/ref.cpp
   src/internal/tick_count.h
   src/internal/vd_handle.h

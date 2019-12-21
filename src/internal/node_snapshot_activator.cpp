@@ -19,7 +19,7 @@
 #include <dataflow/internal/node_snapshot_activator.h>
 #include <dataflow/internal/nodes_factory.h>
 
-#include "pumpa.h"
+#include "engine.h"
 
 namespace dataflow
 {

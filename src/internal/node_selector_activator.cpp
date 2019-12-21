@@ -18,7 +18,7 @@
 
 #include <dataflow/internal/node_selector_activator.h>
 
-#include "pumpa.h"
+#include "engine.h"
 
 namespace dataflow
 {
