@@ -30,7 +30,7 @@ namespace internal
 void* nodes_factory::allocate_(std::size_t size, std::size_t alignment)
 {
   return dst::memory::allocate_aligned(
-    pumpa::instance().get_allocator(), size, alignment);
+    engine::instance().get_allocator(), size, alignment);
 }
 
 void nodes_factory::deallocate_(void* p_object,
@@ -38,7 +38,7 @@ void nodes_factory::deallocate_(void* p_object,
                                 std::size_t alignment)
 {
   return dst::memory::deallocate_aligned(
-    pumpa::instance().get_allocator(), p_object, size, alignment);
+    engine::instance().get_allocator(), p_object, size, alignment);
 }
 
 ref nodes_factory::add_(node* p_node,
@@ -47,11 +47,11 @@ ref nodes_factory::add_(node* p_node,
                         node_flags flags)
 {
   return ref(converter::convert(
-    pumpa::instance().add_node(p_node,
-                               p_args,
-                               args_count,
-                               (flags & node_flags::eager) != node_flags::none,
-                               false)));
+    engine::instance().add_node(p_node,
+                                p_args,
+                                args_count,
+                                (flags & node_flags::eager) != node_flags::none,
+                                false)));
 }
 
 ref nodes_factory::add_conditional_(node* p_node,
@@ -60,21 +60,22 @@ ref nodes_factory::add_conditional_(node* p_node,
                                     node_flags flags)
 {
   return ref(converter::convert(
-    pumpa::instance().add_node(p_node,
-                               p_args,
-                               args_count,
-                               (flags & node_flags::eager) != node_flags::none,
-                               true)));
+    engine::instance().add_node(p_node,
+                                p_args,
+                                args_count,
+                                (flags & node_flags::eager) != node_flags::none,
+                                true)));
 }
 
 ref nodes_factory::add_constant_(node* p_node)
 {
-  return ref(converter::convert(pumpa::instance().add_persistent_node(p_node)));
+  return ref(
+    converter::convert(engine::instance().add_persistent_node(p_node)));
 }
 
 ref nodes_factory::get_time_()
 {
-  return ref(converter::convert(pumpa::instance().get_time_node()));
+  return ref(converter::convert(engine::instance().get_time_node()));
 }
 
 } // internal

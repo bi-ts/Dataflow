@@ -25,7 +25,7 @@ namespace dataflow
 internal::update_status internal::update_node_selector_activator(
   node_id id, node_id x, bool initialized)
 {
-  return pumpa::instance().update_node_selector_activator(
+  return engine::instance().update_node_selector_activator(
     converter::convert(id), converter::convert(x), initialized);
 }
 } // dataflow

@@ -28,43 +28,43 @@ namespace internal
 ref::ref(const ref& other)
 : id_(other.id_)
 {
-  pumpa::instance().add_ref(converter::convert(id_));
+  engine::instance().add_ref(converter::convert(id_));
 }
 
 ref::~ref()
 {
-  pumpa::instance().release(converter::convert(id_));
+  engine::instance().release(converter::convert(id_));
 }
 
 const node* ref::get_() const
 {
-  return pumpa::instance().get_node(converter::convert(id_));
+  return engine::instance().get_node(converter::convert(id_));
 }
 
 void ref::schedule_() const
 {
-  pumpa::instance().schedule(converter::convert(id_));
-  pumpa::instance().pump();
+  engine::instance().schedule(converter::convert(id_));
+  engine::instance().pump();
 }
 
 void ref::set_metadata(std::shared_ptr<const metadata> p_metadata)
 {
-  pumpa::instance().set_metadata(get_(), std::move(p_metadata));
+  engine::instance().set_metadata(get_(), std::move(p_metadata));
 }
 
 void ref::reset_(const ref& other)
 {
-  pumpa::instance().release(converter::convert(id_));
+  engine::instance().release(converter::convert(id_));
 
   id_ = other.id_;
 
-  pumpa::instance().add_ref(converter::convert(id_));
+  engine::instance().add_ref(converter::convert(id_));
 }
 
 ref::ref(node_id id)
 : id_(id)
 {
-  pumpa::instance().add_ref(converter::convert(id_));
+  engine::instance().add_ref(converter::convert(id_));
 }
 }
 }

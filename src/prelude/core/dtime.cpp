@@ -28,7 +28,7 @@ dtimestamp::dtimestamp()
 }
 
 dtimestamp::dtimestamp(const Time& t)
-: timestamp_(internal::pumpa::instance().ticks())
+: timestamp_(internal::engine::instance().ticks())
 {
 }
 

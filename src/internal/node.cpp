@@ -27,24 +27,24 @@ namespace internal
 
 const tick_count& node::ticks_()
 {
-  return pumpa::instance().ticks();
+  return engine::instance().ticks();
 }
 
 void node::pump(node_id id)
 {
-  pumpa::instance().schedule(converter::convert(id));
-  pumpa::instance().pump();
+  engine::instance().schedule(converter::convert(id));
+  engine::instance().pump();
 }
 
 void node::set_metadata(const node* p_node,
                         std::shared_ptr<const metadata> p_metadata)
 {
-  pumpa::instance().set_metadata(p_node, std::move(p_metadata));
+  engine::instance().set_metadata(p_node, std::move(p_metadata));
 }
 
 const std::shared_ptr<const metadata>& node::get_metadata(const node* p_node)
 {
-  return pumpa::instance().get_metadata(p_node);
+  return engine::instance().get_metadata(p_node);
 }
 
 } // internal

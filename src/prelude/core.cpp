@@ -26,12 +26,12 @@ namespace dataflow
 {
 Engine::Engine()
 {
-  internal::pumpa::start();
+  internal::engine::start();
 }
 
 Engine::~Engine()
 {
-  internal::pumpa::stop();
+  internal::engine::stop();
 }
 
 void sig::emit() const

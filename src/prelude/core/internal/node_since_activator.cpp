@@ -47,7 +47,7 @@ update_status node_since_activator::update_(node_id id,
 
   const auto new_value = extract_node_value<dtimestamp>(p_deps[0]);
 
-  const auto result = pumpa::instance().update_node_since_activator(
+  const auto result = engine::instance().update_node_since_activator(
     converter::convert(id), initialized, std::size_t(new_value));
 
   return this->set_value_(new_value) | result;

@@ -24,11 +24,12 @@ namespace dataflow
 {
 void internal::activate_node_compound(node_id x, node_id y)
 {
-  pumpa::instance().add_data_edge(converter::convert(x), converter::convert(y));
+  engine::instance().add_data_edge(converter::convert(x),
+                                   converter::convert(y));
 }
 
 void internal::deactivate_node_compound(node_id x)
 {
-  pumpa::instance().remove_data_edge(converter::convert(x), 0);
+  engine::instance().remove_data_edge(converter::convert(x), 0);
 }
 } // dataflow
