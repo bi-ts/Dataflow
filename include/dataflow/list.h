@@ -38,7 +38,7 @@ namespace dataflow
 
 namespace list_internal
 {
-template <typename T> class element_wrapper;
+template <typename T> class assignable_ref;
 
 template <typename T>
 using list_data =
@@ -53,7 +53,7 @@ template <typename T> struct select_list_data
 
 template <typename T> struct select_list_data<ref<T>>
 {
-  using type = list_data<element_wrapper<T>>;
+  using type = list_data<assignable_ref<T>>;
 };
 }
 
@@ -92,6 +92,8 @@ public:
   list concat(list other) const;
 
   list take(integer n) const;
+
+  list skip(integer n) const;
 
   T operator[](integer idx) const;
 

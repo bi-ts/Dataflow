@@ -164,6 +164,117 @@ BOOST_AUTO_TEST_CASE(test_listC_erase)
   BOOST_CHECK_EQUAL(core::to_string(xs), "list(1 3 4)");
 }
 
+BOOST_AUTO_TEST_CASE(test_listA_concat)
+{
+  Engine engine;
+
+  const auto c0 = Const(0);
+  const auto c1 = Const(1);
+  const auto c2 = Const(2);
+  const auto c3 = Const(3);
+  const auto c4 = Const(4);
+
+  const auto xs = make_listA(c0, c1, c2);
+  const auto ys = make_listA(c3, c4);
+  const auto zs = xs.concat(ys);
+
+  BOOST_CHECK_EQUAL(xs.size(), 3);
+  BOOST_CHECK_EQUAL(ys.size(), 2);
+  BOOST_CHECK_EQUAL(zs.size(), 5);
+
+  BOOST_CHECK_EQUAL(zs[0].id(), c0.id());
+  BOOST_CHECK_EQUAL(zs[1].id(), c1.id());
+  BOOST_CHECK_EQUAL(zs[2].id(), c2.id());
+  BOOST_CHECK_EQUAL(zs[3].id(), c3.id());
+  BOOST_CHECK_EQUAL(zs[4].id(), c4.id());
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_concat)
+{
+  Engine engine;
+
+  const auto xs = make_listC(0, 1, 2, 3, 4, 5);
+  const auto ys = make_listC(6, 7, 8, 9);
+  const auto zs = xs.concat(ys);
+
+  BOOST_TEST(xs == std::vector<int>({0, 1, 2, 3, 4, 5}),
+             boost::test_tools::per_element());
+
+  BOOST_TEST(ys == std::vector<int>({6, 7, 8, 9}),
+             boost::test_tools::per_element());
+
+  BOOST_TEST(zs == std::vector<int>({0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
+             boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(test_listA_take)
+{
+  Engine engine;
+
+  const auto c0 = Const(0);
+  const auto c1 = Const(1);
+  const auto c2 = Const(2);
+  const auto c3 = Const(3);
+  const auto c4 = Const(4);
+
+  const auto xs = make_listA(c0, c1, c2, c3, c4);
+  const auto ys = xs.take(3);
+
+  BOOST_CHECK_EQUAL(xs.size(), 5);
+  BOOST_CHECK_EQUAL(ys.size(), 3);
+
+  BOOST_CHECK_EQUAL(ys[0].id(), c0.id());
+  BOOST_CHECK_EQUAL(ys[1].id(), c1.id());
+  BOOST_CHECK_EQUAL(ys[2].id(), c2.id());
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_take)
+{
+  Engine engine;
+
+  const auto xs = make_listC(0, 1, 2, 3, 4, 5);
+  const auto ys = xs.take(3);
+
+  BOOST_TEST(xs == std::vector<int>({0, 1, 2, 3, 4, 5}),
+             boost::test_tools::per_element());
+
+  BOOST_TEST(ys == std::vector<int>({0, 1, 2}),
+             boost::test_tools::per_element());
+}
+
+BOOST_AUTO_TEST_CASE(test_listA_skip)
+{
+  Engine engine;
+
+  const auto c0 = Const(0);
+  const auto c1 = Const(1);
+  const auto c2 = Const(2);
+  const auto c3 = Const(3);
+  const auto c4 = Const(4);
+
+  const auto xs = make_listA(c0, c1, c2, c3, c4);
+  const auto ys = xs.skip(3);
+
+  BOOST_CHECK_EQUAL(xs.size(), 5);
+  BOOST_CHECK_EQUAL(ys.size(), 2);
+
+  BOOST_CHECK_EQUAL(ys[0].id(), c3.id());
+  BOOST_CHECK_EQUAL(ys[1].id(), c4.id());
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_skip)
+{
+  Engine engine;
+
+  const auto xs = make_listC(0, 1, 2, 3, 4, 5);
+  const auto ys = xs.skip(4);
+
+  BOOST_TEST(xs == std::vector<int>({0, 1, 2, 3, 4, 5}),
+             boost::test_tools::per_element());
+
+  BOOST_TEST(ys == std::vector<int>({4, 5}), boost::test_tools::per_element());
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_subscript)
 {
   Engine engine;

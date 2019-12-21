@@ -31,31 +31,30 @@ namespace dataflow
 {
 namespace list_internal
 {
-template <typename T> class element_wrapper
+template <typename T> class assignable_ref : public core::ref_base<T>
 {
 public:
-  element_wrapper(const ref<T>& x)
-  : x_(x)
+  assignable_ref(core::ref_base<T> base)
+  : core::ref_base<T>(base)
   {
   }
 
-  bool operator==(const element_wrapper& other) const
+  bool operator==(const assignable_ref& other) const
   {
-    return x_.id() == other.x_.id();
+    return this->id() == other.id();
   }
 
-  bool operator!=(const element_wrapper& other) const
+  bool operator!=(const assignable_ref& other) const
   {
     return !(*this == other);
   }
 
-  operator const ref<T>&() const
+  assignable_ref& operator=(const assignable_ref& other)
   {
-    return x_;
-  }
+    this->reset_(other);
 
-private:
-  ref<T> x_;
+    return *this;
+  }
 };
 
 template <typename T> bool is_valid_erase_index(const list<T>& lst, integer idx)
@@ -135,6 +134,11 @@ template <typename T> list<T> list<T>::concat(list<T> other) const
 template <typename T> list<T> list<T>::take(integer n) const
 {
   return data_.take(n);
+}
+
+template <typename T> list<T> list<T>::skip(integer n) const
+{
+  return data_.drop(n);
 }
 
 template <typename T> T list<T>::operator[](integer idx) const
