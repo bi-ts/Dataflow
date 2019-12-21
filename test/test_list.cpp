@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Length)
 {
   Engine engine;
 
-  auto a = Var<list<std::string>>();
+  auto a = Var<listC<std::string>>();
 
   auto b = Main([=](const Time& t0) { return Length(a); });
 
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_insert_inactive)
 {
   Engine engine;
 
-  auto xs = Var<list<int>>();
+  auto xs = Var<listC<int>>();
 
   xs.insert(0, 2);
   xs.insert(0, 1);
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_erase_inactive)
 {
   Engine engine;
 
-  auto xs = Var<list<int>>(1, 2, 3, 4);
+  auto xs = Var<listC<int>>(1, 2, 3, 4);
 
   xs.erase(2);
   xs.erase(1);
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_erase_inactive)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 4)");
 }
 
-BOOST_AUTO_TEST_CASE(test_listA_Get)
+BOOST_AUTO_TEST_CASE(test_listA_Var_assign_Get)
 {
   Engine engine;
 
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(test_listA_Get)
   BOOST_CHECK_EQUAL(introspect::active_node(v3), false);
 }
 
-BOOST_AUTO_TEST_CASE(test_listC_Get)
+BOOST_AUTO_TEST_CASE(test_listC_Var_assign_Get)
 {
   Engine engine;
 
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Get)
   BOOST_CHECK_EQUAL(x(), "default");
 }
 
-BOOST_AUTO_TEST_CASE(test_listC_Var_Get)
+BOOST_AUTO_TEST_CASE(test_listC_Var_ins_erase_Get)
 {
   Engine engine;
 
@@ -292,7 +292,42 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Get)
   BOOST_CHECK_EQUAL(x(), "default");
 }
 
-BOOST_AUTO_TEST_CASE(test_ListC_Get_via_subscript_operator)
+BOOST_AUTO_TEST_CASE(test_listC_Var_ins_erase_Get_via_subscript_operator)
+{
+  Engine engine;
+
+  auto lst = Var<listC<std::string>>();
+  auto idx = Var<integer>(0);
+
+  auto x = Main([=](const Time& t0) { return FromMaybe(lst[idx]); });
+
+  lst.insert(0, "first");
+  lst.insert(1, "fourth");
+
+  BOOST_CHECK_EQUAL(x(), "first");
+
+  idx = 1;
+
+  BOOST_CHECK_EQUAL(x(), "fourth");
+
+  lst.insert(1, "third");
+
+  BOOST_CHECK_EQUAL(x(), "third");
+
+  lst.insert(1, "second");
+
+  BOOST_CHECK_EQUAL(x(), "second");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(x(), "third");
+
+  lst.erase(1);
+
+  BOOST_CHECK_EQUAL(x(), "fourth");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_Var_assign_Get_via_subscript_operator)
 {
   Engine engine;
 
@@ -371,7 +406,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Insert_out_of_range)
 {
   Engine engine;
 
-  const auto xs = Var<list<int>>(0, 1, 2);
+  const auto xs = Var<listC<int>>(0, 1, 2);
   auto idx = Var(3);
 
   const auto ys = Insert(xs, idx, 100);
@@ -508,8 +543,8 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Concat_operator)
 {
   Engine engine;
 
-  auto xs = Var<list<int>>(1, 2, 3, 4);
-  auto ys = Var<list<int>>(5, 6, 7);
+  auto xs = Var<listC<int>>(1, 2, 3, 4);
+  auto ys = Var<listC<int>>(5, 6, 7);
   auto zs = xs + ys;
 
   auto f = *zs;
@@ -571,11 +606,11 @@ BOOST_AUTO_TEST_CASE(test_ListC_Concat_operator)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 22 3 44 55 66 7)");
 }
 
-BOOST_AUTO_TEST_CASE(test_ListC_Var_Concat_arguments)
+BOOST_AUTO_TEST_CASE(test_listC_Var_Concat_arguments)
 {
   Engine engine;
 
-  auto a = Var<list<int>>(1, 2);
+  auto a = Var<listC<int>>(1, 2);
   auto b = Concat(a, a);
   auto c = Concat(make_listC(3, 4), make_listC(3, 4));
   auto d = Concat(b, make_listC(3, 4));
@@ -590,11 +625,11 @@ BOOST_AUTO_TEST_CASE(test_ListC_Var_Concat_arguments)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(3 4 3 4 -1 0 1 8 2 1 8 2 3 4)");
 }
 
-BOOST_AUTO_TEST_CASE(test_ListC_Concat_operator_arguments)
+BOOST_AUTO_TEST_CASE(test_listC_Concat_operator_arguments)
 {
   Engine engine;
 
-  auto a = Var<list<int>>(1, 2);
+  auto a = Var<listC<int>>(1, 2);
   auto b = a + a;
   auto c = make_listC(3, 4) + make_listC(3, 4);
   auto d = b + make_listC(3, 4);
@@ -613,7 +648,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ListC_concat_Insert_Erase)
 {
   Engine engine;
 
-  auto xs = Var<list<int>>(1, 2, 3);
+  auto xs = Var<listC<int>>(1, 2, 3);
 
   auto y1 = Var(5);
   auto y2 = Var(6);
@@ -654,7 +689,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Take)
 {
   Engine engine;
 
-  auto xs = Var<list<int>>(1, 2, 3, 4, 5);
+  auto xs = Var<listC<int>>(1, 2, 3, 4, 5);
 
   auto n = Var(3);
 
@@ -709,7 +744,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Map)
 {
   Engine engine;
 
-  auto xs = Var<list<int>>(0, 1, 2, 3, 4, 5);
+  auto xs = Var<listC<int>>(0, 1, 2, 3, 4, 5);
   auto y = Var<int>(100);
 
   int calls_count = 0;
@@ -743,7 +778,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Map)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(33 34 35 55 36 37 38)");
 }
 
-BOOST_AUTO_TEST_CASE(test_listC_ListC_Map)
+BOOST_AUTO_TEST_CASE(test_ListC_Map)
 {
   Engine engine;
 
