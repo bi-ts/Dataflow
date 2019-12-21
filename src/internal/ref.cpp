@@ -52,6 +52,15 @@ void ref::set_metadata(std::shared_ptr<const metadata> p_metadata)
   pumpa::instance().set_metadata(get_(), std::move(p_metadata));
 }
 
+void ref::reset_(const ref& other)
+{
+  pumpa::instance().release(converter::convert(id_));
+
+  id_ = other.id_;
+
+  pumpa::instance().add_ref(converter::convert(id_));
+}
+
 ref::ref(node_id id)
 : id_(id)
 {

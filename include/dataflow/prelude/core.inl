@@ -61,6 +61,13 @@ template <typename T> ref_base<T> ref_base<T>::snapshot_(const Time& t) const
                        internal::node_snapshot_activator::create(), *this),
                      internal::ref::ctor_guard);
 }
+
+template <typename T> void ref_base<T>::reset_(const ref_base<T>& other)
+{
+  DATAFLOW___CHECK_PRECONDITION(other.is_of_type<T>());
+
+  internal::ref::reset_(other);
+}
 }
 
 // arg

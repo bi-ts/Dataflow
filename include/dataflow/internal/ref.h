@@ -55,6 +55,8 @@ protected:
 
   void set_metadata(std::shared_ptr<const metadata> p_metadata);
 
+  void reset_(const ref& other);
+
 private:
   explicit ref(node_id id);
 

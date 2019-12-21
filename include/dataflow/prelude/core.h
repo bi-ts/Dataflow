@@ -76,6 +76,8 @@ public:
 
 protected:
   ref_base<T> snapshot_(const Time& t) const;
+
+  void reset_(const ref_base<T>& other);
 };
 }
 
