@@ -132,6 +132,11 @@ template <typename T> list<T> list<T>::concat(list<T> other) const
   return data_ + std::move(other.data_);
 }
 
+template <typename T> list<T> list<T>::take(integer n) const
+{
+  return data_.take(n);
+}
+
 template <typename T> T list<T>::operator[](integer idx) const
 {
   return data_.at(static_cast<std::size_t>(idx));
@@ -571,6 +576,68 @@ dataflow::ref<dataflow::list<T>> dataflow::operator+(const ArgL& lhs,
                                                      const ArgR& rhs)
 {
   return Concat(lhs, rhs);
+}
+
+template <typename ArgL, typename ArgN, typename T, typename>
+dataflow::ref<dataflow::list<T>> dataflow::Take(const ArgL& l, const ArgN& num)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "list-take";
+    }
+
+    list<T> calculate(const list<T>& l, integer n)
+    {
+      return l.take(n);
+    }
+
+    list_patch<T> prepare_patch(const core::diff_type_t<list<T>>& diff_l,
+                                const core::diff_type_t<integer>& diff_n)
+    {
+      DATAFLOW___CHECK_CONDITION((diff_l.curr() == diff_l.prev()) ==
+                                 diff_l.patch().empty());
+
+      list_patch<T> patch;
+
+      if (diff_n.curr() > diff_n.prev())
+      {
+        for (auto i = diff_n.prev(); i < diff_n.curr(); ++i)
+        {
+          patch.insert(i, diff_l.prev()[i]);
+        }
+      }
+      else if (diff_n.curr() < diff_n.prev())
+      {
+        for (auto i = diff_n.prev(); i > diff_n.curr(); --i)
+        {
+          patch.erase(i - 1);
+        }
+      }
+
+      diff_l.patch().apply(
+        [&](const integer& idx, const T& x) {
+          if (idx < diff_n.curr())
+          {
+            patch.insert(idx, x);
+            patch.erase(diff_n.curr());
+          }
+        },
+        [&](const integer& idx) {
+          if (idx < diff_n.curr())
+          {
+            patch.erase(idx);
+            patch.insert(diff_n.curr(), diff_l.curr()[diff_n.curr()]);
+          }
+        });
+
+      return patch;
+    }
+  };
+
+  return core::LiftPatcher<policy>(core::make_argument(l),
+                                   core::make_argument(num));
 }
 
 template <typename ArgL, typename... Args, typename F, typename T, typename U>

@@ -650,6 +650,61 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ListC_concat_Insert_Erase)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 22 3 4 55 77)");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_Var_Take)
+{
+  Engine engine;
+
+  auto xs = Var<list<int>>(1, 2, 3, 4, 5);
+
+  auto n = Var(3);
+
+  auto ys = Take(xs, n);
+
+  auto f = *ys;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
+
+  n = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2)");
+
+  n = 4;
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3 4)");
+
+  xs.insert(5, 6);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3 4)");
+
+  xs.insert(2, 22);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 22 3)");
+
+  xs.insert(4, 44);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 22 3)");
+
+  xs.insert(3, 33);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 22 33)");
+
+  xs.erase(1);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 22 33 44)");
+
+  xs.erase(4);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 22 33 44)");
+
+  xs.erase(3);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 22 33 5)");
+
+  xs.erase(3);
+
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 22 33 6)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Var_Map)
 {
   Engine engine;

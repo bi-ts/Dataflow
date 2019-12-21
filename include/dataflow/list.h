@@ -91,6 +91,8 @@ public:
 
   list concat(list other) const;
 
+  list take(integer n) const;
+
   T operator[](integer idx) const;
 
   list operator+(list other) const;
@@ -238,6 +240,12 @@ template <typename ArgL,
           typename T =
             list_element_type_t<core::common_argument_data_type_t<ArgL, ArgR>>>
 ref<list<T>> operator+(const ArgL& lhs, const ArgR& rhs);
+
+template <typename ArgL,
+          typename ArgN,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename = core::enable_for_argument_data_type_t<ArgN, integer>>
+ref<list<T>> Take(const ArgL& l, const ArgN& num);
 
 template <typename ArgL,
           typename... Args,
