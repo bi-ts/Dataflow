@@ -50,6 +50,7 @@ public:
             vertex_descriptor time_node_v,
             tick_count& ticks);
 
+private:
   void pump_(dependency_graph& graph,
              topological_list& order,
              vertex_descriptor time_node_v,
@@ -61,7 +62,17 @@ private:
   std::vector<topological_position, memory_allocator<topological_position>>
     next_update_;
 
-  std::unordered_map<const node*, std::shared_ptr<const metadata>> metadata_;
+  // TODO: move to not existing yet `network` class together with graph and
+  //       topological order?
+  std::unordered_map<
+    const node*,
+    std::shared_ptr<const metadata>,
+    std::hash<const node*>,
+    std::equal_to<const node*>,
+    memory_allocator<
+      std::pair<const node* const, std::shared_ptr<const metadata>>>>
+    metadata_;
+
   const std::shared_ptr<const metadata> p_no_metadata_;
 
   std::size_t changed_nodes_count_;

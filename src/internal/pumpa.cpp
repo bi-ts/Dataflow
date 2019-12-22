@@ -27,8 +27,11 @@ namespace internal
 pumpa::pumpa(const memory_allocator<char>& allocator)
 : pumping_started_(false)
 , args_buffer_(allocator)
-, changed_nodes_count_()
-, updated_nodes_count_()
+, next_update_(allocator)
+, metadata_(allocator)
+, p_no_metadata_(nullptr)
+, changed_nodes_count_(0)
+, updated_nodes_count_(0)
 {
 }
 
