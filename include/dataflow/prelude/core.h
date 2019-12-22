@@ -485,6 +485,11 @@ using is_generic_patch =
   typename detail::is_generic_patch<typename std::remove_cv<
     typename std::remove_reference<Patch>::type>::type>::type;
 
+/**
+ * A type trait that checks if there is no custom patch type defined for `T`
+ * data type. It is `std::true_type`, if `patch_type_t<T>` is a generic patch.
+ * Otherwise, it is `std::false_type`.
+ */
 template <typename T>
 using is_trivially_patcheable = is_generic_patch<typename patch_type<T>::type>;
 
