@@ -23,6 +23,7 @@
 
 #include "converter.h"
 #include "graph.h"
+#include "pumpa.h"
 #include "tick_count.h"
 
 #include <utility>
@@ -122,8 +123,6 @@ private:
   explicit engine();
   ~engine() noexcept;
 
-  void schedule_for_next_update_(vertex_descriptor v);
-
   edge_descriptor out_edge_at_(vertex_descriptor v, std::size_t idx) const;
   edge_descriptor last_out_edge_(vertex_descriptor v) const;
 
@@ -159,22 +158,13 @@ private:
 
   void remove_subgraph_(vertex_descriptor v);
 
-  void pump_();
-
 private:
   allocator_type allocator_;
   dependency_graph graph_;
   topological_list order_;
-  std::vector<topological_position, memory_allocator<topological_position>>
-    next_update_;
-  bool pumping_started_;
-  std::vector<const node*, memory_allocator<const node*>> args_buffer_;
+  pumpa pumpa_;
   tick_count ticks_;
   vertex_descriptor time_node_v_;
-  std::unordered_map<const node*, std::shared_ptr<const metadata>> metadata_;
-  const std::shared_ptr<const metadata> p_no_metadata_;
-  std::size_t changed_nodes_count_;
-  std::size_t updated_nodes_count_;
 
 private:
   static engine* gp_engine_;

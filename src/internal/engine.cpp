@@ -164,53 +164,18 @@ void engine::schedule(vertex_descriptor v)
 
 void engine::pump()
 {
-  CHECK_PRECONDITION(!pumping_started_);
-
-  pumping_started_ = true;
-
-  try
-  {
-    pump_();
-
-    while (!next_update_.empty())
-    {
-      for (auto pos : next_update_)
-        order_.mark(pos);
-
-      next_update_.clear();
-
-      pump_();
-    }
-  }
-  catch (...)
-  {
-    pumping_started_ = false;
-    args_buffer_.clear();
-    metadata_.clear();
-    throw;
-  }
-
-  pumping_started_ = false;
-
-  CHECK_POSTCONDITION(metadata_.empty());
+  pumpa_.pump(graph_, order_, time_node_v_, ticks_);
 }
 
 void engine::set_metadata(const node* p_node,
                           std::shared_ptr<const metadata> p_metadata)
 {
-  CHECK_CONDITION(metadata_.find(p_node) == metadata_.end());
-
-  metadata_[p_node] = std::move(p_metadata);
+  return pumpa_.set_metadata(p_node, p_metadata);
 }
 
 const std::shared_ptr<const metadata>& engine::get_metadata(const node* p_node)
 {
-  const auto it = metadata_.find(p_node);
-
-  if (it == metadata_.end())
-    return p_no_metadata_;
-
-  return it->second;
+  return pumpa_.get_metadata(p_node);
 }
 
 update_status engine::update_node_if_activator(vertex_descriptor v,
@@ -361,8 +326,11 @@ void engine::update_node_state(vertex_descriptor v)
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(out_degree(v, graph_) == 4);
 
-  engine::instance().schedule_for_next_update_(
-    target(out_edge_at_(v, 0), graph_));
+  const auto w = target(out_edge_at_(v, 0), graph_);
+
+  CHECK_CONDITION(w != vertex_descriptor());
+
+  pumpa_.schedule_for_next_update(graph_[w].position);
 }
 
 std::pair<const node*, update_status>
@@ -410,12 +378,9 @@ engine::engine()
 : allocator_()
 , graph_()
 , order_(allocator_)
-, pumping_started_(false)
-, args_buffer_(allocator_)
+, pumpa_(allocator_)
 , ticks_()
 , time_node_v_()
-, changed_nodes_count_()
-, updated_nodes_count_()
 {
 }
 
@@ -431,15 +396,6 @@ engine::~engine() noexcept
   {
     CHECK_NOT_REACHABLE_NOEXCEPT();
   }
-}
-
-void engine::schedule_for_next_update_(vertex_descriptor v)
-{
-  CHECK_PRECONDITION(pumping_started_);
-  CHECK_PRECONDITION(v != vertex_descriptor());
-
-  if (graph_[v].position != topological_position())
-    next_update_.push_back(graph_[v].position);
 }
 
 vertex_descriptor engine::implied_activator_(vertex_descriptor u,
@@ -859,73 +815,5 @@ void engine::remove_subgraph_(vertex_descriptor v)
     delete_node_(u);
   }
 }
-
-void engine::pump_()
-{
-  ++ticks_;
-  changed_nodes_count_ = 0;
-  updated_nodes_count_ = 0;
-
-  CHECK_CONDITION(dynamic_cast<node_time*>(graph_[time_node_v_].p_node));
-
-  const auto p_node_time = static_cast<node_time*>(graph_[time_node_v_].p_node);
-
-  p_node_time->increment();
-
-  order_.mark(graph_[time_node_v_].position);
-
-  const auto to = order_.end_marked();
-  for (auto it = order_.begin_marked(); it != to; it = order_.begin_marked())
-  {
-    const auto v = *it;
-
-    order_.unmark(it.base());
-
-    const auto p_node = graph_[v].p_node;
-
-    assert(p_node);
-
-    assert(args_buffer_.size() == 0);
-
-    for (auto es = out_edges(v, graph_); es.first != es.second; ++es.first)
-    {
-      const auto e = *es.first;
-
-      if (is_active_data_dependency(e))
-        args_buffer_.push_back(graph_[target(e, graph_)].p_node);
-    }
-
-    const auto status = p_node->update(converter::convert(v),
-                                       graph_[v].initialized,
-                                       &args_buffer_.front(),
-                                       args_buffer_.size());
-
-    ++updated_nodes_count_;
-
-    if ((status & update_status::updated_next) != update_status::nothing)
-    {
-      schedule_for_next_update_(v);
-    }
-
-    if ((status & update_status::updated) != update_status::nothing)
-    {
-      ++changed_nodes_count_;
-
-      for (auto u : graph_[v].consumers)
-      {
-        order_.mark(graph_[u].position);
-      }
-    }
-
-    graph_[v].initialized = true;
-
-    args_buffer_.clear();
-  }
-
-  assert(order_.begin_marked() == order_.end_marked());
-
-  metadata_.clear();
-}
-
 } // internal
 } // dataflow

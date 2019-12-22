@@ -131,16 +131,12 @@ inline bool engine::is_persistent_node(vertex_descriptor v) const
 
 inline std::size_t engine::changed_nodes_count() const
 {
-  CHECK_PRECONDITION(!pumping_started_);
-
-  return changed_nodes_count_;
+  return pumpa_.changed_nodes_count();
 }
 
 inline std::size_t engine::updated_nodes_count() const
 {
-  CHECK_PRECONDITION(!pumping_started_);
-
-  return updated_nodes_count_;
+  return pumpa_.updated_nodes_count();
 }
 
 inline bool engine::requires_activation(vertex_descriptor v) const
