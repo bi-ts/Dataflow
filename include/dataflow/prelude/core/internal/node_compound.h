@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,42 +18,42 @@
 
 #pragma once
 
-#include "config.h"
+#include <dataflow++_export.h>
+
 #include "node_t.h"
 #include "nodes_factory.h"
 #include "ref.h"
 
-#include <utility>
+#include <array>
+#include <functional>
 
 namespace dataflow
 {
 namespace internal
 {
-template <typename T> class node_var final : public node_t<T>
+DATAFLOW___EXPORT void activate_node_compound(node_id x, node_id y);
+DATAFLOW___EXPORT void deactivate_node_compound(node_id x);
+
+template <typename T> class node_compound final : public node_t<T>
 {
   friend class nodes_factory;
 
 public:
-  static ref create(const T& v)
+  static ref create(const std::function<ref(const tick_count&)>& f)
   {
-    return nodes_factory::create<node_var<T>>(nullptr, 0, node_flags::none, v);
-  }
-
-  void set_next_value(const T& v) const
-  {
-    next_value_ = v;
-  }
-
-  const T& next_value() const
-  {
-    return next_value_;
+    return nodes_factory::create<node_compound<T>>(
+      nullptr, 0, node_flags::none, f);
   }
 
 private:
-  explicit node_var(const T& v)
-  : node_t<T>(v)
-  , next_value_(v)
+  explicit node_compound(const std::function<ref(const tick_count&)>& f)
+  : f_(f)
   {
+  }
+
+  virtual void activate_(node_id id, const tick_count& t0) override
+  {
+    activate_node_compound(id, f_(t0).id());
   }
 
   virtual update_status update_(node_id id,
@@ -61,12 +61,20 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    return this->set_value_(next_value_);
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 1);
+
+    return this->set_value_(extract_node_value<T>(p_args[0]));
+  }
+
+  virtual void deactivate_(node_id id) override
+  {
+    deactivate_node_compound(id);
   }
 
   virtual std::string label_() const override
   {
-    return "var";
+    return "compound";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
@@ -75,7 +83,7 @@ private:
   }
 
 private:
-  mutable T next_value_;
+  const std::function<ref(const tick_count&)> f_;
 };
 } // internal
 } // dataflow

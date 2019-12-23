@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,42 +18,35 @@
 
 #pragma once
 
-#include <dataflow++_export.h>
+#include "dataflow++_export.h"
 
 #include "node_t.h"
 #include "nodes_factory.h"
 #include "ref.h"
 
-#include <array>
-#include <functional>
-
 namespace dataflow
 {
 namespace internal
 {
-DATAFLOW___EXPORT void activate_node_compound(node_id x, node_id y);
-DATAFLOW___EXPORT void deactivate_node_compound(node_id x);
-
-template <typename T> class node_compound final : public node_t<T>
+template <typename T, typename U, typename StaticPolicy>
+class node_selector final : public node_t<T>
 {
   friend class nodes_factory;
 
 public:
-  static ref create(const std::function<ref(const tick_count&)>& f)
+  static ref create(const ref& activator, bool eager)
   {
-    return nodes_factory::create<node_compound<T>>(
-      nullptr, 0, node_flags::none, f);
+    DATAFLOW___CHECK_PRECONDITION(activator.template is_of_type<U>());
+
+    const auto id = activator.id();
+
+    return nodes_factory::create_conditional<node_selector<T, U, StaticPolicy>>(
+      &id, 1, eager ? node_flags::eager : node_flags::none);
   }
 
 private:
-  explicit node_compound(const std::function<ref(const tick_count&)>& f)
-  : f_(f)
+  explicit node_selector()
   {
-  }
-
-  virtual void activate_(node_id id, const tick_count& t0) override
-  {
-    activate_node_compound(id, f_(t0).id());
   }
 
   virtual update_status update_(node_id id,
@@ -62,28 +55,20 @@ private:
                                 std::size_t args_count) override
   {
     DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
-    DATAFLOW___CHECK_PRECONDITION(args_count == 1);
+    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
 
-    return this->set_value_(extract_node_value<T>(p_args[0]));
-  }
-
-  virtual void deactivate_(node_id id) override
-  {
-    deactivate_node_compound(id);
+    return this->set_value_(extract_node_value<T>(p_args[1]));
   }
 
   virtual std::string label_() const override
   {
-    return "compound";
+    return StaticPolicy::label();
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
   {
     return std::make_pair(sizeof(*this), alignof(decltype(*this)));
   }
-
-private:
-  const std::function<ref(const tick_count&)> f_;
 };
 } // internal
 } // dataflow

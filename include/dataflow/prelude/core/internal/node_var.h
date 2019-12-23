@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,36 +18,41 @@
 
 #pragma once
 
-#include "dataflow++_export.h"
-
+#include "config.h"
 #include "node_t.h"
 #include "nodes_factory.h"
 #include "ref.h"
 
-#include <array>
+#include <utility>
 
 namespace dataflow
 {
 namespace internal
 {
-template <typename T> class node_snapshot final : public node_t<T>
+template <typename T> class node_var final : public node_t<T>
 {
   friend class nodes_factory;
 
 public:
-  static ref create(const ref& activator, const ref& x)
+  static ref create(const T& v)
   {
-    DATAFLOW___CHECK_PRECONDITION(activator.template is_of_type<bool>());
-    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
+    return nodes_factory::create<node_var<T>>(nullptr, 0, node_flags::none, v);
+  }
 
-    const std::array<node_id, 2> args = {{activator.id(), x.id()}};
+  void set_next_value(const T& v) const
+  {
+    next_value_ = v;
+  }
 
-    return nodes_factory::create_conditional<node_snapshot<T>>(
-      &args[0], args.size(), node_flags::eager);
+  const T& next_value() const
+  {
+    return next_value_;
   }
 
 private:
-  explicit node_snapshot()
+  explicit node_var(const T& v)
+  : node_t<T>(v)
+  , next_value_(v)
   {
   }
 
@@ -56,29 +61,21 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
-
-    if (!initialized)
-    {
-
-      DATAFLOW___CHECK_PRECONDITION(args_count == 2);
-
-      return this->set_value_(extract_node_value<T>(p_args[1])) |
-             update_status::updated;
-    }
-
-    return update_status::nothing;
+    return this->set_value_(next_value_);
   }
 
   virtual std::string label_() const override
   {
-    return "snapshot";
+    return "var";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
   {
     return std::make_pair(sizeof(*this), alignof(decltype(*this)));
   }
+
+private:
+  mutable T next_value_;
 };
 } // internal
 } // dataflow

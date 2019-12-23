@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,30 +18,36 @@
 
 #pragma once
 
-#include "config.h"
+#include "dataflow++_export.h"
+
 #include "node_t.h"
 #include "nodes_factory.h"
 #include "ref.h"
 
-#include <utility>
+#include <array>
 
 namespace dataflow
 {
 namespace internal
 {
-template <typename T> class node_const final : public node_t<T>
+template <typename T> class node_snapshot final : public node_t<T>
 {
   friend class nodes_factory;
 
 public:
-  static ref create(const T& v)
+  static ref create(const ref& activator, const ref& x)
   {
-    return nodes_factory::create_constant<node_const<T>>(v);
+    DATAFLOW___CHECK_PRECONDITION(activator.template is_of_type<bool>());
+    DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
+
+    const std::array<node_id, 2> args = {{activator.id(), x.id()}};
+
+    return nodes_factory::create_conditional<node_snapshot<T>>(
+      &args[0], args.size(), node_flags::eager);
   }
 
 private:
-  explicit node_const(const T& v)
-  : node_t<T>(v)
+  explicit node_snapshot()
   {
   }
 
@@ -50,14 +56,23 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    DATAFLOW___CHECK_NOT_REACHABLE();
+    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
+
+    if (!initialized)
+    {
+
+      DATAFLOW___CHECK_PRECONDITION(args_count == 2);
+
+      return this->set_value_(extract_node_value<T>(p_args[1])) |
+             update_status::updated;
+    }
 
     return update_status::nothing;
   }
 
   virtual std::string label_() const override
   {
-    return "const";
+    return "snapshot";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final

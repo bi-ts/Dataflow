@@ -20,25 +20,24 @@
 #error '.inl' file can't be included directly. Use 'core.h' instead
 #endif
 
-#include "../internal/config.h"
-#include "../internal/node_compound.h"
-#include "../internal/node_const.h"
-#include "../internal/node_if.h"
-#include "../internal/node_if_activator.h"
-#include "../internal/node_main.h"
-#include "../internal/node_n_ary.h"
-#include "../internal/node_patcher_n_ary.h"
-#include "../internal/node_previous.h"
-#include "../internal/node_selector.h"
-#include "../internal/node_selector_activator.h"
-#include "../internal/node_snapshot.h"
-#include "../internal/node_snapshot_activator.h"
-#include "../internal/node_state.h"
-#include "../internal/node_state_prev.h"
-#include "../internal/node_var.h"
-
+#include "core/internal/config.h"
+#include "core/internal/node_compound.h"
+#include "core/internal/node_const.h"
+#include "core/internal/node_if.h"
+#include "core/internal/node_if_activator.h"
+#include "core/internal/node_main.h"
+#include "core/internal/node_n_ary.h"
+#include "core/internal/node_patcher_n_ary.h"
+#include "core/internal/node_previous.h"
+#include "core/internal/node_selector.h"
+#include "core/internal/node_selector_activator.h"
 #include "core/internal/node_since.h"
 #include "core/internal/node_since_activator.h"
+#include "core/internal/node_snapshot.h"
+#include "core/internal/node_snapshot_activator.h"
+#include "core/internal/node_state.h"
+#include "core/internal/node_state_prev.h"
+#include "core/internal/node_var.h"
 
 #include <sstream>
 

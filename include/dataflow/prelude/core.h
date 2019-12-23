@@ -25,8 +25,8 @@
 
 #include "core/dtime.h"
 
-#include "../internal/ref.h"
-#include "../internal/std_future.h"
+#include "core/internal/ref.h"
+#include "core/internal/std_future.h"
 
 #include <functional>
 #include <string>

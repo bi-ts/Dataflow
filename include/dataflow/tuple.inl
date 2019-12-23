@@ -20,7 +20,7 @@
 #error '.inl' file can't be included directly. Use 'tuple.h' instead
 #endif
 
-#include "internal/std_future.h"
+#include "prelude/core/internal/std_future.h"
 
 namespace dataflow
 {

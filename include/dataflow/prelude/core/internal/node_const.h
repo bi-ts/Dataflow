@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,34 +18,30 @@
 
 #pragma once
 
-#include "dataflow++_export.h"
-
+#include "config.h"
 #include "node_t.h"
 #include "nodes_factory.h"
 #include "ref.h"
+
+#include <utility>
 
 namespace dataflow
 {
 namespace internal
 {
-template <typename T, typename U, typename StaticPolicy>
-class node_selector final : public node_t<T>
+template <typename T> class node_const final : public node_t<T>
 {
   friend class nodes_factory;
 
 public:
-  static ref create(const ref& activator, bool eager)
+  static ref create(const T& v)
   {
-    DATAFLOW___CHECK_PRECONDITION(activator.template is_of_type<U>());
-
-    const auto id = activator.id();
-
-    return nodes_factory::create_conditional<node_selector<T, U, StaticPolicy>>(
-      &id, 1, eager ? node_flags::eager : node_flags::none);
+    return nodes_factory::create_constant<node_const<T>>(v);
   }
 
 private:
-  explicit node_selector()
+  explicit node_const(const T& v)
+  : node_t<T>(v)
   {
   }
 
@@ -54,15 +50,14 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
-    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
+    DATAFLOW___CHECK_NOT_REACHABLE();
 
-    return this->set_value_(extract_node_value<T>(p_args[1]));
+    return update_status::nothing;
   }
 
   virtual std::string label_() const override
   {
-    return StaticPolicy::label();
+    return "const";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final

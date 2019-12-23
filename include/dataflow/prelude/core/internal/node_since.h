@@ -18,10 +18,10 @@
 
 #pragma once
 
-#include "../../../internal/config.h"
-#include "../../../internal/node_t.h"
-#include "../../../internal/nodes_factory.h"
-#include "../../../internal/ref.h"
+#include "config.h"
+#include "node_t.h"
+#include "nodes_factory.h"
+#include "ref.h"
 
 #include <dataflow/prelude/core/dtime.h>
 

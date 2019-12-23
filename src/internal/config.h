@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <dataflow/internal/config.h>
+#include <dataflow/prelude/core/internal/config.h>
 
 #define CHECK_ARGUMENT(x) DATAFLOW___CHECK_ARGUMENT(x)
 

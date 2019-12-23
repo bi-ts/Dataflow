@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2016 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,7 +20,7 @@
 
 #include "graph.h"
 
-#include <dataflow/internal/node.h>
+#include <dataflow/prelude/core/internal/node.h>
 
 #include <type_traits>
 

@@ -20,8 +20,8 @@
 
 #include "dataflow++_export.h"
 
-#include "../../../internal/node_t.h"
-#include "../../../internal/ref.h"
+#include "node_t.h"
+#include "ref.h"
 
 #include <dataflow/prelude/core/dtime.h>
 

@@ -20,7 +20,7 @@
 
 #include "../internal/engine.h"
 
-#include <dataflow/internal/node_signal.h>
+#include <dataflow/prelude/core/internal/node_signal.h>
 
 namespace dataflow
 {

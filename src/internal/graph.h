@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include <dataflow/internal/node.h>
+#include <dataflow/prelude/core/internal/node.h>
 
 #include <dst/allocator/global_counter_allocator.h>
 #include <dst/binary_tree/list.h>

@@ -21,7 +21,7 @@
 #ifndef DATAFLOW___STATEFUL_H
 #define DATAFLOW___STATEFUL_H
 
-#include "../internal/std_future.h"
+#include "core/internal/std_future.h"
 
 #include "core.h"
 

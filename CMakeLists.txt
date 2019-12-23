@@ -57,8 +57,31 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core.h
   include/dataflow/prelude/core.inl
   include/dataflow/prelude/core/dtime.h
+  include/dataflow/prelude/core/internal/config.h
+  include/dataflow/prelude/core/internal/node.h
+  include/dataflow/prelude/core/internal/node_compound.h
+  include/dataflow/prelude/core/internal/node_const.h
+  include/dataflow/prelude/core/internal/node_if.h
+  include/dataflow/prelude/core/internal/node_if_activator.h
+  include/dataflow/prelude/core/internal/node_main.h
+  include/dataflow/prelude/core/internal/node_n_ary.h
+  include/dataflow/prelude/core/internal/node_patcher_n_ary.h
+  include/dataflow/prelude/core/internal/node_previous.h
+  include/dataflow/prelude/core/internal/node_selector.h
+  include/dataflow/prelude/core/internal/node_selector_activator.h
+  include/dataflow/prelude/core/internal/node_signal.h
   include/dataflow/prelude/core/internal/node_since.h
   include/dataflow/prelude/core/internal/node_since_activator.h
+  include/dataflow/prelude/core/internal/node_snapshot.h
+  include/dataflow/prelude/core/internal/node_snapshot_activator.h
+  include/dataflow/prelude/core/internal/node_state.h
+  include/dataflow/prelude/core/internal/node_state_prev.h
+  include/dataflow/prelude/core/internal/node_t.h
+  include/dataflow/prelude/core/internal/node_var.h
+  include/dataflow/prelude/core/internal/nodes_factory.h
+  include/dataflow/prelude/core/internal/ref.h
+  include/dataflow/prelude/core/internal/std_future.h
+  include/dataflow/prelude/core/internal/type_traits.h
   include/dataflow/prelude/logical.h
   include/dataflow/prelude/logical.inl
   include/dataflow/prelude/stateful.h
@@ -69,29 +92,6 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/tuple.h
   include/dataflow/tuple.inl
 
-  include/dataflow/internal/config.h
-  include/dataflow/internal/node.h
-  include/dataflow/internal/node_compound.h
-  include/dataflow/internal/node_const.h
-  include/dataflow/internal/node_if.h
-  include/dataflow/internal/node_if_activator.h
-  include/dataflow/internal/node_main.h
-  include/dataflow/internal/node_n_ary.h
-  include/dataflow/internal/node_patcher_n_ary.h
-  include/dataflow/internal/node_previous.h
-  include/dataflow/internal/node_selector.h
-  include/dataflow/internal/node_selector_activator.h
-  include/dataflow/internal/node_signal.h
-  include/dataflow/internal/node_snapshot.h
-  include/dataflow/internal/node_snapshot_activator.h
-  include/dataflow/internal/node_state.h
-  include/dataflow/internal/node_state_prev.h
-  include/dataflow/internal/node_t.h
-  include/dataflow/internal/node_var.h
-  include/dataflow/internal/nodes_factory.h
-  include/dataflow/internal/ref.h
-  include/dataflow/internal/std_future.h
-  include/dataflow/internal/type_traits.h
 
   src/introspect.cpp
   src/io.cpp

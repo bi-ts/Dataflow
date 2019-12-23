@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2018 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include <dataflow/internal/node_t.h>
+#include <dataflow/prelude/core/internal/node_t.h>
 
 namespace dataflow
 {
