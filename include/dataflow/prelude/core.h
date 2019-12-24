@@ -482,8 +482,7 @@ template <typename T> struct is_generic_patch<generic_patch<T>>
  */
 template <typename Patch>
 using is_generic_patch =
-  typename detail::is_generic_patch<typename std::remove_cv<
-    typename std::remove_reference<Patch>::type>::type>::type;
+  typename detail::is_generic_patch<std20::remove_cvref_t<Patch>>::type;
 
 /**
  * A type trait that checks if there is no custom patch type defined for `T`
@@ -566,36 +565,36 @@ template <typename F,
           typename T = typename std::result_of<F(const X&, const Y&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = typename std::remove_cv<typename std::remove_reference<
-            decltype(std::declval<Policy>().calculate(
-              std::declval<X>(), std::declval<Xs>()...))>::type>::type>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> Lift(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = typename std::remove_cv<typename std::remove_reference<
-            decltype(std::declval<Policy>().calculate(
-              std::declval<X>(), std::declval<Xs>()...))>::type>::type>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> Lift(const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = typename std::remove_cv<typename std::remove_reference<
-            decltype(std::declval<Policy>().calculate(
-              std::declval<X>(), std::declval<Xs>()...))>::type>::type>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftPuller(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = typename std::remove_cv<typename std::remove_reference<
-            decltype(std::declval<Policy>().calculate(
-              std::declval<X>(), std::declval<Xs>()...))>::type>::type>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftPuller(const ref<X>& x, const ref<Xs>&... xs);
 
 template <typename Policy,
@@ -615,18 +614,20 @@ template <typename Policy,
           typename = enable_if_aggregate_data_type_t<X>>
 ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftPatcher(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftPatcher(const ref<X>& x, const ref<Xs>&... xs);
 }
 
