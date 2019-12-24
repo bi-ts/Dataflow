@@ -80,7 +80,6 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core/internal/node_var.h
   include/dataflow/prelude/core/internal/nodes_factory.h
   include/dataflow/prelude/core/internal/ref.h
-  include/dataflow/prelude/core/internal/std_future.h
   include/dataflow/prelude/core/internal/type_traits.h
   include/dataflow/prelude/logical.h
   include/dataflow/prelude/logical.inl
@@ -91,6 +90,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/string.inl
   include/dataflow/tuple.h
   include/dataflow/tuple.inl
+
+  include/dataflow/utility/std_future.h
 
 
   src/introspect.cpp

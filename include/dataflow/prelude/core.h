@@ -26,7 +26,8 @@
 #include "core/dtime.h"
 
 #include "core/internal/ref.h"
-#include "core/internal/std_future.h"
+
+#include <dataflow/utility/std_future.h>
 
 #include <functional>
 #include <string>
@@ -39,15 +40,14 @@ namespace core
 {
 template <typename T>
 struct is_flowable
-: internal::std17::conjunction<
-    std::is_default_constructible<T>,
-    std::is_copy_constructible<T>,
-    std::is_copy_assignable<T>,
-    internal::is_streamable<T>,
-    internal::is_equality_comparable<T>,
-    internal::std17::negation<std::is_base_of<internal::ref, T>>,
-    internal::std17::negation<std::is_pointer<T>>,
-    internal::std17::negation<std::is_reference<T>>>
+: std17::conjunction<std::is_default_constructible<T>,
+                     std::is_copy_constructible<T>,
+                     std::is_copy_assignable<T>,
+                     internal::is_streamable<T>,
+                     internal::is_equality_comparable<T>,
+                     std17::negation<std::is_base_of<internal::ref, T>>,
+                     std17::negation<std::is_pointer<T>>,
+                     std17::negation<std::is_reference<T>>>
 {
 };
 }
@@ -227,8 +227,8 @@ using enable_if_flowable_t = typename enable_if_flowable<T, U>::type;
 
 template <typename T>
 using is_aggregate_data_type =
-  typename internal::std17::conjunction<is_flowable<T>,
-                                        std::is_base_of<aggregate_base, T>>;
+  typename std17::conjunction<is_flowable<T>,
+                              std::is_base_of<aggregate_base, T>>;
 
 template <typename T, typename U = T>
 using enable_if_aggregate_data_type =
@@ -239,9 +239,9 @@ using enable_if_aggregate_data_type_t =
   typename enable_if_aggregate_data_type<T, U>::type;
 
 template <typename T>
-using is_regular_data_type = typename internal::std17::conjunction<
-  is_flowable<T>,
-  internal::std17::negation<is_aggregate_data_type<T>>>;
+using is_regular_data_type =
+  typename std17::conjunction<is_flowable<T>,
+                              std17::negation<is_aggregate_data_type<T>>>;
 
 template <typename T, typename U = T>
 using enable_if_regular_data_type =
@@ -254,8 +254,8 @@ using enable_if_regular_data_type_t =
 template <typename T>
 struct convert_to_flowable
 : enable_if_flowable<typename std::conditional<
-    is_flowable<internal::std20::remove_cvref_t<T>>::value,
-    internal::std20::remove_cvref_t<T>,
+    is_flowable<std20::remove_cvref_t<T>>::value,
+    std20::remove_cvref_t<T>,
     typename std::conditional<std::is_convertible<T, std::string>::value,
                               std::string,
                               void>::type>::type>
@@ -366,7 +366,7 @@ public:
 }
 
 template <typename F, typename T>
-using is_transition_function = internal::std17::disjunction<
+using is_transition_function = std17::disjunction<
   is_flowable<typename detail::type_1_transition_function_result<F, T>::type>,
   is_flowable<typename detail::type_2_transition_function_result<F, T>::type>>;
 
@@ -440,7 +440,7 @@ using enable_for_farg_data_type_t =
 
 template <typename T, typename... FArgs>
 using farg_result = std::conditional<
-  internal::std17::disjunction<core::is_function_of_time<FArgs>...>::value,
+  std17::disjunction<core::is_function_of_time<FArgs>...>::value,
   function_of_time<T>,
   ref<T>>;
 
@@ -501,23 +501,20 @@ template <typename T> struct diff_type
 template <typename T> using diff_type_t = typename diff_type<T>::type;
 
 template <typename T, typename... Args>
-using enable_if_all =
-  std::enable_if<internal::std17::conjunction<Args...>::value, T>;
+using enable_if_all = std::enable_if<std17::conjunction<Args...>::value, T>;
 
 template <typename T, typename... Args>
 using enable_if_all_t = typename enable_if_all<T, Args...>::type;
 
 template <typename T, typename... Args>
-using enable_if_any =
-  std::enable_if<internal::std17::disjunction<Args...>::value, T>;
+using enable_if_any = std::enable_if<std17::disjunction<Args...>::value, T>;
 
 template <typename T, typename... Args>
 using enable_if_any_t = typename enable_if_any<T, Args...>::type;
 
 template <typename T, typename... Args>
-using enable_if_none = std::enable_if<
-  internal::std17::conjunction<internal::std17::negation<Args>...>::value,
-  T>;
+using enable_if_none =
+  std::enable_if<std17::conjunction<std17::negation<Args>...>::value, T>;
 
 template <typename T = void, typename... Args>
 using enable_if_none_t = typename enable_if_none<T, Args...>::type;

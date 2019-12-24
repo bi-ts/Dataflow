@@ -20,7 +20,7 @@
 #error '.inl' file can't be included directly. Use 'tuple.h' instead
 #endif
 
-#include "prelude/core/internal/std_future.h"
+#include <dataflow/utility/std_future.h>
 
 namespace dataflow
 {
@@ -45,7 +45,7 @@ void print_tuple_elements(std::ostream& out,
 template <typename... Us, std::size_t... Is>
 void print_tuple(std::ostream& out,
                  const tuple<Us...>& v,
-                 const internal::std14::index_sequence<Is...>&)
+                 const std14::index_sequence<Is...>&)
 {
   print_tuple_elements(out, get<Is>(v)...);
 }
@@ -77,7 +77,7 @@ bool compare_pairs(const std::pair<U, U>& p, const std::pair<Us, Us>&... ps)
 template <typename... Us, std::size_t... Is>
 bool compare_tuples(const tuple<Us...>& lhs,
                     const tuple<Us...>& rhs,
-                    const internal::std14::index_sequence<Is...>&)
+                    const std14::index_sequence<Is...>&)
 {
   return compare_pairs(std::make_pair(get<Is>(lhs), get<Is>(rhs))...);
 }
@@ -143,10 +143,10 @@ T default_value(
 }
 
 template <typename... Ts, std::size_t... Is>
-ref<bool> make_equality_comparison(
-  const ref<tuple<Ts...>>& x,
-  const ref<tuple<Ts...>>& y,
-  const dataflow::internal::std14::index_sequence<Is...>& seq)
+ref<bool>
+make_equality_comparison(const ref<tuple<Ts...>>& x,
+                         const ref<tuple<Ts...>>& y,
+                         const dataflow::std14::index_sequence<Is...>& seq)
 {
   return And(Get<Is>(x) == Get<Is>(y)...);
 }
@@ -168,7 +168,7 @@ template <typename T, typename... Ts>
 bool tuple<T, Ts...>::operator==(const tuple& other) const
 {
   return detail::compare_tuples(
-    *this, other, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
+    *this, other, std14::make_index_sequence<sizeof...(Ts) + 1>());
 }
 
 template <typename T, typename... Ts>
@@ -185,8 +185,7 @@ std::ostream& dataflow::operator<<(std::ostream& out, const tuple<Ts...>& value)
 
   out << "tuple(";
 
-  detail::print_tuple(
-    out, value, internal::std14::make_index_sequence<sizeof...(Ts)>());
+  detail::print_tuple(out, value, std14::make_index_sequence<sizeof...(Ts)>());
 
   out << ")";
 
@@ -298,7 +297,7 @@ dataflow::ref<bool> dataflow::operator==(const ref<tuple<T, Ts...>>& x,
                                          const ref<tuple<T, Ts...>>& y)
 {
   return detail::make_equality_comparison(
-    x, y, internal::std14::make_index_sequence<sizeof...(Ts) + 1>());
+    x, y, std14::make_index_sequence<sizeof...(Ts) + 1>());
 }
 
 template <typename T, typename... Ts>

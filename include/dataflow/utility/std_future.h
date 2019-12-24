@@ -22,8 +22,6 @@
 
 namespace dataflow
 {
-namespace internal
-{
 namespace std14
 {
 template <std::size_t... Is> class index_sequence
@@ -94,6 +92,5 @@ template <typename T>
 using remove_cvref = std::remove_cv<typename std::remove_reference<T>::type>;
 
 template <typename T> using remove_cvref_t = typename remove_cvref<T>::type;
-}
 }
 }

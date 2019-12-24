@@ -37,7 +37,7 @@ template <typename F, typename T> struct is_sm_definition_function
 {
 private:
   template <typename... FArgs>
-  static dataflow::internal::std17::conjunction<
+  static dataflow::std17::conjunction<
     std::is_same<typename core::farg_data_type<FArgs>::type, T>...>
   test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
   static std::false_type test_f_(...);
@@ -56,8 +56,7 @@ public:
 template <typename T, typename... Trs, std::size_t... Is>
 ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
-  // TODO: should std14 move from internal to dataflow namespace?
-  const dataflow::internal::std14::index_sequence<Is...>& seq,
+  const dataflow::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   const Time& t0,
   const core::enable_if_any_t<
@@ -104,7 +103,7 @@ ref<T> make_state_machine(
 template <typename T, typename... Trs, std::size_t... Is>
 ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
-  const dataflow::internal::std14::index_sequence<Is...>& seq,
+  const dataflow::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   const Time& t0,
   const core::enable_if_none_t<
@@ -144,7 +143,7 @@ dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
 
         return stateful::detail::make_state_machine(
           transitions,
-          internal::std14::make_index_sequence<
+          std14::make_index_sequence<
             std::tuple_size<decltype(transitions)>::value>(),
           initial_arg,
           t0);

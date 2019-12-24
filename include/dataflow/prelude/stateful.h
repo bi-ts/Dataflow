@@ -21,9 +21,9 @@
 #ifndef DATAFLOW___STATEFUL_H
 #define DATAFLOW___STATEFUL_H
 
-#include "core/internal/std_future.h"
-
 #include "core.h"
+
+#include <dataflow/utility/std_future.h>
 
 #include <cstdint>
 #include <tuple>

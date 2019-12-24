@@ -62,8 +62,7 @@ template <typename T> class list_patch;
 template <typename T>
 class list final
 : public std::conditional<
-    internal::std17::disjunction<core::is_ref<T>,
-                                 core::is_aggregate_data_type<T>>::value,
+    std17::disjunction<core::is_ref<T>, core::is_aggregate_data_type<T>>::value,
     core::aggregate_base,
     core::composite_base>::type
 {
