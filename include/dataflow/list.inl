@@ -264,6 +264,18 @@ template <typename T> void list_patch<T>::erase(integer idx)
   for (auto it = it_lower_bound; it != changes_.end(); ++it)
     --it->idx;
 
+  if (it_lower_bound != changes_.begin())
+  {
+    const auto it_pre_lower_bound = std::prev(it_lower_bound);
+
+    if (it_pre_lower_bound->idx == idx &&
+        it_pre_lower_bound->type == change_type::insert)
+    {
+      changes_.erase(it_pre_lower_bound);
+      return;
+    }
+  }
+
   changes_.insert(it_lower_bound, {change_type::erase, idx, {}});
 }
 

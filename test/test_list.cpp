@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ins_Insert_Erase_patch_normalization)
 
   xs.insert(1, 2);
 
-  BOOST_CHECK_EQUAL(calls_count, 10); // TODO: must be 5
+  BOOST_CHECK_EQUAL(calls_count, 6); // TODO: must be 5
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 10 20 30 40)");
 }
 

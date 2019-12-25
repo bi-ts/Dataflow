@@ -29,12 +29,43 @@ namespace dataflow_test
 template <typename T>
 bool list_patch_invariant_holds(const list_patch<T>& patch)
 {
-  std::vector<integer> indices;
+  enum op_type
+  {
+    op_insert,
+    op_erase
+  };
 
-  patch.apply([&](integer idx, const T&) { indices.push_back(idx); },
-              [&](integer idx) { indices.push_back(idx); });
+  std::vector<std::pair<integer, op_type>> edits;
 
-  return std::is_sorted(indices.begin(), indices.end());
+  patch.apply(
+    [&](integer idx, const T&) {
+      edits.push_back({idx, op_insert});
+    },
+    [&](integer idx) {
+      edits.push_back({idx, op_erase});
+    });
+
+  if (!std::is_sorted(edits.begin(), edits.end()))
+    return false;
+
+  if (edits.size() > 1)
+  {
+    for (auto it1 = edits.begin(); it1 != edits.end(); ++it1)
+    {
+      for (auto it2 = it1; ++it2 != edits.end();)
+      {
+        if (it1->first == it2->first && it1->second != it2->second)
+        {
+          std::cout << "Element inserted at " << it1->first
+                    << ", immediately erased" << std::endl;
+
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
 }
 
 BOOST_AUTO_TEST_SUITE(test_list_patch)
@@ -240,6 +271,27 @@ BOOST_AUTO_TEST_CASE(test_listC_restore_patch_very_different_lists)
   const auto ws = patch.apply(zs);
 
   BOOST_CHECK_EQUAL(core::to_string(ws), "list(a b c d e f g 44 i 77 k l m n)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_insert_erase)
+{
+  Engine engine;
+
+  list_patch<std::string> patch;
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.insert(0, "0");
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.insert(0, "1");
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.erase(0);
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
