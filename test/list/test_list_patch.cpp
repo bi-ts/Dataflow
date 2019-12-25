@@ -45,7 +45,11 @@ bool list_patch_invariant_holds(const list_patch<T>& patch)
       edits.push_back({idx, op_erase});
     });
 
-  if (!std::is_sorted(edits.begin(), edits.end()))
+  if (!std::is_sorted(
+        edits.begin(), edits.end(), [](const auto& lhs, const auto& rhs) {
+          return lhs.first < rhs.first;
+        }))
+
     return false;
 
   if (edits.size() > 1)
@@ -54,10 +58,11 @@ bool list_patch_invariant_holds(const list_patch<T>& patch)
     {
       for (auto it2 = it1; ++it2 != edits.end();)
       {
-        if (it1->first == it2->first && it1->second != it2->second)
+        if (it1->first == it2->first && it1->second == op_insert &&
+            it2->second == op_erase)
         {
-          std::cout << "Element inserted at " << it1->first
-                    << ", immediately erased" << std::endl;
+          std::cout << "Patch is not normalized: the element inserted at "
+                    << it1->first << ", immediately erased" << std::endl;
 
           return false;
         }
@@ -273,7 +278,34 @@ BOOST_AUTO_TEST_CASE(test_listC_restore_patch_very_different_lists)
   BOOST_CHECK_EQUAL(core::to_string(ws), "list(a b c d e f g 44 i 77 k l m n)");
 }
 
-BOOST_AUTO_TEST_CASE(test_listC_insert_erase)
+BOOST_AUTO_TEST_CASE(test_listC_erase_insert)
+{
+  Engine engine;
+
+  list_patch<std::string> patch;
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.erase(0);
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.insert(0, "0");
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.insert(0, "1");
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  const auto xs = make_listC("a", "b", "c");
+
+  const auto ys = patch.apply(xs);
+
+  BOOST_CHECK_EQUAL(core::to_string(ys), "list(1 0 b c)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_insert_erase_normalization)
 {
   Engine engine;
 
@@ -292,6 +324,39 @@ BOOST_AUTO_TEST_CASE(test_listC_insert_erase)
   patch.erase(0);
 
   BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  const auto xs = make_listC("a", "b", "c");
+
+  const auto ys = patch.apply(xs);
+
+  BOOST_CHECK_EQUAL(core::to_string(ys), "list(0 a b c)");
+}
+
+BOOST_AUTO_TEST_CASE(test_listC_erase_insert_normalization)
+{
+  Engine engine;
+
+  list_patch<std::string> patch;
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.insert(0, "0");
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.insert(0, "1");
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  patch.erase(0);
+
+  BOOST_CHECK(list_patch_invariant_holds(patch));
+
+  const auto xs = make_listC("a", "b", "c");
+
+  const auto ys = patch.apply(xs);
+
+  BOOST_CHECK_EQUAL(core::to_string(ys), "list(0 a b c)");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
