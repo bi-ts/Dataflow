@@ -487,13 +487,32 @@ dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
         list_internal::insert_index(diff_l.prev(), diff_idx.prev());
 
       list_patch<T> patch;
-      patch.erase(ins_idx);
+
+      integer shifted_ins_idx = ins_idx;
 
       diff_l.patch().apply(
-        [&](const integer& idx, const T& x) { patch.insert(idx, x); },
-        [&](const integer& idx) { patch.erase(idx); });
+        [&](const integer& idx, const T& x) {
+          const integer adj_idx = idx >= shifted_ins_idx ? idx + 1 : idx;
 
-      patch.insert(diff_idx.curr(), diff_x.curr());
+          if (adj_idx <= shifted_ins_idx)
+            ++shifted_ins_idx;
+
+          patch.insert(adj_idx, x);
+        },
+        [&](const integer& idx) {
+          const integer adj_idx = idx >= shifted_ins_idx ? idx + 1 : idx;
+
+          if (adj_idx <= shifted_ins_idx)
+            --shifted_ins_idx;
+
+          patch.erase(adj_idx);
+        });
+
+      if (shifted_ins_idx != diff_idx.curr())
+      {
+        patch.erase(shifted_ins_idx);
+        patch.insert(diff_idx.curr(), diff_x.curr());
+      }
 
       return patch;
     }
