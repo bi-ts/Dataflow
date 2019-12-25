@@ -539,6 +539,34 @@ BOOST_AUTO_TEST_CASE(test_listC_Erase_in_empty)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list()");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_Var_ins_Insert_Erase_patch_normalization)
+{
+  Engine engine;
+
+  auto xs = Var<listC<int>>(1, 3, 4);
+
+  auto as = Insert(xs, 0, 2);
+  auto bs = Erase(as, 0);
+  auto cs = Insert(bs, 0, 1);
+  auto ds = Erase(cs, 0);
+  auto es = Insert(ds, 0, 0);
+
+  int calls_count = 0;
+
+  const auto f = *Map(es, [&](int x) {
+    ++calls_count;
+    return x * 10;
+  });
+
+  BOOST_CHECK_EQUAL(calls_count, 4);
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 10 30 40)");
+
+  xs.insert(1, 2);
+
+  BOOST_CHECK_EQUAL(calls_count, 10); // TODO: must be 5
+  BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 10 20 30 40)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_State)
 {
   Engine engine;
