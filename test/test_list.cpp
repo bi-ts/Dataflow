@@ -539,6 +539,34 @@ BOOST_AUTO_TEST_CASE(test_listC_Erase_in_empty)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list()");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_State)
+{
+  Engine engine;
+
+  auto x = Var<int>();
+
+  auto xs = Main([=](const Time& t0) {
+    auto xp = Prev(0, x, t0);
+
+    return StateMachine(
+      ListC(x(t0)),
+      [=](const ref<list<int>>& sp) {
+        return If(x != xp, Insert(sp, Length(sp), x), sp);
+      },
+      t0);
+  });
+
+  BOOST_CHECK_EQUAL(core::to_string(xs()), "list(0)");
+
+  x = 1;
+
+  BOOST_CHECK_EQUAL(core::to_string(xs()), "list(0 1)");
+
+  x = 5;
+
+  BOOST_CHECK_EQUAL(core::to_string(xs()), "list(0 1 5)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Var_Concat_operator)
 {
   Engine engine;
