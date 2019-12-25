@@ -103,33 +103,33 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/conditional.cpp
   src/prelude/core.cpp
   src/prelude/core/dtime.cpp
+  src/prelude/core/internal/config.h
+  src/prelude/core/internal/converter.h
+  src/prelude/core/internal/engine.cpp
+  src/prelude/core/internal/engine.h
+  src/prelude/core/internal/engine.inl
+  src/prelude/core/internal/graph.h
+  src/prelude/core/internal/node.cpp
+  src/prelude/core/internal/node_compound.cpp
+  src/prelude/core/internal/node_if_activator.cpp
+  src/prelude/core/internal/node_selector_activator.cpp
+  src/prelude/core/internal/node_signal.cpp
   src/prelude/core/internal/node_since_activator.cpp
+  src/prelude/core/internal/node_snapshot_activator.cpp
+  src/prelude/core/internal/node_state.cpp
+  src/prelude/core/internal/node_state_prev.cpp
+  src/prelude/core/internal/node_time.h
+  src/prelude/core/internal/nodes_factory.cpp
+  src/prelude/core/internal/pumpa.cpp
+  src/prelude/core/internal/pumpa.h
+  src/prelude/core/internal/ref.cpp
+  src/prelude/core/internal/tick_count.h
+  src/prelude/core/internal/vd_handle.h
+  src/prelude/core/internal/vd_handle.inl
   src/prelude/logical.cpp
   src/prelude/stateful/internal/transition.cpp
   src/string.cpp
 
-  src/internal/config.h
-  src/internal/converter.h
-  src/internal/engine.cpp
-  src/internal/engine.h
-  src/internal/engine.inl
-  src/internal/graph.h
-  src/internal/node.cpp
-  src/internal/node_compound.cpp
-  src/internal/node_if_activator.cpp
-  src/internal/node_selector_activator.cpp
-  src/internal/node_signal.cpp
-  src/internal/node_snapshot_activator.cpp
-  src/internal/node_state.cpp
-  src/internal/node_state_prev.cpp
-  src/internal/node_time.h
-  src/internal/nodes_factory.cpp
-  src/internal/pumpa.cpp
-  src/internal/pumpa.h
-  src/internal/ref.cpp
-  src/internal/tick_count.h
-  src/internal/vd_handle.h
-  src/internal/vd_handle.inl
 )
 
 target_link_libraries(${PROJECT_NAME} dst immer)

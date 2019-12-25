@@ -19,8 +19,8 @@
 #include <dataflow/prelude/core/internal/node_since_activator.h>
 #include <dataflow/prelude/core/internal/nodes_factory.h>
 
-#include "../../../internal/config.h"
-#include "../../../internal/engine.h"
+#include "config.h"
+#include "engine.h"
 
 namespace dataflow
 {

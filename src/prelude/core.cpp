@@ -18,7 +18,7 @@
 
 #include <dataflow/prelude/core.h>
 
-#include "../internal/engine.h"
+#include "core/internal/engine.h"
 
 #include <dataflow/prelude/core/internal/node_signal.h>
 
