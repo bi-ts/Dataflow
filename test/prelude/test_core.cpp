@@ -1284,6 +1284,30 @@ BOOST_AUTO_TEST_CASE(
   BOOST_CHECK_EQUAL(y(), 1);
 }
 
+BOOST_AUTO_TEST_CASE(test_StateMachine_transition_function_creates_eager_node)
+{
+  Engine engine;
+
+  const auto const_true = Const<bool>(true);
+  const auto const_false = Const<bool>(false);
+
+  const auto tf = [=](const ref<bool>& sp) {
+    return [=](const Time& t0) {
+      return If(
+        sp,
+        [=](const Time& t0) { return const_true; },
+        [=](const Time& t0) { return const_false; },
+        t0);
+    };
+  };
+
+  const auto z =
+    Main([=](const Time& t0) { return StateMachine(true, tf, t0); });
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(z(), true);
+}
+
 BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
 {
   Engine engine;
