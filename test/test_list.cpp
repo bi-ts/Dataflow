@@ -877,5 +877,64 @@ BOOST_AUTO_TEST_CASE(test_ListC_Map)
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(34 44 36)");
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_Var_ToString)
+{
+  Engine engine;
+
+  auto xs = Var(make_listC("a", "b"));
+
+  auto f = Main([=](const Time& t0) { return ToString(xs); });
+
+  BOOST_CHECK_EQUAL(f(), "ab");
+
+  xs.insert(2, "bc");
+
+  BOOST_CHECK_EQUAL(f(), "abbc");
+
+  xs.erase(1);
+
+  BOOST_CHECK_EQUAL(f(), "abc");
+}
+
+BOOST_AUTO_TEST_CASE(test_ListC_ToString_with_delimiter)
+{
+  Engine engine;
+
+  auto x1 = Var(1);
+  const auto x2 = Var(2);
+  auto x3 = Var(3);
+  auto delimiter = Var(";");
+
+  auto idx = Var(1);
+
+  auto xs = ListC(x1, x2, x3);
+
+  auto ys = Erase(xs, idx);
+
+  auto f = Main([=](const Time& t0) { return ToString(ys, delimiter); });
+
+  BOOST_CHECK_EQUAL(f(), "1;3;");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(f(), "1;2;");
+
+  x1 = 5;
+
+  BOOST_CHECK_EQUAL(f(), "5;2;");
+
+  idx = 0;
+
+  BOOST_CHECK_EQUAL(f(), "2;3;");
+
+  delimiter = "//";
+
+  BOOST_CHECK_EQUAL(f(), "2//3//");
+
+  x3 = 8;
+
+  BOOST_CHECK_EQUAL(f(), "2//8//");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test

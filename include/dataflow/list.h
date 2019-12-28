@@ -257,6 +257,19 @@ template <typename ArgL,
             std::declval<const core::argument_data_type_t<Args>&>()...))>>
 ref<list<U>> Map(const ArgL& x, const F& f, const Args&... args);
 
+template <
+  typename ArgL,
+  typename ArgDelimiter,
+  typename...,
+  typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+  typename = core::enable_for_argument_data_type_t<ArgDelimiter, std::string>>
+ref<std::string> ToString(const ArgL& l, const ArgDelimiter& delimiter = "");
+
+template <typename ArgL,
+          typename...,
+          typename = list_element_type_t<core::argument_data_type_t<ArgL>>>
+ref<std::string> ToString(const ArgL& l);
+
 /// \}
 } // dataflow
 

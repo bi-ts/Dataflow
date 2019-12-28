@@ -746,3 +746,39 @@ dataflow::Map(const ArgL& x, const F& f, const Args&... args)
 
   return core::LiftPatcher<policy>(policy{f}, x, core::make_argument(args)...);
 }
+
+template <typename ArgL,
+          typename ArgDelimiter,
+          typename...,
+          typename T,
+          typename>
+dataflow::ref<std::string> dataflow::ToString(const ArgL& l,
+                                              const ArgDelimiter& delimiter)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "to-string";
+    }
+
+    static std::string calculate(const list<T>& x, std::string delimiter)
+    {
+      std::ostringstream out;
+      for (const auto& e : x)
+      {
+        out << core::to_string(e) << delimiter;
+      }
+      return out.str();
+    }
+  };
+
+  return core::Lift<policy>(core::make_argument(l),
+                            core::make_argument(delimiter));
+}
+
+template <typename ArgL, typename..., typename>
+dataflow::ref<std::string> dataflow::ToString(const ArgL& l)
+{
+  return ToString(l, "");
+}
