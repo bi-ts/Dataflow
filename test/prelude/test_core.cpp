@@ -1180,7 +1180,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_overloads, test_core_fixture)
   BOOST_CHECK_EQUAL(log_string(), "prev = 3;prev = 33;prev = 3;prev = 10;");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
 {
   var<char> x = Var<char>('a');
 
@@ -1214,7 +1214,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
       return core::Lift<policy>(s, x);
     };
 
-    const auto s = StateMachine(0, tf, t0);
+    const auto s = Recursion(0, tf, t0);
 
     return introspect::Log(s);
   });
@@ -1263,7 +1263,7 @@ BOOST_FIXTURE_TEST_CASE(test_StateMachine, test_core_fixture)
 }
 
 BOOST_AUTO_TEST_CASE(
-  test_StateMachine_transition_function_requires_initialization)
+  test_Recursion_recursion_definition_function_requires_initialization)
 {
   Engine engine;
 
@@ -1273,7 +1273,7 @@ BOOST_AUTO_TEST_CASE(
     return [=](const Time& t0) { return x(t0); };
   };
 
-  const auto y = Main([=](const Time& t0) { return StateMachine(0, tf, t0); });
+  const auto y = Main([=](const Time& t0) { return Recursion(0, tf, t0); });
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), 1);
@@ -1284,7 +1284,8 @@ BOOST_AUTO_TEST_CASE(
   BOOST_CHECK_EQUAL(y(), 1);
 }
 
-BOOST_AUTO_TEST_CASE(test_StateMachine_transition_function_creates_eager_node)
+BOOST_AUTO_TEST_CASE(
+  test_Recursion_recursion_definition_function_creates_eager_node)
 {
   Engine engine;
 
@@ -1301,8 +1302,7 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_transition_function_creates_eager_node)
     };
   };
 
-  const auto z =
-    Main([=](const Time& t0) { return StateMachine(true, tf, t0); });
+  const auto z = Main([=](const Time& t0) { return Recursion(true, tf, t0); });
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(z(), true);

@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(test_regression_Or_num_vertices)
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 6);
 }
 
-BOOST_AUTO_TEST_CASE(test_regression_StateMachine_independent_on_previous_state)
+BOOST_AUTO_TEST_CASE(test_regression_Recursion_independent_on_previous_state)
 {
   Engine engine;
 
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(test_regression_StateMachine_independent_on_previous_state)
 
   const auto tf = [=](const ref<int>&) { return x; };
 
-  const auto y = Main([=](const Time& t0) { return StateMachine(0, tf, t0); });
+  const auto y = Main([=](const Time& t0) { return Recursion(0, tf, t0); });
 
   BOOST_CHECK_EQUAL(y(), 1);
 

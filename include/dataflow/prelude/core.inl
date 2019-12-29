@@ -491,7 +491,7 @@ dataflow::Prev(const ArgV0& v0, const ArgX& x, const Time& t0)
 }
 
 template <typename Arg, typename F, typename..., typename T, typename>
-dataflow::ref<T> dataflow::StateMachine(const Arg& s0, F tf, const Time& t0)
+dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, const Time& t0)
 {
   struct helper
   {

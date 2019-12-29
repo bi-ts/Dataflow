@@ -79,7 +79,7 @@ ref<T> make_state_machine(
     }
   };
 
-  const auto tr = StateMachine(
+  const auto tr = Recursion(
     internal::transition(0, t0),
     [=](ref<internal::transition> sp) {
       return Switch(
@@ -111,7 +111,7 @@ ref<T> make_state_machine(
     core::is_function_of_time<decltype(
       std::get<Is>(std::declval<std::tuple<Trs...>>()).second)>...>* = nullptr)
 {
-  const auto tr_idx = StateMachine(
+  const auto tr_idx = Recursion(
     0,
     [=](ref<integer> sp) {
       return Switch(Case(std::get<Is>(transitions).first,
@@ -135,7 +135,7 @@ dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
 {
   const auto initial_arg = core::make_argument(initial);
 
-  return StateMachine(
+  return Recursion(
     initial_arg,
     [=](const ref<T>& sp) {
       return [=](const Time& t0) {

@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
 }
 
 template <typename T>
-using transition_function_types =
+using recursion_definition_function_types =
   boost::mpl::list<std::function<ref<T>(ref<T>)>,
                    std::function<val<T>(ref<T>)>,
                    std::function<var<T>(ref<T>)>,
@@ -299,56 +299,70 @@ using transition_function_types =
                    val<T> (*(*)(ref<T>))(const Time&),
                    var<T> (*(*)(ref<T>))(const Time&)>;
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transition_function_int,
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_recursion_definition_function_int,
                               T,
-                              transition_function_types<int>)
+                              recursion_definition_function_types<int>)
 {
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, int>::value), true);
-
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, float>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, std::string>::value),
-                    false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, const char*>::value),
-                    false);
-}
-
-BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transition_function_float,
-                              T,
-                              transition_function_types<float>)
-{
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, float>::value), true);
-
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, int>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, std::string>::value),
-                    false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, const char*>::value),
-                    false);
-}
-
-BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_transition_function_string,
-                              T,
-                              transition_function_types<std::string>)
-{
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, std::string>::value),
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, int>::value),
                     true);
 
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, char>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, float>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, void>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, int>::value), false);
-  BOOST_CHECK_EQUAL((core::is_transition_function<T, const char*>::value),
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, char>::value),
                     false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, float>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, void>::value),
+                    false);
+  BOOST_CHECK_EQUAL(
+    (core::is_recursion_definition_function<T, std::string>::value), false);
+  BOOST_CHECK_EQUAL(
+    (core::is_recursion_definition_function<T, const char*>::value), false);
 }
 
-BOOST_AUTO_TEST_CASE(test_is_transition_function_false)
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_recursion_definition_function_float,
+                              T,
+                              recursion_definition_function_types<float>)
 {
-  BOOST_CHECK_EQUAL((core::is_transition_function<int, int>::value), false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, float>::value),
+                    true);
 
-  BOOST_CHECK_EQUAL((core::is_transition_function<void, int>::value), false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, char>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, int>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, void>::value),
+                    false);
+  BOOST_CHECK_EQUAL(
+    (core::is_recursion_definition_function<T, std::string>::value), false);
+  BOOST_CHECK_EQUAL(
+    (core::is_recursion_definition_function<T, const char*>::value), false);
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_recursion_definition_function_string,
+                              T,
+                              recursion_definition_function_types<std::string>)
+{
+  BOOST_CHECK_EQUAL(
+    (core::is_recursion_definition_function<T, std::string>::value), true);
+
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, char>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, float>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, void>::value),
+                    false);
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<T, int>::value),
+                    false);
+  BOOST_CHECK_EQUAL(
+    (core::is_recursion_definition_function<T, const char*>::value), false);
+}
+
+BOOST_AUTO_TEST_CASE(test_is_recursion_definition_function_false)
+{
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<int, int>::value),
+                    false);
+
+  BOOST_CHECK_EQUAL((core::is_recursion_definition_function<void, int>::value),
+                    false);
 }
 
 BOOST_AUTO_TEST_CASE(test_patch_type)

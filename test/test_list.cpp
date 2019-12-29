@@ -576,7 +576,7 @@ BOOST_AUTO_TEST_CASE(test_listC_State)
   auto xs = Main([=](const Time& t0) {
     auto xp = Prev(0, x, t0);
 
-    return StateMachine(
+    return Recursion(
       ListC(x(t0)),
       [=](const ref<list<int>>& sp) {
         return If(x != xp, Insert(sp, Length(sp), x), sp);
