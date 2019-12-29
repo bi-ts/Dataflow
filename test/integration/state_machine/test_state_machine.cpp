@@ -105,7 +105,7 @@ ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
                                     const arg<int>& radius,
                                     const arg<point>& mouse_pos,
                                     const arg<int>& mouse_pressed,
-                                    const Time& t0)
+                                    dtime t0)
 {
   // TODO: add Diff(d0, x, t0) function
   const auto mouse_down =
@@ -120,7 +120,7 @@ ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
       return Transitions(
         On(prev_mode == mode::idle && mouse_down == 1 &&
              Distance(mouse_pos, circle_pos) < radius,
-           [=](const Time& t0) {
+           [=](dtime t0) {
              const auto mouse_shift = mouse_pos - mouse_pos(t0);
              return TupleC(mode::active, circle_pos(t0) + mouse_shift);
            }),
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
   auto mouse_pressed = Var<int>(false);
   auto mouse_pos = Var(point(0, 0));
 
-  auto f = Main([=](const Time& t0) {
+  auto f = Main([=](dtime t0) {
     return AdjustableCirclePosition(
       point(100, 100), 30, mouse_pos, mouse_pressed, t0);
   });

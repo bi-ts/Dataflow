@@ -27,7 +27,7 @@ dtimestamp::dtimestamp()
 {
 }
 
-dtimestamp::dtimestamp(const Time& t)
+dtimestamp::dtimestamp(dtime t)
 : timestamp_(internal::engine::instance().ticks())
 {
 }

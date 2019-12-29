@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -31,25 +31,23 @@ namespace dataflow
 {
 namespace console
 {
-DATAFLOW___EXPORT ref<std::string> Input(const Time& t0,
+DATAFLOW___EXPORT ref<std::string> Input(dtime t0,
                                          const ref<std::string>& prompt);
-template <typename T>
-ref<T> Input(const Time& t0, const ref<std::string>& prompt);
+template <typename T> ref<T> Input(dtime t0, const ref<std::string>& prompt);
 
-DATAFLOW___EXPORT ref<std::string> Error(const Time& t0,
+DATAFLOW___EXPORT ref<std::string> Error(dtime t0,
                                          const ref<std::string>& message);
 template <typename... Args>
-ref<std::string> Error(const Time& t0, const Args&... args);
+ref<std::string> Error(dtime t0, const Args&... args);
 
-DATAFLOW___EXPORT ref<std::string> Log(const Time& t0,
+DATAFLOW___EXPORT ref<std::string> Log(dtime t0,
                                        const ref<std::string>& message);
-template <typename... Args>
-ref<std::string> Log(const Time& t0, const Args&... args);
+template <typename... Args> ref<std::string> Log(dtime t0, const Args&... args);
 
-DATAFLOW___EXPORT ref<std::string> Output(const Time& t0,
+DATAFLOW___EXPORT ref<std::string> Output(dtime t0,
                                           const ref<std::string>& message);
 template <typename... Args>
-ref<std::string> Output(const Time& t0, const Args&... args);
+ref<std::string> Output(dtime t0, const Args&... args);
 }
 }
 

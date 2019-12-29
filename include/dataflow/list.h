@@ -178,7 +178,7 @@ template <typename T> class ref<list<T>> : public core::ref_base<list<T>>
 public:
   ref(core::ref_base<list<T>> base);
 
-  ref<T> operator()(const Time& t) const;
+  ref<T> operator()(dtime t) const;
 
   ref<maybe<T>> operator[](const ref<integer>& idx) const;
 };

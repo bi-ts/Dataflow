@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Length)
 
   auto a = Var<listC<std::string>>();
 
-  auto b = Main([=](const Time& t0) { return Length(a); });
+  auto b = Main([=](dtime t0) { return Length(a); });
 
   BOOST_CHECK_EQUAL(b(), 0);
 
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(test_listA_Var_assign_Get)
   auto v2 = Var("second");
   auto v3 = Var("third");
 
-  auto x = Main([=](const Time& t0) { return FromMaybe(Get(lst, idx), vd); });
+  auto x = Main([=](dtime t0) { return FromMaybe(Get(lst, idx), vd); });
 
   BOOST_CHECK_EQUAL(x(), "default");
 
@@ -205,8 +205,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_assign_Get)
   auto lst = Var<listC<std::string>>();
   auto idx = Var<integer>(0);
 
-  auto x =
-    Main([=](const Time& t0) { return FromMaybe(Get(lst, idx), "default"); });
+  auto x = Main([=](dtime t0) { return FromMaybe(Get(lst, idx), "default"); });
 
   BOOST_CHECK_EQUAL(x(), "default");
 
@@ -246,8 +245,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ins_erase_Get)
   auto lst = Var<listC<std::string>>();
   auto idx = Var<integer>(0);
 
-  auto x =
-    Main([=](const Time& t0) { return FromMaybe(Get(lst, idx), "default"); });
+  auto x = Main([=](dtime t0) { return FromMaybe(Get(lst, idx), "default"); });
 
   BOOST_CHECK_EQUAL(x(), "default");
 
@@ -299,7 +297,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ins_erase_Get_via_subscript_operator)
   auto lst = Var<listC<std::string>>();
   auto idx = Var<integer>(0);
 
-  auto x = Main([=](const Time& t0) { return FromMaybe(lst[idx]); });
+  auto x = Main([=](dtime t0) { return FromMaybe(lst[idx]); });
 
   lst.insert(0, "first");
   lst.insert(1, "fourth");
@@ -334,7 +332,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_assign_Get_via_subscript_operator)
   auto lst = Var<listC<std::string>>();
   auto idx = Var<integer>(0);
 
-  auto x = Main([=](const Time& t0) { return FromMaybe(lst[idx], "default"); });
+  auto x = Main([=](dtime t0) { return FromMaybe(lst[idx], "default"); });
 
   BOOST_CHECK_EQUAL(x(), "default");
 
@@ -573,7 +571,7 @@ BOOST_AUTO_TEST_CASE(test_listC_State)
 
   auto x = Var<int>();
 
-  auto xs = Main([=](const Time& t0) {
+  auto xs = Main([=](dtime t0) {
     auto xp = Prev(0, x, t0);
 
     return Recursion(
@@ -883,7 +881,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ToString)
 
   auto xs = Var(make_listC("a", "b"));
 
-  auto f = Main([=](const Time& t0) { return ToString(xs); });
+  auto f = Main([=](dtime t0) { return ToString(xs); });
 
   BOOST_CHECK_EQUAL(f(), "ab");
 
@@ -911,7 +909,7 @@ BOOST_AUTO_TEST_CASE(test_ListC_ToString_with_delimiter)
 
   auto ys = Erase(xs, idx);
 
-  auto f = Main([=](const Time& t0) { return ToString(ys, delimiter); });
+  auto f = Main([=](dtime t0) { return ToString(ys, delimiter); });
 
   BOOST_CHECK_EQUAL(f(), "1;3;");
 

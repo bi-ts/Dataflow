@@ -38,20 +38,20 @@ using good_sm_definition_function_types = boost::mpl::list<
   std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, val<int>>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, var<int>>>(ref<int>)>,
-  std::function<std::tuple<
-    std::pair<ref<bool>, std::function<ref<int>(const Time&)>>>(ref<int>)>,
-  std::function<std::tuple<
-    std::pair<ref<bool>, std::function<val<int>(const Time&)>>>(ref<int>)>,
-  std::function<std::tuple<
-    std::pair<ref<bool>, std::function<var<int>(const Time&)>>>(ref<int>)>,
-  std::function<std::tuple<
-    std::pair<ref<bool>, int>,
-    std::pair<ref<bool>, ref<int>>,
-    std::pair<ref<bool>, val<int>>,
-    std::pair<ref<bool>, var<int>>,
-    std::pair<ref<bool>, std::function<ref<int>(const Time&)>>,
-    std::pair<ref<bool>, std::function<val<int>(const Time&)>>,
-    std::pair<ref<bool>, std::function<var<int>(const Time&)>>>(ref<int>)>,
+  std::function<
+    std::tuple<std::pair<ref<bool>, std::function<ref<int>(dtime)>>>(ref<int>)>,
+  std::function<
+    std::tuple<std::pair<ref<bool>, std::function<val<int>(dtime)>>>(ref<int>)>,
+  std::function<
+    std::tuple<std::pair<ref<bool>, std::function<var<int>(dtime)>>>(ref<int>)>,
+  std::function<
+    std::tuple<std::pair<ref<bool>, int>,
+               std::pair<ref<bool>, ref<int>>,
+               std::pair<ref<bool>, val<int>>,
+               std::pair<ref<bool>, var<int>>,
+               std::pair<ref<bool>, std::function<ref<int>(dtime)>>,
+               std::pair<ref<bool>, std::function<val<int>(dtime)>>,
+               std::pair<ref<bool>, std::function<var<int>(dtime)>>>(ref<int>)>,
   std::tuple<std::pair<ref<bool>, int>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, ref<int>>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, val<int>>> (*)(ref<int>),
@@ -60,9 +60,9 @@ using good_sm_definition_function_types = boost::mpl::list<
              std::pair<ref<bool>, ref<int>>,
              std::pair<ref<bool>, val<int>>,
              std::pair<ref<bool>, var<int>>,
-             std::pair<ref<bool>, ref<int> (*)(const Time&)>,
-             std::pair<ref<bool>, val<int> (*)(const Time&)>,
-             std::pair<ref<bool>, var<int> (*)(const Time&)>> (*)(ref<int>)>;
+             std::pair<ref<bool>, ref<int> (*)(dtime)>,
+             std::pair<ref<bool>, val<int> (*)(dtime)>,
+             std::pair<ref<bool>, var<int> (*)(dtime)>> (*)(ref<int>)>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function,
                               T,
@@ -86,11 +86,11 @@ using bad_sm_definition_function_types = boost::mpl::list<
   std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<char>)>,
   std::function<std::tuple<std::pair<ref<char>, ref<int>>>(ref<int>)>,
   std::function<std::tuple<
-    std::pair<ref<bool>, std::function<ref<char>(const Time&)>>>(ref<int>)>,
+    std::pair<ref<bool>, std::function<ref<char>(dtime)>>>(ref<int>)>,
   std::function<std::tuple<
-    std::pair<ref<bool>, std::function<ref<int>(const Time&)>>>(ref<char>)>,
-  std::function<std::tuple<
-    std::pair<ref<char>, std::function<ref<int>(const Time&)>>>(ref<int>)>,
+    std::pair<ref<bool>, std::function<ref<int>(dtime)>>>(ref<char>)>,
+  std::function<
+    std::tuple<std::pair<ref<char>, std::function<ref<int>(dtime)>>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, ref<int>>,
                            std::pair<ref<bool>, char>>(ref<int>)>,
   std::tuple<std::pair<ref<bool>, char>> (*)(ref<int>),
@@ -153,8 +153,8 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_num_vertices_fots)
   const auto f = Signal();
 
   const auto m = Main(StateMachine(true, [=](const ref<bool>&) {
-    return Transitions(On(t, [](const Time&) { return Const(true); }),
-                       On(f, [](const Time&) { return Const(false); }));
+    return Transitions(On(t, [](dtime) { return Const(true); }),
+                       On(f, [](dtime) { return Const(false); }));
   }));
 
   // TODO: calculate and illustrate how many nodes are really needed
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_fot_ref)
   const auto toggle = Signal();
 
   const auto light = Main(StateMachine(false, [=](const ref<bool>& sp) {
-    return Transitions(On(toggle, [=](const Time& t0) { return !sp(t0); }),
+    return Transitions(On(toggle, [=](dtime t0) { return !sp(t0); }),
                        On(!toggle, sp));
   }));
 
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
   const auto toggle = Signal();
 
   const auto light = Main(StateMachine(false, [=](const ref<bool>& sp) {
-    return Transitions(On(toggle, [=](const Time& t0) { return !sp(t0); }));
+    return Transitions(On(toggle, [=](dtime t0) { return !sp(t0); }));
   }));
 
   BOOST_CHECK_EQUAL(light(), false);

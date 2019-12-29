@@ -35,13 +35,13 @@ namespace internal
 class tick_count;
 }
 
-using Time = internal::tick_count;
+using dtime = const internal::tick_count&;
 
 class DATAFLOW___EXPORT dtimestamp final
 {
 public:
   dtimestamp();
-  dtimestamp(const Time& t);
+  dtimestamp(dtime t);
 
   operator std::size_t() const;
 

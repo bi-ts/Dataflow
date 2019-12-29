@@ -75,7 +75,7 @@ public:
   explicit ref_base(const internal::ref& r, internal::ref::ctor_guard_t);
 
 protected:
-  ref_base<T> snapshot_(const Time& t) const;
+  ref_base<T> snapshot_(dtime t) const;
 
   void reset_(const ref_base<T>& other);
 };
@@ -89,7 +89,7 @@ public:
   {
   }
 
-  ref<T> operator()(const Time& t) const
+  ref<T> operator()(dtime t) const
   {
     return this->snapshot_(t);
   }
@@ -166,8 +166,7 @@ public:
   }
 };
 
-template <typename T>
-using function_of_time = std::function<ref<T>(const Time&)>;
+template <typename T> using function_of_time = std::function<ref<T>(dtime)>;
 
 namespace core
 {
@@ -298,8 +297,8 @@ template <typename T> struct function_of_time_type
 {
 private:
   template <typename F,
-            typename U = data_type_t<
-              decltype(std::declval<F>()(std::declval<const Time&>()))>>
+            typename U =
+              data_type_t<decltype(std::declval<F>()(std::declval<dtime>()))>>
   static typename std::enable_if<!is_ref<F>::value, U>::type test_(const F*);
   static void test_(...);
 
@@ -681,7 +680,7 @@ template <typename FArgT,
           typename = core::enable_if_any_t<void,
                                            core::is_function_of_time<FArgT>,
                                            core::is_function_of_time<FArgU>>>
-ref<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z, const Time& t0);
+ref<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z, dtime t0);
 
 template <typename FArgT,
           typename FArgU,
@@ -698,7 +697,7 @@ template <typename ArgV0,
           typename ArgX,
           typename FwT = core::argument_data_type_t<ArgV0>,
           typename = core::enable_for_argument_data_type_t<ArgX, FwT>>
-ref<FwT> Prev(const ArgV0& v0, const ArgX& x, const Time& t0);
+ref<FwT> Prev(const ArgV0& v0, const ArgX& x, dtime t0);
 
 template <typename Arg,
           typename F,
@@ -707,12 +706,12 @@ template <typename Arg,
             F,
             core::argument_data_type_t<Arg>>,
           typename = core::enable_if_regular_data_type_t<T>>
-ref<T> Recursion(const Arg& s0, F tf, const Time& t0);
+ref<T> Recursion(const Arg& s0, F tf, dtime t0);
 
 template <typename F,
           typename...,
           typename T = core::function_of_time_type_t<F>>
-ref<T> Since(const ref<dtimestamp>& ti, const F& f, const Time& t0);
+ref<T> Since(const ref<dtimestamp>& ti, const F& f, dtime t0);
 
 template <typename F,
           typename...,

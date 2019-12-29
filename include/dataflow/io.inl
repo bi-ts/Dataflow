@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -25,28 +25,27 @@
 #include <sstream>
 
 template <typename T>
-dataflow::ref<T> dataflow::console::Input(const Time& t0,
+dataflow::ref<T> dataflow::console::Input(dtime t0,
                                           const ref<std::string>& prompt)
 {
   return FromString<T>(Input(t0, prompt));
 }
 
 template <typename... Args>
-dataflow::ref<std::string> dataflow::console::Error(const Time& t0,
+dataflow::ref<std::string> dataflow::console::Error(dtime t0,
                                                     const Args&... args)
 {
   return Error(t0, ToString(args...));
 }
 
 template <typename... Args>
-dataflow::ref<std::string> dataflow::console::Log(const Time& t0,
-                                                  const Args&... args)
+dataflow::ref<std::string> dataflow::console::Log(dtime t0, const Args&... args)
 {
   return Log(t0, ToString(args...));
 }
 
 template <typename... Args>
-dataflow::ref<std::string> dataflow::console::Output(const Time& t0,
+dataflow::ref<std::string> dataflow::console::Output(dtime t0,
                                                      const Args&... args)
 {
   return Output(t0, ToString(args...));

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -21,7 +21,7 @@
 #include <iostream>
 
 dataflow::ref<std::string>
-dataflow::console::Input(const Time& t0, const ref<std::string>& prompt)
+dataflow::console::Input(dtime t0, const ref<std::string>& prompt)
 {
   struct policy
   {
@@ -45,7 +45,7 @@ dataflow::console::Input(const Time& t0, const ref<std::string>& prompt)
 }
 
 dataflow::ref<std::string>
-dataflow::console::Error(const Time& t0, const ref<std::string>& message)
+dataflow::console::Error(dtime t0, const ref<std::string>& message)
 {
   struct policy
   {
@@ -64,7 +64,7 @@ dataflow::console::Error(const Time& t0, const ref<std::string>& message)
 }
 
 dataflow::ref<std::string>
-dataflow::console::Log(const Time& t0, const ref<std::string>& message)
+dataflow::console::Log(dtime t0, const ref<std::string>& message)
 {
   struct policy
   {
@@ -83,7 +83,7 @@ dataflow::console::Log(const Time& t0, const ref<std::string>& message)
 }
 
 dataflow::ref<std::string>
-dataflow::console::Output(const Time& t0, const ref<std::string>& message)
+dataflow::console::Output(dtime t0, const ref<std::string>& message)
 {
   struct policy
   {

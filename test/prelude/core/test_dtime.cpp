@@ -61,8 +61,8 @@ BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
   // t = 0
   const val<dtimestamp> ts = Main(If(
     make_timestamp,
-    [=](const Time& t0) { return Const<dtimestamp>(t0); },
-    [=](const Time& t0) { return Const<dtimestamp>(); }));
+    [=](dtime t0) { return Const<dtimestamp>(t0); },
+    [=](dtime t0) { return Const<dtimestamp>(); }));
 
   BOOST_CHECK_EQUAL(ts(), 0);
 

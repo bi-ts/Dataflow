@@ -54,7 +54,7 @@ ref_base<T>::ref_base(const internal::ref& r, internal::ref::ctor_guard_t)
   DATAFLOW___CHECK_PRECONDITION(r.is_of_type<T>());
 }
 
-template <typename T> ref_base<T> ref_base<T>::snapshot_(const Time& t) const
+template <typename T> ref_base<T> ref_base<T>::snapshot_(dtime t) const
 {
   return ref_base<T>(internal::node_snapshot<T>::create(
                        internal::node_snapshot_activator::create(), *this),
@@ -409,7 +409,7 @@ dataflow::var<T> dataflow::Var(Args&&... args)
 
 template <typename T> dataflow::val<T> dataflow::Curr(ref<T> x)
 {
-  return val<T>(internal::node_main<T>::create([x](const Time&) { return x; }),
+  return val<T>(internal::node_main<T>::create([x](dtime) { return x; }),
                 internal::ref::ctor_guard);
 }
 
@@ -462,7 +462,7 @@ ref_from_function_of_time_or_ref(const ArgT& x)
 
 template <typename FArgT, typename FArgU, typename T, typename, typename>
 dataflow::ref<T>
-dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z, const Time& t0)
+dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z, dtime t0)
 {
   return core::ref_base<T>(
     internal::node_if<T>::create(internal::node_if_activator::create(x),
@@ -476,14 +476,13 @@ template <typename FArgT, typename FArgU, typename T, typename, typename>
 dataflow::function_of_time<T>
 dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 {
-  return [=](const Time& t0) { return If(x, y, z, t0); };
+  return [=](dtime t0) { return If(x, y, z, t0); };
 }
 
 // Stateful functions
 
 template <typename ArgV0, typename ArgX, typename FwT, typename>
-dataflow::ref<FwT>
-dataflow::Prev(const ArgV0& v0, const ArgX& x, const Time& t0)
+dataflow::ref<FwT> dataflow::Prev(const ArgV0& v0, const ArgX& x, dtime t0)
 {
   return core::ref_base<FwT>(
     internal::node_previous<FwT>::create(core::make_argument(v0)(t0), x),
@@ -491,7 +490,7 @@ dataflow::Prev(const ArgV0& v0, const ArgX& x, const Time& t0)
 }
 
 template <typename Arg, typename F, typename..., typename T, typename>
-dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, const Time& t0)
+dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, dtime t0)
 {
   struct helper
   {
@@ -519,7 +518,7 @@ dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, const Time& t0)
 
 template <typename F, typename..., typename T>
 dataflow::ref<T>
-dataflow::Since(const ref<dtimestamp>& ti, const F& f, const Time& t0)
+dataflow::Since(const ref<dtimestamp>& ti, const F& f, dtime t0)
 {
   return core::ref_base<T>(
     internal::node_since<T>::create(internal::node_since_activator::create(ti),
@@ -532,5 +531,5 @@ template <typename F, typename..., typename T>
 dataflow::function_of_time<T> dataflow::Since(const ref<dtimestamp>& ti,
                                               const F& f)
 {
-  return [=](const Time& t0) { return Since(ti, f, t0); };
+  return [=](dtime t0) { return Since(ti, f, t0); };
 }

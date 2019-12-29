@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(test_regression_Recursion_independent_on_previous_state)
 
   const auto tf = [=](const ref<int>&) { return x; };
 
-  const auto y = Main([=](const Time& t0) { return Recursion(0, tf, t0); });
+  const auto y = Main([=](dtime t0) { return Recursion(0, tf, t0); });
 
   BOOST_CHECK_EQUAL(y(), 1);
 
@@ -144,8 +144,8 @@ BOOST_AUTO_TEST_CASE(test_regression_compound_deactivation)
 
   const auto y = If(
     x,
-    [](const Time&) { return Const<int>(100); },
-    [](const Time&) { return Const<int>(200); });
+    [](dtime) { return Const<int>(100); },
+    [](dtime) { return Const<int>(200); });
 
   const auto z = Main(y);
 

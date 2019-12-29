@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
   BOOST_CHECK_EQUAL(e(), false);
 
   // Includes stateful
-  const auto f = Main([](const Time& t0) {
+  const auto f = Main([](dtime t0) {
     return StateMachine(
       0, [](const ref<int>&) { return Transitions(On(true, 1)); }, t0);
   });

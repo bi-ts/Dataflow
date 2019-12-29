@@ -51,7 +51,7 @@ template <typename ArgT,
           typename F,
           typename = typename std::enable_if<
             stateful::is_sm_definition_function<F, T>::value>::type>
-ref<T> StateMachine(const ArgT& initial, const F& f, const Time& t0);
+ref<T> StateMachine(const ArgT& initial, const F& f, dtime t0);
 
 template <typename ArgT,
           typename T = core::argument_data_type_t<ArgT>,

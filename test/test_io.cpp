@@ -55,8 +55,8 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Error, test_io_fixture)
 {
   capture_output();
 
-  const auto z = Main(
-    [=](const Time& t) { return console::Error(t, "(", x, ", ", y, ")"); });
+  const auto z =
+    Main([=](dtime t) { return console::Error(t, "(", x, ", ", y, ")"); });
 
   reset_output();
 
@@ -83,8 +83,8 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Log, test_io_fixture)
 {
   capture_output();
 
-  const auto z = Main(
-    [=](const Time& t) { return console::Log(t, "Point(", x, ", ", y, ")"); });
+  const auto z =
+    Main([=](dtime t) { return console::Log(t, "Point(", x, ", ", y, ")"); });
 
   reset_output();
 
@@ -111,9 +111,8 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Output, test_io_fixture)
 {
   capture_output();
 
-  const auto z = Main([=](const Time& t) {
-    return console::Output(t, x, " + ", y, " = ", x + y);
-  });
+  const auto z = Main(
+    [=](dtime t) { return console::Output(t, x, " + ", y, " = ", x + y); });
 
   reset_output();
 
@@ -141,7 +140,7 @@ BOOST_FIXTURE_TEST_CASE(test_Input, test_io_fixture)
   set_input("world\n");
   capture_output();
 
-  const auto x = Main([](const Time& t) {
+  const auto x = Main([](dtime t) {
     const auto name = console::Input(t, Const("What's your name?: "));
     return console::Log(t, "Hello, ", name, "!");
   });
@@ -156,7 +155,7 @@ BOOST_FIXTURE_TEST_CASE(test_Input_int, test_io_fixture)
   set_input("10\n20\n");
   capture_output();
 
-  const auto y = Main([](const Time& t) {
+  const auto y = Main([](dtime t) {
     const auto x = console::Input<int>(t, Const("x = "));
     const auto y = console::Input<int>(t, Const("y = "));
 
@@ -173,7 +172,7 @@ BOOST_FIXTURE_TEST_CASE(test_Message_Output_Time, test_io_fixture)
 {
   capture_output();
 
-  const auto z = Main([=](const Time& t) {
+  const auto z = Main([=](dtime t) {
     return console::Output(t, "x(", CurrentTime(), ") = ", x);
   });
 

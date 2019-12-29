@@ -269,12 +269,12 @@ BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
   BOOST_CHECK_EQUAL(core::is_function_of_time<int>::value, false);
   BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
 
-  const auto good_function_of_time = [](const Time&) { return Const<int>(); };
+  const auto good_function_of_time = [](dtime) { return Const<int>(); };
 
   BOOST_CHECK_EQUAL(
     core::is_function_of_time<decltype(good_function_of_time)>::value, true);
 
-  const auto bad_function_of_time = [](const Time&) { return 0; };
+  const auto bad_function_of_time = [](dtime) { return 0; };
 
   BOOST_CHECK_EQUAL(
     core::is_function_of_time<decltype(bad_function_of_time)>::value, false);
@@ -292,12 +292,12 @@ using recursion_definition_function_types =
                    ref<T> (*)(ref<T>),
                    val<T> (*)(ref<T>),
                    var<T> (*)(ref<T>),
-                   std::function<std::function<ref<T>(const Time&)>(ref<T>)>,
-                   std::function<std::function<val<T>(const Time&)>(ref<T>)>,
-                   std::function<std::function<var<T>(const Time&)>(ref<T>)>,
-                   ref<T> (*(*)(ref<T>))(const Time&),
-                   val<T> (*(*)(ref<T>))(const Time&),
-                   var<T> (*(*)(ref<T>))(const Time&)>;
+                   std::function<std::function<ref<T>(dtime)>(ref<T>)>,
+                   std::function<std::function<val<T>(dtime)>(ref<T>)>,
+                   std::function<std::function<var<T>(dtime)>(ref<T>)>,
+                   ref<T> (*(*)(ref<T>))(dtime),
+                   val<T> (*(*)(ref<T>))(dtime),
+                   var<T> (*(*)(ref<T>))(dtime)>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_recursion_definition_function_int,
                               T,

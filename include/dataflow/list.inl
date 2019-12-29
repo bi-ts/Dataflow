@@ -315,7 +315,7 @@ ref<list<T>>::ref(core::ref_base<list<T>> base)
 {
 }
 
-template <typename T> ref<T> ref<list<T>>::operator()(const Time& t) const
+template <typename T> ref<T> ref<list<T>>::operator()(dtime t) const
 {
   return this->snapshot_(t);
 }

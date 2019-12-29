@@ -58,7 +58,7 @@ ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
   const dataflow::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
-  const Time& t0,
+  dtime t0,
   const core::enable_if_any_t<
     void,
     core::is_function_of_time<decltype(
@@ -74,8 +74,7 @@ ref<T> make_state_machine(
     static function_of_time<internal::transition> make_case(integer idx,
                                                             std::true_type)
     {
-      return
-        [=](const Time& t0) { return Const<internal::transition>(idx, t0); };
+      return [=](dtime t0) { return Const<internal::transition>(idx, t0); };
     }
   };
 
@@ -105,7 +104,7 @@ ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
   const dataflow::std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
-  const Time& t0,
+  dtime t0,
   const core::enable_if_none_t<
     void,
     core::is_function_of_time<decltype(
@@ -131,14 +130,14 @@ ref<T> make_state_machine(
 
 template <typename ArgT, typename T, typename F, typename>
 dataflow::ref<T>
-dataflow::StateMachine(const ArgT& initial, const F& f, const Time& t0)
+dataflow::StateMachine(const ArgT& initial, const F& f, dtime t0)
 {
   const auto initial_arg = core::make_argument(initial);
 
   return Recursion(
     initial_arg,
     [=](const ref<T>& sp) {
-      return [=](const Time& t0) {
+      return [=](dtime t0) {
         const auto transitions = f(sp);
 
         return stateful::detail::make_state_machine(
@@ -156,7 +155,7 @@ template <typename ArgT, typename T, typename F, typename>
 dataflow::function_of_time<T> dataflow::StateMachine(const ArgT& initial,
                                                      const F& f)
 {
-  return [=](const Time& t0) { return StateMachine(initial, f, t0); };
+  return [=](dtime t0) { return StateMachine(initial, f, t0); };
 }
 
 template <typename... Trs>
