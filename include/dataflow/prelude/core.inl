@@ -211,7 +211,7 @@ dataflow::ref<T> dataflow::core::make_argument(const ref<T>& x)
 }
 
 template <typename F>
-dataflow::function_of_time<dataflow::core::function_of_time_type_t<F>>
+dataflow::init_function<dataflow::core::init_function_type_t<F>>
 dataflow::core::make_farg(const F& f)
 {
   return f;
@@ -442,10 +442,9 @@ namespace dataflow
 namespace detail
 {
 template <typename F>
-ref<core::function_of_time_type_t<F>>
-ref_from_function_of_time_or_ref(const F& f)
+ref<core::init_function_type_t<F>> ref_from_init_function_or_ref(const F& f)
 {
-  using type = core::function_of_time_type_t<F>;
+  using type = core::init_function_type_t<F>;
 
   return core::ref_base<type>(internal::node_compound<type>::create(f),
                               internal::ref::ctor_guard);
@@ -453,7 +452,7 @@ ref_from_function_of_time_or_ref(const F& f)
 
 template <typename ArgT>
 ref<core::argument_data_type_t<ArgT>>
-ref_from_function_of_time_or_ref(const ArgT& x)
+ref_from_init_function_or_ref(const ArgT& x)
 {
   return core::make_argument(x);
 }
@@ -466,14 +465,14 @@ dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z, dtime t0)
 {
   return core::ref_base<T>(
     internal::node_if<T>::create(internal::node_if_activator::create(x),
-                                 detail::ref_from_function_of_time_or_ref(y),
-                                 detail::ref_from_function_of_time_or_ref(z),
+                                 detail::ref_from_init_function_or_ref(y),
+                                 detail::ref_from_init_function_or_ref(z),
                                  true),
     internal::ref::ctor_guard);
 }
 
 template <typename FArgT, typename FArgU, typename T, typename, typename>
-dataflow::function_of_time<T>
+dataflow::init_function<T>
 dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 {
   return [=](dtime t0) { return If(x, y, z, t0); };
@@ -499,7 +498,7 @@ dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, dtime t0)
       return x;
     }
 
-    static ref<T> init(const function_of_time<T>& f)
+    static ref<T> init(const init_function<T>& f)
     {
       return core::ref_base<T>(internal::node_compound<T>::create(f),
                                internal::ref::ctor_guard);
@@ -522,14 +521,14 @@ dataflow::Since(const ref<dtimestamp>& ti, const F& f, dtime t0)
 {
   return core::ref_base<T>(
     internal::node_since<T>::create(internal::node_since_activator::create(ti),
-                                    detail::ref_from_function_of_time_or_ref(f),
+                                    detail::ref_from_init_function_or_ref(f),
                                     true),
     internal::ref::ctor_guard);
 }
 
 template <typename F, typename..., typename T>
-dataflow::function_of_time<T> dataflow::Since(const ref<dtimestamp>& ti,
-                                              const F& f)
+dataflow::init_function<T> dataflow::Since(const ref<dtimestamp>& ti,
+                                           const F& f)
 {
   return [=](dtime t0) { return Since(ti, f, t0); };
 }

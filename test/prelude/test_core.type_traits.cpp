@@ -264,24 +264,24 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<void>::value, false);
 }
 
-BOOST_AUTO_TEST_CASE(test_is_function_of_time_type)
+BOOST_AUTO_TEST_CASE(test_is_init_function_type)
 {
-  BOOST_CHECK_EQUAL(core::is_function_of_time<int>::value, false);
-  BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
+  BOOST_CHECK_EQUAL(core::is_init_function<int>::value, false);
+  BOOST_CHECK_EQUAL(core::is_init_function<void>::value, false);
 
-  const auto good_function_of_time = [](dtime) { return Const<int>(); };
+  const auto good_init_function = [](dtime) { return Const<int>(); };
 
-  BOOST_CHECK_EQUAL(
-    core::is_function_of_time<decltype(good_function_of_time)>::value, true);
+  BOOST_CHECK_EQUAL(core::is_init_function<decltype(good_init_function)>::value,
+                    true);
 
-  const auto bad_function_of_time = [](dtime) { return 0; };
+  const auto bad_init_function = [](dtime) { return 0; };
 
-  BOOST_CHECK_EQUAL(
-    core::is_function_of_time<decltype(bad_function_of_time)>::value, false);
+  BOOST_CHECK_EQUAL(core::is_init_function<decltype(bad_init_function)>::value,
+                    false);
 
-  BOOST_CHECK_EQUAL(core::is_function_of_time<ref<int>>::value, false);
+  BOOST_CHECK_EQUAL(core::is_init_function<ref<int>>::value, false);
 
-  BOOST_CHECK_EQUAL(core::is_function_of_time<void>::value, false);
+  BOOST_CHECK_EQUAL(core::is_init_function<void>::value, false);
 }
 
 template <typename T>

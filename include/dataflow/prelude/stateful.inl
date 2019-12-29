@@ -61,7 +61,7 @@ ref<T> make_state_machine(
   dtime t0,
   const core::enable_if_any_t<
     void,
-    core::is_function_of_time<decltype(
+    core::is_init_function<decltype(
       std::get<Is>(std::declval<std::tuple<Trs...>>()).second)>...>* = nullptr)
 {
   struct helper
@@ -71,8 +71,8 @@ ref<T> make_state_machine(
       return Const<internal::transition>(idx, dtimestamp());
     }
 
-    static function_of_time<internal::transition> make_case(integer idx,
-                                                            std::true_type)
+    static init_function<internal::transition> make_case(integer idx,
+                                                         std::true_type)
     {
       return [=](dtime t0) { return Const<internal::transition>(idx, t0); };
     }
@@ -84,7 +84,7 @@ ref<T> make_state_machine(
       return Switch(
         Case(std::get<Is>(transitions).first,
              helper::make_case(static_cast<integer>(Is) + 1,
-                               core::is_function_of_time<decltype(
+                               core::is_init_function<decltype(
                                  std::get<Is>(transitions).second)>()))...,
         Default(sp));
     },
@@ -107,7 +107,7 @@ ref<T> make_state_machine(
   dtime t0,
   const core::enable_if_none_t<
     void,
-    core::is_function_of_time<decltype(
+    core::is_init_function<decltype(
       std::get<Is>(std::declval<std::tuple<Trs...>>()).second)>...>* = nullptr)
 {
   const auto tr_idx = Recursion(
@@ -152,8 +152,8 @@ dataflow::StateMachine(const ArgT& initial, const F& f, dtime t0)
 }
 
 template <typename ArgT, typename T, typename F, typename>
-dataflow::function_of_time<T> dataflow::StateMachine(const ArgT& initial,
-                                                     const F& f)
+dataflow::init_function<T> dataflow::StateMachine(const ArgT& initial,
+                                                  const F& f)
 {
   return [=](dtime t0) { return StateMachine(initial, f, t0); };
 }

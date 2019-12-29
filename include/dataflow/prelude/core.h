@@ -166,7 +166,7 @@ public:
   }
 };
 
-template <typename T> using function_of_time = std::function<ref<T>(dtime)>;
+template <typename T> using init_function = std::function<ref<T>(dtime)>;
 
 namespace core
 {
@@ -293,7 +293,7 @@ template <typename T> using data_type_t = typename data_type<T>::type;
 
 namespace detail
 {
-template <typename T> struct function_of_time_type
+template <typename T> struct init_function_type
 {
 private:
   template <typename F,
@@ -308,20 +308,20 @@ public:
 }
 
 template <typename T>
-struct is_function_of_time
-: is_flowable<typename detail::function_of_time_type<T>::type>
+struct is_init_function
+: is_flowable<typename detail::init_function_type<T>::type>
 {
 };
 
 template <typename F>
-struct function_of_time_type
-: std::enable_if<is_function_of_time<F>::value,
-                 typename detail::function_of_time_type<F>::type>
+struct init_function_type
+: std::enable_if<is_init_function<F>::value,
+                 typename detail::init_function_type<F>::type>
 {
 };
 
 template <typename F>
-using function_of_time_type_t = typename function_of_time_type<F>::type;
+using init_function_type_t = typename init_function_type<F>::type;
 
 namespace detail
 {
@@ -353,7 +353,7 @@ private:
             typename TT,
             typename FwTT = convert_to_flowable_t<TT>,
             typename = std::enable_if<
-              std::is_same<function_of_time_type_t<decltype(
+              std::is_same<init_function_type_t<decltype(
                              std::declval<FF>()(std::declval<ref<FwTT>>()))>,
                            T>::value>>
   static T test_(const FF*, const TT*);
@@ -423,8 +423,8 @@ using enable_for_argument_data_type_t =
   typename enable_for_argument_data_type<T, U, V>::type;
 
 template <typename T>
-using farg_data_type = typename std::conditional<is_function_of_time<T>::value,
-                                                 function_of_time_type<T>,
+using farg_data_type = typename std::conditional<is_init_function<T>::value,
+                                                 init_function_type<T>,
                                                  argument_data_type<T>>::type;
 
 template <typename T> using farg_data_type_t = typename farg_data_type<T>::type;
@@ -442,10 +442,10 @@ using enable_for_farg_data_type_t =
   typename enable_for_farg_data_type<Arg, T, U>::type;
 
 template <typename T, typename... FArgs>
-using farg_result = std::conditional<
-  std17::disjunction<core::is_function_of_time<FArgs>...>::value,
-  function_of_time<T>,
-  ref<T>>;
+using farg_result =
+  std::conditional<std17::disjunction<core::is_init_function<FArgs>...>::value,
+                   init_function<T>,
+                   ref<T>>;
 
 template <typename T, typename... FArgs>
 using farg_result_t = typename farg_result<T, FArgs...>::type;
@@ -549,7 +549,7 @@ ref<FwT> make_argument(const T& v);
 template <typename T> ref<T> make_argument(const ref<T>& x);
 
 template <typename F>
-function_of_time<function_of_time_type_t<F>> make_farg(const F& f);
+init_function<init_function_type_t<F>> make_farg(const F& f);
 
 template <typename T> ref<argument_data_type_t<T>> make_farg(const T& x);
 
@@ -658,7 +658,7 @@ var<T> Var(Args&&... args);
 
 template <typename T> val<T> Curr(ref<T> x);
 
-template <typename F, typename T = core::function_of_time_type_t<F>>
+template <typename F, typename T = core::init_function_type_t<F>>
 val<T> Main(F f);
 
 // Operators
@@ -678,8 +678,8 @@ template <typename FArgT,
           typename T = core::farg_data_type_t<FArgT>,
           typename = core::enable_for_farg_data_type_t<FArgU, T>,
           typename = core::enable_if_any_t<void,
-                                           core::is_function_of_time<FArgT>,
-                                           core::is_function_of_time<FArgU>>>
+                                           core::is_init_function<FArgT>,
+                                           core::is_init_function<FArgU>>>
 ref<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z, dtime t0);
 
 template <typename FArgT,
@@ -687,9 +687,9 @@ template <typename FArgT,
           typename T = core::farg_data_type_t<FArgT>,
           typename = core::enable_for_farg_data_type_t<FArgU, T>,
           typename = core::enable_if_any_t<void,
-                                           core::is_function_of_time<FArgT>,
-                                           core::is_function_of_time<FArgU>>>
-function_of_time<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
+                                           core::is_init_function<FArgT>,
+                                           core::is_init_function<FArgU>>>
+init_function<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
 
 // Stateful functions
 
@@ -708,15 +708,11 @@ template <typename Arg,
           typename = core::enable_if_regular_data_type_t<T>>
 ref<T> Recursion(const Arg& s0, F tf, dtime t0);
 
-template <typename F,
-          typename...,
-          typename T = core::function_of_time_type_t<F>>
+template <typename F, typename..., typename T = core::init_function_type_t<F>>
 ref<T> Since(const ref<dtimestamp>& ti, const F& f, dtime t0);
 
-template <typename F,
-          typename...,
-          typename T = core::function_of_time_type_t<F>>
-function_of_time<T> Since(const ref<dtimestamp>& ti, const F& f);
+template <typename F, typename..., typename T = core::init_function_type_t<F>>
+init_function<T> Since(const ref<dtimestamp>& ti, const F& f);
 
 /// \}
 }

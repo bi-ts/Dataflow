@@ -202,7 +202,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_time_func, test_fixture)
   auto x = Var("ten");
   auto y = Var(0);
 
-  const function_of_time<int> ff =
+  const init_function<int> ff =
     Switch(Case(x == "one", 1),
            Case(x == "three", [](dtime t0) { return Const(3); }),
            Case(x == "five", 5),
@@ -239,7 +239,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_time_func_default, test_fixture)
   auto x = Var("ten");
   auto y = Var(0);
 
-  const function_of_time<int> ff =
+  const init_function<int> ff =
     Switch(Case(x == "one", [](dtime t0) { return Const(1); }),
            Case(x == "three", 3),
            Case(x == "five", [](dtime t0) { return Const(5); }),

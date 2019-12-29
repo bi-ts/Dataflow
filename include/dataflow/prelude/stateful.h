@@ -58,7 +58,7 @@ template <typename ArgT,
           typename F,
           typename = typename std::enable_if<
             stateful::is_sm_definition_function<F, T>::value>::type>
-function_of_time<T> StateMachine(const ArgT& initial, const F& f);
+init_function<T> StateMachine(const ArgT& initial, const F& f);
 
 template <typename... Trs>
 std::tuple<Trs...> Transitions(const Trs&... transitions);
