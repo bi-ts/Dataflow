@@ -210,6 +210,38 @@ DATAFLOW___EXPORT bool eager_node(dependency_graph::vertex_descriptor v);
 
 DATAFLOW___EXPORT bool persistent_node(dependency_graph::vertex_descriptor v);
 
+/// Gets the order of update for two data nodes.
+///
+/// That is, the order in which these two nodes, both being marked as outdated,
+/// will be updated.
+///
+/// Inactive nodes are considered to be up-to-date and never need to be updated,
+/// which means that all active nodes are updated after the inactive.
+///
+/// Since inactive nodes are never updated, any two inactive nodes are
+/// considered to be updated concurrently.
+///
+/// If `v` has active (direct or indirect) dependency on `u` (`u` &larr; `v`),
+/// `u` is updated before `v`.
+///
+/// If `u` has active (direct or indirect) dependency on `v` (`u` &rarr; `v`),
+/// `u` is updated after `v`.
+///
+/// If `u` and `v` are independent, the order of update is implementation
+/// defined.
+///
+/// \param u, v Two data nodes, represented by corresponding vertices of the
+///             dependency graph
+///
+/// \returns
+///       value | condition
+///       ------|----------------------------------------------------
+///         +1  | if `u` is updated before `v`
+///          0  | if `u = v` or both nodes are updated concurrently
+///         -1  | if `u` is updated after `v`
+///
+/// \see active_node()
+/// \see active_dependency()
 DATAFLOW___EXPORT int update_order(dependency_graph::vertex_descriptor u,
                                    dependency_graph::vertex_descriptor v);
 
