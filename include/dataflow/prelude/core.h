@@ -135,14 +135,12 @@ protected:
   var_base(const var_base& other);
   var_base(var_base& other);
 
-  /**
-   * \throws std::logic_error in case the variable reference is readonly.
-   */
+  /// \throws std::logic_error in case the variable reference is readonly.
+  ///
   void set_value_(const T& v);
 
-  /**
-   * \throws std::logic_error in case the variable reference is readonly.
-   */
+  /// \throws std::logic_error in case the variable reference is readonly.
+  ///
   template <typename Patch> void set_patch_(const Patch& patch);
 
 private:
@@ -477,21 +475,19 @@ template <typename T> struct is_generic_patch<generic_patch<T>>
 };
 }
 
-/**
- * A type trait that checks whether type `Patch` is a generic patch. It is
- * `std::true_type`, if type `Patch` is an instance of `generic_patch<T>` class
- * template (possibly cv-qualified) or a reference thereto. Otherwise, it is
- * `std::false_type`.
- */
+/// A type trait that checks whether type `Patch` is a generic patch. It is
+/// `std::true_type`, if type `Patch` is an instance of `generic_patch<T>` class
+/// template (possibly cv-qualified) or a reference thereto. Otherwise, it is
+/// `std::false_type`.
+///
 template <typename Patch>
 using is_generic_patch =
   typename detail::is_generic_patch<std20::remove_cvref_t<Patch>>::type;
 
-/**
- * A type trait that checks if there is no custom patch type defined for `T`
- * data type. It is `std::true_type`, if `patch_type_t<T>` is a generic patch.
- * Otherwise, it is `std::false_type`.
- */
+/// A type trait that checks if there is no custom patch type defined for `T`
+/// data type. It is `std::true_type`, if `patch_type_t<T>` is a generic patch.
+/// Otherwise, it is `std::false_type`.
+///
 template <typename T>
 using is_trivially_patcheable = is_generic_patch<typename patch_type<T>::type>;
 
