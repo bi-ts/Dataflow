@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 
 project(dataflow_test)
 
-find_package(Boost 1.68.0 REQUIRED EXACT QUIET)
+find_package(Boost 1.72.0 REQUIRED EXACT QUIET)
 
 add_library(testing_utilities STATIC
   main.cpp
