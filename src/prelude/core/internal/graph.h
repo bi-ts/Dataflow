@@ -31,6 +31,13 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 
+// #define DATAFLOW___EXPERIMENTAL_BUILD_WITH_BOOST_POOL_ALLOCATOR
+#ifdef DATAFLOW___EXPERIMENTAL_BUILD_WITH_BOOST_POOL_ALLOCATOR
+#define BOOST_POOL_NO_MT       // disable multi-threading
+#define BOOST_THREAD_MUTEX_HPP // disable <boost/thread/mutex.hpp> header
+#include <boost/pool/pool_alloc.hpp>
+#endif
+
 #include <cstddef>
 #include <limits>
 #include <list>
@@ -87,9 +94,21 @@ using vertex_descriptor = void*;
 
 template <typename T> using memory_allocator = dst::global_counter_allocator<T>;
 
+#ifdef DATAFLOW___EXPERIMENTAL_BUILD_WITH_BOOST_POOL_ALLOCATOR
+template <typename T>
+using list_element_allocator = dst::global_counter_allocator<
+  T,
+  boost::fast_pool_allocator<T,
+                             boost::default_user_allocator_new_delete,
+                             boost::details::pool::null_mutex,
+                             1024 * 1024>>;
+#else
+template <typename T> using list_element_allocator = memory_allocator<T>;
+#endif
+
 using topological_list =
   dst::binary_tree::list<vertex_descriptor,
-                         memory_allocator<vertex_descriptor>,
+                         list_element_allocator<vertex_descriptor>,
                          dst::binary_tree::Marking<>,
                          dst::binary_tree::AVL,
                          dst::binary_tree::Ordering>;

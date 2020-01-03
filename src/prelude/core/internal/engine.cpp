@@ -377,7 +377,11 @@ engine::update_node_state_prev(vertex_descriptor v, bool initialized)
 engine::engine()
 : allocator_()
 , graph_()
+#ifdef DATAFLOW___EXPERIMENTAL_BUILD_WITH_BOOST_POOL_ALLOCATOR
+, order_()
+#else
 , order_(allocator_)
+#endif
 , pumpa_(allocator_)
 , ticks_()
 , time_node_v_()
