@@ -149,5 +149,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${Boost_INCLUDE_DIRS}
 )
 
+add_subdirectory(example)
 add_subdirectory(test)
 add_subdirectory(benchmark)
