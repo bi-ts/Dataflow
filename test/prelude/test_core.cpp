@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(test_Box)
   BOOST_CHECK_EQUAL(introspect::label(a), "boxed");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto b = Curr(a);
+  auto b = Main(a);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(b(), 13);
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(test_Box_activation)
   auto x = Var(0);
   auto y = Var(make_box(x));
 
-  auto a = Curr(y);
+  auto a = Main(y);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(x), false);
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(test_Box_conditional)
   BOOST_CHECK_EQUAL(introspect::label(a), "boxed");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto b = Curr(a);
+  auto b = Main(a);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(b(), 22);
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
   BOOST_CHECK_EQUAL(introspect::label(e), "boxed-or-default");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto f = Curr(e);
+  auto f = Main(e);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(f(), 11);
@@ -265,7 +265,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK(graph_invariant_holds());
 
-  const auto y = Curr(x);
+  const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), 17);
@@ -278,7 +278,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_default_constructor, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto y = Curr(x);
+  auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), 0);
@@ -292,7 +292,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_forward_args, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
   BOOST_CHECK(graph_invariant_holds());
 
-  const auto z = Curr(y);
+  const auto z = Main(y);
 
   BOOST_CHECK(graph_invariant_holds());
 }
@@ -305,7 +305,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_forward_args_to_string_constructor,
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK(graph_invariant_holds());
 
-  const auto y = Curr(x);
+  const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), "**********");
@@ -318,7 +318,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto y = Curr(x);
+  auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), "some text");
@@ -334,7 +334,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_via_arg_ctor, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK(graph_invariant_holds());
 
-  const auto y = Curr(x);
+  const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), "some text");
@@ -350,7 +350,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
   {
     capture_output();
 
-    auto y = Curr(introspect::Log(x, "x"));
+    auto y = Main(introspect::Log(x, "x"));
 
     reset_output();
 
@@ -376,7 +376,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
   {
     capture_output();
 
-    auto y = Curr(introspect::Log(x, "x"));
+    auto y = Main(introspect::Log(x, "x"));
 
     reset_output();
 
@@ -435,7 +435,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto y = Curr(x);
+  auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), 17);
@@ -453,7 +453,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto y = Curr(x);
+  auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), 0);
@@ -470,7 +470,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args, test_core_fixture)
 
   x = make_box(b);
 
-  auto y = Curr(x);
+  auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
 }
@@ -483,7 +483,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args_to_string_constructor,
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
 
-  const auto y = Curr(x);
+  const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), "**********");
@@ -496,7 +496,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
 
-  auto y = Curr(x);
+  auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(y(), "some text");
@@ -514,7 +514,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::ref_count(x), 1);
 
-  const auto y = Curr(x);
+  const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::ref_count(x), 2);
@@ -770,7 +770,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
   };
 
   const auto y = core::Lift(policy(), x);
-  const auto z = Curr(y);
+  const auto z = Main(y);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::label(y), "shift");
@@ -799,7 +799,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
   };
 
   const auto y = core::Lift(policy(), x);
-  const auto z = Curr(y);
+  const auto z = Main(y);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::label(y), "lowercase");
@@ -814,7 +814,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
   const auto y =
     core::Lift("trinity", x, [](char c) { return std::string(3, c); });
 
-  const auto z = Curr(y);
+  const auto z = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "trinity");
 
@@ -836,7 +836,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_core_fixture)
 
   const auto y = core::Lift("duplicate", x, tool::duplicate);
 
-  const auto z = Curr(y);
+  const auto z = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "duplicate");
 
@@ -862,7 +862,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
   };
 
   const auto z = core::Lift(policy(), x, y);
-  const auto a = Curr(z);
+  const auto a = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "shift");
 
@@ -892,7 +892,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
   };
 
   const auto z = core::Lift(policy(), x, y);
-  const auto a = Curr(z);
+  const auto a = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "lowercase");
 
@@ -913,7 +913,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
   const auto z = core::Lift(
     "multiply", x, y, [](char c, int n) { return std::string(n, c); });
 
-  const auto a = Curr(z);
+  const auto a = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "multiply");
 
@@ -946,7 +946,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
 
   const auto z = core::Lift("multiply", x, y, tool::multiply);
 
-  const auto a = Curr(z);
+  const auto a = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "multiply");
 
@@ -985,7 +985,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   };
 
   const auto e = core::Lift<policy>(a, b, c, d);
-  const auto f = Curr(e);
+  const auto f = Main(e);
 
   BOOST_CHECK_EQUAL(introspect::label(e), "4-ary");
 

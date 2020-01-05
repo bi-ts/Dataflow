@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(test_Abs_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "abs");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(test_Add_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "+");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(test_Add_lhs_literal_int)
 
   const auto a = Add(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), -1);
 
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(test_Add_rhs_literal_int)
 
   const auto a = Add(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "-");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_lhs_literal_int)
 
   const auto a = Sub(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), 5);
 
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_rhs_literal_int)
 
   const auto a = Sub(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(test_Plus_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "(+)");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(test_Inv_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "(-)");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "*");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -380,7 +380,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_lhs_literal_int)
 
   const auto a = Mult(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), -6);
 
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_rhs_literal_int)
 
   const auto a = Mult(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(test_Div_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "/");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE(test_Div_lhs_literal_int)
 
   const auto a = Div(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 / -3));
 
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(test_Div_rhs_literal_int)
 
   const auto a = Div(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "mod");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -584,7 +584,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_lhs_literal_int)
 
   const auto a = Mod(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 % -3));
 
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_rhs_literal_int)
 
   const auto a = Mod(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -632,7 +632,7 @@ BOOST_AUTO_TEST_CASE(test_Incr_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "incr");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -659,7 +659,7 @@ BOOST_AUTO_TEST_CASE(test_Decr_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "decr");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -685,7 +685,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_int)
 
   const auto a = x + y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -739,7 +739,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_string)
 
   const auto a = x + y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), "aa1bbaa1bb");
 
@@ -788,7 +788,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_lhs_literal_int)
 
   const auto a = 2 + y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), -1);
 
@@ -809,7 +809,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_rhs_literal_int)
 
   const auto a = x + 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -832,7 +832,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_lhs_literal_string)
 
   const auto a = "aa2bb" + y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), "aa2bbaa1bb");
 
@@ -853,7 +853,7 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_rhs_literal_string)
 
   const auto a = x + "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), "aa1bbaa2bb");
 
@@ -877,7 +877,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_int)
 
   const auto a = x - y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -930,7 +930,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_lhs_literal_int)
 
   const auto a = 2 - y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), 5);
 
@@ -951,7 +951,7 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_rhs_literal_int)
 
   const auto a = x - 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -976,7 +976,7 @@ BOOST_AUTO_TEST_CASE(test_Plus_operator_int)
 
   const auto a = +x;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1001,7 +1001,7 @@ BOOST_AUTO_TEST_CASE(test_Inv_operator_int)
 
   const auto a = -x;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1027,7 +1027,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_int)
 
   const auto a = x * y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1080,7 +1080,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_lhs_literal_int)
 
   const auto a = 2 * y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), -6);
 
@@ -1101,7 +1101,7 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_rhs_literal_int)
 
   const auto a = x * 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1127,7 +1127,7 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_int)
 
   const auto a = x / y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1180,7 +1180,7 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_lhs_literal_int)
 
   const auto a = 2 / y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 / -3));
 
@@ -1201,7 +1201,7 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_rhs_literal_int)
 
   const auto a = x / 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1227,7 +1227,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_int)
 
   const auto a = x % y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1280,7 +1280,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_lhs_literal_int)
 
   const auto a = 2 % y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 % -3));
 
@@ -1301,7 +1301,7 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_rhs_literal_int)
 
   const auto a = x % 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1326,7 +1326,7 @@ BOOST_AUTO_TEST_CASE(test_Incr_operator_int)
 
   const auto a = ++x;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1351,7 +1351,7 @@ BOOST_AUTO_TEST_CASE(test_Decr_operator_int)
 
   const auto a = --x;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 

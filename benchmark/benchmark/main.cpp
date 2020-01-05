@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -305,7 +305,7 @@ void Benchmark(
     check_points.constructed = make_check_point();
 
     {
-      auto r = Curr(y);
+      auto r = Main(y);
 
       if (introspect::num_active_nodes() != expected_active_nodes_count)
         throw std::logic_error("benchmark logic error");
@@ -326,7 +326,7 @@ void Benchmark(
     check_points.deactivated = make_check_point();
 
     {
-      auto r = Curr(y);
+      auto r = Main(y);
 
       check_points.second_time_activated = make_check_point();
     }

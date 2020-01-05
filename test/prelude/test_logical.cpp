@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(test_Not)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "not");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(test_And_1_arg)
 
   const auto a = And(x);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(test_And)
 
   const auto a = And(x, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(test_And_lhs_literal)
 
   const auto a = And(false, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(test_And_rhs_literal)
 
   const auto a = And(x, true);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(test_And_4_mixed_arguments)
 
   const auto a = And(x, true, y, true);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(test_Or_1_arg)
 
   const auto a = Or(x);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(test_Or)
 
   const auto a = Or(x, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(test_Or_lhs_literal)
 
   const auto a = Or(false, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(test_Or_rhs_literal)
 
   const auto a = Or(x, true);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE(test_Or_4_mixed_arguments)
 
   const auto a = Or(x, false, y, false);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_1_arg)
 
   const auto a = AndE(x);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -382,7 +382,7 @@ BOOST_AUTO_TEST_CASE(test_AndE)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "&");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -423,7 +423,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_lhs_literal)
 
   const auto a = AndE(false, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_rhs_literal)
 
   const auto a = AndE(x, true);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -462,7 +462,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_4_mixed_arguments)
 
   const auto a = AndE(x, true, y, true);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_1_arg)
 
   const auto a = OrE(x);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(test_OrE)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "|");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -572,7 +572,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_lhs_literal)
 
   const auto a = OrE(false, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -591,7 +591,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_rhs_literal)
 
   const auto a = OrE(x, true);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -611,7 +611,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_4_mixed_arguments)
 
   const auto a = OrE(x, false, y, false);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -654,7 +654,7 @@ BOOST_AUTO_TEST_CASE(test_Not_operator)
 
   const auto a = !x;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -676,7 +676,7 @@ BOOST_AUTO_TEST_CASE(test_And_operator)
 
   const auto a = x && y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -717,7 +717,7 @@ BOOST_AUTO_TEST_CASE(test_And_operator_lhs_literal)
 
   const auto a = false && y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -736,7 +736,7 @@ BOOST_AUTO_TEST_CASE(test_And_operator_rhs_literal)
 
   const auto a = x && true;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -758,7 +758,7 @@ BOOST_AUTO_TEST_CASE(test_Or_operator)
 
   const auto a = x || y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -799,7 +799,7 @@ BOOST_AUTO_TEST_CASE(test_Or_operator_lhs_literal)
 
   const auto a = false || y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -818,7 +818,7 @@ BOOST_AUTO_TEST_CASE(test_Or_operator_rhs_literal)
 
   const auto a = x || true;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -840,7 +840,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator)
 
   const auto a = x & y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -881,7 +881,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator_lhs_literal)
 
   const auto a = false & y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -900,7 +900,7 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator_rhs_literal)
 
   const auto a = x & true;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -922,7 +922,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator)
 
   const auto a = x | y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 
@@ -963,7 +963,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator_lhs_literal)
 
   const auto a = false | y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   y = true;
 
@@ -982,7 +982,7 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator_rhs_literal)
 
   const auto a = x | true;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = true;
 

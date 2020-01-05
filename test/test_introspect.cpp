@@ -310,7 +310,7 @@ BOOST_FIXTURE_TEST_CASE(test_update_order, test_introspect_fixture)
   BOOST_CHECK_EQUAL(introspect::update_order(x, x), 0);
   BOOST_CHECK_EQUAL(introspect::update_order(y, x), 0);
 
-  const auto z = Curr(y);
+  const auto z = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::update_order(x, y), 1);
   BOOST_CHECK_EQUAL(introspect::update_order(x, x), 0);

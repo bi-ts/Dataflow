@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(test_Mod)
 
   BOOST_CHECK_EQUAL(introspect::label(z), "mod");
 
-  auto a = Curr(z);
+  auto a = Main(z);
 
   std::vector<int> mods(1, a());
 
@@ -64,14 +64,14 @@ BOOST_AUTO_TEST_CASE(test_regression_eager_node_deactivation)
 
   BOOST_CHECK(introspect::active_node(y) == false);
 
-  const auto a = Curr(y);
+  const auto a = Main(y);
 
   BOOST_CHECK(introspect::active_node(y) == true);
 
   BOOST_CHECK_EQUAL(a(), 7);
 
   {
-    const auto b = Curr(a * 2);
+    const auto b = Main(a * 2);
 
     BOOST_CHECK_EQUAL(b(), 14);
   }
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(test_regression_diamond_deactivation)
   Engine engine;
 
   const auto x = Var<int>(6);
-  const auto y = Curr(x * x);
+  const auto y = Main(x * x);
 
   BOOST_CHECK_EQUAL(y(), 36);
 }
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(test_regression_diamond_destruction)
 
   const auto y = []() {
     const auto x = Var<int>(6);
-    return Curr(x * x);
+    return Main(x * x);
   }();
 
   BOOST_CHECK_EQUAL(y(), 36);

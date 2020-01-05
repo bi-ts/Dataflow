@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "==");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_lhs_literal_int)
 
   const auto a = Eq(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 == -3));
 
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_rhs_literal_int)
 
   const auto a = Eq(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "!=");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_lhs_literal_int)
 
   const auto a = NotEq(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 != -3));
 
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_rhs_literal_int)
 
   const auto a = NotEq(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), ">");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_lhs_literal_int)
 
   const auto a = Gr(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 > -3));
 
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_rhs_literal_int)
 
   const auto a = Gr(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(test_Less_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "<");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(test_Less_lhs_literal_int)
 
   const auto a = Less(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 < -3));
 
@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(test_Less_rhs_literal_int)
 
   const auto a = Less(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -450,7 +450,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), ">=");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_lhs_literal_int)
 
   const auto a = GrEq(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 >= -3));
 
@@ -524,7 +524,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_rhs_literal_int)
 
   const auto a = GrEq(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_int)
 
   BOOST_CHECK_EQUAL(introspect::label(a), "<=");
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_lhs_literal_int)
 
   const auto a = LessEq(2, y);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 <= -3));
 
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_rhs_literal_int)
 
   const auto a = LessEq(x, 2);
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -652,7 +652,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_int)
 
   const auto a = x == y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -706,7 +706,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_string)
 
   const auto a = x == y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa1bb")));
 
@@ -755,7 +755,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_lhs_literal_int)
 
   const auto a = 2 == y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 == -3));
 
@@ -776,7 +776,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_rhs_literal_int)
 
   const auto a = x == 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -799,7 +799,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_lhs_literal_string)
 
   const auto a = "aa2bb" == y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") == std::string("aa1bb")));
 
@@ -820,7 +820,7 @@ BOOST_AUTO_TEST_CASE(test_Eq_operator_rhs_literal_string)
 
   const auto a = x == "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") == std::string("aa2bb")));
 
@@ -844,7 +844,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_int)
 
   const auto a = x != y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -898,7 +898,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_string)
 
   const auto a = x != y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa1bb")));
 
@@ -947,7 +947,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_lhs_literal_int)
 
   const auto a = 2 != y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 != -3));
 
@@ -968,7 +968,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_rhs_literal_int)
 
   const auto a = x != 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -991,7 +991,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_lhs_literal_string)
 
   const auto a = "aa2bb" != y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") != std::string("aa1bb")));
 
@@ -1012,7 +1012,7 @@ BOOST_AUTO_TEST_CASE(test_NotEq_operator_rhs_literal_string)
 
   const auto a = x != "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") != std::string("aa2bb")));
 
@@ -1036,7 +1036,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_int)
 
   const auto a = x > y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1090,7 +1090,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_string)
 
   const auto a = x > y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa1bb")));
 
@@ -1139,7 +1139,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_lhs_literal_int)
 
   const auto a = 2 > y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 > -3));
 
@@ -1160,7 +1160,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_rhs_literal_int)
 
   const auto a = x > 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1183,7 +1183,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_lhs_literal_string)
 
   const auto a = "aa2bb" > y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") > std::string("aa1bb")));
 
@@ -1204,7 +1204,7 @@ BOOST_AUTO_TEST_CASE(test_Gr_operator_rhs_literal_string)
 
   const auto a = x > "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") > std::string("aa2bb")));
 
@@ -1228,7 +1228,7 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_int)
 
   const auto a = x < y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1282,7 +1282,7 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_string)
 
   const auto a = x < y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa1bb")));
 
@@ -1331,7 +1331,7 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_lhs_literal_int)
 
   const auto a = 2 < y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 < -3));
 
@@ -1352,7 +1352,7 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_rhs_literal_int)
 
   const auto a = x < 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1375,7 +1375,7 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_lhs_literal_string)
 
   const auto a = "aa2bb" < y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") < std::string("aa1bb")));
 
@@ -1396,7 +1396,7 @@ BOOST_AUTO_TEST_CASE(test_Less_operator_rhs_literal_string)
 
   const auto a = x < "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") < std::string("aa2bb")));
 
@@ -1420,7 +1420,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_int)
 
   const auto a = x >= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1474,7 +1474,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_string)
 
   const auto a = x >= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa1bb")));
 
@@ -1523,7 +1523,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_lhs_literal_int)
 
   const auto a = 2 >= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 >= -3));
 
@@ -1544,7 +1544,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_rhs_literal_int)
 
   const auto a = x >= 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1567,7 +1567,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_lhs_literal_string)
 
   const auto a = "aa2bb" >= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") >= std::string("aa1bb")));
 
@@ -1588,7 +1588,7 @@ BOOST_AUTO_TEST_CASE(test_GrEq_operator_rhs_literal_string)
 
   const auto a = x >= "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") >= std::string("aa2bb")));
 
@@ -1612,7 +1612,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_int)
 
   const auto a = x <= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1666,7 +1666,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_string)
 
   const auto a = x <= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa1bb")));
 
@@ -1715,7 +1715,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_lhs_literal_int)
 
   const auto a = 2 <= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (2 <= -3));
 
@@ -1736,7 +1736,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_rhs_literal_int)
 
   const auto a = x <= 2;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   x = -3;
 
@@ -1759,7 +1759,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_lhs_literal_string)
 
   const auto a = "aa2bb" <= y;
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa2bb") <= std::string("aa1bb")));
 
@@ -1780,7 +1780,7 @@ BOOST_AUTO_TEST_CASE(test_LessEq_operator_rhs_literal_string)
 
   const auto a = x <= "aa2bb";
 
-  const auto f = Curr(a);
+  const auto f = Main(a);
 
   BOOST_CHECK_EQUAL(f(), (std::string("aa1bb") <= std::string("aa2bb")));
 
