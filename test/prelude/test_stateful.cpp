@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -23,7 +23,6 @@
 #include <dataflow/introspect.h>
 
 #include <boost/mpl/list.hpp>
-#include <boost/test/test_case_template.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace dataflow;
