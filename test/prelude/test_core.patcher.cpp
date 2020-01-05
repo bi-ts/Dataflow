@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
-  auto f = *b;
+  auto f = Main(b);
 
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
@@ -301,7 +301,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
 
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
-  auto f = *z;
+  auto f = Main(z);
 
   //         f=55
   //          |
@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
-  auto f = *c;
+  auto f = Main(c);
 
   //                  f=26
   //                   |
@@ -615,7 +615,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
 
   auto x = Var<int>(22);
   auto y = core::LiftPatcher<policy>(x);
-  auto z = *y;
+  auto z = Main(y);
 
   BOOST_CHECK_EQUAL(z(), 110);
 

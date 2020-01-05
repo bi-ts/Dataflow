@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(test_ListA_Length)
 
   BOOST_CHECK_EQUAL(introspect::label(d), "list-length");
 
-  const auto e = *d;
+  const auto e = Main(d);
 
   BOOST_CHECK_EQUAL(e(), 5);
 }
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_insert_inactive)
   xs.insert(0, 2);
   xs.insert(0, 1);
 
-  auto f = *xs;
+  auto f = Main(xs);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2)");
 }
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_erase_inactive)
   xs.erase(2);
   xs.erase(1);
 
-  auto f = *xs;
+  auto f = Main(xs);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 4)");
 }
@@ -379,7 +379,7 @@ BOOST_AUTO_TEST_CASE(test_ListC_Insert)
 
   auto ys = Insert(xs, idx, 11);
 
-  auto f = *ys;
+  auto f = Main(ys);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 11 2 3)");
 
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Insert_out_of_range)
 
   const auto ys = Insert(xs, idx, 100);
 
-  const auto f = *ys;
+  const auto f = Main(ys);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2 100)");
 
@@ -456,7 +456,7 @@ BOOST_AUTO_TEST_CASE(test_ListC_Erase)
 
   const auto ys = Erase(xs, idx);
 
-  const auto f = *ys;
+  const auto f = Main(ys);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 3)");
 
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Erase_out_of_range)
 
   auto ys = Erase(xs, idx);
 
-  auto f = *ys;
+  auto f = Main(ys);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 1 2)");
 
@@ -528,7 +528,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Erase_in_empty)
 
   auto ys = Erase(xs, idx);
 
-  auto f = *ys;
+  auto f = Main(ys);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list()");
 
@@ -551,10 +551,10 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ins_Insert_Erase_patch_normalization)
 
   int calls_count = 0;
 
-  const auto f = *Map(es, [&](int x) {
+  const auto f = Main(Map(es, [&](int x) {
     ++calls_count;
     return x * 10;
-  });
+  }));
 
   BOOST_CHECK_EQUAL(calls_count, 4);
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(0 10 30 40)");
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Concat_operator)
   auto ys = Var<listC<int>>(5, 6, 7);
   auto zs = xs + ys;
 
-  auto f = *zs;
+  auto f = Main(zs);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3 4 5 6 7)");
 
@@ -639,7 +639,7 @@ BOOST_AUTO_TEST_CASE(test_ListC_Concat_operator)
 
   auto zs = xs + ys;
 
-  auto f = *zs;
+  auto f = Main(zs);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3 4 5 6 7)");
 
@@ -670,7 +670,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Concat_arguments)
   auto d = Concat(b, make_listC(3, 4));
   auto e = Concat(make_listC(-1, 0), d);
 
-  auto f = *Concat(c, e);
+  auto f = Main(Concat(c, e));
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(3 4 3 4 -1 0 1 2 1 2 3 4)");
 
@@ -689,7 +689,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Concat_operator_arguments)
   auto d = b + make_listC(3, 4);
   auto e = make_listC(-1, 0) + d;
 
-  auto f = *(c + e);
+  auto f = Main((c + e));
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(3 4 3 4 -1 0 1 2 1 2 3 4)");
 
@@ -714,7 +714,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_ListC_concat_Insert_Erase)
 
   auto zs = Insert(xs + Erase(ys, 1), Length(xs), a);
 
-  auto f = *zs;
+  auto f = Main(zs);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3 4 5 7)");
 
@@ -749,7 +749,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Take)
 
   auto ys = Take(xs, n);
 
-  auto f = *ys;
+  auto f = Main(ys);
 
   BOOST_CHECK_EQUAL(core::to_string(f()), "list(1 2 3)");
 
@@ -813,7 +813,7 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Map)
 
   BOOST_CHECK_EQUAL(calls_count, 0);
 
-  auto f = *zs;
+  auto f = Main(zs);
 
   BOOST_CHECK_EQUAL(calls_count, 6);
 
@@ -856,7 +856,7 @@ BOOST_AUTO_TEST_CASE(test_ListC_Map)
 
   BOOST_CHECK_EQUAL(calls_count, 0);
 
-  auto f = *zs;
+  auto f = Main(zs);
 
   BOOST_CHECK_EQUAL(calls_count, 3);
 

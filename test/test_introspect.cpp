@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -148,7 +148,7 @@ BOOST_FIXTURE_TEST_CASE(test_with_boost_topological_sort,
 
   const auto y = If(x < 0, -x, 2 * x + 1);
 
-  const auto z = *y;
+  const auto z = Main(y);
 
   const auto g = boost::make_filtered_graph(introspect::graph(),
                                             introspect::active_dependency,
@@ -185,7 +185,7 @@ BOOST_FIXTURE_TEST_CASE(test_topological_order, test_introspect_fixture)
   BOOST_CHECK_EQUAL(std::distance(it, it_end), 1);
 
   {
-    const auto z = *y;
+    const auto z = Main(y);
 
     std::tie(it, it_end) = introspect::topological_order();
 
@@ -237,7 +237,7 @@ BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
 
   auto x = Var(1);
 
-  const auto y = *(x * x - x + 5);
+  const auto y = Main((x * x - x + 5));
 
   BOOST_CHECK_EQUAL(y(), 5);
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log)
 
   io.capture_output();
 
-  auto a = *z;
+  auto a = Main(z);
 
   io.reset_output();
 
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log_default_label)
 
   io.capture_output();
 
-  auto a = *introspect::Log(x);
+  auto a = Main(introspect::Log(x));
 
   io.reset_output();
 

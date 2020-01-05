@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -48,11 +48,11 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_fixture)
   auto x = Var("ten");
   auto y = Var(0);
 
-  auto f = *Switch(Case(x == "one", 1),
-                   Case(x == "three", 3),
-                   Case(x == "five", 5),
-                   Case(x == "ten", 10),
-                   Default(y));
+  auto f = Main(Switch(Case(x == "one", 1),
+                       Case(x == "three", 3),
+                       Case(x == "five", 5),
+                       Case(x == "ten", 10),
+                       Default(y)));
 
   BOOST_CHECK_EQUAL(f(), 10);
 
@@ -84,14 +84,14 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_fixture)
   auto y3 = Var(3);
   auto y5 = Var(5);
 
-  auto f = *Switch(x,
-                   Case(Const("one"), y1),
-                   Case(Const("two"), 2),
-                   Case(std::string("three"), y3),
-                   Case(std::string("four"), 4),
-                   Case("five", y5),
-                   Case("ten", 10),
-                   Default(0));
+  auto f = Main(Switch(x,
+                       Case(Const("one"), y1),
+                       Case(Const("two"), 2),
+                       Case(std::string("three"), y3),
+                       Case(std::string("four"), 4),
+                       Case("five", y5),
+                       Case("ten", 10),
+                       Default(0)));
 
   BOOST_CHECK_EQUAL(f(), 10);
 
@@ -120,11 +120,11 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_fixture)
 {
   auto x = Var("yes");
 
-  auto f = *Switch(x,
-                   Case(Const("yes"), "ja"),
-                   Case(std::string("no"), "nee"),
-                   Case("maybe", "misschien"),
-                   Default(""));
+  auto f = Main(Switch(x,
+                       Case(Const("yes"), "ja"),
+                       Case(std::string("no"), "nee"),
+                       Case("maybe", "misschien"),
+                       Default("")));
 
   BOOST_CHECK_EQUAL(f(), "ja");
 
@@ -142,11 +142,11 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_fixture)
   auto x = Var<int>(1);
   auto y = Var("one");
 
-  auto f = *Switch(Case(x == 1, y),
-                   Case(x == 2, Const("two")),
-                   Case(x == 3, std::string("three")),
-                   Case(x == 4, "four"),
-                   Default("error"));
+  auto f = Main(Switch(Case(x == 1, y),
+                       Case(x == 2, Const("two")),
+                       Case(x == 3, std::string("three")),
+                       Case(x == 4, "four"),
+                       Default("error")));
 
   BOOST_CHECK_EQUAL(f(), "one");
 
@@ -172,11 +172,11 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_fixture)
   auto x = Var<int>(1);
   auto y = Var("three");
 
-  auto f = *Switch(x == 1 >>= "one",
-                   x == 2 >>= std::string("two"),
-                   x == 3 >>= y,
-                   x == 4 >>= Const("four"),
-                   Default("error"));
+  auto f = Main(Switch(x == 1 >>= "one",
+                       x == 2 >>= std::string("two"),
+                       x == 3 >>= y,
+                       x == 4 >>= Const("four"),
+                       Default("error")));
 
   BOOST_CHECK_EQUAL(f(), "one");
 

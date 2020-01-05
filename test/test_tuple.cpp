@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(test_TupleA_Get)
 
   const auto f = Get<0>(d) + ", " + e;
 
-  auto g = *f;
+  auto g = Main(f);
 
   BOOST_CHECK_EQUAL(g(), "Saturday, 26");
   BOOST_CHECK_EQUAL(introspect::active_node(a), false);
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(test_TupleC_Get)
 
   const auto f = Get<0>(d) + ", " + e;
 
-  auto g = *f;
+  auto g = Main(f);
 
   BOOST_CHECK_EQUAL(g(), "Friday, 13");
   BOOST_CHECK_EQUAL(introspect::active_node(a), true);
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(test_TupleC_Getters)
 
   auto a = TupleC("str", 20, 'c', "text", 34, 0, 1, 2);
 
-  auto b = *TupleC(Fifth(a), Fourth(a), Third(a), Second(a), First(a));
+  auto b = Main(TupleC(Fifth(a), Fourth(a), Third(a), Second(a), First(a)));
 
   BOOST_CHECK_EQUAL((get<0>(b())), 34);
   BOOST_CHECK_EQUAL((get<1>(b())), "text");
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_Getters)
   const auto a =
     Const(make_tupleB(Const("str"), Const(20), Const('c'), Const("text")));
 
-  const auto b = *Third(a);
+  const auto b = Main(Third(a));
 
   BOOST_CHECK_EQUAL(b(), 'c');
 }
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison)
   const auto a = Const(make_tupleB("13", Const(10), Const(20.19)));
   const auto b = Const(make_tupleB("13", x, y));
 
-  const auto c = *(a == b);
+  const auto c = Main((a == b));
 
   BOOST_CHECK_EQUAL(c(), true);
 
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison_minimal_tuple)
   const auto y = Const(make_tupleB(Const("13")));
   const auto z = Const(make_tupleB(x));
 
-  const auto f = *(z == y);
+  const auto f = Main((z == y));
 
   BOOST_CHECK_EQUAL(f(), true);
 
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison)
   const auto a = Const(make_tupleB("13", Const(10), Const(20.19)));
   const auto b = Const(make_tupleB("13", x, y));
 
-  const auto c = *(a != b);
+  const auto c = Main((a != b));
 
   BOOST_CHECK_EQUAL(c(), false);
 
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison_minimal_tuple)
   const auto y = Const(make_tupleB(Const("13")));
   const auto z = Const(make_tupleB(x));
 
-  const auto f = *(z != y);
+  const auto f = Main((z != y));
 
   BOOST_CHECK_EQUAL(f(), false);
 

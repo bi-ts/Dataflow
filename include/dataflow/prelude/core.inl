@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -418,11 +418,9 @@ template <typename F, typename T> dataflow::val<T> dataflow::Main(F f)
   return val<T>(internal::node_main<T>::create(f), internal::ref::ctor_guard);
 }
 
-// Operators
-
-template <typename T> dataflow::val<T> dataflow::operator*(ref<T> x)
+template <typename T> dataflow::val<T> dataflow::Main(ref<T> x)
 {
-  return Curr(x);
+  return Main([x](dtime) { return x; });
 }
 
 template <typename T, typename U, typename FwT, typename>

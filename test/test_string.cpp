@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -44,7 +44,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int, test_string_basic)
 {
   auto x = Var<int>(42);
   auto y = ToString(x);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "ToString");
 
@@ -59,7 +59,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_string_basic)
 {
   auto x = Var("str");
   auto y = ToString(x);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
@@ -73,7 +73,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_string_basic)
 BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_string_basic)
 {
   auto y = ToString(5);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
@@ -83,7 +83,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_string_basic)
 BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_string_basic)
 {
   auto y = ToString("string literal");
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
@@ -95,7 +95,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_string_basic)
   auto x = Var<int>(42);
   auto y = Var<float>(42.5f);
   auto z = ToString(x, " != ", y);
-  auto f = *z;
+  auto f = Main(z);
 
   BOOST_CHECK_EQUAL(f(), "42 != 42.5");
 
@@ -108,7 +108,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_string_basic)
 {
   auto x = Var("42");
   auto y = FromString<int>(x);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
@@ -123,7 +123,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_string_basic)
 {
   auto x = Var("NAN");
   auto y = FromString<int>(x, 5);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
@@ -139,7 +139,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
 {
   auto x = Var("");
   auto y = FromString<int>(x, 5);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
@@ -154,7 +154,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_string_basic)
 {
   auto x = Var("str");
   auto y = FromString<std::string>(x);
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
@@ -169,7 +169,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_string_basic)
 {
   auto x = Var("str");
   auto y = FromString<std::string>(x, "never used");
-  auto f = *y;
+  auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
@@ -183,7 +183,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_string_basic)
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal, test_string_basic)
 {
   auto x = FromString<int>("54");
-  auto f = *x;
+  auto f = Main(x);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
 
@@ -195,7 +195,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal_default,
 {
   auto x = FromString<int>("NAN", 3);
   auto y = FromString<int>("39", 10);
-  auto f = *(x + y);
+  auto f = Main((x + y));
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
@@ -208,7 +208,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
 {
   auto x = FromString<int>("", 13);
   auto y = FromString<int>("29", 10);
-  auto f = *(x + y);
+  auto f = Main((x + y));
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK_EQUAL(introspect::label(y), "const");

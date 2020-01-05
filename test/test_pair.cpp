@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(test_pair)
 
   auto c = If(use_z, z, Pair(1, 2));
 
-  auto d = *Second(c);
+  auto d = Main(Second(c));
 
   BOOST_CHECK_EQUAL(d(), 31);
 
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(test_pair_First)
 
   const auto a = Pair(std::string("1st"), 2);
 
-  const auto b = *First(a);
+  const auto b = Main(First(a));
 
   BOOST_CHECK_EQUAL(b(), std::string("1st"));
 }
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(test_pair_Second)
 
   const auto a = Pair(1, std::string("2nd"));
 
-  const auto b = *Second(a);
+  const auto b = Main(Second(a));
 
   BOOST_CHECK_EQUAL(b(), std::string("2nd"));
 }

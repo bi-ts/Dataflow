@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_to_string)
   Engine engine;
 
   const auto x = Nothing<ref<int>>();
-  const auto f = *x;
+  const auto f = Main(x);
 
   BOOST_CHECK_EQUAL(introspect::value(x), "nothing");
 }
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Just_to_string)
 
   const auto x = Var(11);
   const auto y = Just(x);
-  const auto f = *y;
+  const auto f = Main(y);
 
   std::stringstream ss;
   ss << std::hex << x.id();
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_to_string)
   Engine engine;
 
   const auto x = Nothing<int>();
-  const auto f = *x;
+  const auto f = Main(x);
 
   BOOST_CHECK_EQUAL(introspect::value(x), "nothing");
 }
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_to_string)
 
   auto x = Var(11);
   const auto y = JustE(x);
-  const auto f = *y;
+  const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::value(y), "just(11)");
 
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Just_FromMaybe)
   auto x = Var(11);
   const auto y = Just(x);
   const auto z = FromMaybe(y);
-  const auto f = *z;
+  const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
   BOOST_CHECK_EQUAL(f(), 11);
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_1_argument)
 
   const auto x = Nothing<ref<int>>();
   const auto y = FromMaybe(x);
-  const auto f = *y;
+  const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
   BOOST_CHECK_EQUAL(f(), 0);
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
   const auto x = Nothing<ref<int>>();
   auto y = Var(23);
   const auto z = FromMaybe(x, y);
-  const auto f = *z;
+  const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
   BOOST_CHECK_EQUAL(f(), 23);
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2nd_argument_literal)
 
   const auto x = Nothing<ref<std::string>>();
   const auto y = FromMaybe(x, "empty");
-  const auto f = *y;
+  const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
   BOOST_CHECK_EQUAL(f(), "empty");
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_FromMaybe)
   auto x = Var(11);
   const auto y = JustE(x);
   const auto z = FromMaybe(y);
-  const auto f = *z;
+  const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
   BOOST_CHECK_EQUAL(f(), 11);
@@ -378,7 +378,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_1_argument)
 
   const auto x = Nothing<int>();
   const auto y = FromMaybe(x);
-  const auto f = *y;
+  const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
   BOOST_CHECK_EQUAL(f(), 0);
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2_arguments)
   const auto x = Nothing<int>();
   auto y = Var(23);
   const auto z = FromMaybe(x, y);
-  const auto f = *z;
+  const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
   BOOST_CHECK_EQUAL(f(), 23);
@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2nd_argument_literal)
 
   const auto x = Nothing<std::string>();
   const auto y = FromMaybe(x, "empty");
-  const auto f = *y;
+  const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
   BOOST_CHECK_EQUAL(f(), "empty");

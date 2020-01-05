@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -35,27 +35,27 @@ BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
   const auto y = Var<int>(2);
 
   // Includes arithmetic
-  const auto a = *(x + y);
+  const auto a = Main((x + y));
 
   BOOST_CHECK_EQUAL(a(), 3);
 
   // Includes comparison
-  const auto b = *(x < y);
+  const auto b = Main((x < y));
 
   BOOST_CHECK_EQUAL(b(), true);
 
   // Includes conditional
-  const auto c = *Switch(Case(b, y), Default(0));
+  const auto c = Main(Switch(Case(b, y), Default(0)));
 
   BOOST_CHECK_EQUAL(c(), 2);
 
   // Includes core
-  const auto d = *Const(3);
+  const auto d = Main(Const(3));
 
   BOOST_CHECK_EQUAL(d(), 3);
 
   // Includes logical
-  const auto e = *(b && false);
+  const auto e = Main((b && false));
 
   BOOST_CHECK_EQUAL(e(), false);
 

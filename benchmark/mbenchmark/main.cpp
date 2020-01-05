@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -125,7 +125,7 @@ static void Update_Unary_Incr_Int(benchmark::State& state)
     tmp.push_back(Incr(a));
   }
 
-  const auto y = *tmp.front();
+  const auto y = Main(tmp.front());
 
   while (state.KeepRunningBatch(state.max_iterations))
   {

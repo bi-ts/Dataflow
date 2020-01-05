@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -544,7 +544,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_core_fixture)
   auto y = Var<int>(10);
   auto z = Var<int>(20);
 
-  auto f = *If(x, y, z);
+  auto f = Main(If(x, y, z));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(f(), 10);
@@ -560,7 +560,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_core_fixture)
   auto x = Var<bool>(true);
   auto z = Var<int>(20);
 
-  auto f = *If(x, 10, z);
+  auto f = Main(If(x, 10, z));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(f(), 10);
@@ -576,7 +576,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_core_fixture)
   auto x = Var<bool>(true);
   auto y = Var<int>(10);
 
-  auto f = *If(x, y, 20);
+  auto f = Main(If(x, y, 20));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(f(), 10);
@@ -591,7 +591,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
 {
   auto x = Var<bool>(true);
 
-  auto f = *If(x, 10, 20);
+  auto f = Main(If(x, 10, 20));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(f(), 10);
@@ -606,7 +606,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_str_strliteral, test_core_fixture)
 {
   auto x = Var<bool>(true);
 
-  auto f = *If(x, std::string("str"), "strliteral");
+  auto f = Main(If(x, std::string("str"), "strliteral"));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(f(), "str");
@@ -1052,7 +1052,7 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
 
 BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 {
-  const val<int> x = *Var<int>(15);
+  const val<int> x = Main(Var<int>(15));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::label(x), "main");

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -657,9 +657,7 @@ template <typename T> val<T> Curr(ref<T> x);
 template <typename F, typename T = core::init_function_type_t<F>>
 val<T> Main(F f);
 
-// Operators
-
-template <typename T> val<T> operator*(ref<T> x);
+template <typename T> val<T> Main(ref<T> x);
 
 // Conditional functions
 
