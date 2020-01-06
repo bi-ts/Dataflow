@@ -507,7 +507,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, "other text");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Curr, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Main_ref_arg, test_core_fixture)
 {
   const var<int> x = Var<int>(6);
 
@@ -523,7 +523,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 6);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Main, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_Main_init_func_arg, test_core_fixture)
 {
   var<int> x = Var<int>(6);
 
@@ -1048,15 +1048,6 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*e, 132);
-}
-
-BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
-{
-  const val<int> x = Main(Var<int>(15));
-
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(introspect::label(x), "main");
-  BOOST_CHECK_EQUAL(*x, 15);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
