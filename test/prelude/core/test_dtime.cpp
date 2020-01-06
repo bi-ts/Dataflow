@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -64,42 +64,42 @@ BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
     [=](dtime t0) { return Const<dtimestamp>(t0); },
     [=](dtime t0) { return Const<dtimestamp>(); }));
 
-  BOOST_CHECK_EQUAL(ts(), 0);
+  BOOST_CHECK_EQUAL(*ts, 0);
 
   // t = 1
   x = 0;
 
-  BOOST_CHECK_EQUAL(ts(), 0);
+  BOOST_CHECK_EQUAL(*ts, 0);
 
   // t = 2
   x = 110;
 
-  BOOST_CHECK_EQUAL(ts(), 2);
+  BOOST_CHECK_EQUAL(*ts, 2);
 
   // t = 3
   x = 10;
 
-  BOOST_CHECK_EQUAL(ts(), 0);
+  BOOST_CHECK_EQUAL(*ts, 0);
 
   // t = 4
   x = 120;
 
-  BOOST_CHECK_EQUAL(ts(), 4);
+  BOOST_CHECK_EQUAL(*ts, 4);
 
   // t = 5
   x = 130;
 
-  BOOST_CHECK_EQUAL(ts(), 4);
+  BOOST_CHECK_EQUAL(*ts, 4);
 
   // t = 6
   x = 20;
 
-  BOOST_CHECK_EQUAL(ts(), 0);
+  BOOST_CHECK_EQUAL(*ts, 0);
 
   // t = 7
   x = 140;
 
-  BOOST_CHECK_EQUAL(ts(), 7);
+  BOOST_CHECK_EQUAL(*ts, 7);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

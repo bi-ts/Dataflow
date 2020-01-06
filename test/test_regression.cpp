@@ -43,12 +43,12 @@ BOOST_AUTO_TEST_CASE(test_Mod)
 
   auto a = Main(z);
 
-  std::vector<int> mods(1, a());
+  std::vector<int> mods(1, *a);
 
   for (int i = 2; i < 10; ++i)
   {
     y = i;
-    mods.push_back(a());
+    mods.push_back(*a);
   }
 
   BOOST_TEST(mods == std::vector<int>({0, 0, 0, 0, 0, 0, 4, 4, 6}),
@@ -68,12 +68,12 @@ BOOST_AUTO_TEST_CASE(test_regression_eager_node_deactivation)
 
   BOOST_CHECK(introspect::active_node(y) == true);
 
-  BOOST_CHECK_EQUAL(a(), 7);
+  BOOST_CHECK_EQUAL(*a, 7);
 
   {
     const auto b = Main(a * 2);
 
-    BOOST_CHECK_EQUAL(b(), 14);
+    BOOST_CHECK_EQUAL(*b, 14);
   }
 
   BOOST_CHECK(introspect::active_node(y) == true);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(test_regression_diamond_deactivation)
   const auto x = Var<int>(6);
   const auto y = Main(x * x);
 
-  BOOST_CHECK_EQUAL(y(), 36);
+  BOOST_CHECK_EQUAL(*y, 36);
 }
 
 BOOST_AUTO_TEST_CASE(test_regression_And_num_vertices)
@@ -117,11 +117,11 @@ BOOST_AUTO_TEST_CASE(test_regression_Recursion_independent_on_previous_state)
 
   const auto y = Main([=](dtime t0) { return Recursion(0, tf, t0); });
 
-  BOOST_CHECK_EQUAL(y(), 1);
+  BOOST_CHECK_EQUAL(*y, 1);
 
   x = 33;
 
-  BOOST_CHECK_EQUAL(y(), 33);
+  BOOST_CHECK_EQUAL(*y, 33);
 }
 
 BOOST_AUTO_TEST_CASE(test_regression_diamond_destruction)
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(test_regression_diamond_destruction)
     return Main(x * x);
   }();
 
-  BOOST_CHECK_EQUAL(y(), 36);
+  BOOST_CHECK_EQUAL(*y, 36);
 }
 
 BOOST_AUTO_TEST_CASE(test_regression_compound_deactivation)
@@ -149,11 +149,11 @@ BOOST_AUTO_TEST_CASE(test_regression_compound_deactivation)
 
   const auto z = Main(y);
 
-  BOOST_CHECK_EQUAL(z(), 100);
+  BOOST_CHECK_EQUAL(*z, 100);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(z(), 200);
+  BOOST_CHECK_EQUAL(*z, 200);
 }
 
 BOOST_AUTO_TEST_CASE(test_regression_no_bad_ref_type_conversion)

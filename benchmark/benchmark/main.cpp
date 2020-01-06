@@ -312,13 +312,13 @@ void Benchmark(
 
       check_points.activated = make_check_point();
 
-      initial_value = r();
+      initial_value = *r;
 
       x = last_x;
 
       check_points.updated = make_check_point();
 
-      last_value = r();
+      last_value = *r;
 
       total_nodes_count = introspect::num_vertices();
     }

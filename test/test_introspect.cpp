@@ -239,7 +239,7 @@ BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
 
   const auto y = Main((x * x - x + 5));
 
-  BOOST_CHECK_EQUAL(y(), 5);
+  BOOST_CHECK_EQUAL(*y, 5);
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
   BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
 
@@ -250,7 +250,7 @@ BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
 
   x = 0;
 
-  BOOST_CHECK_EQUAL(y(), 5);
+  BOOST_CHECK_EQUAL(*y, 5);
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
   BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
   BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 3);
@@ -258,7 +258,7 @@ BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
 
   x = 10;
 
-  BOOST_CHECK_EQUAL(y(), 95);
+  BOOST_CHECK_EQUAL(*y, 95);
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
   BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
   BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 6);
@@ -341,7 +341,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log)
   io.reset_output();
 
   BOOST_CHECK_EQUAL(io.log_string(), "x + 12 = 23;");
-  BOOST_CHECK_EQUAL(a(), 46);
+  BOOST_CHECK_EQUAL(*a, 46);
 
   io.capture_output(true);
 
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log)
   io.reset_output();
 
   BOOST_CHECK_EQUAL(io.log_string(), "x + 12 = 34;");
-  BOOST_CHECK_EQUAL(a(), 68);
+  BOOST_CHECK_EQUAL(*a, 68);
 }
 
 BOOST_AUTO_TEST_CASE(test_introspect_Log_default_label)
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log_default_label)
   io.reset_output();
 
   BOOST_CHECK_EQUAL(io.log_string(), "var = 256;");
-  BOOST_CHECK_EQUAL(a(), 256);
+  BOOST_CHECK_EQUAL(*a, 256);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

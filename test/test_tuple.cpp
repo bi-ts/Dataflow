@@ -96,14 +96,14 @@ BOOST_AUTO_TEST_CASE(test_TupleA_Get)
 
   auto g = Main(f);
 
-  BOOST_CHECK_EQUAL(g(), "Saturday, 26");
+  BOOST_CHECK_EQUAL(*g, "Saturday, 26");
   BOOST_CHECK_EQUAL(introspect::active_node(a), false);
   BOOST_CHECK_EQUAL(introspect::active_node(b), true);
   BOOST_CHECK_EQUAL(introspect::active_node(c), false);
 
   b = "27";
 
-  BOOST_CHECK_EQUAL(g(), "Saturday, 27");
+  BOOST_CHECK_EQUAL(*g, "Saturday, 27");
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleC_Get)
@@ -126,14 +126,14 @@ BOOST_AUTO_TEST_CASE(test_TupleC_Get)
 
   auto g = Main(f);
 
-  BOOST_CHECK_EQUAL(g(), "Friday, 13");
+  BOOST_CHECK_EQUAL(*g, "Friday, 13");
   BOOST_CHECK_EQUAL(introspect::active_node(a), true);
   BOOST_CHECK_EQUAL(introspect::active_node(b), true);
   BOOST_CHECK_EQUAL(introspect::active_node(c), true);
 
   b = "15";
 
-  BOOST_CHECK_EQUAL(g(), "Friday, 15");
+  BOOST_CHECK_EQUAL(*g, "Friday, 15");
 }
 
 BOOST_AUTO_TEST_CASE(test_TupleC_Getters)
@@ -144,11 +144,11 @@ BOOST_AUTO_TEST_CASE(test_TupleC_Getters)
 
   auto b = Main(TupleC(Fifth(a), Fourth(a), Third(a), Second(a), First(a)));
 
-  BOOST_CHECK_EQUAL((get<0>(b())), 34);
-  BOOST_CHECK_EQUAL((get<1>(b())), "text");
-  BOOST_CHECK_EQUAL((get<2>(b())), 'c');
-  BOOST_CHECK_EQUAL((get<3>(b())), 20);
-  BOOST_CHECK_EQUAL((get<4>(b())), "str");
+  BOOST_CHECK_EQUAL((get<0>(*b)), 34);
+  BOOST_CHECK_EQUAL((get<1>(*b)), "text");
+  BOOST_CHECK_EQUAL((get<2>(*b)), 'c');
+  BOOST_CHECK_EQUAL((get<3>(*b)), 20);
+  BOOST_CHECK_EQUAL((get<4>(*b)), "str");
 }
 
 BOOST_AUTO_TEST_CASE(test_Tuple_Getters)
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(test_Tuple_Getters)
 
   const auto b = Main(Third(a));
 
-  BOOST_CHECK_EQUAL(b(), 'c');
+  BOOST_CHECK_EQUAL(*b, 'c');
 }
 
 BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison)
@@ -175,11 +175,11 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison)
 
   const auto c = Main((a == b));
 
-  BOOST_CHECK_EQUAL(c(), true);
+  BOOST_CHECK_EQUAL(*c, true);
 
   x = 0;
 
-  BOOST_CHECK_EQUAL(c(), false);
+  BOOST_CHECK_EQUAL(*c, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison_minimal_tuple)
@@ -192,11 +192,11 @@ BOOST_AUTO_TEST_CASE(test_Tuple_equality_comparison_minimal_tuple)
 
   const auto f = Main((z == y));
 
-  BOOST_CHECK_EQUAL(f(), true);
+  BOOST_CHECK_EQUAL(*f, true);
 
   x = "14";
 
-  BOOST_CHECK_EQUAL(f(), false);
+  BOOST_CHECK_EQUAL(*f, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison)
@@ -211,11 +211,11 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison)
 
   const auto c = Main((a != b));
 
-  BOOST_CHECK_EQUAL(c(), false);
+  BOOST_CHECK_EQUAL(*c, false);
 
   x = 0;
 
-  BOOST_CHECK_EQUAL(c(), true);
+  BOOST_CHECK_EQUAL(*c, true);
 }
 
 BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison_minimal_tuple)
@@ -228,11 +228,11 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison_minimal_tuple)
 
   const auto f = Main((z != y));
 
-  BOOST_CHECK_EQUAL(f(), false);
+  BOOST_CHECK_EQUAL(*f, false);
 
   x = "14";
 
-  BOOST_CHECK_EQUAL(f(), true);
+  BOOST_CHECK_EQUAL(*f, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

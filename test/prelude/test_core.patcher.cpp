@@ -259,25 +259,25 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
 
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
-  BOOST_CHECK_EQUAL(f(), data{24});
+  BOOST_CHECK_EQUAL(*f, data{24});
 
   x = 32;
 
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1));
-  BOOST_CHECK_EQUAL(f(), data{34});
+  BOOST_CHECK_EQUAL(*f, data{34});
 
   x = 12;
 
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2));
-  BOOST_CHECK_EQUAL(f(), data{14});
+  BOOST_CHECK_EQUAL(*f, data{14});
 
   y = 3;
 
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3));
-  BOOST_CHECK_EQUAL(f(), data{15});
+  BOOST_CHECK_EQUAL(*f, data{15});
 }
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=22           y=33
 
-  BOOST_CHECK_EQUAL(f(), data{55});
+  BOOST_CHECK_EQUAL(*f, data{55});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
 
   x = data{44};
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=44           y=33
 
-  BOOST_CHECK_EQUAL(f(), data{77});
+  BOOST_CHECK_EQUAL(*f, data{77});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1, 1));
 
   y = 55;
@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=44           y=55
 
-  BOOST_CHECK_EQUAL(f(), data{99});
+  BOOST_CHECK_EQUAL(*f, data{99});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2, 1));
 
   x = data{11};
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=11           y=55
 
-  BOOST_CHECK_EQUAL(f(), data{66});
+  BOOST_CHECK_EQUAL(*f, data{66});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3, 2));
 }
 
@@ -431,7 +431,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
-  BOOST_CHECK_EQUAL(f(), data{26});
+  BOOST_CHECK_EQUAL(*f, data{26});
 
   x = 32;
 
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1));
-  BOOST_CHECK_EQUAL(f(), data{36});
+  BOOST_CHECK_EQUAL(*f, data{36});
 
   z = 3;
 
@@ -483,7 +483,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2));
-  BOOST_CHECK_EQUAL(f(), data{37});
+  BOOST_CHECK_EQUAL(*f, data{37});
 
   y = 4;
 
@@ -509,7 +509,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3, 1));
-  BOOST_CHECK_EQUAL(f(), data{11});
+  BOOST_CHECK_EQUAL(*f, data{11});
 
   y = 8;
 
@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 4, 1));
-  BOOST_CHECK_EQUAL(f(), data{19});
+  BOOST_CHECK_EQUAL(*f, data{19});
 
   y = 3;
 
@@ -561,7 +561,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(2, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 5, 2));
-  BOOST_CHECK_EQUAL(f(), data{38});
+  BOOST_CHECK_EQUAL(*f, data{38});
 
   x = 0;
 
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(2, 2));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 6, 2));
-  BOOST_CHECK_EQUAL(f(), data{6});
+  BOOST_CHECK_EQUAL(*f, data{6});
 }
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
@@ -617,15 +617,15 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
   auto y = core::LiftPatcher<policy>(x);
   auto z = Main(y);
 
-  BOOST_CHECK_EQUAL(z(), 110);
+  BOOST_CHECK_EQUAL(*z, 110);
 
   x = 64;
 
-  BOOST_CHECK_EQUAL(z(), 320);
+  BOOST_CHECK_EQUAL(*z, 320);
 
   x = 0;
 
-  BOOST_CHECK_EQUAL(z(), 0);
+  BOOST_CHECK_EQUAL(*z, 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

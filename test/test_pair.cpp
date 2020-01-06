@@ -50,15 +50,15 @@ BOOST_AUTO_TEST_CASE(test_pair)
 
   auto d = Main(Second(c));
 
-  BOOST_CHECK_EQUAL(d(), 31);
+  BOOST_CHECK_EQUAL(*d, 31);
 
   y = 43;
 
-  BOOST_CHECK_EQUAL(d(), 43);
+  BOOST_CHECK_EQUAL(*d, 43);
 
   use_z = false;
 
-  BOOST_CHECK_EQUAL(d(), 2);
+  BOOST_CHECK_EQUAL(*d, 2);
 }
 
 BOOST_AUTO_TEST_CASE(test_pair_First)
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(test_pair_First)
 
   const auto b = Main(First(a));
 
-  BOOST_CHECK_EQUAL(b(), std::string("1st"));
+  BOOST_CHECK_EQUAL(*b, std::string("1st"));
 }
 
 BOOST_AUTO_TEST_CASE(test_pair_Second)
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(test_pair_Second)
 
   const auto b = Main(Second(a));
 
-  BOOST_CHECK_EQUAL(b(), std::string("2nd"));
+  BOOST_CHECK_EQUAL(*b, std::string("2nd"));
 }
 
 BOOST_AUTO_TEST_CASE(test_pair_Pair_overloads)

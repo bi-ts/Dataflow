@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_minimal)
     return Transitions(On(Const(false), Const(1)));
   }));
 
-  BOOST_CHECK_EQUAL(m(), 0);
+  BOOST_CHECK_EQUAL(*m, 0);
 }
 
 BOOST_AUTO_TEST_CASE(test_StateMachine_num_vertices_refs)
@@ -172,15 +172,15 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_refs)
                          On(!switched_on && toggle, true));
     }));
 
-  BOOST_CHECK_EQUAL(light(), false);
+  BOOST_CHECK_EQUAL(*light, false);
 
   toggle.emit();
 
-  BOOST_CHECK_EQUAL(light(), true);
+  BOOST_CHECK_EQUAL(*light, true);
 
   toggle.emit();
 
-  BOOST_CHECK_EQUAL(light(), false);
+  BOOST_CHECK_EQUAL(*light, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_StateMachine_fot_ref)
@@ -194,15 +194,15 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_fot_ref)
                        On(!toggle, sp));
   }));
 
-  BOOST_CHECK_EQUAL(light(), false);
+  BOOST_CHECK_EQUAL(*light, false);
 
   toggle.emit();
 
-  BOOST_CHECK_EQUAL(light(), true);
+  BOOST_CHECK_EQUAL(*light, true);
 
   toggle.emit();
 
-  BOOST_CHECK_EQUAL(light(), false);
+  BOOST_CHECK_EQUAL(*light, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
@@ -215,15 +215,15 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
     return Transitions(On(toggle, [=](dtime t0) { return !sp(t0); }));
   }));
 
-  BOOST_CHECK_EQUAL(light(), false);
+  BOOST_CHECK_EQUAL(*light, false);
 
   toggle.emit();
 
-  BOOST_CHECK_EQUAL(light(), true);
+  BOOST_CHECK_EQUAL(*light, true);
 
   toggle.emit();
 
-  BOOST_CHECK_EQUAL(light(), false);
+  BOOST_CHECK_EQUAL(*light, false);
 }
 
 BOOST_AUTO_TEST_CASE(test_StateMachine_initial_state)
@@ -236,15 +236,15 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_initial_state)
     return Transitions(On(Const(false), Const(0)));
   }));
 
-  BOOST_CHECK_EQUAL(m(), 0);
+  BOOST_CHECK_EQUAL(*m, 0);
 
   x = 11;
 
-  BOOST_CHECK_EQUAL(m(), 11);
+  BOOST_CHECK_EQUAL(*m, 11);
 
   x = 22;
 
-  BOOST_CHECK_EQUAL(m(), 22);
+  BOOST_CHECK_EQUAL(*m, 22);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

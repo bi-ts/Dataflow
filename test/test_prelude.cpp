@@ -37,27 +37,27 @@ BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
   // Includes arithmetic
   const auto a = Main((x + y));
 
-  BOOST_CHECK_EQUAL(a(), 3);
+  BOOST_CHECK_EQUAL(*a, 3);
 
   // Includes comparison
   const auto b = Main((x < y));
 
-  BOOST_CHECK_EQUAL(b(), true);
+  BOOST_CHECK_EQUAL(*b, true);
 
   // Includes conditional
   const auto c = Main(Switch(Case(b, y), Default(0)));
 
-  BOOST_CHECK_EQUAL(c(), 2);
+  BOOST_CHECK_EQUAL(*c, 2);
 
   // Includes core
   const auto d = Main(Const(3));
 
-  BOOST_CHECK_EQUAL(d(), 3);
+  BOOST_CHECK_EQUAL(*d, 3);
 
   // Includes logical
   const auto e = Main((b && false));
 
-  BOOST_CHECK_EQUAL(e(), false);
+  BOOST_CHECK_EQUAL(*e, false);
 
   // Includes stateful
   const auto f = Main([](dtime t0) {
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(test_prelude_contains_all_submodules)
       0, [](const ref<int>&) { return Transitions(On(true, 1)); }, t0);
   });
 
-  BOOST_CHECK_EQUAL(f(), 1);
+  BOOST_CHECK_EQUAL(*f, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

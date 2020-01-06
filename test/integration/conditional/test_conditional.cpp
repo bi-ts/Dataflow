@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -64,12 +64,12 @@ BOOST_DATA_TEST_CASE(test_hat_function,
     return If(g >= 0, g, 2 - abs);
   });
 
-  BOOST_CHECK_EQUAL(f(), reference_f(x0));
+  BOOST_CHECK_EQUAL(*f, reference_f(x0));
   BOOST_CHECK(graph_invariant_holds());
 
   x = x1;
 
-  BOOST_CHECK_EQUAL(f(), reference_f(x1));
+  BOOST_CHECK_EQUAL(*f, reference_f(x1));
   BOOST_CHECK(graph_invariant_holds());
 }
 

@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(test_Box)
   auto b = Main(a);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(b(), 13);
+  BOOST_CHECK_EQUAL(*b, 13);
 
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
@@ -153,12 +153,12 @@ BOOST_AUTO_TEST_CASE(test_Box)
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
 
-  BOOST_CHECK_EQUAL(b(), 22);
+  BOOST_CHECK_EQUAL(*b, 22);
 
   y = 32;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(b(), 32);
+  BOOST_CHECK_EQUAL(*b, 32);
 }
 
 BOOST_AUTO_TEST_CASE(test_Box_activation)
@@ -191,22 +191,22 @@ BOOST_AUTO_TEST_CASE(test_Box_conditional)
   auto b = Main(a);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(b(), 22);
+  BOOST_CHECK_EQUAL(*b, 22);
 
   y = 33;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(b(), 33);
+  BOOST_CHECK_EQUAL(*b, 33);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(b(), 1);
+  BOOST_CHECK_EQUAL(*b, 1);
 
   y = 44;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(b(), 1);
+  BOOST_CHECK_EQUAL(*b, 1);
 }
 
 BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
@@ -226,22 +226,22 @@ BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
   auto f = Main(e);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 11);
+  BOOST_CHECK_EQUAL(*f, 11);
 
   a = 2;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 2);
+  BOOST_CHECK_EQUAL(*f, 2);
 
   c = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 22);
+  BOOST_CHECK_EQUAL(*f, 22);
 
   d = 3;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 3);
+  BOOST_CHECK_EQUAL(*f, 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
@@ -249,7 +249,7 @@ BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
   const auto x = Main([=](dtime t0) { return CurrentTime(); });
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(x(), 0);
+  BOOST_CHECK_EQUAL(*x, 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ref, test_core_fixture)
@@ -268,7 +268,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
   const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 17);
+  BOOST_CHECK_EQUAL(*y, 17);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_default_constructor, test_core_fixture)
@@ -281,7 +281,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_default_constructor, test_core_fixture)
   auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 0);
+  BOOST_CHECK_EQUAL(*y, 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_forward_args, test_core_fixture)
@@ -308,7 +308,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_forward_args_to_string_constructor,
   const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), "**********");
+  BOOST_CHECK_EQUAL(*y, "**********");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
@@ -321,7 +321,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), "some text");
+  BOOST_CHECK_EQUAL(*y, "some text");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Const_via_arg_ctor, test_core_fixture)
@@ -337,7 +337,7 @@ BOOST_FIXTURE_TEST_CASE(test_Const_via_arg_ctor, test_core_fixture)
   const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), "some text");
+  BOOST_CHECK_EQUAL(*y, "some text");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
@@ -355,7 +355,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
-    BOOST_CHECK_EQUAL(y(), false);
+    BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(), "x = false;");
 
@@ -366,7 +366,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
-    BOOST_CHECK_EQUAL(y(), false);
+    BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(),
                       "x = false;x = true;"
@@ -381,7 +381,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
-    BOOST_CHECK_EQUAL(y(), false);
+    BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(),
                       "x = false;"
@@ -395,7 +395,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
-    BOOST_CHECK_EQUAL(y(), false);
+    BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(),
                       "x = false;"
@@ -415,17 +415,17 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
   BOOST_CHECK(!introspect::active_node(x));
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(y(), 3);
+  BOOST_CHECK_EQUAL(*y, 3);
 
   x = 4;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 3);
+  BOOST_CHECK_EQUAL(*y, 3);
 
   x = 6;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 3);
+  BOOST_CHECK_EQUAL(*y, 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
@@ -438,12 +438,12 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 17);
+  BOOST_CHECK_EQUAL(*y, 17);
 
   x = 6;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 6);
+  BOOST_CHECK_EQUAL(*y, 6);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
@@ -456,7 +456,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
   auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 0);
+  BOOST_CHECK_EQUAL(*y, 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_forward_args, test_core_fixture)
@@ -486,7 +486,7 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args_to_string_constructor,
   const auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), "**********");
+  BOOST_CHECK_EQUAL(*y, "**********");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
@@ -499,12 +499,12 @@ BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
   auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), "some text");
+  BOOST_CHECK_EQUAL(*y, "some text");
 
   x = "other text";
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), "other text");
+  BOOST_CHECK_EQUAL(*y, "other text");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Curr, test_core_fixture)
@@ -520,7 +520,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::ref_count(x), 2);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "main");
-  BOOST_CHECK_EQUAL(y(), 6);
+  BOOST_CHECK_EQUAL(*y, 6);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Main, test_core_fixture)
@@ -530,12 +530,12 @@ BOOST_FIXTURE_TEST_CASE(test_Main, test_core_fixture)
   const auto y = Main([=](dtime t) { return x; });
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 6);
+  BOOST_CHECK_EQUAL(*y, 6);
 
   x = 25;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 25);
+  BOOST_CHECK_EQUAL(*y, 25);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_core_fixture)
@@ -547,12 +547,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_core_fixture)
   auto f = Main(If(x, y, z));
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 20);
+  BOOST_CHECK_EQUAL(*f, 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_core_fixture)
@@ -563,12 +563,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_core_fixture)
   auto f = Main(If(x, 10, z));
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 20);
+  BOOST_CHECK_EQUAL(*f, 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_core_fixture)
@@ -579,12 +579,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_core_fixture)
   auto f = Main(If(x, y, 20));
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 20);
+  BOOST_CHECK_EQUAL(*f, 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
@@ -594,12 +594,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
   auto f = Main(If(x, 10, 20));
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 20);
+  BOOST_CHECK_EQUAL(*f, 20);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_var_str_strliteral, test_core_fixture)
@@ -609,12 +609,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_str_strliteral, test_core_fixture)
   auto f = Main(If(x, std::string("str"), "strliteral"));
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "str");
+  BOOST_CHECK_EQUAL(*f, "str");
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "strliteral");
+  BOOST_CHECK_EQUAL(*f, "strliteral");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
@@ -629,12 +629,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), false);
-  BOOST_CHECK_EQUAL(f(), 11);
+  BOOST_CHECK_EQUAL(*f, 11);
 
   y = 13;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 13);
+  BOOST_CHECK_EQUAL(*f, 13);
 
   const auto count = introspect::num_active_nodes();
 
@@ -644,12 +644,12 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::num_active_nodes(), count + 2);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
-  BOOST_CHECK_EQUAL(f(), 12);
+  BOOST_CHECK_EQUAL(*f, 12);
 
   z = 14;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 14);
+  BOOST_CHECK_EQUAL(*f, 14);
 
   x = true;
 
@@ -657,7 +657,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::num_active_nodes(), count);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), false);
-  BOOST_CHECK_EQUAL(f(), 13);
+  BOOST_CHECK_EQUAL(*f, 13);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_ref_fn, test_core_fixture)
@@ -671,24 +671,24 @@ BOOST_FIXTURE_TEST_CASE(test_If_ref_fn, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), false);
-  BOOST_CHECK_EQUAL(f(), 11);
+  BOOST_CHECK_EQUAL(*f, 11);
 
   y = 34;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 34);
+  BOOST_CHECK_EQUAL(*f, 34);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
-  BOOST_CHECK_EQUAL(f(), 12);
+  BOOST_CHECK_EQUAL(*f, 12);
 
   z = 15;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 15);
+  BOOST_CHECK_EQUAL(*f, 15);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_fn_ref, test_core_fixture)
@@ -703,24 +703,24 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_ref, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
   BOOST_CHECK_EQUAL(introspect::active_node(z), false);
-  BOOST_CHECK_EQUAL(f(), 11);
+  BOOST_CHECK_EQUAL(*f, 11);
 
   y = 34;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 34);
+  BOOST_CHECK_EQUAL(*f, 34);
 
   x = false;
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
-  BOOST_CHECK_EQUAL(f(), 12);
+  BOOST_CHECK_EQUAL(*f, 12);
 
   z = 15;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), 15);
+  BOOST_CHECK_EQUAL(*f, 15);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
@@ -775,7 +775,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::label(y), "shift");
 
-  BOOST_CHECK_EQUAL(z(), 'C');
+  BOOST_CHECK_EQUAL(*z, 'C');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
@@ -804,7 +804,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::label(y), "lowercase");
 
-  BOOST_CHECK_EQUAL(z(), 'c');
+  BOOST_CHECK_EQUAL(*z, 'c');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
@@ -819,7 +819,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(y), "trinity");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(z(), "BBB");
+  BOOST_CHECK_EQUAL(*z, "BBB");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_core_fixture)
@@ -841,7 +841,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(y), "duplicate");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(z(), "CC");
+  BOOST_CHECK_EQUAL(*z, "CC");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
@@ -867,7 +867,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(z), "shift");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), 'E');
+  BOOST_CHECK_EQUAL(*a, 'E');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
@@ -897,12 +897,12 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(z), "lowercase");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), 'c');
+  BOOST_CHECK_EQUAL(*a, 'c');
 
   y = false;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), 'C');
+  BOOST_CHECK_EQUAL(*a, 'C');
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
@@ -918,17 +918,17 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(z), "multiply");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), "BBBB");
+  BOOST_CHECK_EQUAL(*a, "BBBB");
 
   y = 2;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), "BB");
+  BOOST_CHECK_EQUAL(*a, "BB");
 
   x = 'A';
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), "AA");
+  BOOST_CHECK_EQUAL(*a, "AA");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
@@ -951,17 +951,17 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(z), "multiply");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), "CCC");
+  BOOST_CHECK_EQUAL(*a, "CCC");
 
   y = 2;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), "CC");
+  BOOST_CHECK_EQUAL(*a, "CC");
 
   x = 'A';
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(a(), "AA");
+  BOOST_CHECK_EQUAL(*a, "AA");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
@@ -990,27 +990,27 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::label(e), "4-ary");
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "text/AAAA/314%");
+  BOOST_CHECK_EQUAL(*f, "text/AAAA/314%");
 
   b = 'B';
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "text/BBBB/314%");
+  BOOST_CHECK_EQUAL(*f, "text/BBBB/314%");
 
   c = 6;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "text/BBBBBB/314%");
+  BOOST_CHECK_EQUAL(*f, "text/BBBBBB/314%");
 
   d = 1.11;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "text/BBBBBB/111%");
+  BOOST_CHECK_EQUAL(*f, "text/BBBBBB/111%");
 
   a = "other-text";
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(f(), "other-text/BBBBBB/111%");
+  BOOST_CHECK_EQUAL(*f, "other-text/BBBBBB/111%");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
@@ -1047,7 +1047,7 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
   const auto e = Main([d](dtime) { return d; });
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(e(), 132);
+  BOOST_CHECK_EQUAL(*e, 132);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
@@ -1056,7 +1056,7 @@ BOOST_FIXTURE_TEST_CASE(test_Curr_operator, test_core_fixture)
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::label(x), "main");
-  BOOST_CHECK_EQUAL(x(), 15);
+  BOOST_CHECK_EQUAL(*x, 15);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
@@ -1270,12 +1270,12 @@ BOOST_AUTO_TEST_CASE(
   const auto y = Main([=](dtime t0) { return Recursion(0, tf, t0); });
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 1);
+  BOOST_CHECK_EQUAL(*y, 1);
 
   x = 33;
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(y(), 1);
+  BOOST_CHECK_EQUAL(*y, 1);
 }
 
 BOOST_AUTO_TEST_CASE(
@@ -1299,7 +1299,7 @@ BOOST_AUTO_TEST_CASE(
   const auto z = Main([=](dtime t0) { return Recursion(true, tf, t0); });
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(z(), true);
+  BOOST_CHECK_EQUAL(*z, true);
 }
 
 BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
@@ -1364,32 +1364,32 @@ BOOST_AUTO_TEST_CASE(test_Since)
       t0);
   });
 
-  BOOST_CHECK_EQUAL(m(), 0);
+  BOOST_CHECK_EQUAL(*m, 0);
 
   // t = 1
   x = 10;
 
-  BOOST_CHECK_EQUAL(m(), 0);
+  BOOST_CHECK_EQUAL(*m, 0);
 
   // t = 2
   x = 100;
 
-  BOOST_CHECK_EQUAL(m(), 2);
+  BOOST_CHECK_EQUAL(*m, 2);
 
   // t = 3
   x = 110;
 
-  BOOST_CHECK_EQUAL(m(), 2);
+  BOOST_CHECK_EQUAL(*m, 2);
 
   // t = 4
   use_since = false;
 
-  BOOST_CHECK_EQUAL(m(), 101010);
+  BOOST_CHECK_EQUAL(*m, 101010);
 
   // t = 5
   use_since = true;
 
-  BOOST_CHECK_EQUAL(m(), 5);
+  BOOST_CHECK_EQUAL(*m, 5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -48,11 +48,11 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "ToString");
 
-  BOOST_CHECK_EQUAL(f(), "42");
+  BOOST_CHECK_EQUAL(*f, "42");
 
   x = 53;
 
-  BOOST_CHECK_EQUAL(f(), "53");
+  BOOST_CHECK_EQUAL(*f, "53");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_string_basic)
@@ -63,11 +63,11 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
-  BOOST_CHECK_EQUAL(f(), "str");
+  BOOST_CHECK_EQUAL(*f, "str");
 
   x = "long string";
 
-  BOOST_CHECK_EQUAL(f(), "long string");
+  BOOST_CHECK_EQUAL(*f, "long string");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_string_basic)
@@ -77,7 +77,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_int_leteral, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL(f(), "5");
+  BOOST_CHECK_EQUAL(*f, "5");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_string_basic)
@@ -87,7 +87,7 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_string_leteral, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL(f(), "string literal");
+  BOOST_CHECK_EQUAL(*f, "string literal");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_string_basic)
@@ -97,11 +97,11 @@ BOOST_FIXTURE_TEST_CASE(test_ToString_concatenation, test_string_basic)
   auto z = ToString(x, " != ", y);
   auto f = Main(z);
 
-  BOOST_CHECK_EQUAL(f(), "42 != 42.5");
+  BOOST_CHECK_EQUAL(*f, "42 != 42.5");
 
   x = 43;
 
-  BOOST_CHECK_EQUAL(f(), "43 != 42.5");
+  BOOST_CHECK_EQUAL(*f, "43 != 42.5");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_string_basic)
@@ -112,11 +112,11 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
-  BOOST_CHECK_EQUAL(f(), 42);
+  BOOST_CHECK_EQUAL(*f, 42);
 
   x = "55";
 
-  BOOST_CHECK_EQUAL(f(), 55);
+  BOOST_CHECK_EQUAL(*f, 55);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_string_basic)
@@ -127,11 +127,11 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_default, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
-  BOOST_CHECK_EQUAL(f(), 5);
+  BOOST_CHECK_EQUAL(*f, 5);
 
   x = "55";
 
-  BOOST_CHECK_EQUAL(f(), 55);
+  BOOST_CHECK_EQUAL(*f, 55);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
@@ -143,11 +143,11 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_int_from_empty_string,
 
   BOOST_CHECK_EQUAL(introspect::label(y), "FromString");
 
-  BOOST_CHECK_EQUAL(f(), 5);
+  BOOST_CHECK_EQUAL(*f, 5);
 
   x = "55";
 
-  BOOST_CHECK_EQUAL(f(), 55);
+  BOOST_CHECK_EQUAL(*f, 55);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_string_basic)
@@ -158,11 +158,11 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
-  BOOST_CHECK_EQUAL(f(), "str");
+  BOOST_CHECK_EQUAL(*f, "str");
 
   x = "long string";
 
-  BOOST_CHECK_EQUAL(f(), "long string");
+  BOOST_CHECK_EQUAL(*f, "long string");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_string_basic)
@@ -173,11 +173,11 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_string_default, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(y), "var");
 
-  BOOST_CHECK_EQUAL(f(), "str");
+  BOOST_CHECK_EQUAL(*f, "str");
 
   x = "long string";
 
-  BOOST_CHECK_EQUAL(f(), "long string");
+  BOOST_CHECK_EQUAL(*f, "long string");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal, test_string_basic)
@@ -187,7 +187,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal, test_string_basic)
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
 
-  BOOST_CHECK_EQUAL(f(), 54);
+  BOOST_CHECK_EQUAL(*f, 54);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal_default,
@@ -200,7 +200,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_string_literal_default,
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL(f(), 42);
+  BOOST_CHECK_EQUAL(*f, 42);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
@@ -213,7 +213,7 @@ BOOST_FIXTURE_TEST_CASE(test_FromString_from_empty_string_literal,
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
   BOOST_CHECK_EQUAL(introspect::label(y), "const");
 
-  BOOST_CHECK_EQUAL(f(), 42);
+  BOOST_CHECK_EQUAL(*f, 42);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -45,11 +45,11 @@ BOOST_AUTO_TEST_CASE(test_Not)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (!true));
+  BOOST_CHECK_EQUAL(*f, (!true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (!false));
+  BOOST_CHECK_EQUAL(*f, (!false));
 }
 
 // Logical `and` (lazy)
@@ -66,13 +66,13 @@ BOOST_AUTO_TEST_CASE(test_And_1_arg)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), true);
+  BOOST_CHECK_EQUAL(*f, true);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), false);
+  BOOST_CHECK_EQUAL(*f, false);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 }
@@ -92,28 +92,28 @@ BOOST_AUTO_TEST_CASE(test_And)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && false));
+  BOOST_CHECK_EQUAL(*f, (true && false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -131,11 +131,11 @@ BOOST_AUTO_TEST_CASE(test_And_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 }
 
 BOOST_AUTO_TEST_CASE(test_And_rhs_literal)
@@ -150,11 +150,11 @@ BOOST_AUTO_TEST_CASE(test_And_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 }
 
 BOOST_AUTO_TEST_CASE(test_And_4_mixed_arguments)
@@ -172,28 +172,28 @@ BOOST_AUTO_TEST_CASE(test_And_4_mixed_arguments)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true && true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true && true && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true && true && true));
+  BOOST_CHECK_EQUAL(*f, (false && true && true && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true && false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true && false && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true && false && true));
+  BOOST_CHECK_EQUAL(*f, (true && true && false && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -213,13 +213,13 @@ BOOST_AUTO_TEST_CASE(test_Or_1_arg)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), true);
+  BOOST_CHECK_EQUAL(*f, true);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), false);
+  BOOST_CHECK_EQUAL(*f, false);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 }
@@ -239,28 +239,28 @@ BOOST_AUTO_TEST_CASE(test_Or)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false));
+  BOOST_CHECK_EQUAL(*f, (true || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
@@ -278,11 +278,11 @@ BOOST_AUTO_TEST_CASE(test_Or_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 }
 
 BOOST_AUTO_TEST_CASE(test_Or_rhs_literal)
@@ -297,11 +297,11 @@ BOOST_AUTO_TEST_CASE(test_Or_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 }
 
 BOOST_AUTO_TEST_CASE(test_Or_4_mixed_arguments)
@@ -319,28 +319,28 @@ BOOST_AUTO_TEST_CASE(test_Or_4_mixed_arguments)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false || true || true));
+  BOOST_CHECK_EQUAL(*f, (true || false || true || true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false || true || false));
+  BOOST_CHECK_EQUAL(*f, (false || false || true || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false || false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false || false || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false || false || false));
+  BOOST_CHECK_EQUAL(*f, (true || false || false || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
@@ -360,13 +360,13 @@ BOOST_AUTO_TEST_CASE(test_AndE_1_arg)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), true);
+  BOOST_CHECK_EQUAL(*f, true);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), false);
+  BOOST_CHECK_EQUAL(*f, false);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 }
@@ -388,28 +388,28 @@ BOOST_AUTO_TEST_CASE(test_AndE)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && false));
+  BOOST_CHECK_EQUAL(*f, (true && false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
@@ -427,11 +427,11 @@ BOOST_AUTO_TEST_CASE(test_AndE_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 }
 
 BOOST_AUTO_TEST_CASE(test_AndE_rhs_literal)
@@ -446,11 +446,11 @@ BOOST_AUTO_TEST_CASE(test_AndE_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 }
 
 BOOST_AUTO_TEST_CASE(test_AndE_4_mixed_arguments)
@@ -468,28 +468,28 @@ BOOST_AUTO_TEST_CASE(test_AndE_4_mixed_arguments)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true && true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true && true && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true && true && true));
+  BOOST_CHECK_EQUAL(*f, (false && true && true && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true && false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true && false && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true && false && true));
+  BOOST_CHECK_EQUAL(*f, (true && true && false && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -509,13 +509,13 @@ BOOST_AUTO_TEST_CASE(test_OrE_1_arg)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), true);
+  BOOST_CHECK_EQUAL(*f, true);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), false);
+  BOOST_CHECK_EQUAL(*f, false);
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 }
@@ -537,28 +537,28 @@ BOOST_AUTO_TEST_CASE(test_OrE)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false));
+  BOOST_CHECK_EQUAL(*f, (true || false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
@@ -576,11 +576,11 @@ BOOST_AUTO_TEST_CASE(test_OrE_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 }
 
 BOOST_AUTO_TEST_CASE(test_OrE_rhs_literal)
@@ -595,11 +595,11 @@ BOOST_AUTO_TEST_CASE(test_OrE_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 }
 
 BOOST_AUTO_TEST_CASE(test_OrE_4_mixed_arguments)
@@ -617,28 +617,28 @@ BOOST_AUTO_TEST_CASE(test_OrE_4_mixed_arguments)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false || true || true));
+  BOOST_CHECK_EQUAL(*f, (true || false || true || true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false || true || false));
+  BOOST_CHECK_EQUAL(*f, (false || false || true || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false || false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false || false || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false || false || false));
+  BOOST_CHECK_EQUAL(*f, (true || false || false || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -658,11 +658,11 @@ BOOST_AUTO_TEST_CASE(test_Not_operator)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (!true));
+  BOOST_CHECK_EQUAL(*f, (!true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (!false));
+  BOOST_CHECK_EQUAL(*f, (!false));
 }
 
 // Logical `and` (lazy)
@@ -682,28 +682,28 @@ BOOST_AUTO_TEST_CASE(test_And_operator)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && false));
+  BOOST_CHECK_EQUAL(*f, (true && false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -721,11 +721,11 @@ BOOST_AUTO_TEST_CASE(test_And_operator_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 }
 
 BOOST_AUTO_TEST_CASE(test_And_operator_rhs_literal)
@@ -740,11 +740,11 @@ BOOST_AUTO_TEST_CASE(test_And_operator_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 }
 
 // Logical `or` (lazy)
@@ -764,28 +764,28 @@ BOOST_AUTO_TEST_CASE(test_Or_operator)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false));
+  BOOST_CHECK_EQUAL(*f, (true || false));
 
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
   BOOST_CHECK_EQUAL(introspect::active_node(y), false);
@@ -803,11 +803,11 @@ BOOST_AUTO_TEST_CASE(test_Or_operator_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 }
 
 BOOST_AUTO_TEST_CASE(test_Or_operator_rhs_literal)
@@ -822,11 +822,11 @@ BOOST_AUTO_TEST_CASE(test_Or_operator_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 }
 
 // Logical `and` (eager)
@@ -846,28 +846,28 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && false));
+  BOOST_CHECK_EQUAL(*f, (true && false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
@@ -885,11 +885,11 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && false));
+  BOOST_CHECK_EQUAL(*f, (false && false));
 }
 
 BOOST_AUTO_TEST_CASE(test_AndE_operator_rhs_literal)
@@ -904,11 +904,11 @@ BOOST_AUTO_TEST_CASE(test_AndE_operator_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true && true));
+  BOOST_CHECK_EQUAL(*f, (true && true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false && true));
+  BOOST_CHECK_EQUAL(*f, (false && true));
 }
 
 // Logical `or` (eager)
@@ -928,28 +928,28 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || false));
+  BOOST_CHECK_EQUAL(*f, (true || false));
 
   BOOST_CHECK(introspect::active_node(x));
   BOOST_CHECK(introspect::active_node(y));
@@ -967,11 +967,11 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator_lhs_literal)
 
   y = true;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 
   y = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || false));
+  BOOST_CHECK_EQUAL(*f, (false || false));
 }
 
 BOOST_AUTO_TEST_CASE(test_OrE_operator_rhs_literal)
@@ -986,11 +986,11 @@ BOOST_AUTO_TEST_CASE(test_OrE_operator_rhs_literal)
 
   x = true;
 
-  BOOST_CHECK_EQUAL(f(), (true || true));
+  BOOST_CHECK_EQUAL(*f, (true || true));
 
   x = false;
 
-  BOOST_CHECK_EQUAL(f(), (false || true));
+  BOOST_CHECK_EQUAL(*f, (false || true));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

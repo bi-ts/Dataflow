@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(f(), (point(100, 100)));
+  BOOST_CHECK_EQUAL(*f, (point(100, 100)));
 
   mouse_pos = point(90, 110);
 
@@ -162,13 +162,13 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(f(), point(210, 90));
+  BOOST_CHECK_EQUAL(*f, point(210, 90));
 
   mouse_pos = point(150, 150);
 
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(f(), point(160, 140));
+  BOOST_CHECK_EQUAL(*f, point(160, 140));
 
   mouse_pressed = false;
 
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(f(), point(160, 140));
+  BOOST_CHECK_EQUAL(*f, point(160, 140));
 
   mouse_pos = point(90, 110);
 
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(f(), point(160, 140));
+  BOOST_CHECK_EQUAL(*f, point(160, 140));
 
   mouse_pressed = false;
 
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  BOOST_CHECK_EQUAL(f(), point(180, 160));
+  BOOST_CHECK_EQUAL(*f, point(180, 160));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -92,7 +92,7 @@ val<T>::val(const internal::ref& r, internal::ref::ctor_guard_t)
 {
 }
 
-template <typename T> const T& val<T>::operator()() const
+template <typename T> const T& val<T>::operator*() const
 {
   return this->template value<T>();
 }

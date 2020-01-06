@@ -222,11 +222,11 @@ BOOST_AUTO_TEST_CASE(test_maybe_Just_FromMaybe)
   const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), 11);
+  BOOST_CHECK_EQUAL(*f, 11);
 
   x = 22;
 
-  BOOST_CHECK_EQUAL(f(), 22);
+  BOOST_CHECK_EQUAL(*f, 22);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_1_argument)
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_1_argument)
   const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), 0);
+  BOOST_CHECK_EQUAL(*f, 0);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
@@ -251,11 +251,11 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2_arguments)
   const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), 23);
+  BOOST_CHECK_EQUAL(*f, 23);
 
   y = 34;
 
-  BOOST_CHECK_EQUAL(f(), 34);
+  BOOST_CHECK_EQUAL(*f, 34);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2nd_argument_literal)
@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Nothing_FromMaybe_2nd_argument_literal)
   const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), "empty");
+  BOOST_CHECK_EQUAL(*f, "empty");
 }
 
 BOOST_AUTO_TEST_CASE(test_maybeE_flowable)
@@ -365,11 +365,11 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_FromMaybe)
   const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), 11);
+  BOOST_CHECK_EQUAL(*f, 11);
 
   x = 22;
 
-  BOOST_CHECK_EQUAL(f(), 22);
+  BOOST_CHECK_EQUAL(*f, 22);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_1_argument)
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_1_argument)
   const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), 0);
+  BOOST_CHECK_EQUAL(*f, 0);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2_arguments)
@@ -394,11 +394,11 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2_arguments)
   const auto f = Main(z);
 
   BOOST_CHECK_EQUAL(introspect::label(z), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), 23);
+  BOOST_CHECK_EQUAL(*f, 23);
 
   y = 34;
 
-  BOOST_CHECK_EQUAL(f(), 34);
+  BOOST_CHECK_EQUAL(*f, 34);
 }
 
 BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2nd_argument_literal)
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Nothing_FromMaybe_2nd_argument_literal)
   const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::label(y), "from-maybe");
-  BOOST_CHECK_EQUAL(f(), "empty");
+  BOOST_CHECK_EQUAL(*f, "empty");
 }
 
 class not_relocatable

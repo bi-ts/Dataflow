@@ -120,7 +120,7 @@ template <typename T> class val final : public ref<T>
 public:
   explicit val(const internal::ref& r, internal::ref::ctor_guard_t);
 
-  const T& operator()() const;
+  const T& operator*() const;
 };
 
 namespace core

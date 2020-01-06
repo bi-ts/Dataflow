@@ -54,27 +54,27 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_int, test_fixture)
                        Case(x == "ten", 10),
                        Default(y)));
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "one";
 
-  BOOST_CHECK_EQUAL(f(), 1);
+  BOOST_CHECK_EQUAL(*f, 1);
 
   x = "five";
 
-  BOOST_CHECK_EQUAL(f(), 5);
+  BOOST_CHECK_EQUAL(*f, 5);
 
   x = "three";
 
-  BOOST_CHECK_EQUAL(f(), 3);
+  BOOST_CHECK_EQUAL(*f, 3);
 
   x = "ten";
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "NAN";
 
-  BOOST_CHECK_EQUAL(f(), 0);
+  BOOST_CHECK_EQUAL(*f, 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_fixture)
@@ -93,27 +93,27 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_int, test_fixture)
                        Case("ten", 10),
                        Default(0)));
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "one";
 
-  BOOST_CHECK_EQUAL(f(), 1);
+  BOOST_CHECK_EQUAL(*f, 1);
 
   x = "five";
 
-  BOOST_CHECK_EQUAL(f(), 5);
+  BOOST_CHECK_EQUAL(*f, 5);
 
   x = "two";
 
-  BOOST_CHECK_EQUAL(f(), 2);
+  BOOST_CHECK_EQUAL(*f, 2);
 
   x = "four";
 
-  BOOST_CHECK_EQUAL(f(), 4);
+  BOOST_CHECK_EQUAL(*f, 4);
 
   x = "three";
 
-  BOOST_CHECK_EQUAL(f(), 3);
+  BOOST_CHECK_EQUAL(*f, 3);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_fixture)
@@ -126,15 +126,15 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_string_string, test_fixture)
                        Case("maybe", "misschien"),
                        Default("")));
 
-  BOOST_CHECK_EQUAL(f(), "ja");
+  BOOST_CHECK_EQUAL(*f, "ja");
 
   x = "maybe";
 
-  BOOST_CHECK_EQUAL(f(), "misschien");
+  BOOST_CHECK_EQUAL(*f, "misschien");
 
   x = "no";
 
-  BOOST_CHECK_EQUAL(f(), "nee");
+  BOOST_CHECK_EQUAL(*f, "nee");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_fixture)
@@ -148,23 +148,23 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_string, test_fixture)
                        Case(x == 4, "four"),
                        Default("error")));
 
-  BOOST_CHECK_EQUAL(f(), "one");
+  BOOST_CHECK_EQUAL(*f, "one");
 
   x = 2;
 
-  BOOST_CHECK_EQUAL(f(), "two");
+  BOOST_CHECK_EQUAL(*f, "two");
 
   x = 3;
 
-  BOOST_CHECK_EQUAL(f(), "three");
+  BOOST_CHECK_EQUAL(*f, "three");
 
   x = 4;
 
-  BOOST_CHECK_EQUAL(f(), "four");
+  BOOST_CHECK_EQUAL(*f, "four");
 
   x = 5;
 
-  BOOST_CHECK_EQUAL(f(), "error");
+  BOOST_CHECK_EQUAL(*f, "error");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_fixture)
@@ -178,23 +178,23 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_if_operator, test_fixture)
                        x == 4 >>= Const("four"),
                        Default("error")));
 
-  BOOST_CHECK_EQUAL(f(), "one");
+  BOOST_CHECK_EQUAL(*f, "one");
 
   x = 2;
 
-  BOOST_CHECK_EQUAL(f(), "two");
+  BOOST_CHECK_EQUAL(*f, "two");
 
   x = 3;
 
-  BOOST_CHECK_EQUAL(f(), "three");
+  BOOST_CHECK_EQUAL(*f, "three");
 
   x = 4;
 
-  BOOST_CHECK_EQUAL(f(), "four");
+  BOOST_CHECK_EQUAL(*f, "four");
 
   x = 5;
 
-  BOOST_CHECK_EQUAL(f(), "error");
+  BOOST_CHECK_EQUAL(*f, "error");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_time_func, test_fixture)
@@ -211,27 +211,27 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_time_func, test_fixture)
 
   auto f = Main(ff);
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "one";
 
-  BOOST_CHECK_EQUAL(f(), 1);
+  BOOST_CHECK_EQUAL(*f, 1);
 
   x = "five";
 
-  BOOST_CHECK_EQUAL(f(), 5);
+  BOOST_CHECK_EQUAL(*f, 5);
 
   x = "three";
 
-  BOOST_CHECK_EQUAL(f(), 3);
+  BOOST_CHECK_EQUAL(*f, 3);
 
   x = "ten";
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "NAN";
 
-  BOOST_CHECK_EQUAL(f(), 0);
+  BOOST_CHECK_EQUAL(*f, 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Switch_time_func_default, test_fixture)
@@ -248,27 +248,27 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_time_func_default, test_fixture)
 
   auto f = Main(ff);
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "one";
 
-  BOOST_CHECK_EQUAL(f(), 1);
+  BOOST_CHECK_EQUAL(*f, 1);
 
   x = "five";
 
-  BOOST_CHECK_EQUAL(f(), 5);
+  BOOST_CHECK_EQUAL(*f, 5);
 
   x = "three";
 
-  BOOST_CHECK_EQUAL(f(), 3);
+  BOOST_CHECK_EQUAL(*f, 3);
 
   x = "ten";
 
-  BOOST_CHECK_EQUAL(f(), 10);
+  BOOST_CHECK_EQUAL(*f, 10);
 
   x = "NAN";
 
-  BOOST_CHECK_EQUAL(f(), 0);
+  BOOST_CHECK_EQUAL(*f, 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
