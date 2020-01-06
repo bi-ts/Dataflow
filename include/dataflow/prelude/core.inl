@@ -110,6 +110,16 @@ var_base<T>::var_base(const internal::ref& r, internal::ref::ctor_guard_t)
 
 template <typename T> var_base<T>::var_base(var_base&& other) = default;
 
+template <typename T> const T& var_base<T>::operator*() const
+{
+  DATAFLOW___CHECK_PRECONDITION(
+    dynamic_cast<const internal::node_var<T>*>(this->get_()));
+
+  const auto p_var = static_cast<const internal::node_var<T>*>(this->get_());
+
+  return p_var->next_value();
+}
+
 template <typename T>
 var_base<T>::var_base(const var_base& other)
 : ref<T>(other)

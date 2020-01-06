@@ -446,6 +446,29 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 6);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Var_indirection, test_core_fixture)
+{
+  var<int> x = Var(6);
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "var");
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*x, 6);
+
+  x = 1;
+
+  auto y = Main(x);
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*x, 1);
+  BOOST_CHECK_EQUAL(*y, 1);
+
+  x = 2020;
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*x, 2020);
+  BOOST_CHECK_EQUAL(*y, 2020);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
 {
   auto x = Var<int>();

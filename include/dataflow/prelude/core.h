@@ -131,6 +131,8 @@ public:
   explicit var_base(const internal::ref& r, internal::ref::ctor_guard_t);
   var_base(var_base&& other);
 
+  const T& operator*() const;
+
 protected:
   var_base(const var_base& other);
   var_base(var_base& other);
