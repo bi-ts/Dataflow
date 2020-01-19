@@ -409,7 +409,7 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 {
   var<int> x = Var<int>(3);
 
-  const auto y = Main([=](dtime t0) { return x(t0); });
+  const auto y = Main([x = x.as_ref()](dtime t0) { return x(t0); });
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK(!introspect::active_node(x));
@@ -550,7 +550,7 @@ BOOST_FIXTURE_TEST_CASE(test_Main_init_func_arg, test_core_fixture)
 {
   var<int> x = Var<int>(6);
 
-  const auto y = Main([=](dtime t) { return x; });
+  const auto y = Main([x = x.as_ref()](dtime t) { return x; });
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*y, 6);
@@ -647,7 +647,11 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   auto z = Var<int>(12);
 
   auto f = Main(If(
-    x, [=](dtime t) { return y; }, [=](dtime t) { return If(x, y, z); }));
+    x,
+    [y = y.as_ref()](dtime t) { return y; },
+    [x = x.as_ref(), y = y.as_ref(), z = z.as_ref()](dtime t) {
+      return If(x, y, z);
+    }));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -689,7 +693,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_ref_fn, test_core_fixture)
   auto y = Var<int>(11);
   auto z = Var<int>(12);
 
-  auto f = Main(If(x, y, [=](dtime t0) { return z; }));
+  auto f = Main(If(x, y, [z = z.as_ref()](dtime t0) { return z; }));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -721,7 +725,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_ref, test_core_fixture)
   auto z = Var<int>(12);
 
   auto f = Main(If(
-    x, [=](dtime t0) { return y; }, z));
+    x, [y = y.as_ref()](dtime t0) { return y; }, z));
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(introspect::active_node(y), true);
@@ -752,7 +756,7 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
   auto y = Var<int>(11);
   auto z = Var<int>(12);
 
-  auto f = Main([=](dtime t0) {
+  auto f = Main([x = x.as_ref(), y = y.as_ref(), z = z.as_ref()](dtime t0) {
     auto zz = If(
       x, [=](dtime t) { return z; }, [=](dtime t) { return z; }, t0);
 
@@ -1080,8 +1084,8 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
 
   capture_output();
 
-  const auto z =
-    Main([=](dtime t0) { return introspect::Log(Prev(v0, x, t0)); });
+  const auto z = Main(
+    [=, x = x.as_ref()](dtime t0) { return introspect::Log(Prev(v0, x, t0)); });
 
   reset_output();
 
@@ -1118,8 +1122,9 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   capture_output();
 
-  const auto z =
-    Main([=](dtime t0) { return If(b, introspect::Log(Prev(v0, x, t0)), 0); });
+  const auto z = Main([=, x = x.as_ref(), b = b.as_ref()](dtime t0) {
+    return If(b, introspect::Log(Prev(v0, x, t0)), 0);
+  });
 
   reset_output();
 
@@ -1170,8 +1175,9 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_overloads, test_core_fixture)
 
   capture_output();
 
-  const auto z = Main(
-    [=](dtime t0) { return introspect::Log(Prev(x, Prev(33, x, t0), t0)); });
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Prev(x, Prev(33, x, t0), t0));
+  });
 
   reset_output();
 
@@ -1194,7 +1200,7 @@ BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
 
   capture_output();
 
-  const auto y = Main([=](dtime t0) {
+  const auto y = Main([x = x.as_ref()](dtime t0) {
     const auto tf = [=](ref<int> s) {
       struct policy
       {
@@ -1277,7 +1283,7 @@ BOOST_AUTO_TEST_CASE(
 
   auto x = Var<int>(1);
 
-  const auto tf = [=](const ref<int>&) {
+  const auto tf = [x = x.as_ref()](const ref<int>&) {
     return [=](dtime t0) { return x(t0); };
   };
 
@@ -1364,19 +1370,20 @@ BOOST_AUTO_TEST_CASE(test_Since)
   const auto y = core::Lift(policy(), x);
 
   // t = 0
-  const auto m = Main([=](dtime t0) {
-    const auto z = If(
-      y,
-      [](dtime t0) { return Const(dtimestamp(t0)); },
-      [](dtime t0) { return Const(dtimestamp(t0)); },
-      t0);
+  const auto m =
+    Main([=, x = x.as_ref(), use_since = use_since.as_ref()](dtime t0) {
+      const auto z = If(
+        y,
+        [](dtime t0) { return Const(dtimestamp(t0)); },
+        [](dtime t0) { return Const(dtimestamp(t0)); },
+        t0);
 
-    return If(
-      use_since,
-      Since(z, [](dtime t0) { return Const<std::size_t>(dtimestamp(t0)); }),
-      std::size_t(101010),
-      t0);
-  });
+      return If(
+        use_since,
+        Since(z, [](dtime t0) { return Const<std::size_t>(dtimestamp(t0)); }),
+        std::size_t(101010),
+        t0);
+    });
 
   BOOST_CHECK_EQUAL(*m, 0);
 

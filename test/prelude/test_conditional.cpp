@@ -244,7 +244,7 @@ BOOST_FIXTURE_TEST_CASE(test_Switch_time_func_default, test_fixture)
            Case(x == "three", 3),
            Case(x == "five", [](dtime t0) { return Const(5); }),
            Case(x == "ten", 10),
-           Default([=](dtime t0) { return y; }));
+           Default([y = y.as_ref()](dtime t0) { return y; }));
 
   auto f = Main(ff);
 

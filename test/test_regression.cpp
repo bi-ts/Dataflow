@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(test_regression_Recursion_independent_on_previous_state)
 
   auto x = Var<int>(1);
 
-  const auto tf = [=](const ref<int>&) { return x; };
+  const auto tf = [x = x.as_ref()](const ref<int>&) { return x; };
 
   const auto y = Main([=](dtime t0) { return Recursion(0, tf, t0); });
 

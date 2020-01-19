@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -155,7 +155,8 @@ template <typename ArgT, typename T, typename F, typename>
 dataflow::init_function<T> dataflow::StateMachine(const ArgT& initial,
                                                   const F& f)
 {
-  return [=](dtime t0) { return StateMachine(initial, f, t0); };
+  const auto initial_ref = core::make_argument(initial);
+  return [=](dtime t0) { return StateMachine(initial_ref, f, t0); };
 }
 
 template <typename... Trs>

@@ -104,7 +104,6 @@ namespace core
 template <typename T>
 var_base<T>::var_base(const internal::ref& r, internal::ref::ctor_guard_t)
 : ref<T>(core::ref_base<T>(r, internal::ref::ctor_guard))
-, readonly_(false)
 {
 }
 
@@ -120,20 +119,15 @@ template <typename T> const T& var_base<T>::operator*() const
   return p_var->next_value();
 }
 
-template <typename T>
-var_base<T>::var_base(const var_base& other)
-: ref<T>(other)
-, readonly_(true)
+template <typename T> const ref<T>& var_base<T>::as_ref() const
 {
+  return *this;
 }
 
 template <typename T> var_base<T>::var_base(var_base& other) = default;
 
 template <typename T> void var_base<T>::set_value_(const T& v)
 {
-  if (readonly_)
-    throw std::logic_error("variable is readonly");
-
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
 
@@ -146,9 +140,6 @@ template <typename T>
 template <typename Patch>
 void var_base<T>::set_patch_(const Patch& patch)
 {
-  if (readonly_)
-    throw std::logic_error("variable is readonly");
-
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
 
@@ -483,7 +474,11 @@ template <typename FArgT, typename FArgU, typename T, typename, typename>
 dataflow::init_function<T>
 dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 {
-  return [=](dtime t0) { return If(x, y, z, t0); };
+  const auto x_ref = core::make_farg(x);
+  const auto y_ref = core::make_farg(y);
+  const auto z_ref = core::make_farg(z);
+
+  return [=](dtime t0) { return If(x_ref, y_ref, z_ref, t0); };
 }
 
 // Stateful functions

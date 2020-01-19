@@ -141,7 +141,8 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
   auto mouse_pressed = Var<int>(false);
   auto mouse_pos = Var(point(0, 0));
 
-  auto f = Main([=](dtime t0) {
+  auto f = Main([mouse_pos = mouse_pos.as_ref(),
+                 mouse_pressed = mouse_pressed.as_ref()](dtime t0) {
     return AdjustableCirclePosition(
       point(100, 100), 30, mouse_pos, mouse_pressed, t0);
   });

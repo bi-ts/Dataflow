@@ -56,7 +56,7 @@ BOOST_DATA_TEST_CASE(test_hat_function,
 
   auto x = Var<int>(x0);
 
-  auto f = Main([x](dtime t0) {
+  auto f = Main([x = x.as_ref()](dtime t0) {
     auto abs = If(x >= 0, x, -x);
 
     auto g = 4 - If(x >= 0, x * x, 2 * abs);

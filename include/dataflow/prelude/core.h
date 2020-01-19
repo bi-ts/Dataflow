@@ -133,20 +133,15 @@ public:
 
   const T& operator*() const;
 
+  const ref<T>& as_ref() const;
+
 protected:
-  var_base(const var_base& other);
+  var_base(const var_base& other) = delete;
   var_base(var_base& other);
 
-  /// \throws std::logic_error in case the variable reference is readonly.
-  ///
   void set_value_(const T& v);
 
-  /// \throws std::logic_error in case the variable reference is readonly.
-  ///
   template <typename Patch> void set_patch_(const Patch& patch);
-
-private:
-  bool readonly_;
 };
 }
 
