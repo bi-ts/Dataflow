@@ -29,14 +29,14 @@ inline std::ostream& operator<<(std::ostream& out, QPointF value)
   return out;
 }
 
-class Input : public QObject
+class Context : public QObject
 {
   Q_OBJECT
 
 public:
-  Input()
-  : left_mouse_button_pressed(dataflow::Var<int>())
-  , mouse_pos(dataflow::Var<QPointF>())
+  Context(dataflow::var<int> lmb_pressed, dataflow::var<QPointF> mouse_pos)
+  : lmb_pressed(std::move(lmb_pressed))
+  , mouse_pos(std::move(mouse_pos))
   {
   }
 
@@ -44,32 +44,43 @@ public:
   Q_PROPERTY(
     bool leftMouseButtonPressed READ get_leftMouseButtonPressed_ WRITE
       set_leftMouseButtonPressed_ NOTIFY leftMouseButtonPressedChanged);
+
   Q_PROPERTY(QPointF mousePos READ get_mousePos_ WRITE set_mousePos_ NOTIFY
                mousePosChanged);
 
-public:
-  dataflow::var<int> left_mouse_button_pressed;
-  dataflow::var<QPointF> mouse_pos;
+  Q_PROPERTY(QPointF circlePos READ getCirclePos NOTIFY circlePosChanged);
 
-signals:
-  void leftMouseButtonPressedChanged();
-
-private:
-  bool get_leftMouseButtonPressed_()
+  QPointF getCirclePos() const
   {
-    return *left_mouse_button_pressed;
+    return circle_pos_;
   }
 
-  void set_leftMouseButtonPressed_(bool value)
+  void setCirclePos(const QPointF& pos)
   {
-    left_mouse_button_pressed = value;
-    emit leftMouseButtonPressedChanged();
+    if (circle_pos_ != pos)
+    {
+      circle_pos_ = pos;
+      emit circlePosChanged();
+    }
   }
 
 signals:
   void mousePosChanged();
+  void leftMouseButtonPressedChanged();
+  void circlePosChanged();
 
-public:
+private:
+  bool get_leftMouseButtonPressed_()
+  {
+    return *lmb_pressed;
+  }
+
+  void set_leftMouseButtonPressed_(bool value)
+  {
+    lmb_pressed = value;
+    emit leftMouseButtonPressedChanged();
+  }
+
   void set_mousePos_(const QPointF& value)
   {
     mouse_pos = value;
@@ -80,4 +91,9 @@ public:
   {
     return *mouse_pos;
   }
+
+private:
+  dataflow::var<int> lmb_pressed;
+  dataflow::var<QPointF> mouse_pos;
+  QPointF circle_pos_;
 };

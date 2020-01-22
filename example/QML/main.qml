@@ -14,22 +14,22 @@ ApplicationWindow {
     hoverEnabled: true
 
     onPositionChanged: {
-      input.mousePos = Qt.point(mouse.x, mouse.y)
+      context.mousePos = Qt.point(mouse.x, mouse.y)
     }
 
     onPressed: {
-      input.leftMouseButtonPressed = true;
+      context.leftMouseButtonPressed = true;
     }
 
     onReleased: {
-      input.leftMouseButtonPressed = false;
+      context.leftMouseButtonPressed = false;
     }
   }
 
   Rectangle {
     radius: width / 2
-    x: output.circlePos.x - radius
-    y: output.circlePos.y - radius
+    x: context.circlePos.x - radius
+    y: context.circlePos.y - radius
     width: 100
     height: 100
     color: "darkgray"

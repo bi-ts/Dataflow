@@ -17,8 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #define DATAFLOW___NO_BOOST
-#include "Input.h"
-#include "Output.h"
+#include "Context.h"
 
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
@@ -36,6 +35,72 @@
 #include <memory>
 
 using namespace dataflow;
+
+ref<std::shared_ptr<QObject>> CreateOutput(const ref<QPointF>& circle_pos,
+                                           var<int> lmb_pressed,
+                                           var<QPointF> mouse_pos)
+{
+  const auto p_output = std::make_shared<Context>(lmb_pressed, mouse_pos);
+
+  class policy
+  {
+  public:
+    policy(const std::shared_ptr<Context>& p_output)
+    : p_output_(p_output)
+    {
+    }
+
+    std::string label() const
+    {
+      return "set-context-property";
+    }
+
+    std::shared_ptr<QObject> calculate(const QPointF& pos) const
+    {
+      p_output_->setCirclePos(pos);
+      return p_output_;
+    };
+
+  private:
+    const std::shared_ptr<Context> p_output_;
+  };
+
+  return Lift(policy(p_output), circle_pos);
+}
+
+ref<std::shared_ptr<QObject>>
+SetContextProperty(QQmlContext* p_context,
+                   const std::string& name,
+                   const ref<std::shared_ptr<QObject>>& value)
+{
+  class policy
+  {
+  public:
+    policy(QQmlContext* p_context, const std::string& name)
+    : p_context_(p_context)
+    , name_(QString::fromUtf8(name.c_str()))
+    {
+    }
+
+    std::string label() const
+    {
+      return "set-context-property";
+    }
+
+    std::shared_ptr<QObject>
+    calculate(const std::shared_ptr<QObject>& p_object) const
+    {
+      p_context_->setContextProperty(name_, p_object.get());
+      return p_object;
+    };
+
+  private:
+    QQmlContext* p_context_;
+    const QString name_;
+  };
+
+  return Lift(policy(p_context, name), value);
+}
 
 enum class mode
 {
@@ -120,29 +185,21 @@ int main(int argc, char* p_argv[])
 
   Engine engine;
 
-  Input input;
-
-  std::function<void()> update = []() {};
+  auto mouse_pos = Var<QPointF>();
+  auto lmb_pressed = Var<int>();
 
   auto x = Main([&](dtime t0) {
-    auto pos = AdjustableCirclePosition(QPointF(100, 100),
-                                        50.0,
-                                        input.mouse_pos,
-                                        input.left_mouse_button_pressed,
-                                        t0);
-
-    return core::Lift("update", pos, [&](const QPointF& pos) {
-      update();
-      return pos;
-    });
+    return AdjustableCirclePosition(
+      QPointF(100, 100), 50.0, mouse_pos, lmb_pressed, t0);
   });
 
-  Output output(x);
+  QQmlContext context(qml_engine.rootContext());
 
-  update = [&]() { emit output.circlePosChanged(); };
+  const auto p_context = &context;
 
-  qml_engine.rootContext()->setContextProperty("input", &input);
-  qml_engine.rootContext()->setContextProperty("output", &output);
+  const auto output = CreateOutput(x, lmb_pressed, mouse_pos);
+
+  const auto m = Main(SetContextProperty(p_context, "context", output));
 
   QQmlComponent qml_component(&qml_engine, QUrl("qrc:/main.qml"));
 
@@ -153,7 +210,7 @@ int main(int argc, char* p_argv[])
     return -1;
   }
 
-  std::unique_ptr<QObject> p_component(qml_component.create());
+  std::unique_ptr<QObject> p_component(qml_component.create(p_context));
 
   return app.exec();
 }
