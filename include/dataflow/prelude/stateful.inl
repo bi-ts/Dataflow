@@ -37,7 +37,7 @@ template <typename F, typename T> struct is_sm_definition_function
 {
 private:
   template <typename... FArgs>
-  static dataflow::std17::conjunction<
+  static std17::conjunction<
     std::is_same<typename core::farg_data_type<FArgs>::type, T>...>
   test_f_(const std::tuple<std::pair<ref<bool>, FArgs>...>&);
   static std::false_type test_f_(...);
@@ -56,7 +56,7 @@ public:
 template <typename T, typename... Trs, std::size_t... Is>
 ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
-  const dataflow::std14::index_sequence<Is...>& seq,
+  const std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   dtime t0,
   const core::enable_if_any_t<
@@ -102,7 +102,7 @@ ref<T> make_state_machine(
 template <typename T, typename... Trs, std::size_t... Is>
 ref<T> make_state_machine(
   const std::tuple<Trs...>& transitions,
-  const dataflow::std14::index_sequence<Is...>& seq,
+  const std14::index_sequence<Is...>& seq,
   const ref<T>& initial,
   dtime t0,
   const core::enable_if_none_t<

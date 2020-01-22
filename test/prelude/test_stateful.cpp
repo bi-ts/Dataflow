@@ -35,33 +35,17 @@ BOOST_AUTO_TEST_SUITE(test_stateful)
 using good_sm_definition_function_types = boost::mpl::list<
   std::function<std::tuple<std::pair<ref<bool>, int>>(ref<int>)>,
   std::function<std::tuple<std::pair<ref<bool>, ref<int>>>(ref<int>)>,
-  std::function<std::tuple<std::pair<ref<bool>, val<int>>>(ref<int>)>,
-  std::function<std::tuple<std::pair<ref<bool>, var<int>>>(ref<int>)>,
   std::function<
     std::tuple<std::pair<ref<bool>, std::function<ref<int>(dtime)>>>(ref<int>)>,
   std::function<
-    std::tuple<std::pair<ref<bool>, std::function<val<int>(dtime)>>>(ref<int>)>,
-  std::function<
-    std::tuple<std::pair<ref<bool>, std::function<var<int>(dtime)>>>(ref<int>)>,
-  std::function<
     std::tuple<std::pair<ref<bool>, int>,
                std::pair<ref<bool>, ref<int>>,
-               std::pair<ref<bool>, val<int>>,
-               std::pair<ref<bool>, var<int>>,
-               std::pair<ref<bool>, std::function<ref<int>(dtime)>>,
-               std::pair<ref<bool>, std::function<val<int>(dtime)>>,
-               std::pair<ref<bool>, std::function<var<int>(dtime)>>>(ref<int>)>,
+               std::pair<ref<bool>, std::function<ref<int>(dtime)>>>(ref<int>)>,
   std::tuple<std::pair<ref<bool>, int>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, ref<int>>> (*)(ref<int>),
-  std::tuple<std::pair<ref<bool>, val<int>>> (*)(ref<int>),
-  std::tuple<std::pair<ref<bool>, var<int>>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, int>,
              std::pair<ref<bool>, ref<int>>,
-             std::pair<ref<bool>, val<int>>,
-             std::pair<ref<bool>, var<int>>,
-             std::pair<ref<bool>, ref<int> (*)(dtime)>,
-             std::pair<ref<bool>, val<int> (*)(dtime)>,
-             std::pair<ref<bool>, var<int> (*)(dtime)>> (*)(ref<int>)>;
+             std::pair<ref<bool>, ref<int> (*)(dtime)>> (*)(ref<int>)>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_sm_definition_function,
                               T,
@@ -95,7 +79,6 @@ using bad_sm_definition_function_types = boost::mpl::list<
   std::tuple<std::pair<ref<bool>, char>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, ref<char>>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, ref<int>>> (*)(ref<char>),
-  std::tuple<std::pair<ref<char>, var<int>>> (*)(ref<int>),
   std::tuple<std::pair<ref<bool>, ref<int>>,
              std::pair<ref<bool>, ref<char>>> (*)(ref<int>),
   int,
