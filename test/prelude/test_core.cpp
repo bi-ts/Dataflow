@@ -530,6 +530,20 @@ BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, "other text");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Var_copy_constructor, test_core_fixture)
+{
+  auto x = Var<int>();
+
+  auto y = x;
+
+  auto z = std::move(x);
+
+  BOOST_CHECK_EQUAL((std::is_convertible<var<int>&, var<int>>::value), true);
+  BOOST_CHECK_EQUAL((std::is_convertible<var<int>&&, var<int>>::value), true);
+  BOOST_CHECK_EQUAL((std::is_convertible<const var<int>&, var<int>>::value),
+                    false);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Main_ref_arg, test_core_fixture)
 {
   const var<int> x = Var<int>(6);

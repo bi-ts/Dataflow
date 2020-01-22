@@ -148,8 +148,13 @@ protected:
 template <typename T> class var final : public core::var_base<T>
 {
 public:
-  var(core::var_base<T> base)
-  : core::var_base<T>(std::move(base))
+  var(core::var_base<T> other)
+  : core::var_base<T>(std::move(other))
+  {
+  }
+
+  var(var& other)
+  : core::var_base<T>(other)
   {
   }
 

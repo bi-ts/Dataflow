@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -336,6 +336,12 @@ template <typename T> var<list<T>>& var<list<T>>::operator=(const list<T>& v)
 template <typename T>
 var<list<T>>::var(core::var_base<list<T>> base)
 : core::var_base<list<T>>(std::move(base))
+{
+}
+
+template <typename T>
+var<list<T>>::var(var<list<T>>& other)
+: core::var_base<list<T>>(other)
 {
 }
 

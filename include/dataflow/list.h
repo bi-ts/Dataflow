@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -187,6 +187,8 @@ template <typename T> class var<list<T>> final : public core::var_base<list<T>>
 {
 public:
   var(core::var_base<list<T>> base);
+
+  var(var<list<T>>& other);
 
   var& operator=(const list<T>& v);
 
