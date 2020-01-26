@@ -291,6 +291,18 @@ struct data_type
 
 template <typename T> using data_type_t = typename data_type<T>::type;
 
+template <typename T, typename... Ts>
+using data_type_tag = std::conditional<
+  std17::disjunction<core::is_ref<T>,
+                     core::is_aggregate_data_type<T>,
+                     core::is_ref<Ts>...,
+                     core::is_aggregate_data_type<Ts>...>::value,
+  core::aggregate_base,
+  core::composite_base>;
+
+template <typename T, typename... Ts>
+using data_type_tag_t = typename data_type_tag<T, Ts...>::type;
+
 namespace detail
 {
 template <typename T> struct init_function_type

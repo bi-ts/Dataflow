@@ -32,14 +32,7 @@ namespace dataflow
 /// \{
 
 template <typename T, typename... Ts>
-class tuple final
-: public std::conditional<
-    std17::disjunction<core::is_ref<T>,
-                       core::is_aggregate_data_type<T>,
-                       core::is_ref<Ts>...,
-                       core::is_aggregate_data_type<Ts>...>::value,
-    core::aggregate_base,
-    core::composite_base>::type
+class tuple final : public core::data_type_tag_t<T, Ts...>
 {
 private:
   using data = std::tuple<T, Ts...>;
