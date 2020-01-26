@@ -53,6 +53,7 @@ add_dataflow_test_project(prelude
 add_dataflow_test_project(introspect)
 add_dataflow_test_project(io)
 add_dataflow_test_project(maybe)
+add_dataflow_test_project(macro)
 add_dataflow_test_project(pair)
 add_dataflow_test_project(string)
 add_dataflow_test_project(tuple)
