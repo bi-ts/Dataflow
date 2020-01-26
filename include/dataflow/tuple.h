@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -80,10 +80,11 @@ template <typename Arg, typename... Args>
 ref<tuple<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
 TupleC(const Arg& x, const Args&... xs);
 
-template <std::size_t I, typename... Us>
-ref<core::argument_data_type_t<
-  typename std::tuple_element<I, std::tuple<Us...>>::type>>
-Get(const ref<tuple<Us...>>& x);
+template <std::size_t I,
+          typename... Us,
+          typename E = typename std::tuple_element<I, std::tuple<Us...>>::type,
+          typename T = core::argument_data_type_t<E>>
+ref<T> Get(const ref<tuple<Us...>>& x);
 
 template <typename A, typename... Args>
 ref<core::argument_data_type_t<A>> First(const ref<tuple<A, Args...>>& x);

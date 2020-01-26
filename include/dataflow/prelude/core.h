@@ -598,21 +598,21 @@ template <
     std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftPuller(const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = data_type_t<decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>,
-          typename = enable_if_aggregate_data_type_t<X>>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = argument_data_type_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T>
 LiftSelector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
-template <typename Policy,
-          typename X,
-          typename... Xs,
-          typename T = data_type_t<decltype(std::declval<Policy>().calculate(
-            std::declval<X>(), std::declval<Xs>()...))>,
-          typename = enable_if_aggregate_data_type_t<X>>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = argument_data_type_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 
 template <

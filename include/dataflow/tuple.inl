@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -80,52 +80,6 @@ bool compare_tuples(const tuple<Us...>& lhs,
                     const std14::index_sequence<Is...>&)
 {
   return compare_pairs(std::make_pair(get<Is>(lhs), get<Is>(rhs))...);
-}
-
-template <std::size_t I,
-          typename... Us,
-          typename T = typename std::tuple_element<I, std::tuple<Us...>>::type>
-ref<typename std::enable_if<!core::is_ref<T>::value, T>::type>
-tuple_get_element(const ref<tuple<Us...>>& x)
-{
-  struct policy
-  {
-    static std::string label()
-    {
-      std::stringstream ss;
-      ss << "get<" << I << ">";
-      return ss.str();
-    }
-    static T calculate(const tuple<Us...>& v)
-    {
-      return get<I>(v);
-    };
-  };
-
-  return core::Lift<policy>(x);
-}
-
-template <std::size_t I,
-          typename... Us,
-          typename T = typename std::tuple_element<I, std::tuple<Us...>>::type>
-typename std::enable_if<core::is_ref<T>::value, T>::type
-tuple_get_element(const ref<tuple<Us...>>& x)
-{
-  struct policy
-  {
-    static std::string label()
-    {
-      std::stringstream ss;
-      ss << "get<" << I << ">";
-      return ss.str();
-    }
-    static T calculate(const tuple<Us...>& v)
-    {
-      return get<I>(v);
-    }
-  };
-
-  return core::LiftSelector<policy>(x);
 }
 
 template <typename T>
@@ -244,12 +198,24 @@ dataflow::TupleC(const Arg& x, const Args&... xs)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(xs)...);
 }
 
-template <std::size_t I, typename... Us>
-dataflow::ref<dataflow::core::argument_data_type_t<
-  typename std::tuple_element<I, std::tuple<Us...>>::type>>
-dataflow::Get(const ref<tuple<Us...>>& x)
+template <std::size_t I, typename... Us, typename E, typename T>
+dataflow::ref<T> dataflow::Get(const ref<tuple<Us...>>& x)
 {
-  return detail::tuple_get_element<I>(x);
+  struct policy
+  {
+    static std::string label()
+    {
+      std::stringstream ss;
+      ss << "get<" << I << ">";
+      return ss.str();
+    }
+    static E calculate(const tuple<Us...>& v)
+    {
+      return get<I>(v);
+    };
+  };
+
+  return core::LiftSelector<policy>(x);
 }
 
 template <typename A, typename... Args>

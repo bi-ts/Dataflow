@@ -338,11 +338,23 @@ dataflow::ref<T> dataflow::core::LiftPuller(const ref<X>& x,
   return LiftPuller<Policy>(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T, typename>
-dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
-                                              const ref<X>& x,
-                                              const ref<Xs>&... xs)
+namespace dataflow
 {
+namespace core
+{
+namespace detail
+{
+template <typename Policy,
+          typename X,
+          typename... Xs,
+          typename T = data_type_t<decltype(std::declval<Policy>().calculate(
+            std::declval<X>(), std::declval<Xs>()...))>>
+ref<T>
+lift_selector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs)
+{
+  static_assert(is_aggregate_data_type<X>::value,
+                "An aggregate type is required for the selector");
+
   return ref_base<T>(
     internal::node_selector<T, X, Policy>::create(
       internal::node_selector_activator<Policy, X, Xs...>::create(
@@ -351,7 +363,30 @@ dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
     internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T, typename>
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
+ref<typename std::enable_if<!core::is_ref<T>::value, T>::type>
+lift_selector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs)
+{
+  return Lift(policy, x, xs...);
+}
+}
+}
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
+                                              const ref<X>& x,
+                                              const ref<Xs>&... xs)
+{
+  return detail::lift_selector(policy, x, xs...);
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
 dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
                                               const ref<Xs>&... xs)
 {
