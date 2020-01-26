@@ -167,17 +167,16 @@ dataflow::get(const tuple<Us...>& t)
 }
 
 template <typename Arg, typename... Args>
-dataflow::ref<
-  dataflow::tuple<dataflow::ref<dataflow::core::argument_data_type_t<Arg>>,
-                  dataflow::ref<dataflow::core::argument_data_type_t<Args>>...>>
+dataflow::ref<dataflow::tupleA<dataflow::core::argument_data_type_t<Arg>,
+                               dataflow::core::argument_data_type_t<Args>...>>
 dataflow::TupleA(const Arg& x, const Args&... xs)
 {
   return Const(make_tupleB(core::make_argument(x), core::make_argument(xs)...));
 }
 
 template <typename Arg, typename... Args>
-dataflow::ref<dataflow::tuple<dataflow::core::argument_data_type_t<Arg>,
-                              dataflow::core::argument_data_type_t<Args>...>>
+dataflow::ref<dataflow::tupleC<dataflow::core::argument_data_type_t<Arg>,
+                               dataflow::core::argument_data_type_t<Args>...>>
 dataflow::TupleC(const Arg& x, const Args&... xs)
 {
   struct policy

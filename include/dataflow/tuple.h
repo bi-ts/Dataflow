@@ -60,6 +60,14 @@ private:
   std::shared_ptr<data> p_data_;
 };
 
+template <typename T, typename... Ts> using tupleA = tuple<ref<T>, ref<Ts>...>;
+
+template <typename T, typename... Ts>
+using tupleC = typename std::enable_if<
+  std17::conjunction<std17::negation<core::is_ref<T>>,
+                     std17::negation<core::is_ref<Ts>>...>::value,
+  tuple<T, Ts...>>::type;
+
 template <typename... Ts>
 std::ostream& operator<<(std::ostream& out, const tuple<Ts...>& value);
 
@@ -72,12 +80,13 @@ typename std::tuple_element<I, std::tuple<Us...>>::type
 get(const tuple<Us...>& t);
 
 template <typename Arg, typename... Args>
-ref<tuple<ref<core::argument_data_type_t<Arg>>,
-          ref<core::argument_data_type_t<Args>>...>>
+ref<
+  tupleA<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
 TupleA(const Arg& x, const Args&... xs);
 
 template <typename Arg, typename... Args>
-ref<tuple<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
+ref<
+  tupleC<core::argument_data_type_t<Arg>, core::argument_data_type_t<Args>...>>
 TupleC(const Arg& x, const Args&... xs);
 
 template <std::size_t I,
