@@ -19,6 +19,7 @@
 #include "../../tools/graph_invariant.h"
 
 #include <dataflow/introspect.h>
+#include <dataflow/macro.h>
 #include <dataflow/prelude.h>
 #include <dataflow/tuple.h>
 
@@ -101,6 +102,44 @@ private:
 };
 }
 
+DATAFLOW_DATA(dnd_state, (mode, Mode), (point, CirclePos));
+
+ref<dnd_state> Idle(const arg<point>& circle_pos)
+{
+  // TODO: Add a data constructor in DATAFLOW_DATA() and use it here
+  struct policy
+  {
+    static std::string label()
+    {
+      return "dnd_state-idle";
+    }
+    static dnd_state calculate(const point& circle_pos)
+    {
+      return dnd_state(mode::idle, circle_pos);
+    };
+  };
+
+  return core::Lift<policy>(circle_pos);
+}
+
+ref<dnd_state> Active(const arg<point>& circle_pos)
+{
+  // TODO: Add a data constructor in DATAFLOW_DATA() and use it here
+  struct policy
+  {
+    static std::string label()
+    {
+      return "dnd_state-active";
+    }
+    static dnd_state calculate(const point& circle_pos)
+    {
+      return dnd_state(mode::active, circle_pos);
+    };
+  };
+
+  return core::Lift<policy>(circle_pos);
+}
+
 ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
                                     const arg<int>& radius,
                                     const arg<point>& mouse_pos,
@@ -112,24 +151,23 @@ ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
     mouse_pressed - Prev(mouse_pressed(t0), mouse_pressed, t0);
 
   const auto s = StateMachine(
-    TupleC(mode::idle, initial_circle_pos),
-    [=](const ref<tuple<mode, point>>& sp) {
-      auto prev_mode = First(sp);
-      auto circle_pos = Second(sp);
+    Idle(initial_circle_pos),
+    [=](const ref<dnd_state>& sp) {
+      auto prev_mode = Mode(sp);
+      auto prev_circle_pos = CirclePos(sp);
 
-      return Transitions(
-        On(prev_mode == mode::idle && mouse_down == 1 &&
-             Distance(mouse_pos, circle_pos) < radius,
-           [=](dtime t0) {
-             const auto mouse_shift = mouse_pos - mouse_pos(t0);
-             return TupleC(mode::active, circle_pos(t0) + mouse_shift);
-           }),
-        On(prev_mode == mode::active && mouse_down == -1,
-           TupleC(mode::idle, circle_pos)));
+      return Transitions(On(prev_mode == mode::idle && mouse_down == 1 &&
+                              Distance(mouse_pos, prev_circle_pos) < radius,
+                            [=](dtime t0) {
+                              return Active(prev_circle_pos(t0) +
+                                            (mouse_pos - mouse_pos(t0)));
+                            }),
+                         On(prev_mode == mode::active && mouse_down == -1,
+                            Idle(prev_circle_pos)));
     },
     t0);
 
-  return Second(s);
+  return CirclePos(s);
 }
 
 BOOST_AUTO_TEST_SUITE(test_integration_state_machine)
