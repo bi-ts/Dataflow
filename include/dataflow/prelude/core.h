@@ -600,6 +600,22 @@ template <
   typename... Xs,
   typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
     std::declval<X>(), std::declval<Xs>()...))>>
+ref<T> LiftUpdater(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
+
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
+ref<T> LiftUpdater(const ref<X>& x, const ref<Xs>&... xs);
+
+template <
+  typename Policy,
+  typename X,
+  typename... Xs,
+  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
+    std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftPuller(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
 
 template <

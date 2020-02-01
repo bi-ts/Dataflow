@@ -1054,6 +1054,113 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, "other-text/BBBBBB/111%");
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Lift_updater_binary_func, test_core_fixture)
+{
+  var<char> x = Var<char>('A');
+  var<int> y = Var<int>(4);
+
+  class data
+  {
+  public:
+    explicit data(char c, int offset)
+    : original_(c)
+    , shifted_(static_cast<char>(c + offset))
+    , update_count_(0)
+    {
+    }
+
+    char original() const
+    {
+      return original_;
+    }
+
+    char shifted() const
+    {
+      return shifted_;
+    }
+
+    char shift(int offset)
+    {
+      ++update_count_;
+
+      return shifted_ = static_cast<char>(original_ + offset);
+    }
+
+    int update_count() const
+    {
+      return update_count_;
+    }
+
+  private:
+    char original_;
+    char shifted_;
+    int update_count_;
+  };
+
+  struct policy
+  {
+    // Make sure that default-constructible and move-constructible policy is
+    // enough for an updater
+    policy() = default;
+    policy(const policy&) = delete;
+    policy(policy&&) = default;
+
+    static std::string label()
+    {
+      return "shift_update";
+    }
+
+    static std::shared_ptr<data> calculate(char c, int offset)
+    {
+      return std::make_shared<data>(c, offset);
+    }
+
+    static std::shared_ptr<data>
+    update(const std::shared_ptr<data>& value, char c, int offset)
+    {
+      if (value->original() != c)
+        return calculate(c, offset);
+
+      value->shift(offset);
+
+      return value;
+    }
+  };
+
+  const auto z = core::LiftUpdater<policy>(x, y);
+  const auto a = Main(z);
+
+  BOOST_CHECK_EQUAL(introspect::label(z), "shift_update");
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL((*a)->shifted(), 'E');
+  BOOST_CHECK_EQUAL((*a)->update_count(), 0);
+
+  y = 2;
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL((*a)->shifted(), 'C');
+  BOOST_CHECK_EQUAL((*a)->update_count(), 1);
+
+  y = 3;
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL((*a)->shifted(), 'D');
+  BOOST_CHECK_EQUAL((*a)->update_count(), 2);
+
+  x = 'C';
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL((*a)->shifted(), 'F');
+  BOOST_CHECK_EQUAL((*a)->update_count(), 0);
+
+  y = 2;
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL((*a)->shifted(), 'E');
+  BOOST_CHECK_EQUAL((*a)->update_count(), 1);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
                         test_core_fixture)
 {

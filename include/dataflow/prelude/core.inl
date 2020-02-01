@@ -37,6 +37,7 @@
 #include "core/internal/node_snapshot_activator.h"
 #include "core/internal/node_state.h"
 #include "core/internal/node_state_prev.h"
+#include "core/internal/node_updater_n_ary.h"
 #include "core/internal/node_var.h"
 
 #include <sstream>
@@ -319,6 +320,23 @@ template <typename Policy, typename X, typename... Xs, typename T>
 dataflow::ref<T> dataflow::core::Lift(const ref<X>& x, const ref<Xs>&... xs)
 {
   return Lift<Policy>(Policy(), x, xs...);
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftUpdater(Policy policy,
+                                             const ref<X>& x,
+                                             const ref<Xs>&... xs)
+{
+  return ref_base<T>(internal::node_updater_n_ary<Policy, T, X, Xs...>::create(
+                       std::move(policy), false, x, xs...),
+                     internal::ref::ctor_guard);
+}
+
+template <typename Policy, typename X, typename... Xs, typename T>
+dataflow::ref<T> dataflow::core::LiftUpdater(const ref<X>& x,
+                                             const ref<Xs>&... xs)
+{
+  return LiftUpdater(Policy(), x, xs...);
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
