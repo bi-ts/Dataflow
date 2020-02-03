@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -88,6 +88,13 @@ protected:
   {
   }
 
+  ~node_t()
+  {
+    // If this condition fails, make sure that `perform_deactivation_()` method
+    // is called in the derived classes that override `deactivate_(id)` method.
+    DATAFLOW___CHECK_CONDITION_DEBUG(value_ == T{});
+  }
+
   update_status set_value_(const T& v)
   {
     if (value_ == v)
@@ -98,10 +105,20 @@ protected:
     return update_status::updated;
   }
 
+  void perform_deactivation_()
+  {
+    value_ = T{};
+  }
+
 private:
   virtual std::string to_string_() const override final
   {
     return detail::node_value_to_string(value_);
+  }
+
+  virtual void deactivate_(node_id id) override
+  {
+    perform_deactivation_();
   }
 
 private:

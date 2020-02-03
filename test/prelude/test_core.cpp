@@ -1127,38 +1127,56 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_updater_binary_func, test_core_fixture)
     }
   };
 
+  std::vector<std::shared_ptr<data>> ptrs;
+
   const auto z = core::LiftUpdater<policy>(x, y);
-  const auto a = Main(z);
 
-  BOOST_CHECK_EQUAL(introspect::label(z), "shift_update");
+  {
+    const auto a = Main(z);
 
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL((*a)->shifted(), 'E');
-  BOOST_CHECK_EQUAL((*a)->update_count(), 0);
+    BOOST_CHECK_EQUAL(introspect::label(z), "shift_update");
 
-  y = 2;
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL((*a)->shifted(), 'E');
+    BOOST_CHECK_EQUAL((*a)->update_count(), 0);
 
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL((*a)->shifted(), 'C');
-  BOOST_CHECK_EQUAL((*a)->update_count(), 1);
+    ptrs.push_back(*a);
 
-  y = 3;
+    y = 2;
 
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL((*a)->shifted(), 'D');
-  BOOST_CHECK_EQUAL((*a)->update_count(), 2);
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL((*a)->shifted(), 'C');
+    BOOST_CHECK_EQUAL((*a)->update_count(), 1);
+    BOOST_CHECK_EQUAL(*a, ptrs.back());
 
-  x = 'C';
+    y = 3;
 
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL((*a)->shifted(), 'F');
-  BOOST_CHECK_EQUAL((*a)->update_count(), 0);
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL((*a)->shifted(), 'D');
+    BOOST_CHECK_EQUAL((*a)->update_count(), 2);
+    BOOST_CHECK_EQUAL(*a, ptrs.back());
 
-  y = 2;
+    x = 'C';
 
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL((*a)->shifted(), 'E');
-  BOOST_CHECK_EQUAL((*a)->update_count(), 1);
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL((*a)->shifted(), 'F');
+    BOOST_CHECK_EQUAL((*a)->update_count(), 0);
+    BOOST_CHECK_NE(*a, ptrs.back());
+
+    ptrs.push_back(*a);
+
+    y = 2;
+
+    BOOST_CHECK(graph_invariant_holds());
+    BOOST_CHECK_EQUAL((*a)->shifted(), 'E');
+    BOOST_CHECK_EQUAL((*a)->update_count(), 1);
+    BOOST_CHECK_EQUAL(*a, ptrs.back());
+  }
+
+  for (const auto& ptr : ptrs)
+  {
+    BOOST_CHECK_EQUAL(ptr.use_count(), 1);
+  }
 }
 
 BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,

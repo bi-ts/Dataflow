@@ -121,8 +121,9 @@ tuple<T, Ts...>::tuple(const T& t, const Ts&... ts)
 template <typename T, typename... Ts>
 bool tuple<T, Ts...>::operator==(const tuple& other) const
 {
-  return detail::compare_tuples(
-    *this, other, std14::make_index_sequence<sizeof...(Ts) + 1>());
+  return p_data_ == other.p_data_ ||
+         detail::compare_tuples(
+           *this, other, std14::make_index_sequence<sizeof...(Ts) + 1>());
 }
 
 template <typename T, typename... Ts>

@@ -231,20 +231,20 @@ BOOST_FIXTURE_TEST_CASE(test_num_active_changed_updated_nodes,
   //    |     |
   // ,-(*)-.  |
   // |     |  |
-  // `-----*--'
+  // `-----+--'
   //       |
   //       x
 
   auto x = Var(1);
 
-  const auto y = Main((x * x - x + 5));
+  const auto y = Main(x * x - x + 5);
 
   BOOST_CHECK_EQUAL(*y, 5);
   BOOST_CHECK_EQUAL(introspect::num_vertices(), 7);
   BOOST_CHECK_EQUAL(introspect::num_active_nodes(), 6);
 
   // TODO: should be 6 (all but const)?
-  BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 4);
+  BOOST_CHECK_EQUAL(introspect::num_changed_nodes(), 5);
 
   BOOST_CHECK_EQUAL(introspect::num_updated_nodes(), 6);
 

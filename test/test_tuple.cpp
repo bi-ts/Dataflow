@@ -235,5 +235,15 @@ BOOST_AUTO_TEST_CASE(test_Tuple_inequality_comparison_minimal_tuple)
   BOOST_CHECK_EQUAL(*f, true);
 }
 
+BOOST_AUTO_TEST_CASE(test_tupleA_def_initialized_eq_comparison)
+{
+  Engine engine;
+
+  const tuple<ref<int>> a;
+  const tuple<ref<int>> b;
+
+  BOOST_CHECK_EQUAL(a, b);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test

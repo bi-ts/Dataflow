@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -147,8 +147,10 @@ template <typename T> T maybe<T>::value_or(const T& def) const
 
 template <typename T> bool maybe<T>::operator==(const maybe& other) const
 {
-  return engaged() == other.engaged() &&
-         data_.storage_.value_ == other.data_.storage_.value_;
+  if (engaged() != other.engaged())
+    return false;
+
+  return !engaged() || data_.storage_.value_ == other.data_.storage_.value_;
 }
 
 template <typename T> bool maybe<T>::operator!=(const maybe& other) const

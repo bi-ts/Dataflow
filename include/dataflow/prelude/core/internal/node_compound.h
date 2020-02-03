@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -70,6 +70,8 @@ private:
   virtual void deactivate_(node_id id) override
   {
     deactivate_node_compound(id);
+
+    node_t<T>::perform_deactivation_();
   }
 
   virtual std::string label_() const override

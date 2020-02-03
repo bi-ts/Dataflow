@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -51,7 +51,7 @@ public:
 
 private:
   explicit node_var(const T& v)
-  : node_t<T>(v)
+  : node_t<T>(T{})
   , next_value_(v)
   {
   }

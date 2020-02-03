@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -43,6 +43,11 @@ private:
   explicit node_const(const T& v)
   : node_t<T>(v)
   {
+  }
+
+  ~node_const()
+  {
+    node_t<T>::perform_deactivation_();
   }
 
   virtual update_status update_(node_id id,

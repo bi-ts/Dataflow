@@ -520,5 +520,15 @@ BOOST_AUTO_TEST_CASE(test_maybeE_copy_assignment_not_relocatable)
   BOOST_CHECK_EQUAL(ee.value_or(22), 11);
 }
 
+BOOST_AUTO_TEST_CASE(test_maybeA_def_initialized_eq_comparison)
+{
+  Engine engine;
+
+  const maybe<ref<int>> a;
+  const maybe<ref<int>> b;
+
+  BOOST_CHECK_EQUAL(a, b);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 } // dataflow_test
