@@ -62,7 +62,10 @@ class DATAFLOW___EXPORT Engine
 {
 public:
   Engine();
-  ~Engine();
+  virtual ~Engine();
+
+protected:
+  static Engine* engine_();
 };
 
 namespace core

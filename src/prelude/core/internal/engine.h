@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -53,10 +53,12 @@ public:
   engine(const engine&) = delete;
   engine& operator=(const engine&) = delete;
 
-  static void start();
+  static void start(void* p_data);
   static void stop();
 
   static engine& instance();
+
+  void* data() const;
 
   bool is_logical_dependency(edge_descriptor e) const;
   bool is_primary_data_dependency(edge_descriptor e) const;
@@ -120,7 +122,7 @@ public:
   update_node_state_prev(vertex_descriptor v, bool initialized);
 
 private:
-  explicit engine();
+  explicit engine(void* p_data);
   ~engine() noexcept;
 
   edge_descriptor out_edge_at_(vertex_descriptor v, std::size_t idx) const;
@@ -160,6 +162,7 @@ private:
 
 private:
   allocator_type allocator_;
+  void* p_data_;
   dependency_graph graph_;
   topological_list order_;
   pumpa pumpa_;

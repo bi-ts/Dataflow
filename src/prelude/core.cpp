@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -26,12 +26,17 @@ namespace dataflow
 {
 Engine::Engine()
 {
-  internal::engine::start();
+  internal::engine::start(this);
 }
 
 Engine::~Engine()
 {
   internal::engine::stop();
+}
+
+Engine* Engine::engine_()
+{
+  return static_cast<Engine*>(internal::engine::instance().data());
 }
 
 void sig::emit() const

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -56,6 +56,11 @@ inline engine& engine::instance()
   CHECK_PRECONDITION(gp_engine_ != nullptr);
 
   return *gp_engine_;
+}
+
+inline void* engine::data() const
+{
+  return p_data_;
 }
 
 inline bool engine::is_logical_dependency(edge_descriptor e) const
