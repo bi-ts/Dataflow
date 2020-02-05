@@ -34,9 +34,12 @@ class Context : public QObject
   Q_OBJECT
 
 public:
-  Context(dataflow::var<int> lmb_pressed, dataflow::var<QPointF> mouse_pos)
+  Context(dataflow::var<int> lmb_pressed,
+          dataflow::var<QPointF> mouse_pos,
+          const QPointF& circle_pos)
   : lmb_pressed(std::move(lmb_pressed))
   , mouse_pos(std::move(mouse_pos))
+  , circle_pos_(circle_pos)
   {
   }
 

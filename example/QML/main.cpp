@@ -36,70 +36,44 @@
 
 using namespace dataflow;
 
-ref<std::shared_ptr<QObject>> CreateOutput(const ref<QPointF>& circle_pos,
-                                           var<int> lmb_pressed,
-                                           var<QPointF> mouse_pos)
+ref<std::shared_ptr<Context>> CreateContext(const ref<QPointF>& circle_pos,
+                                            var<int> lmb_pressed,
+                                            var<QPointF> mouse_pos)
 {
-  const auto p_output = std::make_shared<Context>(lmb_pressed, mouse_pos);
-
   class policy
   {
   public:
-    policy(const std::shared_ptr<Context>& p_output)
-    : p_output_(p_output)
+    policy(var<int> lmb_pressed, var<QPointF> mouse_pos)
+    : lmb_pressed_(std::move(lmb_pressed))
+    , mouse_pos_(std::move(mouse_pos))
     {
     }
 
     std::string label() const
     {
-      return "set-context-property";
+      return "create-context";
     }
 
-    std::shared_ptr<QObject> calculate(const QPointF& pos) const
+    std::shared_ptr<Context> calculate(const QPointF& circle_pos)
     {
-      p_output_->setCirclePos(pos);
-      return p_output_;
+      return std::make_shared<Context>(lmb_pressed_, mouse_pos_, circle_pos);
     };
 
-  private:
-    const std::shared_ptr<Context> p_output_;
-  };
-
-  return Lift(policy(p_output), circle_pos);
-}
-
-ref<std::shared_ptr<QObject>>
-SetContextProperty(QQmlContext* p_context,
-                   const std::string& name,
-                   const ref<std::shared_ptr<QObject>>& value)
-{
-  class policy
-  {
-  public:
-    policy(QQmlContext* p_context, const std::string& name)
-    : p_context_(p_context)
-    , name_(QString::fromUtf8(name.c_str()))
+    std::shared_ptr<Context> update(const std::shared_ptr<Context>& p_context,
+                                    const QPointF& circle_pos)
     {
+      p_context->setCirclePos(circle_pos);
+
+      return p_context;
     }
 
-    std::string label() const
-    {
-      return "set-context-property";
-    }
-
-    std::shared_ptr<QObject>
-    calculate(const std::shared_ptr<QObject>& p_object) const
-    {
-      p_context_->setContextProperty(name_, p_object.get());
-      return p_object;
-    };
-
   private:
-    QQmlContext* p_context_;
-    const QString name_;
+    var<int> lmb_pressed_;
+    var<QPointF> mouse_pos_;
   };
 
-  return Lift(policy(p_context, name), value);
+  return LiftUpdater(policy(std::move(lmb_pressed), std::move(mouse_pos)),
+                     circle_pos);
 }
 
 enum class mode
@@ -177,40 +151,89 @@ ref<QPointF> AdjustableCirclePosition(const arg<QPointF>& initial_circle_pos,
   return Second(s);
 }
 
+class EngineQml : public Engine
+{
+public:
+  static EngineQml& instance()
+  {
+    if (!Engine::engine_())
+      throw std::logic_error("No Engine instance available");
+
+    return *static_cast<EngineQml*>(Engine::engine_());
+  }
+
+  QQmlEngine& GetQmlEngine()
+  {
+    return qml_engine_;
+  }
+
+private:
+  QQmlEngine qml_engine_;
+};
+
+ref<std::shared_ptr<QObject>>
+QmlComponent(const arg<std::string>& qml_url,
+             const arg<std::shared_ptr<Context>>& context)
+{
+  using component_data = tupleC<std::shared_ptr<QQmlComponent>,
+                                std::shared_ptr<QQmlContext>,
+                                std::shared_ptr<QObject>>;
+
+  class policy
+  {
+  public:
+    std::string label() const
+    {
+      return "qml-component";
+    }
+
+    component_data calculate(const std::string& qml_url,
+                             const std::shared_ptr<Context>& p_context)
+    {
+      const auto& p_qml_component = std::make_shared<QQmlComponent>(
+        &EngineQml::instance().GetQmlEngine(),
+        QUrl(QString::fromUtf8(qml_url.c_str())));
+
+      if (p_qml_component->isError())
+      {
+        std::cout << "Error loading QML file: "
+                  << p_qml_component->errorString().toStdString();
+        throw std::runtime_error("Can't create qml component");
+      }
+
+      const auto& p_qml_context = std::make_shared<QQmlContext>(
+        EngineQml::instance().GetQmlEngine().rootContext());
+
+      p_qml_context->setContextProperty("context", p_context.get());
+
+      const auto& p_object =
+        std::shared_ptr<QObject>(p_qml_component->create(p_qml_context.get()));
+
+      return component_data(p_qml_component, p_qml_context, p_object);
+    };
+  };
+
+  return Third(core::Lift<policy>(qml_url, context));
+}
+
 int main(int argc, char* p_argv[])
 {
   QApplication app(argc, p_argv);
 
-  QQmlEngine qml_engine;
+  EngineQml engine;
 
-  Engine engine;
+  // TODO: make sure `Main()` is called only once
+  const auto m = Main([](dtime t0) {
+    auto mouse_pos = Var<QPointF>();
+    auto lmb_pressed = Var<int>();
 
-  auto mouse_pos = Var<QPointF>();
-  auto lmb_pressed = Var<int>();
-
-  auto x = Main([&](dtime t0) {
-    return AdjustableCirclePosition(
+    const auto circle_pos = AdjustableCirclePosition(
       QPointF(100, 100), 50.0, mouse_pos, lmb_pressed, t0);
+
+    const auto context = CreateContext(circle_pos, lmb_pressed, mouse_pos);
+
+    return QmlComponent("qrc:/main.qml", context);
   });
-
-  QQmlContext context(qml_engine.rootContext());
-
-  const auto p_context = &context;
-
-  const auto output = CreateOutput(x, lmb_pressed, mouse_pos);
-
-  const auto m = Main(SetContextProperty(p_context, "context", output));
-
-  QQmlComponent qml_component(&qml_engine, QUrl("qrc:/main.qml"));
-
-  if (qml_component.isError())
-  {
-    std::cout << "Error loading QML file: "
-              << qml_component.errorString().toStdString();
-    return -1;
-  }
-
-  std::unique_ptr<QObject> p_component(qml_component.create(p_context));
 
   return app.exec();
 }
