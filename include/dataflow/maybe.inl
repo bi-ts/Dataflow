@@ -223,7 +223,7 @@ std::ostream& dataflow::operator<<(std::ostream& out, const maybe<T>& value)
 }
 
 template <typename T>
-dataflow::ref<dataflow::maybe<T>> dataflow::JustE(const ref<T>& x)
+dataflow::ref<dataflow::maybeC<T>> dataflow::JustC(const ref<T>& x)
 {
   struct policy
   {
@@ -276,7 +276,7 @@ template <typename T> dataflow::ref<dataflow::maybe<T>> dataflow::Nothing()
 }
 
 template <typename T>
-dataflow::ref<dataflow::maybe<dataflow::ref<T>>> dataflow::Just(const ref<T>& x)
+dataflow::ref<dataflow::maybeA<T>> dataflow::JustA(const ref<T>& x)
 {
   return Const<maybe<ref<T>>>(x);
 }

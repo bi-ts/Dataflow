@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -80,6 +80,11 @@ private:
   data data_;
 };
 
+template <typename T> using maybeA = maybe<ref<T>>;
+
+template <typename T>
+using maybeC = typename std::enable_if<!core::is_ref<T>::value, maybe<T>>::type;
+
 template <typename T> maybe<T> just(const T& x)
 {
   return maybe<T>{x};
@@ -93,7 +98,7 @@ inline nothing_t nothing()
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const maybe<T>& value);
 
-template <typename T> ref<maybe<T>> JustE(const ref<T>& x);
+template <typename T> ref<maybeC<T>> JustC(const ref<T>& x);
 
 template <typename T,
           typename U,
@@ -104,7 +109,7 @@ template <typename T> ref<T> FromMaybe(const ref<maybe<T>>& x);
 
 template <typename T> ref<maybe<T>> Nothing();
 
-template <typename T> ref<maybe<ref<T>>> Just(const ref<T>& x);
+template <typename T> ref<maybeA<T>> JustA(const ref<T>& x);
 template <typename T,
           typename U,
           typename = core::enable_for_argument_data_type_t<U, T>>

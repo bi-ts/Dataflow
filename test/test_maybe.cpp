@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Just_to_string)
   Engine engine;
 
   const auto x = Var(11);
-  const auto y = Just(x);
+  const auto y = JustA(x);
   const auto f = Main(y);
 
   std::stringstream ss;
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_to_string)
   Engine engine;
 
   auto x = Var(11);
-  const auto y = JustE(x);
+  const auto y = JustC(x);
   const auto f = Main(y);
 
   BOOST_CHECK_EQUAL(introspect::value(y), "just(11)");
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(test_maybe_Just_FromMaybe)
   Engine engine;
 
   auto x = Var(11);
-  const auto y = Just(x);
+  const auto y = JustA(x);
   const auto z = FromMaybe(y);
   const auto f = Main(z);
 
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(test_maybeE_Just_FromMaybe)
   Engine engine;
 
   auto x = Var(11);
-  const auto y = JustE(x);
+  const auto y = JustC(x);
   const auto z = FromMaybe(y);
   const auto f = Main(z);
 
