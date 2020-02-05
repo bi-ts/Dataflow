@@ -16,8 +16,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/introspect.h>
 #include <dataflow/maybe.h>
+
+#include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>
 
@@ -528,6 +529,30 @@ BOOST_AUTO_TEST_CASE(test_maybeA_def_initialized_eq_comparison)
   const maybe<ref<int>> b;
 
   BOOST_CHECK_EQUAL(a, b);
+}
+
+BOOST_AUTO_TEST_CASE(test_maybeC_def_initialized_eq_comparison)
+{
+  Engine engine;
+
+  const maybe<int> a;
+  const maybe<int> b;
+
+  BOOST_CHECK_EQUAL(a, b);
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_maybeC_def_initialized_eq_comparison)
+{
+  // Regression test for uninitialized memory comparison.
+  // Two `maybeC` objects should be default-initialized:
+  // - one - on the stack,
+  // - another one - on the heap.
+  Engine engine;
+
+  const auto a = maybe<int>();
+  const auto p_b = std::make_shared<maybe<int>>();
+
+  BOOST_CHECK_EQUAL(a, *p_b);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
