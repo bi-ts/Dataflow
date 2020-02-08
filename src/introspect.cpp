@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -420,9 +420,6 @@ std::string introspect::value(dependency_graph::vertex_descriptor v)
 bool introspect::activator_node(dependency_graph::vertex_descriptor v)
 {
   const auto& l = label(v);
-
-  if (l == "state-prev")
-    return true;
 
   // TODO: make this function independent on the label.
   const auto& ending = std::string("-activator");

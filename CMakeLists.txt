@@ -76,8 +76,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core/internal/node_since_activator.h
   include/dataflow/prelude/core/internal/node_snapshot.h
   include/dataflow/prelude/core/internal/node_snapshot_activator.h
-  include/dataflow/prelude/core/internal/node_state.h
-  include/dataflow/prelude/core/internal/node_state_prev.h
+  include/dataflow/prelude/core/internal/node_recursion.h
+  include/dataflow/prelude/core/internal/node_recursion_activator.h
   include/dataflow/prelude/core/internal/node_t.h
   include/dataflow/prelude/core/internal/node_var.h
   include/dataflow/prelude/core/internal/nodes_factory.h
@@ -118,8 +118,8 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/core/internal/node_signal.cpp
   src/prelude/core/internal/node_since_activator.cpp
   src/prelude/core/internal/node_snapshot_activator.cpp
-  src/prelude/core/internal/node_state.cpp
-  src/prelude/core/internal/node_state_prev.cpp
+  src/prelude/core/internal/node_recursion.cpp
+  src/prelude/core/internal/node_recursion_activator.cpp
   src/prelude/core/internal/node_time.h
   src/prelude/core/internal/nodes_factory.cpp
   src/prelude/core/internal/pumpa.cpp

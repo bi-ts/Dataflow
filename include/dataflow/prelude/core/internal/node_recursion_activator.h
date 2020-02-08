@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -24,33 +24,31 @@
 #include "nodes_factory.h"
 #include "ref.h"
 
-#include <array>
+#include <tuple>
+#include <utility>
 
 namespace dataflow
 {
 namespace internal
 {
-DATAFLOW___EXPORT void update_node_state(node_id id);
+DATAFLOW___EXPORT
+std::pair<const node*, update_status>
+update_node_recursion_activator(node_id id, bool initialized);
 
-template <typename T> class node_state final : public node_t<T>
+template <typename T> class node_recursion_activator final : public node_t<T>
 {
   friend class nodes_factory;
 
 public:
-  static ref create(const ref& sp, const ref& s0, const ref& s)
+  static ref create()
   {
-    DATAFLOW___CHECK_PRECONDITION(sp.template is_of_type<T>());
-    DATAFLOW___CHECK_PRECONDITION(s0.template is_of_type<T>());
-    DATAFLOW___CHECK_PRECONDITION(s.template is_of_type<T>());
-
-    const std::array<node_id, 3> args = {{sp.id(), s0.id(), s.id()}};
-
-    return nodes_factory::create_conditional<node_state<T>>(
-      &args[0], args.size(), node_flags::eager);
+    return nodes_factory::create<node_recursion_activator<T>>(
+      nullptr, 0, node_flags::none);
   }
 
 private:
-  explicit node_state()
+  explicit node_recursion_activator()
+  : node_t<T>()
   {
   }
 
@@ -59,20 +57,22 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    DATAFLOW___CHECK_PRECONDITION(p_args != nullptr);
-    DATAFLOW___CHECK_PRECONDITION(args_count == 2);
+    const node* p_state = nullptr;
+    update_status status = update_status::nothing;
 
-    const auto status = this->set_value_(extract_node_value<T>(p_args[1]));
+    std::tie(p_state, status) =
+      update_node_recursion_activator(id, initialized);
 
-    if (status != update_status::nothing)
-      update_node_state(id);
+    DATAFLOW___CHECK_CONDITION(p_state != nullptr);
+
+    status |= this->set_value_(extract_node_value<T>(p_state));
 
     return status;
   }
 
   virtual std::string label_() const override
   {
-    return "state";
+    return "recursion-activator";
   }
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const override final
@@ -80,5 +80,6 @@ private:
     return std::make_pair(sizeof(*this), alignof(decltype(*this)));
   }
 };
+
 } // internal
 } // dataflow

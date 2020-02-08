@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -16,14 +16,14 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/prelude/core/internal/node_state.h>
+#include <dataflow/prelude/core/internal/node_recursion.h>
 
 #include "engine.h"
 
 namespace dataflow
 {
-void internal::update_node_state(node_id id)
+void internal::update_node_recursion(node_id id)
 {
-  engine::instance().update_node_state(converter::convert(id));
+  engine::instance().update_node_recursion(converter::convert(id));
 }
 } // dataflow

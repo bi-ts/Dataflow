@@ -321,7 +321,7 @@ update_status engine::update_node_since_activator(vertex_descriptor v,
   return update_status::nothing;
 }
 
-void engine::update_node_state(vertex_descriptor v)
+void engine::update_node_recursion(vertex_descriptor v)
 {
   CHECK_PRECONDITION(is_active_node(v));
   CHECK_PRECONDITION(out_degree(v, graph_) == 4);
@@ -334,7 +334,7 @@ void engine::update_node_state(vertex_descriptor v)
 }
 
 std::pair<const node*, update_status>
-engine::update_node_state_prev(vertex_descriptor v, bool initialized)
+engine::update_node_recursion_activator(vertex_descriptor v, bool initialized)
 {
   const auto u = main_consumer_(v);
 

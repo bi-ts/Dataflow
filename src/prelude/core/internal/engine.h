@@ -116,10 +116,10 @@ public:
                                             bool initialized,
                                             std::size_t ti);
 
-  void update_node_state(vertex_descriptor v);
+  void update_node_recursion(vertex_descriptor v);
 
   std::pair<const node*, update_status>
-  update_node_state_prev(vertex_descriptor v, bool initialized);
+  update_node_recursion_activator(vertex_descriptor v, bool initialized);
 
 private:
   explicit engine(void* p_data);

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -16,16 +16,16 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/prelude/core/internal/node_state_prev.h>
+#include <dataflow/prelude/core/internal/node_recursion_activator.h>
 
 #include "engine.h"
 
 namespace dataflow
 {
 std::pair<const internal::node*, internal::update_status>
-internal::update_node_state_prev(node_id id, bool initialized)
+internal::update_node_recursion_activator(node_id id, bool initialized)
 {
-  return engine::instance().update_node_state_prev(converter::convert(id),
-                                                   initialized);
+  return engine::instance().update_node_recursion_activator(
+    converter::convert(id), initialized);
 }
 } // dataflow

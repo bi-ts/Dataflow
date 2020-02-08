@@ -29,14 +29,14 @@
 #include "core/internal/node_n_ary.h"
 #include "core/internal/node_patcher_n_ary.h"
 #include "core/internal/node_previous.h"
+#include "core/internal/node_recursion.h"
+#include "core/internal/node_recursion_activator.h"
 #include "core/internal/node_selector.h"
 #include "core/internal/node_selector_activator.h"
 #include "core/internal/node_since.h"
 #include "core/internal/node_since_activator.h"
 #include "core/internal/node_snapshot.h"
 #include "core/internal/node_snapshot_activator.h"
-#include "core/internal/node_state.h"
-#include "core/internal/node_state_prev.h"
 #include "core/internal/node_updater_n_ary.h"
 #include "core/internal/node_var.h"
 
@@ -561,13 +561,13 @@ dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, dtime t0)
     }
   };
 
-  const ref<T> sp = core::ref_base<T>(internal::node_state_prev<T>::create(),
-                                      internal::ref::ctor_guard);
+  const ref<T> sp = core::ref_base<T>(
+    internal::node_recursion_activator<T>::create(), internal::ref::ctor_guard);
 
   const auto s = helper::init(tf(sp));
 
   return core::ref_base<T>(
-    internal::node_state<T>::create(sp, core::make_argument(s0), s),
+    internal::node_recursion<T>::create(sp, core::make_argument(s0), s),
     internal::ref::ctor_guard);
 }
 
