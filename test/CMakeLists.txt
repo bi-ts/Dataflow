@@ -70,3 +70,8 @@ add_dataflow_test_project(integration
   integration/conditional/test_conditional.cpp
   integration/state_machine/test_state_machine.cpp
 )
+
+add_dataflow_test_project(qt)
+
+target_link_libraries(test_qt PRIVATE dataflow-qt)
+

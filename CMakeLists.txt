@@ -139,16 +139,32 @@ target_link_libraries(${PROJECT_NAME} dst immer)
 generate_export_header(${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-)
-
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${Boost_INCLUDE_DIRS}
+)
+
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOMOC ON)
+
+find_package(Qt5 COMPONENTS Core Qml Quick Widgets REQUIRED)
+
+add_library(dataflow-qt SHARED
+  include/dataflow/qt.h
+  include/dataflow/qt.inl
+  src/qt.cpp
+)
+
+generate_export_header(dataflow-qt)
+
+target_include_directories(dataflow-qt PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 add_subdirectory(example)
