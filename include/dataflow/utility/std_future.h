@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -46,6 +46,12 @@ using make_index_sequence = typename detail::index_sequence_builder<N>::type;
 
 template <bool B, class T, class F>
 using conditional_t = typename std::conditional<B, T, F>::type;
+
+template <typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 }
 
 namespace std17
