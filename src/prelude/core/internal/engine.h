@@ -58,7 +58,7 @@ public:
 
   static engine& instance();
 
-  void* data() const;
+  static void* data();
 
   bool is_logical_dependency(edge_descriptor e) const;
   bool is_primary_data_dependency(edge_descriptor e) const;

@@ -23,16 +23,32 @@
 
 #include "dataflow-qt_export.h"
 
+#include <dataflow/prelude/core.h>
+
+#include <QtCore/QCoreApplication>
+#include <QtCore/QObject>
+#include <QtQml/QQmlEngine>
+
 namespace dataflow
 {
-namespace qt
-{
+
 /// \defgroup qt
 /// \{
 
-DATAFLOW_QT_EXPORT bool test();
+class DATAFLOW_QT_EXPORT EngineQml : public Engine
+{
+public:
+  explicit EngineQml(const QCoreApplication& app);
+
+  static EngineQml& instance();
+
+  QQmlEngine& GetQmlEngine();
+
+private:
+  QQmlEngine qml_engine_;
+};
+
 /// \}
-} // qt
 } // dataflow
 
 #include "qt.inl"

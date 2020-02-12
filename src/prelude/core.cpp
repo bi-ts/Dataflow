@@ -36,7 +36,7 @@ Engine::~Engine()
 
 Engine* Engine::engine_()
 {
-  return static_cast<Engine*>(internal::engine::instance().data());
+  return static_cast<Engine*>(internal::engine::data());
 }
 
 void sig::emit() const

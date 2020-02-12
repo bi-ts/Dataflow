@@ -58,9 +58,12 @@ inline engine& engine::instance()
   return *gp_engine_;
 }
 
-inline void* engine::data() const
+inline void* engine::data()
 {
-  return p_data_;
+  if (gp_engine_ != nullptr)
+    return gp_engine_->p_data_;
+
+  return nullptr;
 }
 
 inline bool engine::is_logical_dependency(edge_descriptor e) const

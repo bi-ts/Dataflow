@@ -18,20 +18,22 @@
 
 #include <dataflow/qt.h>
 
-#include <dataflow/introspect.h>
-
 #include <boost/test/unit_test.hpp>
-
-using namespace dataflow;
 
 namespace dataflow_test
 {
-
 BOOST_AUTO_TEST_SUITE(test_qt)
 
-BOOST_AUTO_TEST_CASE(test_dummy)
+BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_no_engine)
 {
-  BOOST_CHECK(dataflow::qt::test());
+  BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_wrong_engine_type)
+{
+  dataflow::Engine engine;
+
+  BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

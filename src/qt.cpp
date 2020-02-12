@@ -18,9 +18,25 @@
 
 #include <dataflow/qt.h>
 
-bool dataflow::qt::test()
+namespace dataflow
 {
-  return true;
+EngineQml::EngineQml(const QCoreApplication& app)
+{
 }
 
-#include <dataflow/qt.h>
+EngineQml& EngineQml::instance()
+{
+  if (!Engine::engine_())
+    throw std::logic_error("No Engine instance available");
+
+  if (!dynamic_cast<EngineQml*>(Engine::engine_()))
+    throw std::logic_error("The engine is not EngineQml");
+
+  return *static_cast<EngineQml*>(Engine::engine_());
+}
+
+QQmlEngine& EngineQml::GetQmlEngine()
+{
+  return qml_engine_;
+}
+}

@@ -167,6 +167,12 @@ target_include_directories(dataflow-qt PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+target_link_libraries(dataflow-qt
+  dataflow++
+  Qt5::Core
+  Qt5::Qml
+)
+
 add_subdirectory(example)
 add_subdirectory(test)
 add_subdirectory(benchmark)
