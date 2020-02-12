@@ -156,7 +156,11 @@ find_package(Qt5 COMPONENTS Core Qml Quick Widgets REQUIRED)
 add_library(dataflow-qt SHARED
   include/dataflow/qt.h
   include/dataflow/qt.inl
+  include/dataflow/qt/internal/context_builder.h
   src/qt.cpp
+  src/qt/internal/context_builder.cpp
+  src/qt/internal/context_builder_impl.cpp
+  src/qt/internal/context_builder_impl.h
 )
 
 generate_export_header(dataflow-qt)

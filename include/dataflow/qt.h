@@ -29,6 +29,12 @@
 #include <QtCore/QObject>
 #include <QtQml/QQmlEngine>
 
+#include <functional>
+#include <memory>
+#include <string>
+#include <tuple>
+#include <utility>
+
 namespace dataflow
 {
 
@@ -47,6 +53,27 @@ public:
 private:
   QQmlEngine qml_engine_;
 };
+
+namespace qt
+{
+template <typename... Ts>
+std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>
+RW(const std::pair<std::string, std::reference_wrapper<var<Ts>>>&... props);
+
+template <typename T>
+std::pair<std::string, std::reference_wrapper<var<T>>>
+QmlPropertyRW(const std::string& name, var<T>& x);
+
+template <typename T>
+std::pair<std::string, ref<T>> QmlProperty(const std::string& name,
+                                           const ref<T>& x);
+
+template <typename... Ts, typename... Us>
+ref<std::shared_ptr<QObject>> QmlContext(
+  const std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>&
+    rw_props,
+  const std::pair<std::string, ref<Us>>&... props);
+}
 
 /// \}
 } // dataflow

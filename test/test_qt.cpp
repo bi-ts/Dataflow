@@ -18,10 +18,21 @@
 
 #include <dataflow/qt.h>
 
+#include <dataflow/prelude.h>
+
+#include <dataflow/introspect.h>
+
 #include <boost/test/unit_test.hpp>
 
 namespace dataflow_test
 {
+namespace
+{
+char app_name[] = "test_qt";
+char* g_argv[] = {app_name, nullptr};
+int g_argc = static_cast<int>((sizeof(g_argv) / sizeof(g_argv[0])) - 1);
+}
+
 BOOST_AUTO_TEST_SUITE(test_qt)
 
 BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_no_engine)
@@ -34,6 +45,40 @@ BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_wrong_engine_type)
   dataflow::Engine engine;
 
   BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);
+}
+
+BOOST_AUTO_TEST_CASE(test_QmlContext)
+{
+  QCoreApplication app(g_argc, g_argv);
+
+  dataflow::EngineQml engine(app);
+
+  auto x = dataflow::Var(1);
+  auto y = dataflow::Var("str");
+  auto z = dataflow::Var(3.14f);
+
+  const auto a = x * 2;
+  const auto b = y + "-" + y;
+  const auto c = z * 2.0f;
+
+  const auto context = dataflow::qt::QmlContext(
+    dataflow::qt::RW(dataflow::qt::QmlPropertyRW("x", x),
+                     dataflow::qt::QmlPropertyRW("y", y),
+                     dataflow::qt::QmlPropertyRW("z", z)),
+    dataflow::qt::QmlProperty("a", a),
+    dataflow::qt::QmlProperty("b", b),
+    dataflow::qt::QmlProperty("c", c));
+
+  const auto m = Main(context);
+
+  BOOST_CHECK(*m != nullptr);
+
+  BOOST_CHECK((*m)->property("x").isValid());
+  BOOST_CHECK((*m)->property("y").isValid());
+  BOOST_CHECK((*m)->property("z").isValid());
+  BOOST_CHECK((*m)->property("a").isValid());
+  BOOST_CHECK((*m)->property("b").isValid());
+  BOOST_CHECK((*m)->property("c").isValid());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
