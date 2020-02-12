@@ -79,6 +79,10 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   BOOST_CHECK((*m)->property("a").isValid());
   BOOST_CHECK((*m)->property("b").isValid());
   BOOST_CHECK((*m)->property("c").isValid());
+
+  BOOST_CHECK((*m)->property("x") == 1);
+  BOOST_CHECK((*m)->property("y") == "str");
+  // BOOST_CHECK((*m)->property("z") == 3.14f);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

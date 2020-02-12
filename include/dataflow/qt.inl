@@ -84,6 +84,18 @@ struct add_property
 
   internal::context_builder& builder;
 };
+
+struct set_property
+{
+  template <typename T> void operator()(const T& def) const
+  {
+    p_object->setProperty(
+      def.first.c_str(),
+      QVariant::fromValue(detail::to_qml_basic(*(def.second.get()))));
+  }
+
+  std::shared_ptr<QObject> p_object;
+};
 }
 }
 
@@ -114,15 +126,17 @@ ref<std::shared_ptr<QObject>> qt::QmlContext(
     rw_props,
   const std::pair<std::string, ref<Us>>&... props)
 {
-  using all_defs_type =
-    std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...,
-               std::pair<std::string, ref<Ts>>...>;
+  using rw_props_definition_type =
+    std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>;
+  using props_definition_type = std::tuple<std::pair<std::string, ref<Ts>>...>;
 
   class policy
   {
   public:
-    policy(const all_defs_type& defs)
-    : defs_(defs)
+    policy(const rw_props_definition_type& rw_props,
+           const props_definition_type& props)
+    : rw_props_(rw_props)
+    , props_(props)
     {
     }
 
@@ -135,9 +149,15 @@ ref<std::shared_ptr<QObject>> qt::QmlContext(
     {
       internal::context_builder builder;
 
-      detail::for_each_tuple_element(defs_, detail::add_property{builder});
+      detail::for_each_tuple_element(std::tuple_cat(rw_props_, props_),
+                                     detail::add_property{builder});
 
-      return builder.build();
+      const auto p_context = builder.build();
+
+      detail::for_each_tuple_element(rw_props_,
+                                     detail::set_property{p_context});
+
+      return p_context;
     };
 
     std::shared_ptr<QObject> update(const std::shared_ptr<QObject>& p_context,
@@ -147,11 +167,11 @@ ref<std::shared_ptr<QObject>> qt::QmlContext(
     }
 
   private:
-    all_defs_type defs_;
+    rw_props_definition_type rw_props_;
+    props_definition_type props_;
   };
 
-  return core::LiftUpdater(
-    policy(std::tuple_cat(rw_props, std::make_tuple(props...))),
-    props.second...);
+  return core::LiftUpdater(policy(rw_props, std::make_tuple(props...)),
+                           props.second...);
 }
 } // dataflow
