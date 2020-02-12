@@ -21,6 +21,7 @@
 
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
+#include <dataflow/qt.h>
 #include <dataflow/tuple.h>
 
 #include <QtCore/QObject>
@@ -151,26 +152,6 @@ ref<QPointF> AdjustableCirclePosition(const arg<QPointF>& initial_circle_pos,
   return Second(s);
 }
 
-class EngineQml : public Engine
-{
-public:
-  static EngineQml& instance()
-  {
-    if (!Engine::engine_())
-      throw std::logic_error("No Engine instance available");
-
-    return *static_cast<EngineQml*>(Engine::engine_());
-  }
-
-  QQmlEngine& GetQmlEngine()
-  {
-    return qml_engine_;
-  }
-
-private:
-  QQmlEngine qml_engine_;
-};
-
 ref<std::shared_ptr<QObject>>
 QmlComponent(const arg<std::string>& qml_url,
              const arg<std::shared_ptr<Context>>& context)
@@ -220,7 +201,7 @@ int main(int argc, char* p_argv[])
 {
   QApplication app(argc, p_argv);
 
-  EngineQml engine;
+  EngineQml engine(app);
 
   // TODO: make sure `Main()` is called only once
   const auto m = Main([](dtime t0) {
