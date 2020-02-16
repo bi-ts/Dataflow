@@ -35,7 +35,11 @@ public:
   context_builder_impl();
   ~context_builder_impl();
 
-  void add(const std::string& name, const QVariant& initial_value);
+  void add_property(const std::string& name, const QVariant& initial_value);
+
+  void add_property(const std::string& name,
+                    const QVariant& initial_value,
+                    const std::function<void(const QVariant&)>& change_handler);
 
   std::shared_ptr<QObject> build();
 

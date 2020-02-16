@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   auto y = dataflow::Var("str");
   auto z = dataflow::Var(3.14f);
 
-  const auto a = x * 2;
+  const auto a = x * 3;
   const auto b = y + "-" + y;
   const auto c = z * 2.0f;
 
@@ -80,9 +80,42 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   BOOST_CHECK((*m)->property("b").isValid());
   BOOST_CHECK((*m)->property("c").isValid());
 
-  BOOST_CHECK((*m)->property("x") == 1);
-  BOOST_CHECK((*m)->property("y") == "str");
-  // BOOST_CHECK((*m)->property("z") == 3.14f);
+  BOOST_CHECK_EQUAL((*m)->property("x").toInt(), 1);
+  BOOST_CHECK_EQUAL((*m)->property("y").toString().toStdString(), "str");
+  BOOST_CHECK_EQUAL((*m)->property("z").toFloat(), 3.14f);
+  BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 3);
+  BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "str-str");
+  BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 6.28f);
+
+  x = 3;
+
+  BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 9);
+  BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "str-str");
+  BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 6.28f);
+
+  y = "abc";
+
+  BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 9);
+  BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "abc-abc");
+  BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 6.28f);
+
+  z = 2.17f;
+
+  BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 9);
+  BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "abc-abc");
+  BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 4.34f);
+
+  (*m)->setProperty("x", 4);
+
+  BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 12);
+
+  (*m)->setProperty("y", "123");
+
+  BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "123-123");
+
+  (*m)->setProperty("z", 4.14f);
+
+  BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 8.28f);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

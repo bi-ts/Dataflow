@@ -47,7 +47,7 @@ int to_qml_basic(int v)
   return v;
 }
 
-int to_qml_basic(float v)
+float to_qml_basic(float v)
 {
   return v;
 }
@@ -56,6 +56,32 @@ QString to_qml_basic(std::string v)
 {
   return QString::fromUtf8(v.c_str());
 }
+
+template <typename T> struct from_qml_type;
+
+template <> struct from_qml_type<int>
+{
+  static int convert(const QVariant& v)
+  {
+    return v.toInt();
+  }
+};
+
+template <> struct from_qml_type<float>
+{
+  static float convert(const QVariant& v)
+  {
+    return v.toFloat();
+  }
+};
+
+template <> struct from_qml_type<std::string>
+{
+  static std::string convert(const QVariant& v)
+  {
+    return v.toString().toStdString();
+  }
+};
 
 template <std::size_t I = 0, typename F, typename... Ts>
 typename std::enable_if<I == sizeof...(Ts)>::type
@@ -72,11 +98,31 @@ for_each_tuple_element(const std::tuple<Ts...>& t, const F& f)
   for_each_tuple_element<I + 1>(t, f);
 }
 
+struct add_rw_property
+{
+  template <typename T>
+  void operator()(
+    const std::pair<std::string, std::reference_wrapper<var<T>>>& def) const
+  {
+    const auto p_x = std::make_shared<var<T>>(def.second.get());
+
+    builder.add_property(
+      def.first,
+      QVariant::fromValue(detail::to_qml_basic(
+        detail::qml_prop_definition_data_type_t<decltype(def.second)>())),
+      [p_x](const QVariant& value) mutable {
+        *p_x = from_qml_type<T>::convert(value);
+      });
+  }
+
+  internal::context_builder& builder;
+};
+
 struct add_property
 {
   template <typename T> void operator()(const T& def) const
   {
-    builder.add(
+    builder.add_property(
       def.first,
       QVariant::fromValue(detail::to_qml_basic(
         detail::qml_prop_definition_data_type_t<decltype(def.second)>())));
@@ -96,6 +142,27 @@ struct set_property
 
   std::shared_ptr<QObject> p_object;
 };
+
+template <typename... Ts, std::size_t... Is>
+std::shared_ptr<QObject>
+set_properties(const std::shared_ptr<QObject>& p_context,
+               const std::tuple<std::pair<std::string, ref<Ts>>...>& props,
+               const std14::index_sequence<Is...>&,
+               const Ts&... values)
+{
+  const auto values_tuple = std::make_tuple(values...);
+
+  const std::vector<std::pair<std::string, QVariant>> name_value_pairs = {
+    std::make_pair(std::get<Is>(props).first,
+                   QVariant(to_qml_basic(std::get<Is>(values_tuple))))...};
+
+  for (const auto& name_value : name_value_pairs)
+  {
+    p_context->setProperty(name_value.first.c_str(), name_value.second);
+  }
+
+  return p_context;
+}
 }
 }
 
@@ -145,24 +212,44 @@ ref<std::shared_ptr<QObject>> qt::QmlContext(
       return "create-context";
     }
 
-    std::shared_ptr<QObject> calculate(const Us&...)
+    std::shared_ptr<QObject> calculate(const Us&... values)
     {
       internal::context_builder builder;
 
-      detail::for_each_tuple_element(std::tuple_cat(rw_props_, props_),
-                                     detail::add_property{builder});
+      detail::for_each_tuple_element(rw_props_,
+                                     detail::add_rw_property{builder});
+
+      detail::for_each_tuple_element(props_, detail::add_property{builder});
 
       const auto p_context = builder.build();
 
+      p_context->blockSignals(true);
+
       detail::for_each_tuple_element(rw_props_,
                                      detail::set_property{p_context});
+
+      detail::set_properties(p_context,
+                             props_,
+                             std14::make_index_sequence<sizeof...(Us)>(),
+                             values...);
+
+      p_context->blockSignals(false);
 
       return p_context;
     };
 
     std::shared_ptr<QObject> update(const std::shared_ptr<QObject>& p_context,
-                                    const Us&...)
+                                    const Us&... values)
     {
+      p_context->blockSignals(true);
+
+      detail::set_properties(p_context,
+                             props_,
+                             std14::make_index_sequence<sizeof...(Us)>(),
+                             values...);
+
+      p_context->blockSignals(false);
+
       return p_context;
     }
 

@@ -35,10 +35,26 @@ context_builder_impl::~context_builder_impl()
 {
 }
 
-void context_builder_impl::add(const std::string& name,
-                               const QVariant& initial_value)
+void context_builder_impl::add_property(const std::string& name,
+                                        const QVariant& initial_value)
 {
   p_context_->insert(QString::fromUtf8(name.c_str()), initial_value);
+}
+
+void context_builder_impl::add_property(
+  const std::string& name,
+  const QVariant& initial_value,
+  const std::function<void(const QVariant&)>& change_handler)
+{
+  add_property(name, initial_value);
+
+  p_context_->connect(
+    p_context_.get(),
+    &QQmlPropertyMap::valueChanged,
+    [name, change_handler](const QString& n, const QVariant& value) {
+      if (n == QString::fromUtf8(name.c_str()))
+        change_handler(value);
+    });
 }
 
 std::shared_ptr<QObject> context_builder_impl::build()

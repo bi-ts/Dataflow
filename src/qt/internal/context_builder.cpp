@@ -35,10 +35,18 @@ context_builder::~context_builder()
 {
 }
 
-void context_builder::add(const std::string& name,
-                          const QVariant& initial_value)
+void context_builder::add_property(const std::string& name,
+                                   const QVariant& initial_value)
 {
-  p_impl_->add(name, initial_value);
+  p_impl_->add_property(name, initial_value);
+}
+
+void context_builder::add_property(
+  const std::string& name,
+  const QVariant& initial_value,
+  const std::function<void(const QVariant&)>& change_handler)
+{
+  p_impl_->add_property(name, initial_value, change_handler);
 }
 
 std::shared_ptr<QObject> context_builder::build()
