@@ -13,16 +13,16 @@ ApplicationWindow {
     anchors.fill: parent
     hoverEnabled: true
 
-    onPositionChanged: {
-      context.mousePos = Qt.point(mouse.x, mouse.y)
+    Binding {
+      target: context;
+      property: "leftMouseButtonPressed";
+      value: mouse.pressed;
     }
-
-    onPressed: {
-      context.leftMouseButtonPressed = true;
-    }
-
-    onReleased: {
-      context.leftMouseButtonPressed = false;
+    
+    Binding {
+      target: context;
+      property: "mousePos";
+      value: Qt.point(mouse.mouseX, mouse.mouseY);
     }
   }
 
