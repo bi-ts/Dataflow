@@ -50,6 +50,7 @@ add_dataflow_test_project(prelude
   prelude/test_stateful.cpp
 )
 
+add_dataflow_test_project(geometry)
 add_dataflow_test_project(introspect)
 add_dataflow_test_project(io)
 add_dataflow_test_project(maybe)

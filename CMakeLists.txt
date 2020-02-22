@@ -36,6 +36,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 endif()
 
 add_library(${PROJECT_NAME} SHARED
+  include/dataflow/geometry.h
+  include/dataflow/geometry.inl
   include/dataflow/introspect.h
   include/dataflow/introspect.inl
   include/dataflow/io.h
@@ -95,7 +97,7 @@ add_library(${PROJECT_NAME} SHARED
 
   include/dataflow/utility/std_future.h
 
-
+  src/geometry.cpp
   src/introspect.cpp
   src/io.cpp
   src/list.cpp
