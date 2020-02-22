@@ -18,6 +18,7 @@
 
 #include "../../tools/graph_invariant.h"
 
+#include <dataflow/geometry.h>
 #include <dataflow/introspect.h>
 #include <dataflow/macro.h>
 #include <dataflow/prelude.h>
@@ -44,62 +45,7 @@ std::ostream& operator<<(std::ostream& out, mode value)
   return out;
 }
 
-class point
-{
-public:
-  explicit point(int x = 0, int y = 0)
-  : x_(x)
-  , y_(y)
-  {
-  }
-
-  bool operator==(const point& other) const
-  {
-    return x_ == other.x_ && y_ == other.y_;
-  }
-
-  bool operator!=(const point& other) const
-  {
-    return !(*this == other);
-  }
-
-  point operator-(const point& other) const
-  {
-    return point(x_ - other.x_, y_ - other.y_);
-  }
-
-  point operator+(const point& other) const
-  {
-    return point(x_ + other.x_, y_ + other.y_);
-  }
-
-  friend std::ostream& operator<<(std::ostream& out, const point& value)
-  {
-    out << "point (" << value.x_ << "; " << value.y_ << ")";
-    return out;
-  }
-
-  friend ref<int> Distance(const ref<point>& a, const ref<point>& b)
-  {
-    struct policy
-    {
-      static std::string label()
-      {
-        return "distance";
-      }
-      int calculate(const point& a, const point& b)
-      {
-        const point v = a - b;
-        return std::sqrt(v.x_ * v.x_ + v.y_ * v.y_);
-      }
-    };
-    return core::Lift<policy>(a, b);
-  }
-
-private:
-  int x_;
-  int y_;
-};
+using point = vec2<int>;
 }
 
 DATAFLOW_DATA(dnd_state, (mode, Mode), (point, CirclePos));
@@ -156,14 +102,14 @@ ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
       auto prev_mode = Mode(sp);
       auto prev_circle_pos = CirclePos(sp);
 
-      return Transitions(On(prev_mode == mode::idle && mouse_down == 1 &&
-                              Distance(mouse_pos, prev_circle_pos) < radius,
-                            [=](dtime t0) {
-                              return Active(prev_circle_pos(t0) +
-                                            (mouse_pos - mouse_pos(t0)));
-                            }),
-                         On(prev_mode == mode::active && mouse_down == -1,
-                            Idle(prev_circle_pos)));
+      return Transitions(
+        On(prev_mode == mode::idle && mouse_down == 1 &&
+             SquaredNorm(mouse_pos - prev_circle_pos) < radius * radius,
+           [=](dtime t0) {
+             return Active(prev_circle_pos(t0) + (mouse_pos - mouse_pos(t0)));
+           }),
+        On(prev_mode == mode::active && mouse_down == -1,
+           Idle(prev_circle_pos)));
     },
     t0);
 
