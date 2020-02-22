@@ -45,10 +45,10 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/list.h
   include/dataflow/list.inl
   include/dataflow/list/internal/list_diff.h
-  include/dataflow/maybe.h
-  include/dataflow/maybe.inl
   include/dataflow/macro.h
   include/dataflow/macro.inl
+  include/dataflow/maybe.h
+  include/dataflow/maybe.inl
   include/dataflow/pair.h
   include/dataflow/pair.inl
   include/dataflow/prelude.h
@@ -71,6 +71,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core/internal/node_n_ary.h
   include/dataflow/prelude/core/internal/node_patcher_n_ary.h
   include/dataflow/prelude/core/internal/node_previous.h
+  include/dataflow/prelude/core/internal/node_recursion.h
+  include/dataflow/prelude/core/internal/node_recursion_activator.h
   include/dataflow/prelude/core/internal/node_selector.h
   include/dataflow/prelude/core/internal/node_selector_activator.h
   include/dataflow/prelude/core/internal/node_signal.h
@@ -78,8 +80,6 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core/internal/node_since_activator.h
   include/dataflow/prelude/core/internal/node_snapshot.h
   include/dataflow/prelude/core/internal/node_snapshot_activator.h
-  include/dataflow/prelude/core/internal/node_recursion.h
-  include/dataflow/prelude/core/internal/node_recursion_activator.h
   include/dataflow/prelude/core/internal/node_t.h
   include/dataflow/prelude/core/internal/node_var.h
   include/dataflow/prelude/core/internal/nodes_factory.h
@@ -94,7 +94,6 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/string.inl
   include/dataflow/tuple.h
   include/dataflow/tuple.inl
-
   include/dataflow/utility/std_future.h
 
   src/geometry.cpp
@@ -116,12 +115,12 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/core/internal/node.cpp
   src/prelude/core/internal/node_compound.cpp
   src/prelude/core/internal/node_if_activator.cpp
+  src/prelude/core/internal/node_recursion.cpp
+  src/prelude/core/internal/node_recursion_activator.cpp
   src/prelude/core/internal/node_selector_activator.cpp
   src/prelude/core/internal/node_signal.cpp
   src/prelude/core/internal/node_since_activator.cpp
   src/prelude/core/internal/node_snapshot_activator.cpp
-  src/prelude/core/internal/node_recursion.cpp
-  src/prelude/core/internal/node_recursion_activator.cpp
   src/prelude/core/internal/node_time.h
   src/prelude/core/internal/nodes_factory.cpp
   src/prelude/core/internal/pumpa.cpp
