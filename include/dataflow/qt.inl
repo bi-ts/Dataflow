@@ -21,6 +21,7 @@
 #endif
 
 #include "qt/internal/context_builder.h"
+#include "qt/internal/conversion.h"
 
 namespace dataflow
 {
@@ -41,47 +42,6 @@ struct qml_prop_definition_data_type<std::reference_wrapper<T>>
 template <typename T>
 using qml_prop_definition_data_type_t =
   typename qml_prop_definition_data_type<T>::type;
-
-int to_qml_basic(int v)
-{
-  return v;
-}
-
-float to_qml_basic(float v)
-{
-  return v;
-}
-
-QString to_qml_basic(std::string v)
-{
-  return QString::fromUtf8(v.c_str());
-}
-
-template <typename T> struct from_qml_type;
-
-template <> struct from_qml_type<int>
-{
-  static int convert(const QVariant& v)
-  {
-    return v.toInt();
-  }
-};
-
-template <> struct from_qml_type<float>
-{
-  static float convert(const QVariant& v)
-  {
-    return v.toFloat();
-  }
-};
-
-template <> struct from_qml_type<std::string>
-{
-  static std::string convert(const QVariant& v)
-  {
-    return v.toString().toStdString();
-  }
-};
 
 template <std::size_t I = 0, typename F, typename... Ts>
 typename std::enable_if<I == sizeof...(Ts)>::type
@@ -108,10 +68,10 @@ struct add_rw_property
 
     builder.add_property(
       def.first,
-      QVariant::fromValue(detail::to_qml_basic(
-        detail::qml_prop_definition_data_type_t<decltype(def.second)>())),
+      internal::convert_to_qml_type(
+        detail::qml_prop_definition_data_type_t<decltype(def.second)>()),
       [p_x](const QVariant& value) mutable {
-        *p_x = from_qml_type<T>::convert(value);
+        *p_x = internal::convert_from_qml_type<T>(value);
       });
   }
 
@@ -124,8 +84,8 @@ struct add_property
   {
     builder.add_property(
       def.first,
-      QVariant::fromValue(detail::to_qml_basic(
-        detail::qml_prop_definition_data_type_t<decltype(def.second)>())));
+      internal::convert_to_qml_type(
+        detail::qml_prop_definition_data_type_t<decltype(def.second)>()));
   }
 
   internal::context_builder& builder;
@@ -135,9 +95,8 @@ struct set_property
 {
   template <typename T> void operator()(const T& def) const
   {
-    p_object->setProperty(
-      def.first.c_str(),
-      QVariant::fromValue(detail::to_qml_basic(*(def.second.get()))));
+    p_object->setProperty(def.first.c_str(),
+                          internal::convert_to_qml_type(*(def.second.get())));
   }
 
   std::shared_ptr<QObject> p_object;
@@ -153,8 +112,9 @@ set_properties(const std::shared_ptr<QObject>& p_context,
   const auto values_tuple = std::make_tuple(values...);
 
   const std::vector<std::pair<std::string, QVariant>> name_value_pairs = {
-    std::make_pair(std::get<Is>(props).first,
-                   QVariant(to_qml_basic(std::get<Is>(values_tuple))))...};
+    std::make_pair(
+      std::get<Is>(props).first,
+      internal::convert_to_qml_type(std::get<Is>(values_tuple)))...};
 
   for (const auto& name_value : name_value_pairs)
   {
