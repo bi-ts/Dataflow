@@ -93,8 +93,8 @@ dataflow::ref<dataflow::vec2<T>> dataflow::Vec2(const ArgX& x, const ArgY& y)
     }
   };
 
-  // Extend core::Lift to create a constant if all arguments are constants or
-  // literals
+  // TODO: Extend core::Lift to create a constant if all arguments are constants
+  //       or literals
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
@@ -114,4 +114,16 @@ dataflow::ref<T> dataflow::SquaredNorm(const ArgV& v)
   };
 
   return core::Lift<policy>(core::make_argument(v));
+}
+
+template <typename ArgV1,
+          typename ArgV2,
+          typename ArgR,
+          typename...,
+          typename T,
+          typename>
+dataflow::ref<bool>
+dataflow::Close(const ArgV1& v1, const ArgV2& v2, const ArgR& radius)
+{
+  return SquaredNorm(v1 - v2) <= radius * radius;
 }
