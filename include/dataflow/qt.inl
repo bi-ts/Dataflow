@@ -155,7 +155,7 @@ ref<std::shared_ptr<QObject>> qt::QmlContext(
 {
   using rw_props_definition_type =
     std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>;
-  using props_definition_type = std::tuple<std::pair<std::string, ref<Ts>>...>;
+  using props_definition_type = std::tuple<std::pair<std::string, ref<Us>>...>;
 
   class policy
   {

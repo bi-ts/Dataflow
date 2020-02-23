@@ -60,6 +60,7 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   const auto a = x * 3;
   const auto b = y + "-" + y;
   const auto c = z * 2.0f;
+  const auto d = x;
 
   const auto context = dataflow::qt::QmlContext(
     dataflow::qt::RW(dataflow::qt::QmlPropertyRW("x", x),
@@ -67,7 +68,8 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
                      dataflow::qt::QmlPropertyRW("z", z)),
     dataflow::qt::QmlProperty("a", a),
     dataflow::qt::QmlProperty("b", b),
-    dataflow::qt::QmlProperty("c", c));
+    dataflow::qt::QmlProperty("c", c),
+    dataflow::qt::QmlProperty("d", d));
 
   const auto m = Main(context);
 
@@ -79,6 +81,7 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   BOOST_CHECK((*m)->property("a").isValid());
   BOOST_CHECK((*m)->property("b").isValid());
   BOOST_CHECK((*m)->property("c").isValid());
+  BOOST_CHECK((*m)->property("d").isValid());
 
   BOOST_CHECK_EQUAL((*m)->property("x").toInt(), 1);
   BOOST_CHECK_EQUAL((*m)->property("y").toString().toStdString(), "str");
@@ -86,24 +89,28 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 3);
   BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "str-str");
   BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 6.28f);
+  BOOST_CHECK_EQUAL((*m)->property("d").toInt(), 1);
 
   x = 3;
 
   BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 9);
   BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "str-str");
   BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 6.28f);
+  BOOST_CHECK_EQUAL((*m)->property("d").toInt(), 3);
 
   y = "abc";
 
   BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 9);
   BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "abc-abc");
   BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 6.28f);
+  BOOST_CHECK_EQUAL((*m)->property("d").toInt(), 3);
 
   z = 2.17f;
 
   BOOST_CHECK_EQUAL((*m)->property("a").toInt(), 9);
   BOOST_CHECK_EQUAL((*m)->property("b").toString().toStdString(), "abc-abc");
   BOOST_CHECK_EQUAL((*m)->property("c").toFloat(), 4.34f);
+  BOOST_CHECK_EQUAL((*m)->property("d").toInt(), 3);
 
   (*m)->setProperty("x", 4);
 
