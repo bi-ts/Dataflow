@@ -424,18 +424,18 @@ using argument_type = typename std::conditional<is_ref<T>::value,
 
 template <typename T> using argument_type_t = typename argument_type<T>::type;
 
-template <typename T,
-          typename U,
-          typename V = typename argument_data_type<T>::type>
+template <typename Arg,
+          typename T,
+          typename U = typename argument_data_type<Arg>::type>
 using enable_for_argument_data_type =
-  std::enable_if<std::is_same<typename argument_data_type<T>::type, U>::value,
-                 V>;
+  std::enable_if<std::is_same<typename argument_data_type<Arg>::type, T>::value,
+                 U>;
 
-template <typename T,
-          typename U,
-          typename V = typename argument_data_type<T>::type>
+template <typename Arg,
+          typename T,
+          typename U = typename argument_data_type<Arg>::type>
 using enable_for_argument_data_type_t =
-  typename enable_for_argument_data_type<T, U, V>::type;
+  typename enable_for_argument_data_type<Arg, T, U>::type;
 
 template <typename T>
 using farg_data_type = typename std::conditional<is_init_function<T>::value,
