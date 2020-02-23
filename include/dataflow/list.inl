@@ -210,7 +210,8 @@ list_patch<T>::list_patch(const list<T>& curr, const list<T>& prev)
   {
     if (i > 0 && j > 0 && curr[skip + i - 1] == prev[skip + j - 1])
     {
-      --i, --j;
+      --i;
+      --j;
     }
     else if (j > 0 && (i == 0 || table[i][j - 1] >= table[i - 1][j]))
     {
