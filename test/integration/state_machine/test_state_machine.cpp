@@ -102,14 +102,14 @@ ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
       auto prev_mode = Mode(sp);
       auto prev_circle_pos = CirclePos(sp);
 
-      return Transitions(
-        On(prev_mode == mode::idle && mouse_down == 1 &&
-             SquaredNorm(mouse_pos - prev_circle_pos) < radius * radius,
-           [=](dtime t0) {
-             return Active(prev_circle_pos(t0) + (mouse_pos - mouse_pos(t0)));
-           }),
-        On(prev_mode == mode::active && mouse_down == -1,
-           Idle(prev_circle_pos)));
+      return Transitions(On(prev_mode == mode::idle && mouse_down == 1 &&
+                              PointsClose(mouse_pos, prev_circle_pos, radius),
+                            [=](dtime t0) {
+                              return Active(prev_circle_pos(t0) +
+                                            (mouse_pos - mouse_pos(t0)));
+                            }),
+                         On(prev_mode == mode::active && mouse_down == -1,
+                            Idle(prev_circle_pos)));
     },
     t0);
 
