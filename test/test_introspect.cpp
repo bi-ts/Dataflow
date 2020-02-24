@@ -340,7 +340,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log)
 
   io.reset_output();
 
-  BOOST_CHECK_EQUAL(io.log_string(), "x + 12 = 23;");
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] x + 12 = 23;");
   BOOST_CHECK_EQUAL(*a, 46);
 
   io.capture_output(true);
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log)
 
   io.reset_output();
 
-  BOOST_CHECK_EQUAL(io.log_string(), "x + 12 = 34;");
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=1] x + 12 = 34;");
   BOOST_CHECK_EQUAL(*a, 68);
 }
 
@@ -367,8 +367,29 @@ BOOST_AUTO_TEST_CASE(test_introspect_Log_default_label)
 
   io.reset_output();
 
-  BOOST_CHECK_EQUAL(io.log_string(), "var = 256;");
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] var = 256;");
   BOOST_CHECK_EQUAL(*a, 256);
+}
+
+BOOST_AUTO_TEST_CASE(test_introspect_current_time)
+{
+  Engine engine;
+
+  auto x = Var<int>(256);
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), -1);
+
+  // TODO: move this piece of test to core and fix it
+  // x = 1;
+  // BOOST_CHECK_EQUAL(introspect::current_time(), -1);
+
+  auto m = Main(x);
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), 0);
+
+  x = 2;
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

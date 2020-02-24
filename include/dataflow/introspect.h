@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -278,6 +278,8 @@ secondary_dependency(dependency_graph::edge_descriptor e);
 
 template <typename T>
 ref<T> Log(const ref<T>& x, const std::string& label = "");
+
+DATAFLOW___EXPORT integer current_time();
 
 void DATAFLOW___EXPORT write_graphviz(std::ostream& out);
 

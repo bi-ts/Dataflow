@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -190,7 +190,8 @@ ref<T> introspect::Log(const ref<T>& x, const std::string& l)
     }
     T calculate(const T& v)
     {
-      std::clog << prefix_ << " = " << value(x_) << std::endl;
+      std::clog << "[t=" << current_time() << "] " << prefix_ << " = "
+                << value(x_) << std::endl;
       return v;
     }
 

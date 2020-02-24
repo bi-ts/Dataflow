@@ -357,7 +357,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     BOOST_CHECK(graph_invariant_holds());
     BOOST_CHECK_EQUAL(*y, false);
 
-    BOOST_CHECK_EQUAL(log_string(), "x = false;");
+    BOOST_CHECK_EQUAL(log_string(), "[t=0] x = false;");
 
     capture_output();
 
@@ -369,8 +369,8 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(),
-                      "x = false;x = true;"
-                      "x = false;");
+                      "[t=0] x = false;"
+                      "[t=1] x = true;[t=2] x = false;");
   }
 
   {
@@ -384,9 +384,9 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(),
-                      "x = false;"
-                      "x = true;x = false;"
-                      "x = false;");
+                      "[t=0] x = false;"
+                      "[t=1] x = true;[t=2] x = false;"
+                      "[t=3] x = false;");
 
     capture_output();
 
@@ -398,10 +398,10 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
     BOOST_CHECK_EQUAL(*y, false);
 
     BOOST_CHECK_EQUAL(log_string(),
-                      "x = false;"
-                      "x = true;x = false;"
-                      "x = false;"
-                      "x = true;x = false;");
+                      "[t=0] x = false;"
+                      "[t=1] x = true;[t=2] x = false;"
+                      "[t=3] x = false;"
+                      "[t=4] x = true;[t=5] x = false;");
   }
 }
 
@@ -1232,25 +1232,28 @@ BOOST_FIXTURE_TEST_CASE(test_Prev, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
   BOOST_CHECK_EQUAL(introspect::active_node(x), true);
 
-  BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;");
+  BOOST_CHECK_EQUAL(log_string(), "[t=0] prev = 1;[t=1] prev = 3;");
 
   capture_output();
 
-  x = 5;
+  x = 5; // t=2
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;prev = 5;");
+  BOOST_CHECK_EQUAL(log_string(),
+                    "[t=0] prev = 1;[t=1] prev = 3;[t=3] prev = 5;");
 
   capture_output();
 
-  x = 9;
+  x = 9; // t=4
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 1;prev = 3;prev = 5;prev = 9;");
+  BOOST_CHECK_EQUAL(
+    log_string(),
+    "[t=0] prev = 1;[t=1] prev = 3;[t=3] prev = 5;[t=5] prev = 9;");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
@@ -1273,7 +1276,7 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   capture_output();
 
-  x = 7;
+  x = 7; // t=2
 
   reset_output();
 
@@ -1282,30 +1285,31 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_deferred_use, test_core_fixture)
 
   capture_output();
 
-  b = true;
+  b = true; // t=4
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 7;");
+  BOOST_CHECK_EQUAL(log_string(), "[t=4] prev = 7;");
 
   capture_output();
 
-  x = 5;
+  x = 5; // t=5
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;");
+  BOOST_CHECK_EQUAL(log_string(), "[t=4] prev = 7;[t=6] prev = 5;");
 
   capture_output();
 
-  x = 9;
+  x = 9; // t=7
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 7;prev = 5;prev = 9;");
+  BOOST_CHECK_EQUAL(log_string(),
+                    "[t=4] prev = 7;[t=6] prev = 5;[t=8] prev = 9;");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Prev_overloads, test_core_fixture)
@@ -1321,16 +1325,19 @@ BOOST_FIXTURE_TEST_CASE(test_Prev_overloads, test_core_fixture)
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 3;prev = 33;prev = 3;");
+  BOOST_CHECK_EQUAL(log_string(),
+                    "[t=0] prev = 3;[t=1] prev = 33;[t=2] prev = 3;");
 
   capture_output();
 
-  x = 10;
+  x = 10; // t=3
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "prev = 3;prev = 33;prev = 3;prev = 10;");
+  BOOST_CHECK_EQUAL(
+    log_string(),
+    "[t=0] prev = 3;[t=1] prev = 33;[t=2] prev = 3;[t=5] prev = 10;");
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
@@ -1375,46 +1382,52 @@ BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "recursion = 0;recursion = 1;");
+  BOOST_CHECK_EQUAL(log_string(), "[t=0] recursion = 0;[t=1] recursion = 1;");
 
   capture_output();
 
-  x = 'b';
-
-  reset_output();
-
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "recursion = 0;recursion = 1;recursion = 2;");
-
-  capture_output();
-
-  x = 'd';
-
-  reset_output();
-
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "recursion = 0;recursion = 1;recursion = 2;");
-
-  capture_output();
-
-  x = 'c';
-
-  reset_output();
-
-  BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(),
-                    "recursion = 0;recursion = 1;recursion = 2;recursion = 3;");
-
-  capture_output();
-
-  x = 'd';
+  x = 'b'; // t=2
 
   reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(
     log_string(),
-    "recursion = 0;recursion = 1;recursion = 2;recursion = 3;recursion = 4;");
+    "[t=0] recursion = 0;[t=1] recursion = 1;[t=3] recursion = 2;");
+
+  capture_output();
+
+  x = 'd'; // t=4
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(
+    log_string(),
+    "[t=0] recursion = 0;[t=1] recursion = 1;[t=3] recursion = 2;");
+
+  capture_output();
+
+  x = 'c'; // t=5
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(log_string(),
+                    "[t=0] recursion = 0;[t=1] recursion = 1;"
+                    "[t=3] recursion = 2;[t=6] recursion = 3;");
+
+  capture_output();
+
+  x = 'd'; // t=7
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(log_string(),
+                    "[t=0] recursion = 0;[t=1] recursion = 1;"
+                    "[t=3] recursion = 2;[t=6] recursion = 3;"
+                    "[t=8] recursion = 4;");
 }
 
 BOOST_AUTO_TEST_CASE(
