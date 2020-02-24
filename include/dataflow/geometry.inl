@@ -123,7 +123,7 @@ template <typename ArgV1,
           typename T,
           typename>
 dataflow::ref<bool>
-dataflow::Close(const ArgV1& v1, const ArgV2& v2, const ArgR& radius)
+dataflow::PointsClose(const ArgV1& v1, const ArgV2& v2, const ArgR& radius)
 {
   return SquaredNorm(v1 - v2) <= radius * radius;
 }

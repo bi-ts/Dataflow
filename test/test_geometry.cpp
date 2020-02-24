@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(test_Vec2_SquaredNorm)
   BOOST_CHECK_EQUAL(*m, 16);
 }
 
-BOOST_AUTO_TEST_CASE(test_vec2_Close)
+BOOST_AUTO_TEST_CASE(test_vec2_PointsClose)
 {
   Engine engine;
 
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(test_vec2_Close)
   auto y = Var<vec2<int>>(4, 3);
   auto r = Var(3);
 
-  const auto m = Main(Close(x, y, r));
+  const auto m = Main(PointsClose(x, y, r));
 
   BOOST_CHECK_EQUAL(*m, true);
 

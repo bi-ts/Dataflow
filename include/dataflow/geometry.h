@@ -82,7 +82,7 @@ template <
   typename...,
   typename T = vec_data_type_t<core::common_argument_data_type_t<ArgV1, ArgV2>>,
   typename = core::enable_for_argument_data_type_t<ArgR, T>>
-ref<bool> Close(const ArgV1& v1, const ArgV2& v2, const ArgR& radius);
+ref<bool> PointsClose(const ArgV1& v1, const ArgV2& v2, const ArgR& radius);
 }
 
 #include "geometry.inl"
