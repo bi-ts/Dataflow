@@ -201,14 +201,10 @@ ref<std::shared_ptr<QObject>> qt::QmlContext(
     std::shared_ptr<QObject> update(const std::shared_ptr<QObject>& p_context,
                                     const Us&... values)
     {
-      p_context->blockSignals(true);
-
       detail::set_properties(p_context,
                              props_,
                              std14::make_index_sequence<sizeof...(Us)>(),
                              values...);
-
-      p_context->blockSignals(false);
 
       return p_context;
     }

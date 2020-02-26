@@ -11,11 +11,10 @@ ApplicationWindow {
   MouseArea {
     id: mouse
     anchors.fill: parent
-    hoverEnabled: true
 
     Binding {
       target: context;
-      property: "leftMouseButtonPressed";
+      property: "mousePressed";
       value: mouse.pressed;
     }
     
@@ -27,11 +26,11 @@ ApplicationWindow {
   }
 
   Rectangle {
-    radius: width / 2
+    radius: context.circleRadius
     x: context.circlePos.x - radius
     y: context.circlePos.y - radius
-    width: 100
-    height: 100
+    width: 2 * radius
+    height: 2 * radius
     color: "darkgray"
   }
 }
