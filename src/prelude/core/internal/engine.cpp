@@ -158,8 +158,9 @@ void engine::remove_data_edge(vertex_descriptor u, std::size_t idx)
 
 void engine::schedule(vertex_descriptor v)
 {
-  if (graph_[v].position != topological_position())
-    order_.mark(graph_[v].position);
+  CHECK_PRECONDITION(is_active_node(v));
+
+  order_.mark(graph_[v].position);
 }
 
 void engine::pump()
@@ -170,6 +171,7 @@ void engine::pump()
 void engine::set_metadata(const node* p_node,
                           std::shared_ptr<const metadata> p_metadata)
 {
+  // TODO: check if the node is active
   return pumpa_.set_metadata(p_node, p_metadata);
 }
 

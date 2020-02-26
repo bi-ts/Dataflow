@@ -430,19 +430,31 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
 {
-  var<int> x = Var(17);
+  var<int> x = Var(1);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
   BOOST_CHECK(graph_invariant_holds());
 
+  BOOST_CHECK_EQUAL(introspect::current_time(), -1);
+
+  x = 17;
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), -1);
+
   auto y = Main(x);
 
   BOOST_CHECK(graph_invariant_holds());
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), 0);
+
   BOOST_CHECK_EQUAL(*y, 17);
 
   x = 6;
 
   BOOST_CHECK(graph_invariant_holds());
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), 1);
+
   BOOST_CHECK_EQUAL(*y, 6);
 }
 

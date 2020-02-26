@@ -379,10 +379,6 @@ BOOST_AUTO_TEST_CASE(test_introspect_current_time)
 
   BOOST_CHECK_EQUAL(introspect::current_time(), -1);
 
-  // TODO: move this piece of test to core and fix it
-  // x = 1;
-  // BOOST_CHECK_EQUAL(introspect::current_time(), -1);
-
   auto m = Main(x);
 
   BOOST_CHECK_EQUAL(introspect::current_time(), 0);

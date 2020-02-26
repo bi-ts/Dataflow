@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -43,13 +43,17 @@ const node* ref::get_() const
 
 void ref::schedule_() const
 {
-  engine::instance().schedule(converter::convert(id_));
-  engine::instance().pump();
+  if (engine::instance().is_active_node(converter::convert(id_)))
+  {
+    engine::instance().schedule(converter::convert(id_));
+    engine::instance().pump();
+  }
 }
 
 void ref::set_metadata(std::shared_ptr<const metadata> p_metadata)
 {
-  engine::instance().set_metadata(get_(), std::move(p_metadata));
+  if (engine::instance().is_active_node(converter::convert(id_)))
+    engine::instance().set_metadata(get_(), std::move(p_metadata));
 }
 
 void ref::reset_(const ref& other)
