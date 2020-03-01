@@ -307,13 +307,12 @@ dataflow::ref<T> dataflow::core::Lift(const std::string& label,
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::Lift(const Policy& policy,
-                                      const ref<X>& x,
-                                      const ref<Xs>&... xs)
+dataflow::ref<T>
+dataflow::core::Lift(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return ref_base<T>(
-    internal::node_n_ary<Policy, T, X, Xs...>::create(policy, false, x, xs...),
-    internal::ref::ctor_guard);
+  return ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
+                       std::move(policy), false, x, xs...),
+                     internal::ref::ctor_guard);
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
@@ -340,13 +339,12 @@ dataflow::ref<T> dataflow::core::LiftUpdater(const ref<X>& x,
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::LiftPuller(const Policy& policy,
-                                            const ref<X>& x,
-                                            const ref<Xs>&... xs)
+dataflow::ref<T>
+dataflow::core::LiftPuller(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return ref_base<T>(
-    internal::node_n_ary<Policy, T, X, Xs...>::create(policy, true, x, xs...),
-    internal::ref::ctor_guard);
+  return ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
+                       std::move(policy), true, x, xs...),
+                     internal::ref::ctor_guard);
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
@@ -367,8 +365,7 @@ template <typename Policy,
           typename... Xs,
           typename T = data_type_t<decltype(std::declval<Policy>().calculate(
             std::declval<X>(), std::declval<Xs>()...))>>
-ref<T>
-lift_selector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs)
+ref<T> lift_selector(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
   static_assert(is_aggregate_data_type<X>::value,
                 "An aggregate type is required for the selector");
@@ -388,20 +385,20 @@ template <
   typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
     std::declval<X>(), std::declval<Xs>()...))>>
 ref<typename std::enable_if<!core::is_ref<T>::value, T>::type>
-lift_selector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs)
+lift_selector(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return Lift(policy, x, xs...);
+  return Lift(std::move(policy), x, xs...);
 }
 }
 }
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::LiftSelector(const Policy& policy,
+dataflow::ref<T> dataflow::core::LiftSelector(Policy policy,
                                               const ref<X>& x,
                                               const ref<Xs>&... xs)
 {
-  return detail::lift_selector(policy, x, xs...);
+  return detail::lift_selector(std::move(policy), x, xs...);
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
@@ -412,18 +409,16 @@ dataflow::ref<T> dataflow::core::LiftSelector(const ref<X>& x,
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::LiftPatcher(const Policy& policy,
+dataflow::ref<T> dataflow::core::LiftPatcher(Policy policy,
                                              const ref<X>& x,
                                              const ref<Xs>&... xs)
 {
   return ref_base<T>(
-    internal::node_patcher_n_ary<Policy,
-                                 core::patch_type_t<T>,
-                                 core::diff_type_t<X>,
-                                 core::diff_type_t<Xs>...>::create(policy,
-                                                                   false,
-                                                                   x,
-                                                                   xs...),
+    internal::node_patcher_n_ary<
+      Policy,
+      core::patch_type_t<T>,
+      core::diff_type_t<X>,
+      core::diff_type_t<Xs>...>::create(std::move(policy), false, x, xs...),
     internal::ref::ctor_guard);
 }
 

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -39,7 +39,7 @@ class node_n_ary final : public node_t<T>, public Policy
   friend class nodes_factory;
 
 public:
-  static ref create(const Policy& policy, bool eager, ref_t<Xs>... xs)
+  static ref create(Policy policy, bool eager, ref_t<Xs>... xs)
   {
     DATAFLOW___CHECK_PRECONDITION(
       check_all_of(xs.template is_of_type<Xs>()...));
@@ -50,12 +50,12 @@ public:
       &args[0],
       args.size(),
       eager ? node_flags::eager : node_flags::none,
-      policy);
+      std::move(policy));
   }
 
 private:
-  explicit node_n_ary(const Policy& policy)
-  : Policy(policy)
+  explicit node_n_ary(Policy policy)
+  : Policy(std::move(policy))
   {
   }
 

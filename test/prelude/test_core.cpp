@@ -30,6 +30,14 @@ using namespace dataflow;
 namespace dataflow_test
 {
 
+struct test_policy_base
+{
+  // Make sure that a move-only policy is enough for lifters
+  test_policy_base() = default;
+  test_policy_base(const test_policy_base&) = delete;
+  test_policy_base(test_policy_base&&) = default;
+};
+
 template <typename T> class box final : core::aggregate_base
 {
 private:
@@ -810,7 +818,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
 {
   const var<int> x = Var<int>('A');
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {
@@ -835,7 +843,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
 {
   const var<int> x = Var<int>('C');
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {
@@ -902,7 +910,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
   const var<char> x = Var<char>('A');
   const var<int> y = Var<int>(4);
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {
@@ -928,7 +936,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
   const var<int> x = Var<int>('C');
   var<bool> y = Var<bool>(true);
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {
@@ -1024,7 +1032,7 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   var<int> c = Var(4);
   var<double> d = Var(3.14);
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {
@@ -1109,14 +1117,8 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_updater_binary_func, test_core_fixture)
     int update_count_;
   };
 
-  struct policy
+  struct policy : test_policy_base
   {
-    // Make sure that default-constructible and move-constructible policy is
-    // enough for an updater
-    policy() = default;
-    policy(const policy&) = delete;
-    policy(policy&&) = default;
-
     static std::string label()
     {
       return "shift_update";
@@ -1198,7 +1200,7 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
   const auto b = Var(44);
   const auto c = Var(55);
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {
@@ -1360,7 +1362,7 @@ BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
 
   const auto y = Main([x = x.as_ref()](dtime t0) {
     const auto tf = [=](ref<int> s) {
-      struct policy
+      struct policy : test_policy_base
       {
         static std::string label()
         {
@@ -1521,7 +1523,7 @@ BOOST_AUTO_TEST_CASE(test_Since)
   auto x = Var(0);
   auto use_since = Var(true);
 
-  struct policy
+  struct policy : test_policy_base
   {
     static std::string label()
     {

@@ -587,7 +587,7 @@ template <
   typename... Xs,
   typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
     std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> Lift(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+ref<T> Lift(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
 
 template <
   typename Policy,
@@ -619,7 +619,7 @@ template <
   typename... Xs,
   typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
     std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> LiftPuller(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+ref<T> LiftPuller(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
 
 template <
   typename Policy,
@@ -635,8 +635,7 @@ template <
   typename... Xs,
   typename T = argument_data_type_t<decltype(std::declval<Policy>().calculate(
     std::declval<X>(), std::declval<Xs>()...))>>
-ref<T>
-LiftSelector(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+ref<T> LiftSelector(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
 
 template <
   typename Policy,
@@ -652,7 +651,7 @@ template <
   typename... Xs,
   typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
     std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> LiftPatcher(const Policy& policy, const ref<X>& x, const ref<Xs>&... xs);
+ref<T> LiftPatcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
 
 template <
   typename Policy,
