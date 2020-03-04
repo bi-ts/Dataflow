@@ -464,6 +464,22 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::current_time(), 1);
 
   BOOST_CHECK_EQUAL(*y, 6);
+
+  x = 6;
+
+  BOOST_CHECK(graph_invariant_holds());
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), 1);
+
+  BOOST_CHECK_EQUAL(*y, 6);
+
+  x = 7;
+
+  BOOST_CHECK(graph_invariant_holds());
+
+  BOOST_CHECK_EQUAL(introspect::current_time(), 2);
+
+  BOOST_CHECK_EQUAL(*y, 7);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_indirection, test_core_fixture)

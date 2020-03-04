@@ -39,9 +39,14 @@ public:
     return nodes_factory::create<node_var<T>>(nullptr, 0, node_flags::none, v);
   }
 
-  void set_next_value(const T& v) const
+  bool set_next_value(const T& v) const
   {
+    if (next_value_ == v)
+      return false;
+
     next_value_ = v;
+
+    return true;
   }
 
   const T& next_value() const

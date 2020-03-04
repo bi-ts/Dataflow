@@ -132,9 +132,10 @@ template <typename T> void var_base<T>::set_value_(const T& v)
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));
 
-  static_cast<const internal::node_var<T>*>(this->get_())->set_next_value(v);
+  const auto p_var = static_cast<const internal::node_var<T>*>(this->get_());
 
-  this->schedule_();
+  if (p_var->set_next_value(v))
+    this->schedule_();
 }
 
 template <typename T>
@@ -146,12 +147,14 @@ void var_base<T>::set_patch_(const Patch& patch)
 
   const auto p_var = static_cast<const internal::node_var<T>*>(this->get_());
 
-  p_var->set_next_value(patch.apply(p_var->next_value()));
+  if (p_var->set_next_value(patch.apply(p_var->next_value())))
+  {
 
-  this->set_metadata(std::unique_ptr<const internal::metadata>(
-    new internal::patch_metadata<Patch>{patch}));
+    this->set_metadata(std::unique_ptr<const internal::metadata>(
+      new internal::patch_metadata<Patch>{patch}));
 
-  this->schedule_();
+    this->schedule_();
+  }
 }
 
 template <typename T>
