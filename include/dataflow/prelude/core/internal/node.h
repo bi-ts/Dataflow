@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -114,7 +114,7 @@ public:
 
 protected:
   static const tick_count& ticks_();
-  static void pump(node_id id);
+  static void schedule_and_pump(node_id id);
   static void set_metadata(const node* p_node,
                            std::shared_ptr<const metadata> p_metadata);
   static const std::shared_ptr<const metadata>&

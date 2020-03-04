@@ -92,9 +92,11 @@ public:
 
   void remove_data_edge(vertex_descriptor u, std::size_t idx);
 
-  void schedule(vertex_descriptor v);
+  void schedule_and_pump(vertex_descriptor v);
 
-  void pump();
+  void schedule_for_next_update(vertex_descriptor v);
+
+  bool is_pumping() const;
 
   void set_metadata(const node* p_node,
                     std::shared_ptr<const metadata> p_metadata);

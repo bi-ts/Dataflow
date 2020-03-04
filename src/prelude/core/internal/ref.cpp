@@ -45,8 +45,14 @@ void ref::schedule_() const
 {
   if (engine::instance().is_active_node(converter::convert(id_)))
   {
-    engine::instance().schedule(converter::convert(id_));
-    engine::instance().pump();
+    if (engine::instance().is_pumping())
+    {
+      engine::instance().schedule_for_next_update(converter::convert(id_));
+    }
+    else
+    {
+      engine::instance().schedule_and_pump(converter::convert(id_));
+    }
   }
 }
 

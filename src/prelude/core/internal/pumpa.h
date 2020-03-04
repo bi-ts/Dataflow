@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -49,6 +49,8 @@ public:
             topological_list& order,
             vertex_descriptor time_node_v,
             tick_count& ticks);
+
+  bool is_pumping() const;
 
 private:
   void pump_(dependency_graph& graph,

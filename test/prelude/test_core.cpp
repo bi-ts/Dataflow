@@ -580,6 +580,50 @@ BOOST_FIXTURE_TEST_CASE(test_Var_copy_constructor, test_core_fixture)
                     false);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Var_deferred_assign, test_core_fixture)
+{
+  var<int> x = Var<int>(0);
+
+  struct policy
+  {
+    static std::string label()
+    {
+      return "double-step";
+    }
+    int calculate(int v)
+    {
+      x_ = v % 2 ? v + 1 : v;
+      return v * 100;
+    }
+
+    var<int> x_;
+  };
+
+  const auto y = core::Lift(policy{x}, x);
+
+  capture_output();
+
+  const auto z = Main(introspect::Log(y, "y"));
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(log_string(), "[t=0] y = 0;");
+
+  BOOST_CHECK_EQUAL(*z, 0);
+
+  capture_output();
+
+  x = 1;
+
+  reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(log_string(), "[t=0] y = 0;[t=1] y = 100;[t=2] y = 200;");
+
+  BOOST_CHECK_EQUAL(*z, 200);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Main_ref_arg, test_core_fixture)
 {
   const var<int> x = Var<int>(6);

@@ -96,7 +96,7 @@ vertex_descriptor engine::add_node(node* p_node,
     graph_[v].eager = true;
     graph_[v].position = order_.insert(order_.end(), v);
 
-    schedule(v);
+    order_.mark(graph_[v].position);
 
     add_logical_edge_(v, order_.front());
 
@@ -156,16 +156,27 @@ void engine::remove_data_edge(vertex_descriptor u, std::size_t idx)
   remove_edge(e, graph_);
 }
 
-void engine::schedule(vertex_descriptor v)
+void engine::schedule_and_pump(vertex_descriptor v)
 {
   CHECK_PRECONDITION(is_active_node(v));
+  CHECK_PRECONDITION(!is_pumping());
 
   order_.mark(graph_[v].position);
+
+  pumpa_.pump(graph_, order_, time_node_v_, ticks_);
 }
 
-void engine::pump()
+void engine::schedule_for_next_update(vertex_descriptor v)
 {
-  pumpa_.pump(graph_, order_, time_node_v_, ticks_);
+  CHECK_PRECONDITION(is_active_node(v));
+  CHECK_PRECONDITION(is_pumping());
+
+  pumpa_.schedule_for_next_update(graph_[v].position);
+}
+
+bool engine::is_pumping() const
+{
+  return pumpa_.is_pumping();
 }
 
 void engine::set_metadata(const node* p_node,

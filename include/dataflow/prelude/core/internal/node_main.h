@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -45,7 +45,7 @@ public:
     const ref y =
       nodes_factory::create<node_main<T>>(&id, 1, node_flags::eager);
 
-    node::pump(y.id());
+    node::schedule_and_pump(y.id());
 
     return y;
   }

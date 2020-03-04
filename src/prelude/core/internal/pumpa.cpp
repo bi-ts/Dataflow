@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -110,6 +110,11 @@ void pumpa::pump(dependency_graph& graph,
 
   CHECK_POSTCONDITION(!pumping_started_);
   CHECK_POSTCONDITION(metadata_.empty());
+}
+
+bool pumpa::is_pumping() const
+{
+  return pumping_started_;
 }
 
 void pumpa::pump_(dependency_graph& graph,
