@@ -18,12 +18,9 @@
 
 #pragma once
 
-#include <dataflow/qt/internal/qobject_deleter.h>
+#include "dataflow-qt_export.h"
 
 #include <QtCore/QObject>
-#include <QtQml/QQmlPropertyMap>
-
-#include <memory>
 
 namespace dataflow
 {
@@ -31,23 +28,11 @@ namespace qt
 {
 namespace internal
 {
-class context_builder_impl final
+class DATAFLOW_QT_EXPORT qobject_deleter
 {
 public:
-  context_builder_impl();
-  ~context_builder_impl();
-
-  void add_property(const std::string& name, const QVariant& initial_value);
-
-  void add_property(const std::string& name,
-                    const QVariant& initial_value,
-                    const std::function<void(const QVariant&)>& change_handler);
-
-  std::unique_ptr<QQmlPropertyMap, qobject_deleter> build();
-
-private:
-  std::unique_ptr<QQmlPropertyMap, qobject_deleter> p_context_;
+  void operator()(QObject* p_qobject);
 };
 }
 }
-} // dataflow
+}

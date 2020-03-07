@@ -27,7 +27,7 @@ namespace qt
 namespace internal
 {
 context_builder_impl::context_builder_impl()
-: p_context_(std14::make_unique<QQmlPropertyMap>())
+: p_context_(new QQmlPropertyMap())
 {
 }
 
@@ -57,7 +57,7 @@ void context_builder_impl::add_property(
     });
 }
 
-std::shared_ptr<QObject> context_builder_impl::build()
+std::unique_ptr<QQmlPropertyMap, qobject_deleter> context_builder_impl::build()
 {
   return std::move(p_context_);
 }
