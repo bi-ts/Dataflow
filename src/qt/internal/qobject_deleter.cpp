@@ -18,6 +18,8 @@
 
 #include <dataflow/qt/internal/qobject_deleter.h>
 
+#include <QtGui/QWindow>
+
 namespace dataflow
 {
 namespace qt
@@ -26,7 +28,11 @@ namespace internal
 {
 void qobject_deleter::operator()(QObject* p_qobject)
 {
+  if (const auto p_window = qobject_cast<QWindow*>(p_qobject))
+    p_window->destroy();
+
   p_qobject->disconnect();
+
   p_qobject->deleteLater();
 }
 }

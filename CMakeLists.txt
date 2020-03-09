@@ -152,7 +152,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS Core Qml Quick Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets REQUIRED)
 
 add_library(dataflow-qt SHARED
   include/dataflow/qt.h
@@ -179,6 +179,7 @@ target_include_directories(dataflow-qt PUBLIC
 target_link_libraries(dataflow-qt
   dataflow++
   Qt5::Core
+  Qt5::Gui
   Qt5::Qml
 )
 

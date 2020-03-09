@@ -17,6 +17,12 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/qt.h>
+#include <dataflow/tuple.h>
+
+#include <dataflow/qt/internal/qobject_deleter.h>
+
+#include <QtQml/QQmlComponent>
+#include <QtQml/QQmlContext>
 
 namespace dataflow
 {
@@ -38,5 +44,50 @@ EngineQml& EngineQml::instance()
 QQmlEngine& EngineQml::GetQmlEngine()
 {
   return qml_engine_;
+}
+
+ref<std::shared_ptr<QObject>>
+qt::QmlComponent(const arg<std::string>& qml_url,
+                 const arg<std::shared_ptr<QObject>>& context)
+{
+  using component_data =
+    tupleC<std::shared_ptr<QQmlContext>, std::shared_ptr<QObject>>;
+
+  class policy
+  {
+  public:
+    std::string label() const
+    {
+      return "qml-component";
+    }
+
+    component_data calculate(const std::string& qml_url,
+                             const std::shared_ptr<QObject>& p_context)
+    {
+      const std::shared_ptr<QQmlComponent> p_qml_component{
+        new QQmlComponent{&EngineQml::instance().GetQmlEngine(),
+                          QUrl(QString::fromUtf8(qml_url.c_str()))},
+        qt::internal::qobject_deleter{}};
+
+      if (p_qml_component->isError())
+      {
+        throw std::runtime_error("Can't create qml component");
+      }
+
+      const std::shared_ptr<QQmlContext> p_qml_context{
+        new QQmlContext{EngineQml::instance().GetQmlEngine().rootContext()},
+        qt::internal::qobject_deleter{}};
+
+      p_qml_context->setContextProperty("view_context", p_context.get());
+
+      const auto& p_object =
+        std::shared_ptr<QObject>{p_qml_component->create(p_qml_context.get()),
+                                 qt::internal::qobject_deleter{}};
+
+      return component_data(p_qml_context, p_object);
+    };
+  };
+
+  return Second(core::Lift<policy>(qml_url, context));
 }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-  <file>main.qml</file>
+  <file>view1.qml</file>
+  <file>view2.qml</file>
 </qresource>
 </RCC>

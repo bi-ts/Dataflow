@@ -73,6 +73,10 @@ ref<std::shared_ptr<QObject>> QmlContext(
   const std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>&
     rw_props,
   const std::pair<std::string, ref<Us>>&... props);
+
+DATAFLOW_QT_EXPORT ref<std::shared_ptr<QObject>>
+QmlComponent(const arg<std::string>& qml_url,
+             const arg<std::shared_ptr<QObject>>& context);
 }
 
 /// \}
