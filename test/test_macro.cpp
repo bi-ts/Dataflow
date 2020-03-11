@@ -38,7 +38,7 @@ using namespace dataflow;
 
 BOOST_AUTO_TEST_SUITE(test_macro)
 
-BOOST_AUTO_TEST_CASE(test_DECLARE_DATA_mixed_Var)
+BOOST_AUTO_TEST_CASE(test_DATAFLOW_DATA_mixed_Var)
 {
   Engine engine;
 
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(test_DECLARE_DATA_mixed_Var)
   BOOST_CHECK_EQUAL(introspect::value(y), "mixed");
 }
 
-BOOST_AUTO_TEST_CASE(test_DECLARE_DATA_mixed_selectors)
+BOOST_AUTO_TEST_CASE(test_DATAFLOW_DATA_mixed_selectors)
 {
   Engine engine;
 
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(test_DECLARE_DATA_mixed_selectors)
   BOOST_CHECK_EQUAL(*y, 1);
 }
 
-BOOST_AUTO_TEST_CASE(test_DECLARE_DATA_mixed_equality_comparison)
+BOOST_AUTO_TEST_CASE(test_DATAFLOW_DATA_mixed_equality_comparison)
 {
   Engine engine;
 
