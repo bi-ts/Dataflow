@@ -158,7 +158,7 @@ void pumpa::pump_(dependency_graph& graph,
 
     const auto status = p_node->update(converter::convert(v),
                                        graph[v].initialized,
-                                       &args_buffer_.front(),
+                                       args_buffer_.data(),
                                        args_buffer_.size());
 
     ++updated_nodes_count_;
