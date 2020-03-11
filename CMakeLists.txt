@@ -48,6 +48,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/macro.h
   include/dataflow/macro.inl
   include/dataflow/macro/internal/comma_if.h
+  include/dataflow/macro/internal/stringize.h
   include/dataflow/maybe.h
   include/dataflow/maybe.inl
   include/dataflow/pair.h
