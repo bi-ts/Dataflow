@@ -32,8 +32,8 @@
 // #define DATAFLOW___COMMA_IF BOOST_PP_COMMA_IF
 #define DATAFLOW___TUPLE_ELEM BOOST_PP_TUPLE_ELEM
 // #define DATAFLOW___STRINGIZE BOOST_PP_STRINGIZE
-#define DATAFLOW___TUPLE_TO_LIST BOOST_PP_TUPLE_TO_LIST
-#define DATAFLOW___LIST_FOR_EACH_I BOOST_PP_LIST_FOR_EACH_I
+#define DATAFLOW___TUPLE_FOR_EACH_I(macro, data, t)                            \
+  BOOST_PP_LIST_FOR_EACH_I(macro, data, BOOST_PP_TUPLE_TO_LIST(t))
 
 #include "macro/internal/comma_if.h"
 #include "macro/internal/stringize.h"
@@ -78,22 +78,17 @@
 
 #define DATAFLOW_DATA(name, ...)                                               \
   class name                                                                   \
-  : public ::dataflow::core::data_type_tag_t<DATAFLOW___LIST_FOR_EACH_I(       \
-      DATAFLOW___PASS_FIELDS_TYPES,                                            \
-      _,                                                                       \
-      DATAFLOW___TUPLE_TO_LIST((__VA_ARGS__)))>                                \
+  : public ::dataflow::core::data_type_tag_t<DATAFLOW___TUPLE_FOR_EACH_I(      \
+      DATAFLOW___PASS_FIELDS_TYPES, _, (__VA_ARGS__))>                         \
   {                                                                            \
   public:                                                                      \
     explicit name() = default;                                                 \
                                                                                \
-    explicit name(                                                             \
-      DATAFLOW___LIST_FOR_EACH_I(DATAFLOW___DECLARE_ARGUMENTS,                 \
-                                 _,                                            \
-                                 DATAFLOW___TUPLE_TO_LIST((__VA_ARGS__))))     \
-    : data_(                                                                   \
-        DATAFLOW___LIST_FOR_EACH_I(DATAFLOW___PASS_ARGUMENTS,                  \
-                                   _,                                          \
-                                   DATAFLOW___TUPLE_TO_LIST((__VA_ARGS__))))   \
+    explicit name(DATAFLOW___TUPLE_FOR_EACH_I(DATAFLOW___DECLARE_ARGUMENTS,    \
+                                              _,                               \
+                                              (__VA_ARGS__)))                  \
+    : data_(DATAFLOW___TUPLE_FOR_EACH_I(                                       \
+        DATAFLOW___PASS_ARGUMENTS, _, (__VA_ARGS__)))                          \
     {                                                                          \
     }                                                                          \
                                                                                \
@@ -113,15 +108,13 @@
       return out;                                                              \
     }                                                                          \
                                                                                \
-    DATAFLOW___LIST_FOR_EACH_I(DATAFLOW___DEFINE_SELECTOR,                     \
-                               name,                                           \
-                               DATAFLOW___TUPLE_TO_LIST((__VA_ARGS__)))        \
+    DATAFLOW___TUPLE_FOR_EACH_I(DATAFLOW___DEFINE_SELECTOR,                    \
+                                name,                                          \
+                                (__VA_ARGS__))                                 \
                                                                                \
   private:                                                                     \
-    ::dataflow::tuple<DATAFLOW___LIST_FOR_EACH_I(                              \
-      DATAFLOW___PASS_FIELDS_TYPES,                                            \
-      _,                                                                       \
-      DATAFLOW___TUPLE_TO_LIST((__VA_ARGS__)))>                                \
+    ::dataflow::tuple<DATAFLOW___TUPLE_FOR_EACH_I(                             \
+      DATAFLOW___PASS_FIELDS_TYPES, _, (__VA_ARGS__))>                         \
       data_;                                                                   \
   }
 
