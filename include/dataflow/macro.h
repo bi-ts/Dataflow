@@ -29,11 +29,14 @@
 #else
 #include <boost/preprocessor.hpp>
 
-#define DATAFLOW___COMMA_IF BOOST_PP_COMMA_IF
+// #define DATAFLOW___COMMA_IF BOOST_PP_COMMA_IF
 #define DATAFLOW___TUPLE_ELEM BOOST_PP_TUPLE_ELEM
 #define DATAFLOW___STRINGIZE BOOST_PP_STRINGIZE
 #define DATAFLOW___TUPLE_TO_LIST BOOST_PP_TUPLE_TO_LIST
 #define DATAFLOW___LIST_FOR_EACH_I BOOST_PP_LIST_FOR_EACH_I
+
+#include "macro/internal/comma_if.h"
+
 #endif
 
 /// \defgroup macro
