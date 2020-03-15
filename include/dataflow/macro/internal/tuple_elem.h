@@ -1,0 +1,33 @@
+
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//
+//  This file is part of Dataflow++.
+//
+//  Dataflow++ is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Dataflow++ is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
+
+#pragma once
+
+#define DATAFLOW___TUPLE_ELEM_0(e000, ...) e000
+
+#define DATAFLOW___TUPLE_ELEM_1(e000, e001, ...) e001
+
+#define DATAFLOW___INVOKE(a, b) DATAFLOW___INVOKE_(a, b)
+#define DATAFLOW___INVOKE_(a, b) DATAFLOW___INVOKE_EXPAND_(a b)
+#define DATAFLOW___INVOKE_EXPAND_(a) a
+
+#define DATAFLOW___TUPLE_ELEM_FIRST(t)                                         \
+  DATAFLOW___INVOKE(DATAFLOW___TUPLE_ELEM_0, t)
+
+#define DATAFLOW___TUPLE_ELEM_SECOND(t)                                        \
+  DATAFLOW___INVOKE(DATAFLOW___TUPLE_ELEM_1, t)

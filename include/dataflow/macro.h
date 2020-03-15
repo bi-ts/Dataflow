@@ -30,13 +30,15 @@
 #include <boost/preprocessor.hpp>
 
 // #define DATAFLOW___COMMA_IF BOOST_PP_COMMA_IF
-#define DATAFLOW___TUPLE_ELEM BOOST_PP_TUPLE_ELEM
+// #define DATAFLOW___TUPLE_ELEM_FIRST(t) BOOST_PP_TUPLE_ELEM(0, t)
+// #define DATAFLOW___TUPLE_ELEM_SECOND(t) BOOST_PP_TUPLE_ELEM(1, t)
 // #define DATAFLOW___STRINGIZE BOOST_PP_STRINGIZE
 #define DATAFLOW___TUPLE_FOR_EACH_I(macro, data, t)                            \
   BOOST_PP_LIST_FOR_EACH_I(macro, data, BOOST_PP_TUPLE_TO_LIST(t))
 
 #include "macro/internal/comma_if.h"
 #include "macro/internal/stringize.h"
+#include "macro/internal/tuple_elem.h"
 
 #endif
 
@@ -45,19 +47,19 @@
 
 #define DATAFLOW___DECLARE_ARGUMENTS(r, _, idx, field_type_name)               \
   DATAFLOW___COMMA_IF(idx)                                                     \
-  const DATAFLOW___TUPLE_ELEM(2, 0, field_type_name) &                         \
-    DATAFLOW___TUPLE_ELEM(2, 1, field_type_name)
+  const DATAFLOW___TUPLE_ELEM_FIRST(field_type_name) &                         \
+    DATAFLOW___TUPLE_ELEM_SECOND(field_type_name)
 
 #define DATAFLOW___PASS_ARGUMENTS(r, _, idx, field_type_name)                  \
-  DATAFLOW___COMMA_IF(idx) DATAFLOW___TUPLE_ELEM(2, 1, field_type_name)
+  DATAFLOW___COMMA_IF(idx) DATAFLOW___TUPLE_ELEM_SECOND(field_type_name)
 
 #define DATAFLOW___PASS_FIELDS_TYPES(r, _, idx, field_type_name)               \
-  DATAFLOW___COMMA_IF(idx) DATAFLOW___TUPLE_ELEM(2, 0, field_type_name)
+  DATAFLOW___COMMA_IF(idx) DATAFLOW___TUPLE_ELEM_FIRST(field_type_name)
 
 #define DATAFLOW___DEFINE_SELECTOR(r, name, idx, field_type_name)              \
   friend ::dataflow::ref<::dataflow::core::argument_data_type_t<               \
-    DATAFLOW___TUPLE_ELEM(2, 0, field_type_name)>>                             \
-    DATAFLOW___TUPLE_ELEM(2, 1, field_type_name)(                              \
+    DATAFLOW___TUPLE_ELEM_FIRST(field_type_name)>>                             \
+    DATAFLOW___TUPLE_ELEM_SECOND(field_type_name)(                             \
       const ::dataflow::arg<name>& x)                                          \
   {                                                                            \
     struct policy                                                              \
@@ -65,9 +67,9 @@
       static std::string label()                                               \
       {                                                                        \
         return #name "-" DATAFLOW___STRINGIZE(                                 \
-          DATAFLOW___TUPLE_ELEM(2, 1, field_type_name));                       \
+          DATAFLOW___TUPLE_ELEM_SECOND(field_type_name));                      \
       }                                                                        \
-      static DATAFLOW___TUPLE_ELEM(2, 0, field_type_name)                      \
+      static DATAFLOW___TUPLE_ELEM_FIRST(field_type_name)                      \
         calculate(const name& v)                                               \
       {                                                                        \
         return ::dataflow::get<idx>(v.data_);                                  \
