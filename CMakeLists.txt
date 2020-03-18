@@ -153,9 +153,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${Boost_INCLUDE_DIRS}
 )
 
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOMOC ON)
-
 find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets REQUIRED)
 
 add_library(dataflow-qt SHARED

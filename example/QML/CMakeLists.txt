@@ -1,6 +1,8 @@
 
 project(drag_n_drop)
 
+set(CMAKE_AUTORCC ON)
+
 add_executable(${PROJECT_NAME}
   main.cpp
   resources.qrc
