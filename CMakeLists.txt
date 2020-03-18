@@ -47,6 +47,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/list/internal/list_diff.h
   include/dataflow/macro.h
   include/dataflow/macro.inl
+  include/dataflow/macro/internal/cat.h
   include/dataflow/macro/internal/comma_if.h
   include/dataflow/macro/internal/stringize.h
   include/dataflow/macro/internal/tuple_elem.h
