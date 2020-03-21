@@ -19,6 +19,7 @@
 #pragma once
 
 #include "cat.h"
+#include "invoke.h"
 
 // clang-format off
 
@@ -605,10 +606,6 @@
                                  e063
 
 // clang-format on
-
-#define DATAFLOW___INVOKE(a, b) DATAFLOW___INVOKE_(a, b)
-#define DATAFLOW___INVOKE_(a, b) DATAFLOW___INVOKE_EXPAND_(a b)
-#define DATAFLOW___INVOKE_EXPAND_(a) a
 
 #define DATAFLOW___TUPLE_ELEM(n, t)                                            \
   DATAFLOW___INVOKE(DATAFLOW___CAT(DATAFLOW___TUPLE_ELEM_, n), t)
