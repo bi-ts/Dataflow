@@ -44,10 +44,11 @@ BOOST_AUTO_TEST_SUITE(test_macro)
   ( 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,             \
    17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,             \
    33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,             \
-   49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64,             \
-   65, 66)
+   49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64)
 
 // clang-format on
+
+#define TEST_TIMES_100(r, data, idx, elem) DATAFLOW___COMMA_IF(idx) elem * 100
 
 BOOST_AUTO_TEST_CASE(test_DATAFLOW___TUPLE_ELEM)
 {
@@ -115,6 +116,18 @@ BOOST_AUTO_TEST_CASE(test_DATAFLOW___TUPLE_ELEM)
   BOOST_CHECK_EQUAL(DATAFLOW___TUPLE_ELEM(61, TEST_TUPLE), 62);
   BOOST_CHECK_EQUAL(DATAFLOW___TUPLE_ELEM(62, TEST_TUPLE), 63);
   BOOST_CHECK_EQUAL(DATAFLOW___TUPLE_ELEM(63, TEST_TUPLE), 64);
+}
+
+BOOST_AUTO_TEST_CASE(test_DATAFLOW___TUPLE_FOR_EACH_I)
+{
+  int data[] = {DATAFLOW___TUPLE_FOR_EACH_I(TEST_TIMES_100, _, TEST_TUPLE)};
+
+  BOOST_CHECK_EQUAL(sizeof(data) / sizeof(int), 64);
+
+  for (std::size_t i = 0; i < 64; ++i)
+  {
+    BOOST_CHECK_EQUAL(data[i], (i + 1) * 100);
+  }
 }
 
 BOOST_AUTO_TEST_CASE(test_DATAFLOW_DATA_mixed_Var)

@@ -53,6 +53,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/macro/internal/invoke.h
   include/dataflow/macro/internal/stringize.h
   include/dataflow/macro/internal/tuple_elem.h
+  include/dataflow/macro/internal/tuple_for_each_i.h
+  include/dataflow/macro/internal/tuple_size.h
   include/dataflow/maybe.h
   include/dataflow/maybe.inl
   include/dataflow/pair.h

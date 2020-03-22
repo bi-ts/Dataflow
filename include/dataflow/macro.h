@@ -24,20 +24,22 @@
 #include "prelude.h"
 #include "tuple.h"
 
-#ifdef DATAFLOW___NO_BOOST
-// TODO: implement without boost
-#else
+#ifdef DATAFLOW_CONFIG_HEADER_MACRO_BACKEND_BOOST
+
 #include <boost/preprocessor.hpp>
 
-// #define DATAFLOW___COMMA_IF BOOST_PP_COMMA_IF
-// #define DATAFLOW___TUPLE_ELEM BOOST_PP_TUPLE_ELEM
-// #define DATAFLOW___STRINGIZE BOOST_PP_STRINGIZE
+#define DATAFLOW___COMMA_IF BOOST_PP_COMMA_IF
+#define DATAFLOW___TUPLE_ELEM BOOST_PP_TUPLE_ELEM
+#define DATAFLOW___STRINGIZE BOOST_PP_STRINGIZE
 #define DATAFLOW___TUPLE_FOR_EACH_I(macro, data, t)                            \
   BOOST_PP_LIST_FOR_EACH_I(macro, data, BOOST_PP_TUPLE_TO_LIST(t))
+
+#else
 
 #include "macro/internal/comma_if.h"
 #include "macro/internal/stringize.h"
 #include "macro/internal/tuple_elem.h"
+#include "macro/internal/tuple_for_each_i.h"
 
 #endif
 

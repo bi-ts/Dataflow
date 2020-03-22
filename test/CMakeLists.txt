@@ -54,6 +54,11 @@ add_dataflow_test_project(geometry)
 add_dataflow_test_project(introspect)
 add_dataflow_test_project(io)
 add_dataflow_test_project(macro)
+add_dataflow_test_project(macro-boost test_macro.cpp)
+
+target_compile_definitions(test_macro-boost
+  PRIVATE -D DATAFLOW_CONFIG_HEADER_MACRO_BACKEND_BOOST)
+
 add_dataflow_test_project(maybe)
 add_dataflow_test_project(pair)
 add_dataflow_test_project(string)
