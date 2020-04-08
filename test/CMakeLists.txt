@@ -18,8 +18,24 @@ target_include_directories(testing_utilities PUBLIC "${Boost_INCLUDE_DIRS}")
 
 target_link_libraries(testing_utilities PUBLIC dataflow++)
 
-function(add_dataflow_test_project name)
-  set(src "${ARGN}")
+function(dataflow_add_test_project name)
+  set(_options)
+  set(_one_value_args)
+  set(_multi_value_args SOURCES DEFINITIONS LIBRARIES)
+
+  cmake_parse_arguments(_test_project
+    "${_options}" "${_one_value_args}" "${_multi_value_args}" ${ARGN}
+  )
+
+  if(NOT _test_project_SOURCES
+     AND NOT _test_project_DEFINITIONS
+     AND NOT _test_project_LIBRARIES)
+    set(src "${ARGN}")
+  endif()
+
+  if(_test_project_SOURCES)
+    set(src "${_test_project_SOURCES}")
+  endif()
 
   if(NOT src)
     set(src "test_${name}.cpp")
@@ -27,21 +43,26 @@ function(add_dataflow_test_project name)
 
   add_executable(test_${name} ${src})
 
-  target_link_libraries(test_${name} PRIVATE testing_utilities)
+  target_compile_definitions(test_${name} PRIVATE ${_test_project_DEFINITIONS})
+
+  target_link_libraries(test_${name} PRIVATE
+    testing_utilities
+    ${_test_project_LIBRARIES}
+  )
 
   add_test(NAME test_${name} COMMAND test_${name})
 endfunction()
 
-add_dataflow_test_project(test_tools)
+dataflow_add_test_project(test_tools)
 
-add_dataflow_test_project(core
+dataflow_add_test_project(core
   prelude/core/test_dtime.cpp
   prelude/test_core.cpp
   prelude/test_core.patcher.cpp
   prelude/test_core.type_traits.cpp
 )
 
-add_dataflow_test_project(prelude
+dataflow_add_test_project(prelude
   test_prelude.cpp
   prelude/test_arithmetic.cpp
   prelude/test_comparison.cpp
@@ -50,34 +71,33 @@ add_dataflow_test_project(prelude
   prelude/test_stateful.cpp
 )
 
-add_dataflow_test_project(geometry)
-add_dataflow_test_project(introspect)
-add_dataflow_test_project(io)
-add_dataflow_test_project(macro)
-add_dataflow_test_project(macro-boost test_macro.cpp)
+dataflow_add_test_project(geometry)
+dataflow_add_test_project(introspect)
+dataflow_add_test_project(io)
+dataflow_add_test_project(macro)
 
-target_compile_definitions(test_macro-boost
-  PRIVATE -D DATAFLOW_CONFIG_HEADER_MACRO_BACKEND_BOOST)
+dataflow_add_test_project(macro-boost
+  SOURCES test_macro.cpp
+  DEFINITIONS -DDATAFLOW_CONFIG_HEADER_MACRO_BACKEND_BOOST
+)
 
-add_dataflow_test_project(maybe)
-add_dataflow_test_project(pair)
-add_dataflow_test_project(string)
-add_dataflow_test_project(tuple)
+dataflow_add_test_project(maybe)
+dataflow_add_test_project(pair)
+dataflow_add_test_project(string)
+dataflow_add_test_project(tuple)
 
-add_dataflow_test_project(list
+dataflow_add_test_project(list
   test_list.cpp
   list/test_list_list.cpp
   list/test_list_patch.cpp
 )
 
-add_dataflow_test_project(regression)
+dataflow_add_test_project(regression)
 
-add_dataflow_test_project(integration
+dataflow_add_test_project(integration
   integration/conditional/test_conditional.cpp
   integration/state_machine/test_state_machine.cpp
 )
 
-add_dataflow_test_project(qt)
-
-target_link_libraries(test_qt PRIVATE dataflow-qt)
+dataflow_add_test_project(qt LIBRARIES dataflow-qt)
 
