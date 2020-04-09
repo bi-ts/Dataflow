@@ -120,6 +120,33 @@
       data_;                                                                   \
   }
 
+#define DATAFLOW___DECLARE_DATA_CTOR_ARGS(r, _, idx, field_type_name)          \
+  DATAFLOW___COMMA_IF(idx)                                                     \
+  const ::dataflow::arg<DATAFLOW___TUPLE_ELEM(0, field_type_name)>&            \
+    DATAFLOW___TUPLE_ELEM(1, field_type_name)
+
+#define DATAFLOW_COMPOSITE(name, data_constructor, ...)                        \
+  DATAFLOW_DATA(name, __VA_ARGS__);                                            \
+  inline ::dataflow::ref<name> data_constructor(DATAFLOW___TUPLE_FOR_EACH_I(   \
+    DATAFLOW___DECLARE_DATA_CTOR_ARGS, _, (__VA_ARGS__)))                      \
+  {                                                                            \
+    struct policy                                                              \
+    {                                                                          \
+      static std::string label()                                               \
+      {                                                                        \
+        return #name;                                                          \
+      }                                                                        \
+      static name calculate(DATAFLOW___TUPLE_FOR_EACH_I(                       \
+        DATAFLOW___DECLARE_ARGUMENTS, _, (__VA_ARGS__)))                       \
+      {                                                                        \
+        return name{DATAFLOW___TUPLE_FOR_EACH_I(                               \
+          DATAFLOW___PASS_ARGUMENTS, _, (__VA_ARGS__))};                       \
+      };                                                                       \
+    };                                                                         \
+    return ::dataflow::core::Lift<policy>(DATAFLOW___TUPLE_FOR_EACH_I(         \
+      DATAFLOW___PASS_ARGUMENTS, _, (__VA_ARGS__)));                           \
+  }
+
 /// \}
 
 #include "macro.inl"
