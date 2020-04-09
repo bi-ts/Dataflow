@@ -46,51 +46,26 @@ std::ostream& operator<<(std::ostream& out, mode value)
 }
 
 using point = vec2<int>;
-}
 
-DATAFLOW_DATA(dnd_state, (mode, Mode), (point, CirclePos));
+DATAFLOW_COMPOSITE(dnd_state, DragNDropState, (mode, Mode), (point, CirclePos));
 
-ref<dnd_state> Idle(const arg<point>& circle_pos)
+inline ref<dnd_state> Idle(const arg<point>& circle_pos)
 {
-  // TODO: Add a data constructor in DATAFLOW_DATA() and use it here
-  struct policy
-  {
-    static std::string label()
-    {
-      return "dnd_state-idle";
-    }
-    static dnd_state calculate(const point& circle_pos)
-    {
-      return dnd_state(mode::idle, circle_pos);
-    };
-  };
-
-  return core::Lift<policy>(circle_pos);
+  return DragNDropState(mode::idle, circle_pos);
 }
 
-ref<dnd_state> Active(const arg<point>& circle_pos)
+inline ref<dnd_state> Active(const arg<point>& circle_pos)
 {
-  // TODO: Add a data constructor in DATAFLOW_DATA() and use it here
-  struct policy
-  {
-    static std::string label()
-    {
-      return "dnd_state-active";
-    }
-    static dnd_state calculate(const point& circle_pos)
-    {
-      return dnd_state(mode::active, circle_pos);
-    };
-  };
-
-  return core::Lift<policy>(circle_pos);
+  return DragNDropState(mode::active, circle_pos);
 }
 
-ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
-                                    const arg<int>& radius,
-                                    const arg<point>& mouse_pos,
-                                    const arg<int>& mouse_pressed,
-                                    dtime t0)
+}
+
+ref<point> DragNDropCircle(const arg<point>& initial_circle_pos,
+                           const arg<int>& radius,
+                           const arg<point>& mouse_pos,
+                           const arg<int>& mouse_pressed,
+                           dtime t0)
 {
   // TODO: add Diff(d0, x, t0) function
   const auto mouse_down =
@@ -127,8 +102,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   auto f = Main([mouse_pos = mouse_pos.as_ref(),
                  mouse_pressed = mouse_pressed.as_ref()](dtime t0) {
-    return AdjustableCirclePosition(
-      point(100, 100), 30, mouse_pos, mouse_pressed, t0);
+    return DragNDropCircle(point(100, 100), 30, mouse_pos, mouse_pressed, t0);
   });
 
   BOOST_CHECK(graph_invariant_holds());
