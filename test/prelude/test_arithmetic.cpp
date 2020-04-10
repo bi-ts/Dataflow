@@ -26,6 +26,155 @@ using namespace dataflow;
 
 namespace dataflow_test
 {
+namespace
+{
+
+enum class type_a_Add
+{
+  value3 = 3,
+  value4 = 4
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_a_Add value)
+{
+  return out << "type_a_Add::"
+             << (value == type_a_Add::value3 ? "value3" : "value4");
+}
+
+enum class type_b_Add
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_b_Add value)
+{
+  return out << "type_b_Add::"
+             << (value == type_b_Add::value1 ? "value1" : "value2");
+}
+
+inline int operator+(type_a_Add x, type_b_Add y)
+{
+  return static_cast<int>(x) + static_cast<int>(y);
+}
+
+enum class type_a_Sub
+{
+  value3 = 3,
+  value4 = 4
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_a_Sub value)
+{
+  return out << "type_a_Sub::"
+             << (value == type_a_Sub::value3 ? "value3" : "value4");
+}
+
+enum class type_b_Sub
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_b_Sub value)
+{
+  return out << "type_b_Sub::"
+             << (value == type_b_Sub::value1 ? "value1" : "value2");
+}
+
+inline int operator-(type_a_Sub x, type_b_Sub y)
+{
+  return static_cast<int>(x) - static_cast<int>(y);
+}
+
+enum class type_a_Mult
+{
+  value3 = 3,
+  value4 = 4
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_a_Mult value)
+{
+  return out << "type_a_Mult::"
+             << (value == type_a_Mult::value3 ? "value3" : "value4");
+}
+
+enum class type_b_Mult
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_b_Mult value)
+{
+  return out << "type_b_Mult::"
+             << (value == type_b_Mult::value1 ? "value1" : "value2");
+}
+
+inline int operator*(type_a_Mult x, type_b_Mult y)
+{
+  return static_cast<int>(x) * static_cast<int>(y);
+}
+
+enum class type_a_Div
+{
+  value3 = 3,
+  value4 = 4
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_a_Div value)
+{
+  return out << "type_a_Div::"
+             << (value == type_a_Div::value3 ? "value3" : "value4");
+}
+
+enum class type_b_Div
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_b_Div value)
+{
+  return out << "type_b_Div::"
+             << (value == type_b_Div::value1 ? "value1" : "value2");
+}
+
+inline int operator/(type_a_Div x, type_b_Div y)
+{
+  return static_cast<int>(x) / static_cast<int>(y);
+}
+
+enum class type_a_Mod
+{
+  value3 = 3,
+  value4 = 4
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_a_Mod value)
+{
+  return out << "type_a_Mod::"
+             << (value == type_a_Mod::value3 ? "value3" : "value4");
+}
+
+enum class type_b_Mod
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_b_Mod value)
+{
+  return out << "type_b_Mod::"
+             << (value == type_b_Mod::value1 ? "value1" : "value2");
+}
+
+inline int operator%(type_a_Mod x, type_b_Mod y)
+{
+  return static_cast<int>(x) % static_cast<int>(y);
+}
+
+}
 
 BOOST_AUTO_TEST_SUITE(test_arithmetic)
 
@@ -112,6 +261,40 @@ BOOST_AUTO_TEST_CASE(test_Add_int)
   y = 5;
 
   BOOST_CHECK_EQUAL(*f, 10);
+}
+
+BOOST_AUTO_TEST_CASE(test_Add_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Add>();
+  auto y = Var<type_b_Add>();
+
+  const ref<int> a = Add(x, y);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "+");
+
+  const auto f = Main(a);
+
+  x = type_a_Add::value3;
+
+  y = type_b_Add::value1;
+
+  BOOST_CHECK_EQUAL(*f, 4);
+
+  y = type_b_Add::value2;
+
+  BOOST_CHECK_EQUAL(*f, 5);
+
+  x = type_a_Add::value4;
+
+  y = type_b_Add::value1;
+
+  BOOST_CHECK_EQUAL(*f, 5);
+
+  y = type_b_Add::value2;
+
+  BOOST_CHECK_EQUAL(*f, 6);
 }
 
 BOOST_AUTO_TEST_CASE(test_Add_lhs_literal_int)
@@ -214,6 +397,40 @@ BOOST_AUTO_TEST_CASE(test_Sub_int)
   y = 5;
 
   BOOST_CHECK_EQUAL(*f, 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_Sub_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Sub>();
+  auto y = Var<type_b_Sub>();
+
+  const ref<int> a = Sub(x, y);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "-");
+
+  const auto f = Main(a);
+
+  x = type_a_Sub::value3;
+
+  y = type_b_Sub::value1;
+
+  BOOST_CHECK_EQUAL(*f, 2);
+
+  y = type_b_Sub::value2;
+
+  BOOST_CHECK_EQUAL(*f, 1);
+
+  x = type_a_Sub::value4;
+
+  y = type_b_Sub::value1;
+
+  BOOST_CHECK_EQUAL(*f, 3);
+
+  y = type_b_Sub::value2;
+
+  BOOST_CHECK_EQUAL(*f, 2);
 }
 
 BOOST_AUTO_TEST_CASE(test_Sub_lhs_literal_int)
@@ -372,6 +589,40 @@ BOOST_AUTO_TEST_CASE(test_Mult_int)
   BOOST_CHECK_EQUAL(*f, 25);
 }
 
+BOOST_AUTO_TEST_CASE(test_Mult_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Mult>();
+  auto y = Var<type_b_Mult>();
+
+  const ref<int> a = Mult(x, y);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "*");
+
+  const auto f = Main(a);
+
+  x = type_a_Mult::value3;
+
+  y = type_b_Mult::value1;
+
+  BOOST_CHECK_EQUAL(*f, 3);
+
+  y = type_b_Mult::value2;
+
+  BOOST_CHECK_EQUAL(*f, 6);
+
+  x = type_a_Mult::value4;
+
+  y = type_b_Mult::value1;
+
+  BOOST_CHECK_EQUAL(*f, 4);
+
+  y = type_b_Mult::value2;
+
+  BOOST_CHECK_EQUAL(*f, 8);
+}
+
 BOOST_AUTO_TEST_CASE(test_Mult_lhs_literal_int)
 {
   Engine engine;
@@ -474,6 +725,40 @@ BOOST_AUTO_TEST_CASE(test_Div_int)
   BOOST_CHECK_EQUAL(*f, (5 / 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_Div_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Div>();
+  auto y = Var<type_b_Div>(type_b_Div::value1);
+
+  const ref<int> a = Div(x, y);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "/");
+
+  const auto f = Main(a);
+
+  x = type_a_Div::value3;
+
+  y = type_b_Div::value1;
+
+  BOOST_CHECK_EQUAL(*f, (3 / 1));
+
+  y = type_b_Div::value2;
+
+  BOOST_CHECK_EQUAL(*f, (3 / 2));
+
+  x = type_a_Div::value4;
+
+  y = type_b_Div::value1;
+
+  BOOST_CHECK_EQUAL(*f, (4 / 1));
+
+  y = type_b_Div::value2;
+
+  BOOST_CHECK_EQUAL(*f, (4 / 2));
+}
+
 BOOST_AUTO_TEST_CASE(test_Div_lhs_literal_int)
 {
   Engine engine;
@@ -574,6 +859,40 @@ BOOST_AUTO_TEST_CASE(test_Mod_int)
   y = 5;
 
   BOOST_CHECK_EQUAL(*f, (5 % 5));
+}
+
+BOOST_AUTO_TEST_CASE(test_Mod_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Mod>();
+  auto y = Var<type_b_Mod>(type_b_Mod::value1);
+
+  const ref<int> a = Mod(x, y);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "mod");
+
+  const auto f = Main(a);
+
+  x = type_a_Mod::value3;
+
+  y = type_b_Mod::value1;
+
+  BOOST_CHECK_EQUAL(*f, (3 % 1));
+
+  y = type_b_Mod::value2;
+
+  BOOST_CHECK_EQUAL(*f, (3 % 2));
+
+  x = type_a_Mod::value4;
+
+  y = type_b_Mod::value1;
+
+  BOOST_CHECK_EQUAL(*f, (4 % 1));
+
+  y = type_b_Mod::value2;
+
+  BOOST_CHECK_EQUAL(*f, (4 % 2));
 }
 
 BOOST_AUTO_TEST_CASE(test_Mod_lhs_literal_int)
@@ -728,6 +1047,38 @@ BOOST_AUTO_TEST_CASE(test_Add_operator_int)
   y = 5;
 
   BOOST_CHECK_EQUAL(*f, 10);
+}
+
+BOOST_AUTO_TEST_CASE(test_Add_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Add>();
+  auto y = Var<type_b_Add>();
+
+  const ref<int> a = x + y;
+
+  const auto f = Main(a);
+
+  x = type_a_Add::value3;
+
+  y = type_b_Add::value1;
+
+  BOOST_CHECK_EQUAL(*f, 4);
+
+  y = type_b_Add::value2;
+
+  BOOST_CHECK_EQUAL(*f, 5);
+
+  x = type_a_Add::value4;
+
+  y = type_b_Add::value1;
+
+  BOOST_CHECK_EQUAL(*f, 5);
+
+  y = type_b_Add::value2;
+
+  BOOST_CHECK_EQUAL(*f, 6);
 }
 
 BOOST_AUTO_TEST_CASE(test_Add_operator_string)
@@ -922,6 +1273,38 @@ BOOST_AUTO_TEST_CASE(test_Sub_operator_int)
   BOOST_CHECK_EQUAL(*f, 0);
 }
 
+BOOST_AUTO_TEST_CASE(test_Sub_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Sub>();
+  auto y = Var<type_b_Sub>();
+
+  const ref<int> a = x - y;
+
+  const auto f = Main(a);
+
+  x = type_a_Sub::value3;
+
+  y = type_b_Sub::value1;
+
+  BOOST_CHECK_EQUAL(*f, 2);
+
+  y = type_b_Sub::value2;
+
+  BOOST_CHECK_EQUAL(*f, 1);
+
+  x = type_a_Sub::value4;
+
+  y = type_b_Sub::value1;
+
+  BOOST_CHECK_EQUAL(*f, 3);
+
+  y = type_b_Sub::value2;
+
+  BOOST_CHECK_EQUAL(*f, 2);
+}
+
 BOOST_AUTO_TEST_CASE(test_Sub_operator_lhs_literal_int)
 {
   Engine engine;
@@ -1072,6 +1455,38 @@ BOOST_AUTO_TEST_CASE(test_Mult_operator_int)
   BOOST_CHECK_EQUAL(*f, 25);
 }
 
+BOOST_AUTO_TEST_CASE(test_Mult_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Mult>();
+  auto y = Var<type_b_Mult>();
+
+  const ref<int> a = x * y;
+
+  const auto f = Main(a);
+
+  x = type_a_Mult::value3;
+
+  y = type_b_Mult::value1;
+
+  BOOST_CHECK_EQUAL(*f, 3);
+
+  y = type_b_Mult::value2;
+
+  BOOST_CHECK_EQUAL(*f, 6);
+
+  x = type_a_Mult::value4;
+
+  y = type_b_Mult::value1;
+
+  BOOST_CHECK_EQUAL(*f, 4);
+
+  y = type_b_Mult::value2;
+
+  BOOST_CHECK_EQUAL(*f, 8);
+}
+
 BOOST_AUTO_TEST_CASE(test_Mult_operator_lhs_literal_int)
 {
   Engine engine;
@@ -1172,6 +1587,38 @@ BOOST_AUTO_TEST_CASE(test_Div_operator_int)
   BOOST_CHECK_EQUAL(*f, (5 / 5));
 }
 
+BOOST_AUTO_TEST_CASE(test_Div_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Div>();
+  auto y = Var<type_b_Div>(type_b_Div::value1);
+
+  const ref<int> a = x / y;
+
+  const auto f = Main(a);
+
+  x = type_a_Div::value3;
+
+  y = type_b_Div::value1;
+
+  BOOST_CHECK_EQUAL(*f, (3 / 1));
+
+  y = type_b_Div::value2;
+
+  BOOST_CHECK_EQUAL(*f, (3 / 2));
+
+  x = type_a_Div::value4;
+
+  y = type_b_Div::value1;
+
+  BOOST_CHECK_EQUAL(*f, (4 / 1));
+
+  y = type_b_Div::value2;
+
+  BOOST_CHECK_EQUAL(*f, (4 / 2));
+}
+
 BOOST_AUTO_TEST_CASE(test_Div_operator_lhs_literal_int)
 {
   Engine engine;
@@ -1270,6 +1717,38 @@ BOOST_AUTO_TEST_CASE(test_Mod_operator_int)
   y = 5;
 
   BOOST_CHECK_EQUAL(*f, (5 % 5));
+}
+
+BOOST_AUTO_TEST_CASE(test_Mod_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_a_Mod>();
+  auto y = Var<type_b_Mod>(type_b_Mod::value1);
+
+  const ref<int> a = x % y;
+
+  const auto f = Main(a);
+
+  x = type_a_Mod::value3;
+
+  y = type_b_Mod::value1;
+
+  BOOST_CHECK_EQUAL(*f, (3 % 1));
+
+  y = type_b_Mod::value2;
+
+  BOOST_CHECK_EQUAL(*f, (3 % 2));
+
+  x = type_a_Mod::value4;
+
+  y = type_b_Mod::value1;
+
+  BOOST_CHECK_EQUAL(*f, (4 % 1));
+
+  y = type_b_Mod::value2;
+
+  BOOST_CHECK_EQUAL(*f, (4 % 2));
 }
 
 BOOST_AUTO_TEST_CASE(test_Mod_operator_lhs_literal_int)
