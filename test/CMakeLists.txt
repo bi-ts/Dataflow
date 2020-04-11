@@ -71,6 +71,7 @@ dataflow_add_test_project(prelude
   prelude/test_stateful.cpp
 )
 
+dataflow_add_test_project(behavior)
 dataflow_add_test_project(geometry)
 dataflow_add_test_project(introspect)
 dataflow_add_test_project(io)
