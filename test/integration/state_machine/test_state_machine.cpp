@@ -18,6 +18,7 @@
 
 #include "../../tools/graph_invariant.h"
 
+#include <dataflow/behavior.h>
 #include <dataflow/geometry.h>
 #include <dataflow/introspect.h>
 #include <dataflow/macro.h>
@@ -64,12 +65,12 @@ inline ref<dnd_state> Active(const arg<point>& circle_pos)
 ref<point> DragNDropCircle(const arg<point>& initial_circle_pos,
                            const arg<int>& radius,
                            const arg<point>& mouse_pos,
-                           const arg<int>& mouse_pressed,
+                           const arg<button_state>& mouse_button,
                            dtime t0)
 {
   // TODO: add Diff(d0, x, t0) function
-  const auto mouse_down =
-    mouse_pressed - Prev(mouse_pressed(t0), mouse_pressed, t0);
+  const auto mouse_button_action =
+    mouse_button - Prev(mouse_button(t0), mouse_button, t0);
 
   const auto s = StateMachine(
     Idle(initial_circle_pos),
@@ -77,14 +78,16 @@ ref<point> DragNDropCircle(const arg<point>& initial_circle_pos,
       auto prev_mode = Mode(sp);
       auto prev_circle_pos = CirclePos(sp);
 
-      return Transitions(On(prev_mode == mode::idle && mouse_down == 1 &&
-                              PointsClose(mouse_pos, prev_circle_pos, radius),
-                            [=](dtime t0) {
-                              return Active(prev_circle_pos(t0) +
-                                            (mouse_pos - mouse_pos(t0)));
-                            }),
-                         On(prev_mode == mode::active && mouse_down == -1,
-                            Idle(prev_circle_pos)));
+      return Transitions(
+        On(prev_mode == mode::idle &&
+             mouse_button_action == button_state_change::pressed &&
+             PointsClose(mouse_pos, prev_circle_pos, radius),
+           [=](dtime t0) {
+             return Active(prev_circle_pos(t0) + (mouse_pos - mouse_pos(t0)));
+           }),
+        On(prev_mode == mode::active &&
+             mouse_button_action == button_state_change::released,
+           Idle(prev_circle_pos)));
     },
     t0);
 
@@ -97,12 +100,12 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 {
   Engine engine;
 
-  auto mouse_pressed = Var<int>(false);
+  auto mouse_button = Var<button_state>(false);
   auto mouse_pos = Var(point(0, 0));
 
   auto f = Main([mouse_pos = mouse_pos.as_ref(),
-                 mouse_pressed = mouse_pressed.as_ref()](dtime t0) {
-    return DragNDropCircle(point(100, 100), 30, mouse_pos, mouse_pressed, t0);
+                 mouse_button = mouse_button.as_ref()](dtime t0) {
+    return DragNDropCircle(point(100, 100), 30, mouse_pos, mouse_button, t0);
   });
 
   BOOST_CHECK(graph_invariant_holds());
@@ -113,7 +116,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  mouse_pressed = true;
+  mouse_button = button_state::down;
 
   BOOST_CHECK(graph_invariant_holds());
 
@@ -129,7 +132,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK_EQUAL(*f, point(160, 140));
 
-  mouse_pressed = false;
+  mouse_button = button_state::up;
 
   BOOST_CHECK(graph_invariant_holds());
 
@@ -143,7 +146,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  mouse_pressed = true;
+  mouse_button = button_state::down;
 
   BOOST_CHECK(graph_invariant_holds());
 
@@ -153,7 +156,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK_EQUAL(*f, point(160, 140));
 
-  mouse_pressed = false;
+  mouse_button = button_state::up;
 
   BOOST_CHECK(graph_invariant_holds());
 
@@ -161,7 +164,7 @@ BOOST_AUTO_TEST_CASE(test_drag_and_drop)
 
   BOOST_CHECK(graph_invariant_holds());
 
-  mouse_pressed = true;
+  mouse_button = button_state::down;
 
   BOOST_CHECK(graph_invariant_holds());
 
