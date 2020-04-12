@@ -35,6 +35,7 @@ enum class button_state
 
 DATAFLOW___EXPORT std::ostream& operator<<(std::ostream& out, button_state v);
 
+// TODO: rename to `button_action`?
 enum class button_state_change
 {
   released = -1,
