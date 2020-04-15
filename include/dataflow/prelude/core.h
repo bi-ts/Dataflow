@@ -128,6 +128,8 @@ public:
 
 namespace core
 {
+// TODO: move this class out of core namespace, otherwise `Lift*`
+//       functions can be called via argument dependent look up.
 template <typename T> class var_base : public ref<T>
 {
 public:
