@@ -21,9 +21,14 @@
 #include <dataflow/qt/internal/qobject_deleter.h>
 
 #include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QVariant>
 #include <QtQml/QQmlPropertyMap>
 
+#include <functional>
 #include <memory>
+#include <string>
+#include <unordered_map>
 
 namespace dataflow
 {
@@ -46,6 +51,8 @@ public:
   std::unique_ptr<QQmlPropertyMap, qobject_deleter> build();
 
 private:
+  std::unordered_map<QString, std::function<void(const QVariant&)>>
+    change_handlers_;
   std::unique_ptr<QQmlPropertyMap, qobject_deleter> p_context_;
 };
 }

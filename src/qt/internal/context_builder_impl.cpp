@@ -48,17 +48,20 @@ void context_builder_impl::add_property(
 {
   add_property(name, initial_value);
 
-  p_context_->connect(
-    p_context_.get(),
-    &QQmlPropertyMap::valueChanged,
-    [name, change_handler](const QString& n, const QVariant& value) {
-      if (n == QString::fromUtf8(name.c_str()))
-        change_handler(value);
-    });
+  change_handlers_[QString::fromUtf8(name.c_str())] = change_handler;
 }
 
 std::unique_ptr<QQmlPropertyMap, qobject_deleter> context_builder_impl::build()
 {
+  p_context_->connect(p_context_.get(),
+                      &QQmlPropertyMap::valueChanged,
+                      [change_handlers = std::move(change_handlers_)](
+                        const QString& name, const QVariant& value) {
+                        const auto it = change_handlers.find(name);
+                        if (it != change_handlers.end())
+                          it->second(value);
+                      });
+
   return std::move(p_context_);
 }
 }
