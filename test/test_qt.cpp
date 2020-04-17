@@ -62,14 +62,14 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   const auto c = z * 2.0f;
   const auto d = x;
 
-  const auto context = dataflow::qt::QmlContext(
-    dataflow::qt::RW(dataflow::qt::QmlPropertyRW("x", x),
-                     dataflow::qt::QmlPropertyRW("y", y),
-                     dataflow::qt::QmlPropertyRW("z", z)),
-    dataflow::qt::QmlProperty("a", a),
-    dataflow::qt::QmlProperty("b", b),
-    dataflow::qt::QmlProperty("c", c),
-    dataflow::qt::QmlProperty("d", d));
+  const auto context =
+    dataflow::qt::QmlContext(dataflow::qt::QmlPropertyRW("x", x),
+                             dataflow::qt::QmlPropertyRW("y", y),
+                             dataflow::qt::QmlPropertyRW("z", z),
+                             dataflow::qt::QmlProperty("a", a),
+                             dataflow::qt::QmlProperty("b", b),
+                             dataflow::qt::QmlProperty("c", c),
+                             dataflow::qt::QmlProperty("d", d));
 
   const auto m = Main(context);
 

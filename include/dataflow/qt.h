@@ -56,10 +56,6 @@ private:
 
 namespace qt
 {
-template <typename... Ts>
-std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>
-RW(const std::pair<std::string, std::reference_wrapper<var<Ts>>>&... props);
-
 template <typename T>
 std::pair<std::string, std::reference_wrapper<var<T>>>
 QmlPropertyRW(const std::string& name, var<T>& x);
@@ -68,11 +64,9 @@ template <typename T>
 std::pair<std::string, ref<T>> QmlProperty(const std::string& name,
                                            const ref<T>& x);
 
-template <typename... Ts, typename... Us>
-ref<std::shared_ptr<QObject>> QmlContext(
-  const std::tuple<std::pair<std::string, std::reference_wrapper<var<Ts>>>...>&
-    rw_props,
-  const std::pair<std::string, ref<Us>>&... props);
+template <typename... Refs>
+ref<std::shared_ptr<QObject>>
+QmlContext(const std::pair<std::string, Refs>&... props);
 
 DATAFLOW_QT_EXPORT ref<std::shared_ptr<QObject>>
 QmlComponent(const arg<std::string>& qml_url,

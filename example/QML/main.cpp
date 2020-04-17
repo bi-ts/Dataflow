@@ -78,21 +78,21 @@ int main(int argc, char* p_argv[])
 
   EngineQml engine(app);
 
-  // TODO: Allow these variables to be local in main
-  auto mouse_pos = Var<point>();
-  auto lmb_pressed = Var<int>();
-  const auto circle_radius = Const(50.0);
-  auto view = Var("view1.qml");
-
   // TODO: make sure `Main()` is called only once
   const auto m = Main([&](dtime t0) {
+    auto mouse_pos = Var<point>();
+    auto lmb_pressed = Var<int>();
+    auto view = Var("view1.qml");
+
+    const auto circle_radius = Const(50.0);
+
     const auto circle_pos = AdjustableCirclePosition(
       point(100, 100), circle_radius, mouse_pos, lmb_pressed, t0);
 
     const auto context =
-      qt::QmlContext(qt::RW(qt::QmlPropertyRW("mousePressed", lmb_pressed),
-                            qt::QmlPropertyRW("mousePos", mouse_pos),
-                            qt::QmlPropertyRW("view", view)),
+      qt::QmlContext(qt::QmlPropertyRW("mousePressed", lmb_pressed),
+                     qt::QmlPropertyRW("mousePos", mouse_pos),
+                     qt::QmlPropertyRW("view", view),
                      qt::QmlProperty("circleRadius", circle_radius),
                      qt::QmlProperty("circlePos", circle_pos));
 
