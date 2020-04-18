@@ -115,7 +115,7 @@ class DATAFLOW___EXPORT sig final : public ref<bool>
 public:
   explicit sig(const internal::ref& r, internal::ref::ctor_guard_t);
 
-  void emit() const;
+  void operator()() const;
 };
 
 template <typename T> class val final : public ref<T>

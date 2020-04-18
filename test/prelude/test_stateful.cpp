@@ -157,11 +157,11 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_refs)
 
   BOOST_CHECK_EQUAL(*light, false);
 
-  toggle.emit();
+  toggle();
 
   BOOST_CHECK_EQUAL(*light, true);
 
-  toggle.emit();
+  toggle();
 
   BOOST_CHECK_EQUAL(*light, false);
 }
@@ -179,11 +179,11 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_fot_ref)
 
   BOOST_CHECK_EQUAL(*light, false);
 
-  toggle.emit();
+  toggle();
 
   BOOST_CHECK_EQUAL(*light, true);
 
-  toggle.emit();
+  toggle();
 
   BOOST_CHECK_EQUAL(*light, false);
 }
@@ -200,11 +200,11 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_self_transition)
 
   BOOST_CHECK_EQUAL(*light, false);
 
-  toggle.emit();
+  toggle();
 
   BOOST_CHECK_EQUAL(*light, true);
 
-  toggle.emit();
+  toggle();
 
   BOOST_CHECK_EQUAL(*light, false);
 }

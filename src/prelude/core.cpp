@@ -39,7 +39,7 @@ Engine* Engine::engine_()
   return static_cast<Engine*>(internal::engine::data());
 }
 
-void sig::emit() const
+void sig::operator()() const
 {
   this->schedule_();
 }

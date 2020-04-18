@@ -369,7 +369,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
 
     capture_output();
 
-    x.emit();
+    x();
 
     reset_output();
 
@@ -398,7 +398,7 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
 
     capture_output();
 
-    x.emit();
+    x();
 
     reset_output();
 
