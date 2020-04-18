@@ -113,6 +113,42 @@ BOOST_AUTO_TEST_CASE(test_Vec2)
   BOOST_CHECK_EQUAL(*m, (vec2<int>(4, 0)));
 }
 
+BOOST_AUTO_TEST_CASE(test_Vec2_x)
+{
+  Engine engine;
+
+  auto x = Var(1);
+  const ref<vec2<int>> a = Vec2(x, 2);
+  const auto b = a.x();
+  const auto m = Main(b);
+
+  BOOST_CHECK_EQUAL(introspect::label(b), "vec2-x");
+
+  BOOST_CHECK_EQUAL(*m, 1);
+
+  x = 4;
+
+  BOOST_CHECK_EQUAL(*m, 4);
+}
+
+BOOST_AUTO_TEST_CASE(test_Vec2_y)
+{
+  Engine engine;
+
+  auto y = Var(2);
+  const ref<vec2<int>> a = Vec2(1, y);
+  const auto b = a.y();
+  const auto m = Main(b);
+
+  BOOST_CHECK_EQUAL(introspect::label(b), "vec2-y");
+
+  BOOST_CHECK_EQUAL(*m, 2);
+
+  y = 0;
+
+  BOOST_CHECK_EQUAL(*m, 0);
+}
+
 BOOST_AUTO_TEST_CASE(test_Vec2_Add)
 {
   Engine engine;

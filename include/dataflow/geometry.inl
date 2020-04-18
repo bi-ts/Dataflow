@@ -78,6 +78,54 @@ std::ostream& dataflow::operator<<(std::ostream& out, const vec2<T>& v)
   return out << "vec2( " << v.x() << " " << v.y() << " )";
 }
 
+namespace dataflow
+{
+template <typename T>
+ref<vec2<T>>::ref(core::ref_base<vec2<T>> base)
+: core::ref_base<vec2<T>>(base)
+{
+}
+
+template <typename T> ref<vec2<T>> ref<vec2<T>>::operator()(dtime t) const
+{
+  return this->snapshot_(t);
+}
+
+template <typename T> ref<T> ref<vec2<T>>::x() const
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "vec2-x";
+    }
+    static const T& calculate(const vec2<T>& v)
+    {
+      return v.x();
+    }
+  };
+
+  return core::Lift<policy>(*this);
+}
+
+template <typename T> ref<T> ref<vec2<T>>::y() const
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "vec2-y";
+    }
+    static const T& calculate(const vec2<T>& v)
+    {
+      return v.y();
+    }
+  };
+
+  return core::Lift<policy>(*this);
+}
+}
+
 template <typename ArgX, typename ArgY, typename..., typename T>
 dataflow::ref<dataflow::vec2<T>> dataflow::Vec2(const ArgX& x, const ArgY& y)
 {
