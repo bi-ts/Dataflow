@@ -181,7 +181,7 @@ private:
 template <> class props_definition<>
 {
 public:
-  template <std::size_t Idx, typename F> void for_each(const F& f) const
+  template <std::size_t Idx = 0, typename F> void for_each(const F& f) const
   {
   }
 
@@ -240,7 +240,7 @@ public:
 
       std::string label() const
       {
-        return "create-context";
+        return "qml-context";
       }
 
       std::shared_ptr<QObject> calculate(const core::data_type_t<Rs>&... values)

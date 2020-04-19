@@ -24,6 +24,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+namespace dataflow2qt = dataflow::qt;
+
 namespace dataflow_test
 {
 namespace
@@ -47,6 +49,21 @@ BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_wrong_engine_type)
   BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);
 }
 
+BOOST_AUTO_TEST_CASE(test_QmlContext_minimal)
+{
+  QCoreApplication app(g_argc, g_argv);
+
+  dataflow::EngineQml engine(app);
+
+  const auto context = dataflow2qt::QmlContext();
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::label(context), "const");
+
+  const auto m = Main(context);
+
+  BOOST_CHECK(*m != nullptr);
+}
+
 BOOST_AUTO_TEST_CASE(test_QmlContext)
 {
   QCoreApplication app(g_argc, g_argv);
@@ -63,13 +80,15 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   const auto d = x;
 
   const auto context =
-    dataflow::qt::QmlContext(dataflow::qt::QmlPropertyRW("x", x),
-                             dataflow::qt::QmlPropertyRW("y", y),
-                             dataflow::qt::QmlPropertyRW("z", z),
-                             dataflow::qt::QmlProperty("a", a),
-                             dataflow::qt::QmlProperty("b", b),
-                             dataflow::qt::QmlProperty("c", c),
-                             dataflow::qt::QmlProperty("d", d));
+    dataflow2qt::QmlContext(dataflow2qt::QmlPropertyRW("x", x),
+                            dataflow2qt::QmlPropertyRW("y", y),
+                            dataflow2qt::QmlPropertyRW("z", z),
+                            dataflow2qt::QmlProperty("a", a),
+                            dataflow2qt::QmlProperty("b", b),
+                            dataflow2qt::QmlProperty("c", c),
+                            dataflow2qt::QmlProperty("d", d));
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::label(context), "qml-context");
 
   const auto m = Main(context);
 
