@@ -1,3 +1,3 @@
 
-add_subdirectory(QML)
+add_subdirectory(QML/drag-n-drop)
 

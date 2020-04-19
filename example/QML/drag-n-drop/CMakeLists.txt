@@ -1,5 +1,5 @@
 
-project(drag_n_drop)
+project(drag-n-drop)
 
 set(CMAKE_AUTORCC ON)
 
