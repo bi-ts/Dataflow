@@ -324,21 +324,38 @@ dataflow::ref<T> dataflow::core::Lift(const ref<X>& x, const ref<Xs>&... xs)
   return Lift<Policy>(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::LiftUpdater(Policy policy,
-                                             const ref<X>& x,
-                                             const ref<Xs>&... xs)
+namespace dataflow
+{
+namespace core
+{
+namespace detail
+{
+template <typename T, typename Policy, typename X, typename... Xs>
+ref<T> lift_updater(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
   return ref_base<T>(internal::node_updater_n_ary<Policy, T, X, Xs...>::create(
                        std::move(policy), false, x, xs...),
                      internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::LiftUpdater(const ref<X>& x,
-                                             const ref<Xs>&... xs)
+template <typename T, typename Policy> ref<T> lift_updater(Policy policy)
 {
-  return LiftUpdater(Policy(), x, xs...);
+  return Const<T>(policy.calculate());
+}
+}
+}
+
+template <typename Policy, typename... Xs, typename T>
+ref<T> core::LiftUpdater(Policy policy, const ref<Xs>&... xs)
+{
+  return detail::lift_updater<T>(std::move(policy), xs...);
+}
+
+template <typename Policy, typename... Xs, typename T>
+ref<T> core::LiftUpdater(const ref<Xs>&... xs)
+{
+  return LiftUpdater(Policy(), xs...);
+}
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>

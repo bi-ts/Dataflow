@@ -1134,7 +1134,32 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, "other-text/BBBBBB/111%");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_updater_binary_func, test_core_fixture)
+BOOST_FIXTURE_TEST_CASE(test_LiftUpdater_policy_member_func_no_args,
+                        test_core_fixture)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "updater-no-args";
+    }
+
+    int calculate()
+    {
+      return 19042020;
+    }
+  };
+
+  const auto x = core::LiftUpdater<policy>();
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+
+  const auto y = Main(x);
+
+  BOOST_CHECK_EQUAL(*y, 19042020);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_LiftUpdater_binary_func, test_core_fixture)
 {
   var<char> x = Var<char>('A');
   var<int> y = Var<int>(4);
