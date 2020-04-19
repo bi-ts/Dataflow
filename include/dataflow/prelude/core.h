@@ -583,21 +583,17 @@ template <typename F,
           typename T = typename std::result_of<F(const X&, const Y&)>::type>
 ref<T> Lift(const std::string& label, const ref<X>& x, const ref<Y>& y, F func);
 
-template <
-  typename Policy,
-  typename X,
-  typename... Xs,
-  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
-    std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> Lift(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
+template <typename Policy,
+          typename... Xs,
+          typename T = std20::remove_cvref_t<
+            decltype(std::declval<Policy>().calculate(std::declval<Xs>()...))>>
+ref<T> Lift(Policy policy, const ref<Xs>&... xs);
 
-template <
-  typename Policy,
-  typename X,
-  typename... Xs,
-  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
-    std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> Lift(const ref<X>& x, const ref<Xs>&... xs);
+template <typename Policy,
+          typename... Xs,
+          typename T = std20::remove_cvref_t<
+            decltype(std::declval<Policy>().calculate(std::declval<Xs>()...))>>
+ref<T> Lift(const ref<Xs>&... xs);
 
 template <typename Policy,
           typename... Xs,

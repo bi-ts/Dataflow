@@ -874,6 +874,30 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Lift_policy_member_func_no_args, test_core_fixture)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "no-args";
+    }
+
+    int calculate()
+    {
+      return 19042020;
+    }
+  };
+
+  const auto x = core::Lift<policy>();
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+
+  const auto y = Main(x);
+
+  BOOST_CHECK_EQUAL(*y, 19042020);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
 {
   const var<int> x = Var<int>('A');

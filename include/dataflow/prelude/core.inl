@@ -309,23 +309,38 @@ dataflow::ref<T> dataflow::core::Lift(const std::string& label,
   return Lift(policy(label, func), x, y);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T>
-dataflow::core::Lift(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
+namespace dataflow
+{
+namespace core
+{
+namespace detail
+{
+template <typename T, typename Policy, typename X, typename... Xs>
+ref<T> lift(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
   return ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
                        std::move(policy), false, x, xs...),
                      internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
-dataflow::ref<T> dataflow::core::Lift(const ref<X>& x, const ref<Xs>&... xs)
+template <typename T, typename Policy> ref<T> lift(Policy policy)
 {
-  return Lift<Policy>(Policy(), x, xs...);
+  return Const<T>(policy.calculate());
+}
+}
+}
+template <typename Policy, typename... Xs, typename T>
+ref<T> core::Lift(Policy policy, const ref<Xs>&... xs)
+{
+  return detail::lift<T>(std::move(policy), xs...);
 }
 
-namespace dataflow
+template <typename Policy, typename... Xs, typename T>
+ref<T> core::Lift(const ref<Xs>&... xs)
 {
+  return Lift<Policy>(Policy(), xs...);
+}
+
 namespace core
 {
 namespace detail
