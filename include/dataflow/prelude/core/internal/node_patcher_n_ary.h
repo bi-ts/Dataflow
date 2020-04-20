@@ -43,9 +43,8 @@ template <typename Patch> struct patch_metadata : metadata
   Patch patch;
 };
 
-template <typename Policy, typename OutPatch, typename... InDiffs>
-class node_patcher_n_ary final : public node_t<typename OutPatch::data_type>,
-                                 public Policy
+template <typename T, typename Policy, typename OutPatch, typename... InDiffs>
+class node_patcher_n_ary final : public node_t<T>, public Policy
 {
   friend class nodes_factory;
 
@@ -59,7 +58,7 @@ public:
     const std::array<node_id, sizeof...(InDiffs)> args = {{xs.id()...}};
 
     return nodes_factory::create<
-      node_patcher_n_ary<Policy, OutPatch, InDiffs...>>(
+      node_patcher_n_ary<T, Policy, OutPatch, InDiffs...>>(
       &args[0],
       args.size(),
       eager ? node_flags::eager : node_flags::none,
@@ -73,8 +72,7 @@ private:
   }
 
   template <typename... Args, std::size_t... Is>
-  typename OutPatch::data_type initialize_(const node** p_args,
-                                           const std14::index_sequence<Is...>&)
+  T initialize_(const node** p_args, const std14::index_sequence<Is...>&)
   {
     prev_args_ = std::tuple<typename InDiffs::data_type...>{
       extract_node_value<Args>(p_args[Is])...};

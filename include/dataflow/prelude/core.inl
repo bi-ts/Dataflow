@@ -436,6 +436,7 @@ ref<T> core::LiftPatcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
   return ref_base<T>(
     internal::node_patcher_n_ary<
+      T,
       Policy,
       core::patch_type_t<T>,
       core::diff_type_t<X>,

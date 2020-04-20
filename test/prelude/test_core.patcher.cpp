@@ -53,8 +53,6 @@ struct data
 
 struct patch
 {
-  using data_type = data;
-
   explicit patch(const data& curr, const data& prev)
   : restored(curr != prev)
   , diff(restored ? curr.value - prev.value : 0)

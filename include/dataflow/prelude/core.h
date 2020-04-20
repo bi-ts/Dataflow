@@ -178,9 +178,6 @@ namespace core
 template <typename T> class generic_patch
 {
 public:
-  using data_type = T;
-
-public:
   explicit generic_patch(const T& curr, const T& prev);
 
   T apply(const T& prev) const;
@@ -194,9 +191,6 @@ template <typename T, typename Patch = generic_patch<T>> class diff final
 public:
   using data_type = T;
   using patch_type = Patch;
-
-  static_assert(std::is_same<typename Patch::data_type, T>::value,
-                "Wrong patch data type");
 
 public:
   explicit diff(const T& curr, const T& prev, const Patch& patch);
