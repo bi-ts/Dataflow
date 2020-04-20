@@ -24,6 +24,7 @@
 #include "dataflow-qt_export.h"
 
 #include <dataflow/prelude/core.h>
+#include <dataflow/qt/conversion.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QObject>

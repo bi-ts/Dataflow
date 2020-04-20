@@ -21,7 +21,6 @@
 #endif
 
 #include "qt/internal/context_builder.h"
-#include "qt/internal/conversion.h"
 
 namespace dataflow
 {
@@ -37,11 +36,10 @@ struct add_rw_property
     // TODO: avoid this shared var
     const auto p_x = std::make_shared<var<T>>(x);
 
-    builder.add_property(name,
-                         internal::convert_to_qml_type(T{}),
-                         [p_x](const QVariant& value) mutable {
-                           *p_x = internal::convert_from_qml_type<T>(value);
-                         });
+    builder.add_property(
+      name, convert_to_qml_type(T{}), [p_x](const QVariant& value) mutable {
+        *p_x = converter<T>::from_qml_type(value);
+      });
   }
 
   internal::context_builder& builder;
@@ -52,7 +50,7 @@ struct add_property
   template <std::size_t idx, typename T>
   void operator()(const std::string& name) const
   {
-    builder.add_property(name, internal::convert_to_qml_type(T{}));
+    builder.add_property(name, convert_to_qml_type(T{}));
   }
 
   internal::context_builder& builder;
@@ -63,7 +61,7 @@ struct set_property
   template <typename T>
   void operator()(const std::string& name, var<T>& x) const
   {
-    p_object->setProperty(name.c_str(), internal::convert_to_qml_type(*x));
+    p_object->setProperty(name.c_str(), convert_to_qml_type(*x));
   }
 
   std::shared_ptr<QObject> p_object;
@@ -197,8 +195,8 @@ template <typename... Ts> struct set_property_from_value
   template <std::size_t Idx, typename>
   void operator()(const std::string& name) const
   {
-    p_object->setProperty(
-      name.c_str(), internal::convert_to_qml_type(std::get<Idx>(values_)));
+    p_object->setProperty(name.c_str(),
+                          convert_to_qml_type(std::get<Idx>(values_)));
   }
 
   std::tuple<Ts...> values_;
