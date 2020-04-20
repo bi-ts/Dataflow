@@ -122,9 +122,6 @@ private:
   class change_data;
 
 public:
-  using data_type = list<T>;
-
-public:
   explicit list_patch();
 
   explicit list_patch(const list<T>&, const list<T>&);
