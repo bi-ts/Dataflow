@@ -144,7 +144,10 @@ add_library(${PROJECT_NAME} SHARED
 
 )
 
-target_link_libraries(${PROJECT_NAME} dst immer)
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC immer
+  PRIVATE dst
+)
 
 generate_export_header(${PROJECT_NAME})
 
@@ -183,10 +186,8 @@ target_include_directories(dataflow-qt PUBLIC
 )
 
 target_link_libraries(dataflow-qt
-  dataflow++
-  Qt5::Core
-  Qt5::Gui
-  Qt5::Qml
+  PUBLIC dataflow++ Qt5::Qml
+  PRIVATE Qt5::Core Qt5::Gui
 )
 
 add_subdirectory(example)
