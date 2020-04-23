@@ -569,7 +569,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //           |         |     |
   //         <if>-yes-.  |     |
   //           |      |  |     |
-  //    .------+------+--*     |
+  //    .------+------+--'     |
   //    |      |      |        |
   //    b      |      a        |
   //    |      |      |        |
@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //    |      |      |        |
   //    |   (y < 4)   |        |
   //    |      |      |        |
-  //    *--.---*      |        |
+  //    `--.---'      |        |
   //       |          |        |
   //      y=3        x=0      z=3
 
