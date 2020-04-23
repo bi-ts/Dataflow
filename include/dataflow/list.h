@@ -59,12 +59,7 @@ template <typename T> struct select_list_data<ref<T>>
 
 template <typename T> class list_patch;
 
-template <typename T>
-class list final
-: public std::conditional<
-    std17::disjunction<core::is_ref<T>, core::is_aggregate_data_type<T>>::value,
-    core::aggregate_base,
-    core::composite_base>::type
+template <typename T> class list final : public core::data_type_tag_t<T>
 {
 private:
   using data_type = typename list_internal::select_list_data<T>::type;
