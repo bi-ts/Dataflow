@@ -37,6 +37,17 @@ int g_argc = static_cast<int>((sizeof(g_argv) / sizeof(g_argv[0])) - 1);
 
 BOOST_AUTO_TEST_SUITE(test_qt)
 
+BOOST_AUTO_TEST_CASE(test_conversion_type_traits)
+{
+  BOOST_CHECK_EQUAL((dataflow2qt::is_convertible_to_qml_type<int>::value),
+                    true);
+  BOOST_CHECK_EQUAL(
+    (dataflow2qt::is_convertible_to_qml_type<const volatile int&>::value),
+    true);
+  BOOST_CHECK_EQUAL((dataflow2qt::is_convertible_to_qml_type<void>::value),
+                    false);
+}
+
 BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_no_engine)
 {
   BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);

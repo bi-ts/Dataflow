@@ -21,6 +21,7 @@
 #include "dataflow-qt_export.h"
 
 #include <dataflow/geometry.h>
+#include <dataflow/utility/std_future.h>
 
 #include <QtCore/QVariant>
 
@@ -78,9 +79,32 @@ template <> struct DATAFLOW_QT_EXPORT converter<vec2<int>>
   static vec2<int> from_qml_type(const QVariant& v);
 };
 
-template <typename T> QVariant convert_to_qml_type(const T& v)
+namespace detail
+{
+template <typename T> struct is_convertible_to_qml_type
+{
+private:
+  template <typename TT,
+            typename = decltype(converter<TT>::to_qml_type(std::declval<TT>()))>
+  static std::true_type test_(const TT*);
+
+  static std::false_type test_(...);
+
+public:
+  using type = decltype(test_(std::declval<const T*>()));
+};
+}
+
+template <typename T>
+using is_convertible_to_qml_type =
+  typename detail::is_convertible_to_qml_type<std20::remove_cvref_t<T>>::type;
+
+template <typename T>
+typename std::enable_if<is_convertible_to_qml_type<T>::value, QVariant>::type
+convert_to_qml_type(const T& v)
 {
   return converter<T>::to_qml_type(v);
 }
+
 }
 }
