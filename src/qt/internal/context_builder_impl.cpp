@@ -36,14 +36,14 @@ context_builder_impl::~context_builder_impl()
 }
 
 void context_builder_impl::add_property(const std::string& name,
-                                        const QVariant& initial_value)
+                                        const qml_data& initial_value)
 {
   p_context_->insert(QString::fromUtf8(name.c_str()), initial_value);
 }
 
 void context_builder_impl::add_property(
   const std::string& name,
-  const QVariant& initial_value,
+  const qml_data& initial_value,
   const std::function<void(const QVariant&)>& change_handler)
 {
   add_property(name, initial_value);

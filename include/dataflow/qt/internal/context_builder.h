@@ -20,6 +20,8 @@
 
 #include "dataflow-qt_export.h"
 
+#include <dataflow/qt/qml_data.h>
+
 #include <QtCore/QObject>
 
 #include <memory>
@@ -36,10 +38,10 @@ public:
   context_builder();
   ~context_builder();
 
-  void add_property(const std::string& name, const QVariant& value);
+  void add_property(const std::string& name, const qml_data& value);
 
   void add_property(const std::string& name,
-                    const QVariant& initial_value,
+                    const qml_data& initial_value,
                     const std::function<void(const QVariant&)>& change_handler);
 
   std::shared_ptr<QObject> build();

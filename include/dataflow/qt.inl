@@ -36,10 +36,9 @@ struct add_rw_property
     // TODO: avoid this shared var
     const auto p_x = std::make_shared<var<T>>(x);
 
-    builder.add_property(
-      name, convert_to_qml_type(T{}), [p_x](const QVariant& value) mutable {
-        *p_x = converter<T>::from_qml_type(value);
-      });
+    builder.add_property(name, T{}, [p_x](const QVariant& value) {
+      *p_x = converter<T>::from_qml_type(value);
+    });
   }
 
   internal::context_builder& builder;
@@ -50,7 +49,7 @@ struct add_property
   template <std::size_t idx, typename T>
   void operator()(const std::string& name) const
   {
-    builder.add_property(name, convert_to_qml_type(T{}));
+    builder.add_property(name, T{});
   }
 
   internal::context_builder& builder;

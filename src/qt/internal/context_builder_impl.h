@@ -19,6 +19,7 @@
 #pragma once
 
 #include <dataflow/qt/internal/qobject_deleter.h>
+#include <dataflow/qt/qml_data.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
@@ -42,10 +43,10 @@ public:
   context_builder_impl();
   ~context_builder_impl();
 
-  void add_property(const std::string& name, const QVariant& initial_value);
+  void add_property(const std::string& name, const qml_data& initial_value);
 
   void add_property(const std::string& name,
-                    const QVariant& initial_value,
+                    const qml_data& initial_value,
                     const std::function<void(const QVariant&)>& change_handler);
 
   std::unique_ptr<QQmlPropertyMap, qobject_deleter> build();
