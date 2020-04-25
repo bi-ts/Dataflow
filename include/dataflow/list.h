@@ -172,7 +172,7 @@ public:
 
   ref<T> operator()(dtime t) const;
 
-  ref<maybe<T>> operator[](const ref<integer>& idx) const;
+  ref<maybe<T>> operator[](const arg<integer>& idx) const;
 };
 
 template <typename T> class var<list<T>> final : public core::var_base<list<T>>

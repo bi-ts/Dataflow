@@ -322,7 +322,7 @@ template <typename T> ref<T> ref<list<T>>::operator()(dtime t) const
 }
 
 template <typename T>
-ref<maybe<T>> ref<list<T>>::operator[](const ref<integer>& idx) const
+ref<maybe<T>> ref<list<T>>::operator[](const arg<integer>& idx) const
 {
   return Get(static_cast<const ref<list<T>>&>(*this), idx);
 }

@@ -374,6 +374,17 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_assign_Get_via_subscript_operator)
   BOOST_CHECK_EQUAL(*x, "default");
 }
 
+BOOST_AUTO_TEST_CASE(test_ListC_Get_via_subscript_operator_by_literal)
+{
+  Engine engine;
+
+  const auto lst = ListC("0th", "1st", "2nd");
+
+  const auto x = Main([=](dtime t0) { return FromMaybe(lst[1]); });
+
+  BOOST_CHECK_EQUAL(*x, "1st");
+}
+
 BOOST_AUTO_TEST_CASE(test_ListC_Insert)
 {
   Engine engine;
