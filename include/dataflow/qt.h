@@ -25,6 +25,7 @@
 
 #include <dataflow/prelude/core.h>
 #include <dataflow/qt/conversion.h>
+#include <dataflow/qt/qml_data.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QObject>

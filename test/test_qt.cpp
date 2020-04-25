@@ -48,6 +48,49 @@ BOOST_AUTO_TEST_CASE(test_conversion_type_traits)
                     false);
 }
 
+BOOST_AUTO_TEST_CASE(test_QmlData_int)
+{
+  dataflow::Engine engine;
+
+  auto x = dataflow::Var(1);
+
+  const auto y = dataflow2qt::QmlData(x);
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::label(y), "qml-data");
+
+  const auto z = Main(y);
+
+  BOOST_CHECK_EQUAL(static_cast<QVariant>(*z).toInt(), 1);
+
+  x = 3;
+
+  BOOST_CHECK_EQUAL(static_cast<QVariant>(*z).toInt(), 3);
+}
+
+BOOST_AUTO_TEST_CASE(test_QmlData_QObject)
+{
+  dataflow::Engine engine;
+
+  const auto p_qobject_a = std::shared_ptr<QObject>{new QObject{nullptr}};
+  const auto p_qobject_b = std::shared_ptr<QObject>{new QObject{nullptr}};
+
+  auto x = dataflow::Var(p_qobject_a);
+
+  const auto y = dataflow2qt::QmlData(x);
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::label(y), "qml-data");
+
+  const auto z = Main(y);
+
+  BOOST_CHECK_EQUAL((*z).to_qobject(), p_qobject_a);
+  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(*z), p_qobject_a.get());
+
+  x = p_qobject_b;
+
+  BOOST_CHECK_EQUAL((*z).to_qobject(), p_qobject_b);
+  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(*z), p_qobject_b.get());
+}
+
 BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_no_engine)
 {
   BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);
