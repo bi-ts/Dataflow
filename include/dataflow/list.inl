@@ -722,13 +722,8 @@ dataflow::Map(const ArgL& x, const F& f, const Args&... args)
 
         for (integer idx = 0; idx < curr.size(); ++idx)
         {
-          const auto& x = f(curr[idx], xs.curr()...);
-
-          if (idx < prev.size() && x != prev[idx])
-          {
-            patch.erase(idx);
-            patch.insert(idx, x);
-          }
+          patch.erase(idx);
+          patch.insert(idx, f(curr[idx], xs.curr()...));
         }
 
         for (integer idx = curr.size(); idx < prev.size(); ++idx)

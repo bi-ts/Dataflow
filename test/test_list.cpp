@@ -895,6 +895,19 @@ BOOST_AUTO_TEST_CASE(test_ListC_Map)
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(34 44 36)");
 }
 
+BOOST_AUTO_TEST_CASE(test_ListC_Map_int_to_string)
+{
+  Engine engine;
+
+  const auto xs = ListC(1, 2, 3);
+
+  const auto ys = Map(xs, [&](int x) { return "#" + std::to_string(x); });
+
+  const auto f = Main(ys);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(#1 #2 #3)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Var_ToString)
 {
   Engine engine;
