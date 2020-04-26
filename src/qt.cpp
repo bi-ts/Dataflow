@@ -64,12 +64,11 @@ qt::QmlComponent(const arg<std::string>& qml_url,
     component_data calculate(const std::string& qml_url,
                              const std::shared_ptr<QObject>& p_context)
     {
-      const std::shared_ptr<QQmlComponent> p_qml_component{
-        new QQmlComponent{&EngineQml::instance().GetQmlEngine(),
-                          QUrl(QString::fromUtf8(qml_url.c_str()))},
-        qt::internal::qobject_deleter{}};
+      QQmlComponent qml_component_factory{
+        &EngineQml::instance().GetQmlEngine(),
+        QUrl(QString::fromUtf8(qml_url.c_str()))};
 
-      if (p_qml_component->isError())
+      if (qml_component_factory.isError())
       {
         throw std::runtime_error("Can't create qml component");
       }
@@ -80,11 +79,12 @@ qt::QmlComponent(const arg<std::string>& qml_url,
 
       p_qml_context->setContextProperty("view_context", p_context.get());
 
-      const auto& p_object =
-        std::shared_ptr<QObject>{p_qml_component->create(p_qml_context.get()),
-                                 qt::internal::qobject_deleter{}};
+      const auto p_qml_component = std::shared_ptr<QObject>{
+        qml_component_factory.create(p_qml_context.get()),
+        qt::internal::qobject_deleter{}};
 
-      return component_data(p_qml_context, p_object);
+
+      return component_data{p_qml_context, p_qml_component};
     };
   };
 
