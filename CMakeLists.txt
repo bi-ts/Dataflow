@@ -168,7 +168,6 @@ add_library(dataflow-qt SHARED
   include/dataflow/qt.inl
   include/dataflow/qt/conversion.h
   include/dataflow/qt/internal/context_builder.h
-  include/dataflow/qt/internal/qobject_deleter.h
   include/dataflow/qt/qml_data.h
   src/qt.cpp
   src/qt/conversion.cpp
@@ -176,6 +175,7 @@ add_library(dataflow-qt SHARED
   src/qt/internal/context_builder_impl.cpp
   src/qt/internal/context_builder_impl.h
   src/qt/internal/qobject_deleter.cpp
+  src/qt/internal/qobject_deleter.h
   src/qt/qml_data.cpp
 )
 

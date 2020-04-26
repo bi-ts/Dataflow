@@ -16,10 +16,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
+#include "qt/internal/qobject_deleter.h"
 #include <dataflow/qt.h>
 #include <dataflow/tuple.h>
-
-#include <dataflow/qt/internal/qobject_deleter.h>
 
 #include <QtQml/QQmlComponent>
 #include <QtQml/QQmlContext>

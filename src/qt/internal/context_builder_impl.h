@@ -18,7 +18,8 @@
 
 #pragma once
 
-#include <dataflow/qt/internal/qobject_deleter.h>
+#include "qobject_deleter.h"
+
 #include <dataflow/qt/qml_data.h>
 
 #include <QtCore/QObject>
