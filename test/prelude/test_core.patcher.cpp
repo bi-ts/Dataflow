@@ -237,6 +237,32 @@ ref<data> TransformData2(patcher_test_counters& counters,
 
 BOOST_AUTO_TEST_SUITE(test_core_patcher)
 
+BOOST_AUTO_TEST_CASE(test_LiftPatcher_policy_member_func_no_args)
+{
+  Engine engine;
+
+  struct policy
+  {
+    static std::string label()
+    {
+      return "patcher-no-args";
+    }
+
+    int calculate()
+    {
+      return 31052020;
+    }
+  };
+
+  const auto x = core::LiftPatcher<policy>();
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "const");
+
+  const auto y = Main(x);
+
+  BOOST_CHECK_EQUAL(*y, 31052020);
+}
+
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
 {
   Engine engine;

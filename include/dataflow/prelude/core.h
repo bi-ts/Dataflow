@@ -629,21 +629,17 @@ template <
     std::declval<X>(), std::declval<Xs>()...))>>
 ref<T> LiftSelector(const ref<X>& x, const ref<Xs>&... xs);
 
-template <
-  typename Policy,
-  typename X,
-  typename... Xs,
-  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
-    std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> LiftPatcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs);
+template <typename Policy,
+          typename... Xs,
+          typename T = std20::remove_cvref_t<
+            decltype(std::declval<Policy>().calculate(std::declval<Xs>()...))>>
+ref<T> LiftPatcher(Policy policy, const ref<Xs>&... xs);
 
-template <
-  typename Policy,
-  typename X,
-  typename... Xs,
-  typename T = std20::remove_cvref_t<decltype(std::declval<Policy>().calculate(
-    std::declval<X>(), std::declval<Xs>()...))>>
-ref<T> LiftPatcher(const ref<X>& x, const ref<Xs>&... xs);
+template <typename Policy,
+          typename... Xs,
+          typename T = std20::remove_cvref_t<
+            decltype(std::declval<Policy>().calculate(std::declval<Xs>()...))>>
+ref<T> LiftPatcher(const ref<Xs>&... xs);
 }
 
 // Basic functions

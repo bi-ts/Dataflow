@@ -431,8 +431,12 @@ ref<T> core::LiftSelector(const ref<X>& x, const ref<Xs>&... xs)
   return LiftSelector(Policy(), x, xs...);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
-ref<T> core::LiftPatcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
+namespace core
+{
+namespace detail
+{
+template <typename T, typename Policy, typename X, typename... Xs>
+ref<T> lift_patcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
   return ref_base<T>(
     internal::node_patcher_n_ary<
@@ -444,10 +448,23 @@ ref<T> core::LiftPatcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
     internal::ref::ctor_guard);
 }
 
-template <typename Policy, typename X, typename... Xs, typename T>
-ref<T> core::LiftPatcher(const ref<X>& x, const ref<Xs>&... xs)
+template <typename T, typename Policy> ref<T> lift_patcher(Policy policy)
 {
-  return LiftPatcher(Policy(), x, xs...);
+  return Const<T>(policy.calculate());
+}
+}
+}
+
+template <typename Policy, typename... Xs, typename T>
+ref<T> core::LiftPatcher(Policy policy, const ref<Xs>&... xs)
+{
+  return detail::lift_patcher<T>(std::move(policy), xs...);
+}
+
+template <typename Policy, typename... Xs, typename T>
+ref<T> core::LiftPatcher(const ref<Xs>&... xs)
+{
+  return LiftPatcher(Policy(), xs...);
 }
 }
 
