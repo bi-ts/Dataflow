@@ -35,23 +35,6 @@
 
 namespace dataflow
 {
-
-namespace core
-{
-template <typename T>
-struct is_flowable
-: std17::conjunction<std::is_default_constructible<T>,
-                     std::is_copy_constructible<T>,
-                     std::is_copy_assignable<T>,
-                     internal::is_streamable<T>,
-                     internal::is_equality_comparable<T>,
-                     std17::negation<std::is_base_of<internal::ref, T>>,
-                     std17::negation<std::is_pointer<T>>,
-                     std17::negation<std::is_reference<T>>>
-{
-};
-}
-
 /// \defgroup core
 /// \ingroup prelude
 /// \{
@@ -70,6 +53,19 @@ protected:
 
 namespace core
 {
+template <typename T>
+struct is_flowable
+: std17::conjunction<std::is_default_constructible<T>,
+                     std::is_copy_constructible<T>,
+                     std::is_copy_assignable<T>,
+                     internal::is_streamable<T>,
+                     internal::is_equality_comparable<T>,
+                     std17::negation<std::is_base_of<internal::ref, T>>,
+                     std17::negation<std::is_pointer<T>>,
+                     std17::negation<std::is_reference<T>>>
+{
+};
+
 template <typename T> class ref_base : public internal::ref
 {
   static_assert(core::is_flowable<T>::value, "`T` must be flowable");
