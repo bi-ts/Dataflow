@@ -18,7 +18,10 @@
 
 #pragma once
 
+#include <cstddef> // std::size_t
+#include <memory>  // std::unique_ptr
 #include <type_traits>
+#include <utility> // std::forward
 
 namespace dataflow
 {
