@@ -103,6 +103,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/tuple.h
   include/dataflow/tuple.inl
   include/dataflow/utility/std_future.h
+  include/dataflow/utility/utility.h
 
   src/behavior.cpp
   src/geometry.cpp

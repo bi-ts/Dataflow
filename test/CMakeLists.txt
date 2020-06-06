@@ -102,3 +102,5 @@ dataflow_add_test_project(integration
 
 dataflow_add_test_project(qt LIBRARIES dataflow-qt)
 
+dataflow_add_test_project(utility)
+
