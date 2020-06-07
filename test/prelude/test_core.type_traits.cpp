@@ -263,6 +263,29 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<void>::value, false);
 }
 
+BOOST_AUTO_TEST_CASE(test_is_var)
+{
+  BOOST_CHECK_EQUAL(core::is_var<ref<int>>::value, false);
+  BOOST_CHECK_EQUAL(core::is_var<ref<int>&>::value, false);
+  BOOST_CHECK_EQUAL(core::is_var<const ref<int>&>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_var<val<int>>::value, false);
+  BOOST_CHECK_EQUAL(core::is_var<val<int>&>::value, false);
+  BOOST_CHECK_EQUAL(core::is_var<const val<int>&>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_var<var<int>>::value, true);
+  BOOST_CHECK_EQUAL(core::is_var<var<int>&>::value, true);
+  BOOST_CHECK_EQUAL(core::is_var<const var<int>&>::value, true);
+
+  BOOST_CHECK_EQUAL(core::is_var<sig>::value, false);
+  BOOST_CHECK_EQUAL(core::is_var<sig&>::value, false);
+  BOOST_CHECK_EQUAL(core::is_var<const sig&>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_var<int>::value, false);
+
+  BOOST_CHECK_EQUAL(core::is_var<void>::value, false);
+}
+
 BOOST_AUTO_TEST_CASE(test_is_init_function_type)
 {
   BOOST_CHECK_EQUAL(core::is_init_function<int>::value, false);

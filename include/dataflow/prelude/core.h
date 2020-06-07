@@ -300,6 +300,27 @@ using data_type_tag_t = typename data_type_tag<T, Ts...>::type;
 
 namespace detail
 {
+template <typename T> struct is_var
+{
+  using type = std::false_type;
+};
+
+template <typename T> struct is_var<var<T>>
+{
+  using type = std::true_type;
+};
+}
+
+/// A type trait that checks whether type `T` is a variable. It is
+/// `std::true_type`, if type `T` is an instance of `var<T>` class template
+/// (possibly cv-qualified) or a reference thereto. Otherwise, it is
+/// `std::false_type`.
+///
+template <typename T>
+using is_var = typename detail::is_var<std20::remove_cvref_t<T>>::type;
+
+namespace detail
+{
 template <typename T> struct init_function_type
 {
 private:
