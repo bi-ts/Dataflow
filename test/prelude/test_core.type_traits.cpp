@@ -258,6 +258,10 @@ BOOST_AUTO_TEST_CASE(test_is_ref)
   BOOST_CHECK_EQUAL(core::is_ref<var<int>&>::value, true);
   BOOST_CHECK_EQUAL(core::is_ref<const var<int>&>::value, true);
 
+  BOOST_CHECK_EQUAL(core::is_ref<sig>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<sig&>::value, true);
+  BOOST_CHECK_EQUAL(core::is_ref<const sig&>::value, true);
+
   BOOST_CHECK_EQUAL(core::is_ref<int>::value, false);
 
   BOOST_CHECK_EQUAL(core::is_ref<void>::value, false);
