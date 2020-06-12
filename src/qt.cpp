@@ -16,7 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include "qt/internal/qobject_deleter.h"
+#include "qt/internal/qobject_factory.h"
 #include <dataflow/qt.h>
 #include <dataflow/tuple.h>
 
@@ -72,16 +72,13 @@ qt::QmlComponent(const arg<std::string>& qml_url,
         throw std::runtime_error("Can't create qml component");
       }
 
-      const std::shared_ptr<QQmlContext> p_qml_context{
-        new QQmlContext{EngineQml::instance().GetQmlEngine().rootContext()},
-        qt::internal::qobject_deleter{}};
+      const auto p_qml_context = internal::qobject_factory::create<QQmlContext>(
+        EngineQml::instance().GetQmlEngine().rootContext());
 
       p_qml_context->setContextProperty("view_context", p_context.get());
 
-      const auto p_qml_component = std::shared_ptr<QObject>{
-        qml_component_factory.create(p_qml_context.get()),
-        qt::internal::qobject_deleter{}};
-
+      const auto p_qml_component = internal::qobject_factory::make_shared(
+        qml_component_factory.create(p_qml_context.get()));
 
       return component_data{p_qml_context, p_qml_component};
     };
