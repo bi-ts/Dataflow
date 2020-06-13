@@ -47,12 +47,14 @@ class DATAFLOW_QT_EXPORT EngineQml : public Engine
 {
 public:
   explicit EngineQml(const QCoreApplication& app);
+  ~EngineQml();
 
   static EngineQml& instance();
 
   QQmlEngine& GetQmlEngine();
 
 private:
+  const QCoreApplication& app_;
   QQmlEngine qml_engine_;
 };
 

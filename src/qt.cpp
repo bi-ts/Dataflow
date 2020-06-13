@@ -20,13 +20,24 @@
 #include <dataflow/qt.h>
 #include <dataflow/tuple.h>
 
+#include <QtCore/QTimer>
 #include <QtQml/QQmlComponent>
 #include <QtQml/QQmlContext>
 
 namespace dataflow
 {
 EngineQml::EngineQml(const QCoreApplication& app)
+: app_{app}
 {
+}
+
+EngineQml::~EngineQml()
+{
+  QTimer::singleShot(0, &app_, QCoreApplication::quit);
+
+  app_.exec();
+
+  qt::internal::qobject_factory::on_shutdown();
 }
 
 EngineQml& EngineQml::instance()

@@ -18,11 +18,10 @@
 
 #pragma once
 
-#include "qobject_deleter.h"
-
 #include <QtCore/QObject>
 
-#include <memory>
+#include <ostream>
+#include <unordered_map>
 
 namespace dataflow
 {
@@ -30,32 +29,31 @@ namespace qt
 {
 namespace internal
 {
-class qobject_factory
+class qobject_tracker : QObject
 {
+  Q_OBJECT
+
 public:
-  template <typename Object, typename... Args>
-  static std::shared_ptr<Object> create(Args&&... args)
-  {
-    const std::shared_ptr<Object> p_qobject{
-      new Object{std::forward<Args>(args)...}, qobject_deleter{}};
+  static void track(QObject* p_qobject);
 
-    debug_track_(p_qobject.get());
-
-    return p_qobject;
-  }
-
-  template <typename Object>
-  static std::shared_ptr<Object> make_shared(Object* p_qobject)
-  {
-    debug_track_(p_qobject);
-
-    return std::shared_ptr<Object>{p_qobject, qobject_deleter{}};
-  }
-
-  static void on_shutdown();
+  static std::size_t counter();
+  static void print_all(std::ostream& out);
 
 private:
-  static void debug_track_(QObject* p_qobject);
+  qobject_tracker(QObject* p_qobject);
+  ~qobject_tracker() override;
+
+private:
+  struct info
+  {
+    std::size_t index;
+    QObject* p_qobject;
+    std::string type_name;
+  };
+
+private:
+  static std::size_t g_counter_;
+  static std::unordered_map<qobject_tracker*, info> g_qobject_info_;
 };
 }
 }

@@ -177,9 +177,14 @@ add_library(dataflow-qt SHARED
   src/qt/internal/context_builder_impl.h
   src/qt/internal/qobject_deleter.cpp
   src/qt/internal/qobject_deleter.h
+  src/qt/internal/qobject_factory.cpp
   src/qt/internal/qobject_factory.h
+  src/qt/internal/qobject_tracker.cpp
+  src/qt/internal/qobject_tracker.h
   src/qt/qml_data.cpp
 )
+
+set_target_properties(dataflow-qt PROPERTIES AUTOMOC ON)
 
 generate_export_header(dataflow-qt)
 

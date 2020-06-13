@@ -16,13 +16,11 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "qobject_factory.h"
 
-#include "qobject_deleter.h"
+#include "qobject_tracker.h"
 
-#include <QtCore/QObject>
-
-#include <memory>
+#include <iostream>
 
 namespace dataflow
 {
@@ -30,33 +28,28 @@ namespace qt
 {
 namespace internal
 {
-class qobject_factory
+void qobject_factory::on_shutdown()
 {
-public:
-  template <typename Object, typename... Args>
-  static std::shared_ptr<Object> create(Args&&... args)
+#ifndef NDEBUG
+  if (qobject_tracker::counter())
   {
-    const std::shared_ptr<Object> p_qobject{
-      new Object{std::forward<Args>(args)...}, qobject_deleter{}};
+    std::cerr << "[dataflow2qt] Memory leak detected. "
+              << qt::internal::qobject_tracker::counter()
+              << " QObjects are still alive." << std::endl;
 
-    debug_track_(p_qobject.get());
+    qobject_tracker::print_all(std::cerr);
 
-    return p_qobject;
+    std::exit(-1);
   }
+#endif
+}
 
-  template <typename Object>
-  static std::shared_ptr<Object> make_shared(Object* p_qobject)
-  {
-    debug_track_(p_qobject);
-
-    return std::shared_ptr<Object>{p_qobject, qobject_deleter{}};
-  }
-
-  static void on_shutdown();
-
-private:
-  static void debug_track_(QObject* p_qobject);
-};
+void qobject_factory::debug_track_(QObject* p_qobject)
+{
+#ifndef NDEBUG
+  qobject_tracker::track(p_qobject);
+#endif
+}
 }
 }
 }
