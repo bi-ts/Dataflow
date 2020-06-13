@@ -18,6 +18,8 @@
 
 #include "context_builder_impl.h"
 
+#include "qobject_factory.h"
+
 #include <dataflow/utility/std_future.h>
 
 namespace dataflow
@@ -27,7 +29,7 @@ namespace qt
 namespace internal
 {
 context_builder_impl::context_builder_impl()
-: p_context_(new QQmlPropertyMap())
+: p_context_(qobject_factory::create<QQmlPropertyMap>())
 {
 }
 
@@ -51,7 +53,7 @@ void context_builder_impl::add_property(
   change_handlers_[QString::fromUtf8(name.c_str())] = change_handler;
 }
 
-std::unique_ptr<QQmlPropertyMap, qobject_deleter> context_builder_impl::build()
+std::shared_ptr<QQmlPropertyMap> context_builder_impl::build()
 {
   p_context_->connect(p_context_.get(),
                       &QQmlPropertyMap::valueChanged,

@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "qobject_deleter.h"
-
 #include <dataflow/qt/qml_data.h>
 
 #include <QtCore/QObject>
@@ -50,12 +48,12 @@ public:
                     const qml_data& initial_value,
                     const std::function<void(const QVariant&)>& change_handler);
 
-  std::unique_ptr<QQmlPropertyMap, qobject_deleter> build();
+  std::shared_ptr<QQmlPropertyMap> build();
 
 private:
   std::unordered_map<QString, std::function<void(const QVariant&)>>
     change_handlers_;
-  std::unique_ptr<QQmlPropertyMap, qobject_deleter> p_context_;
+  std::shared_ptr<QQmlPropertyMap> p_context_;
 };
 }
 }
