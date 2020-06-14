@@ -21,7 +21,7 @@ target_link_libraries(testing_utilities PUBLIC dataflow++)
 function(dataflow_add_test_project name)
   set(_options)
   set(_one_value_args)
-  set(_multi_value_args SOURCES DEFINITIONS LIBRARIES)
+  set(_multi_value_args SOURCES DEFINITIONS LIBRARIES TARGET_PROPERTIES)
 
   cmake_parse_arguments(_test_project
     "${_options}" "${_one_value_args}" "${_multi_value_args}" ${ARGN}
@@ -29,7 +29,8 @@ function(dataflow_add_test_project name)
 
   if(NOT _test_project_SOURCES
      AND NOT _test_project_DEFINITIONS
-     AND NOT _test_project_LIBRARIES)
+     AND NOT _test_project_LIBRARIES
+     AND NOT _test_project_TARGET_PROPERTIES)
     set(src "${ARGN}")
   endif()
 
@@ -49,6 +50,12 @@ function(dataflow_add_test_project name)
     testing_utilities
     ${_test_project_LIBRARIES}
   )
+
+  if(_test_project_TARGET_PROPERTIES)
+    set_target_properties(test_${name}
+      PROPERTIES ${_test_project_TARGET_PROPERTIES}
+    )
+  endif()
 
   add_test(NAME test_${name} COMMAND test_${name})
 endfunction()
@@ -100,7 +107,13 @@ dataflow_add_test_project(integration
   integration/state_machine/test_state_machine.cpp
 )
 
-dataflow_add_test_project(qt LIBRARIES dataflow-qt)
+dataflow_add_test_project(qt
+  SOURCES test_qt.cpp
+          qt/internal/example_qobject.cpp
+          qt/internal/example_qobject.h
+  LIBRARIES dataflow-qt
+  TARGET_PROPERTIES AUTOMOC ON
+)
 
 dataflow_add_test_project(utility)
 
