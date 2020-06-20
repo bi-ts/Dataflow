@@ -16,32 +16,32 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "lambda_connector.h"
 
-#include <QtCore/QObject>
+#include <utility>
 
 namespace dataflow_test
 {
-class example_qobject : public QObject
+QMetaObject::Connection
+lambda_connector::connect(QObject* p_sender,
+                          const char* signal_name,
+                          handler_type handler,
+                          Qt::ConnectionType connection_type)
 {
-  Q_OBJECT
+  const auto p_qobject = new lambda_connector(p_sender, std::move(handler));
 
-public:
-  explicit example_qobject(QObject* p_qobject = nullptr);
+  return QObject::connect(
+    p_sender, signal_name, p_qobject, SLOT(handler_slot()), connection_type);
+}
 
-public:
-  Q_PROPERTY(int myProperty1 MEMBER my_property_1_ NOTIFY myProperty1Changed);
-  Q_PROPERTY(int myProperty2 MEMBER my_property_2_ NOTIFY myProperty2Changed);
+lambda_connector::lambda_connector(QObject* p_parent, handler_type handler)
+: QObject{p_parent}
+, handler_{std::move(handler)}
+{
+}
 
-signals:
-  void myProperty1Changed();
-  void myProperty2Changed();
-
-public slots:
-  void mySlot() const;
-
-private:
-  int my_property_1_;
-  int my_property_2_;
-};
+void lambda_connector::handler_slot() const
+{
+  handler_();
+}
 }

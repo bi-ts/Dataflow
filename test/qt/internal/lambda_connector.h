@@ -20,28 +20,30 @@
 
 #include <QtCore/QObject>
 
+#include <functional>
+
 namespace dataflow_test
 {
-class example_qobject : public QObject
+class lambda_connector : public QObject
 {
   Q_OBJECT
 
 public:
-  explicit example_qobject(QObject* p_qobject = nullptr);
+  using handler_type = std::function<void(void)>;
 
-public:
-  Q_PROPERTY(int myProperty1 MEMBER my_property_1_ NOTIFY myProperty1Changed);
-  Q_PROPERTY(int myProperty2 MEMBER my_property_2_ NOTIFY myProperty2Changed);
-
-signals:
-  void myProperty1Changed();
-  void myProperty2Changed();
-
-public slots:
-  void mySlot() const;
+  static QMetaObject::Connection
+  connect(QObject* p_sender,
+          const char* signal_name,
+          handler_type handler,
+          Qt::ConnectionType type = Qt::AutoConnection);
 
 private:
-  int my_property_1_;
-  int my_property_2_;
+  explicit lambda_connector(QObject* p_parent, handler_type handler);
+
+private slots:
+  void handler_slot() const;
+
+private:
+  const handler_type handler_;
 };
 }
