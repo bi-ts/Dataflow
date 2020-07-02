@@ -40,7 +40,7 @@ public:
 
   using get_function_type = std::function<void(void*)>;
   using set_function_type = std::function<bool(const void*)>;
-  using method_type = std::function<void(const void*)>;
+  using method_type = std::function<void(const void* const*)>;
 
   using properties_container =
     std::vector<std::pair<get_function_type, set_function_type>>;
@@ -49,7 +49,8 @@ public:
 public:
   dynamic_qobject(QObject* p_parent,
                   qmeta_object_ptr p_meta_object,
-                  properties_container properties);
+                  properties_container properties,
+                  methods_container methods);
 
 public:
   virtual const QMetaObject* metaObject() const override;

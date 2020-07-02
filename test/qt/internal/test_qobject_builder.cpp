@@ -34,11 +34,39 @@ namespace dataflow2qt = dataflow::qt;
 
 namespace dataflow_test
 {
-bool emit_signal(QObject* p_qobject, int global_signal_idx)
+bool invoke_method(QObject* p_qobject, int global_method_idx)
 {
-  const QMetaMethod method = p_qobject->metaObject()->method(global_signal_idx);
+  const QMetaMethod method = p_qobject->metaObject()->method(global_method_idx);
   return method.invoke(p_qobject);
 }
+
+class TestJSEngine
+{
+public:
+  explicit TestJSEngine(const std::string& object_name,
+                        const std::shared_ptr<QObject>& p_qobject)
+  : js_engine_{}
+  {
+    QJSValue js_object = js_engine_.newQObject(p_qobject.get());
+
+    QQmlEngine::setObjectOwnership(p_qobject.get(), QQmlEngine::CppOwnership);
+
+    js_engine_.globalObject().setProperty(object_name.c_str(), js_object);
+  }
+
+  void eval(const std::string& code)
+  {
+    const QJSValue result = js_engine_.evaluate(code.c_str());
+
+    if (result.isError())
+    {
+      throw std::runtime_error(result.toString().toStdString());
+    }
+  }
+
+private:
+  QJSEngine js_engine_;
+};
 
 namespace
 {
@@ -142,7 +170,7 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_readonly_property)
   BOOST_CHECK_EQUAL(*p_x, 33);
   BOOST_CHECK_EQUAL(*p_x_change_count, 0);
 
-  BOOST_CHECK(emit_signal(p_qobject.get(), x_changed_signal_idx));
+  BOOST_CHECK(invoke_method(p_qobject.get(), x_changed_signal_idx));
 
   BOOST_CHECK_EQUAL(*p_x_change_count, 1);
 }
@@ -196,6 +224,70 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_rw_property)
 
   BOOST_CHECK_EQUAL(*p_x, 10);
   BOOST_CHECK_EQUAL(*p_x_change_count, 1);
+}
+
+BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_add_slot)
+{
+  QCoreApplication app{g_argc, g_argv};
+
+  dataflow::EngineQml engine{app};
+
+  dataflow2qt::internal::qobject_builder builder;
+
+  const auto p_invoke_count_a = std::make_shared<int>(0);
+  const auto p_invoke_count_b = std::make_shared<int>(0);
+
+  const auto func_a_idx = builder.add_slot(
+    "myFuncA", [p_invoke_count_a]() { return ++(*p_invoke_count_a); });
+
+  const auto func_b_idx = builder.add_slot(
+    "myFuncB", [p_invoke_count_b]() { return ++(*p_invoke_count_b); });
+
+  const auto p_qobject = builder.build();
+
+  BOOST_REQUIRE(p_qobject != nullptr);
+
+  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->propertyCount(), 1);
+
+  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->methodCount(), 7);
+  BOOST_CHECK_EQUAL(p_qobject->metaObject()->method(5).methodType(),
+                    QMetaMethod::Slot);
+  BOOST_CHECK_EQUAL(p_qobject->metaObject()->method(6).methodType(),
+                    QMetaMethod::Slot);
+
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 0);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 0);
+
+  // Invoke by method index
+  BOOST_CHECK(invoke_method(p_qobject.get(), func_a_idx));
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 1);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 0);
+
+  BOOST_CHECK(invoke_method(p_qobject.get(), func_b_idx));
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 1);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 1);
+
+  // Invoke by method name
+  BOOST_CHECK(QMetaObject::invokeMethod(p_qobject.get(), "myFuncB"));
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 1);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
+
+  BOOST_CHECK(QMetaObject::invokeMethod(p_qobject.get(), "myFuncA"));
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 2);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
+
+  // Invoke from javascript
+  TestJSEngine js_engine{"testContext", p_qobject};
+
+  js_engine.eval("testContext.myFuncA();");
+
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 3);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
+
+  js_engine.eval("testContext.myFuncB();");
+
+  BOOST_CHECK_EQUAL(*p_invoke_count_a, 3);
+  BOOST_CHECK_EQUAL(*p_invoke_count_b, 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

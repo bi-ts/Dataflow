@@ -31,11 +31,12 @@ static const char* g_class_name = "dataflow::qt::internal::dynamic_qobject";
 
 dynamic_qobject::dynamic_qobject(QObject* p_parent,
                                  qmeta_object_ptr p_meta_object,
-                                 properties_container properties)
+                                 properties_container properties,
+                                 methods_container methods)
 : QObject{p_parent}
 , p_meta_object_{std::move(p_meta_object)}
 , properties_{std::move(properties)}
-, methods_{}
+, methods_{std::move(methods)}
 {
 }
 
@@ -111,6 +112,17 @@ int dynamic_qobject::qt_metacall(QMetaObject::Call call,
       {
         // emit signal
         QMetaObject::activate(this, metaObject(), local_idx, nullptr);
+      }
+      else
+      {
+        const auto it = methods_.find(local_idx);
+
+        if (it != methods_.end())
+        {
+          const auto& method = it->second;
+          const void* const* const pp_const_args = pp_args;
+          method(pp_const_args);
+        }
       }
     }
 

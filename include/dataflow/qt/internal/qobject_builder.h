@@ -53,6 +53,9 @@ public:
               std20::remove_cvref_t<decltype(std::declval<const Getter&>()())>>
   int add_property(const std::string& name, const Getter& getter);
 
+  template <typename Func0>
+  int add_slot(const std::string& name, const Func0& func);
+
   std::shared_ptr<QObject> build();
 
 private:
@@ -60,6 +63,9 @@ private:
                     int meta_type_id,
                     const std::function<void(void*)>& getter,
                     const std::function<bool(const void*)>& setter);
+
+  int add_slot_(const std::string& name,
+                const std::function<void(const void* const*)>& func);
 
 private:
   std::unique_ptr<class qobject_builder_data> p_data_;
@@ -87,6 +93,12 @@ int qobject_builder::add_property(const std::string& name, const Getter& getter)
     qMetaTypeId<T>(),
     [=](void* p_value) { *reinterpret_cast<T*>(p_value) = getter(); },
     {});
+}
+
+template <typename Func0>
+int qobject_builder::add_slot(const std::string& name, const Func0& func)
+{
+  return add_slot_(name + "()", [=](const void* const*) { func(); });
 }
 }
 }

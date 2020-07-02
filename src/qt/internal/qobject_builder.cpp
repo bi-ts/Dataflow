@@ -34,6 +34,7 @@ class qobject_builder_data
 public:
   QMetaObjectBuilder meta_object_builder;
   dynamic_qobject::properties_container properties;
+  dynamic_qobject::methods_container methods;
 };
 
 qobject_builder::qobject_builder()
@@ -58,8 +59,11 @@ std::shared_ptr<QObject> qobject_builder::build()
   dynamic_qobject::qmeta_object_ptr p_meta_object{
     p_data_->meta_object_builder.toMetaObject(), std::free};
 
-  const auto p_qobject = qobject_factory::create<dynamic_qobject>(
-    nullptr, std::move(p_meta_object), std::move(p_data_->properties));
+  const auto p_qobject =
+    qobject_factory::create<dynamic_qobject>(nullptr,
+                                             std::move(p_meta_object),
+                                             std::move(p_data_->properties),
+                                             std::move(p_data_->methods));
 
   p_data_ = nullptr;
 
@@ -95,6 +99,26 @@ int qobject_builder::add_property_(
 
   return p_data_->meta_object_builder.superClass()->methodCount() +
          signal_builder.index();
+}
+
+int qobject_builder::add_slot_(
+  const std::string& method_signature,
+  const std::function<void(const void* const*)>& func)
+{
+  if (func == nullptr)
+    throw std::logic_error("function can't be nullptr");
+
+  if (!p_data_)
+    throw std::logic_error("qobject_builder can't be reused");
+
+  QMetaMethodBuilder method_builder =
+    p_data_->meta_object_builder.addSlot(method_signature.c_str());
+
+  const auto local_idx = method_builder.index();
+
+  p_data_->methods[local_idx] = func;
+
+  return p_data_->meta_object_builder.superClass()->methodCount() + local_idx;
 }
 }
 }
