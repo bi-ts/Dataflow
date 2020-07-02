@@ -18,8 +18,7 @@
 
 #include <dataflow/qt.h>
 
-#include "qt/internal/example_qobject.h"
-#include "qt/internal/lambda_connector.h"
+#include <dataflow/prelude.h>
 
 #include <dataflow/introspect.h>
 
@@ -37,33 +36,6 @@ int g_argc = static_cast<int>((sizeof(g_argv) / sizeof(g_argv[0])) - 1);
 }
 
 BOOST_AUTO_TEST_SUITE(test_qt)
-
-BOOST_AUTO_TEST_CASE(test_dataflow_test_example_qobject)
-{
-  example_qobject obj{};
-
-  BOOST_CHECK_EQUAL(obj.metaObject()->className(),
-                    "dataflow_test::example_qobject");
-
-  BOOST_CHECK_EQUAL(obj.metaObject()->propertyCount(), 3);
-  BOOST_CHECK_EQUAL(obj.metaObject()->methodCount(), 8);
-
-  const auto p_call_count = std::make_shared<int>(0);
-
-  lambda_connector::connect(&obj,
-                            SIGNAL(objectNameChanged(const QString&)),
-                            [p_call_count]() { (*p_call_count)++; });
-
-  BOOST_CHECK_EQUAL(*p_call_count, 0);
-
-  obj.setProperty("objectName", "someName");
-
-  BOOST_CHECK_EQUAL(*p_call_count, 1);
-
-  obj.setProperty("objectName", "otherName");
-
-  BOOST_CHECK_EQUAL(*p_call_count, 2);
-}
 
 BOOST_AUTO_TEST_CASE(test_conversion_type_traits)
 {
