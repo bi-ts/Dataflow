@@ -180,9 +180,9 @@ template <typename T> class var<list<T>> final : public core::var_base<list<T>>
 public:
   var(core::var_base<list<T>> base);
 
-  var(var<list<T>>& other);
+  var(DATAFLOW_VAR_CONST var<list<T>>& other);
 
-  var& operator=(const list<T>& v);
+  DATAFLOW_VAR_CONST var& operator=(const list<T>& v) DATAFLOW_VAR_CONST;
 
   void insert(integer idx, const T& v);
 

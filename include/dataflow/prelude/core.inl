@@ -125,9 +125,11 @@ template <typename T> const ref<T>& var_base<T>::as_ref() const
   return *this;
 }
 
-template <typename T> var_base<T>::var_base(var_base& other) = default;
+template <typename T>
+var_base<T>::var_base(DATAFLOW_VAR_CONST var_base& other) = default;
 
-template <typename T> void var_base<T>::set_value_(const T& v)
+template <typename T>
+void var_base<T>::set_value_(const T& v) DATAFLOW_VAR_CONST
 {
   DATAFLOW___CHECK_PRECONDITION(
     dynamic_cast<const internal::node_var<T>*>(this->get_()));

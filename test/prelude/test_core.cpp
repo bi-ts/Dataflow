@@ -576,8 +576,11 @@ BOOST_FIXTURE_TEST_CASE(test_Var_copy_constructor, test_core_fixture)
 
   BOOST_CHECK_EQUAL((std::is_convertible<var<int>&, var<int>>::value), true);
   BOOST_CHECK_EQUAL((std::is_convertible<var<int>&&, var<int>>::value), true);
+
+#ifdef DATAFLOW_CONFIG_VAR_NO_CONST_COPY_CTOR
   BOOST_CHECK_EQUAL((std::is_convertible<const var<int>&, var<int>>::value),
                     false);
+#endif
 }
 
 BOOST_FIXTURE_TEST_CASE(test_Var_deferred_assign, test_core_fixture)

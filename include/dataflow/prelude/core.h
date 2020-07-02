@@ -33,6 +33,12 @@
 #include <string>
 #include <type_traits>
 
+#ifdef DATAFLOW_CONFIG_VAR_NO_CONST_COPY_CTOR
+#define DATAFLOW_VAR_CONST
+#else
+#define DATAFLOW_VAR_CONST const
+#endif
+
 namespace dataflow
 {
 /// \defgroup core
@@ -137,10 +143,12 @@ public:
   const ref<T>& as_ref() const;
 
 protected:
+#ifdef DATAFLOW_CONFIG_VAR_NO_CONST_COPY_CTOR
   var_base(const var_base& other) = delete;
-  var_base(var_base& other);
+#endif
+  var_base(DATAFLOW_VAR_CONST var_base& other);
 
-  void set_value_(const T& v);
+  void set_value_(const T& v) DATAFLOW_VAR_CONST;
 
   template <typename Patch> void set_patch_(const Patch& patch);
 };
@@ -154,12 +162,12 @@ public:
   {
   }
 
-  var(var& other)
+  var(DATAFLOW_VAR_CONST var& other)
   : core::var_base<T>(other)
   {
   }
 
-  var& operator=(const T& v)
+  DATAFLOW_VAR_CONST var& operator=(const T& v) DATAFLOW_VAR_CONST
   {
     core::var_base<T>::set_value_(v);
 

@@ -327,7 +327,9 @@ ref<maybe<T>> ref<list<T>>::operator[](const arg<integer>& idx) const
   return Get(static_cast<const ref<list<T>>&>(*this), idx);
 }
 
-template <typename T> var<list<T>>& var<list<T>>::operator=(const list<T>& v)
+template <typename T>
+DATAFLOW_VAR_CONST var<list<T>>& var<list<T>>::
+operator=(const list<T>& v) DATAFLOW_VAR_CONST
 {
   core::var_base<list<T>>::set_value_(v);
 
@@ -341,7 +343,7 @@ var<list<T>>::var(core::var_base<list<T>> base)
 }
 
 template <typename T>
-var<list<T>>::var(var<list<T>>& other)
+var<list<T>>::var(DATAFLOW_VAR_CONST var<list<T>>& other)
 : core::var_base<list<T>>(other)
 {
 }
