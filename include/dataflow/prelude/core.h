@@ -319,10 +319,10 @@ template <typename T> struct is_var<var<T>>
 };
 }
 
-/// A type trait that checks whether type `T` is a variable. It is
+/// A type trait that checks whether type `T` is a variable. It is an alias for
 /// `std::true_type`, if type `T` is an instance of `var<T>` class template
-/// (possibly cv-qualified) or a reference thereto. Otherwise, it is
-/// `std::false_type`.
+/// (possibly cv-qualified) or a reference thereto. Otherwise, it is an alias
+/// for `std::false_type`.
 ///
 template <typename T>
 using is_var = typename detail::is_var<std20::remove_cvref_t<T>>::type;
@@ -513,18 +513,18 @@ template <typename T> struct is_generic_patch<generic_patch<T>>
 };
 }
 
-/// A type trait that checks whether type `Patch` is a generic patch. It is
-/// `std::true_type`, if type `Patch` is an instance of `generic_patch<T>` class
-/// template (possibly cv-qualified) or a reference thereto. Otherwise, it is
-/// `std::false_type`.
+/// A type trait that checks whether type `Patch` is a generic patch. It is an
+/// alias for `std::true_type`, if type `Patch` is an instance of
+/// `generic_patch<T>` class template (possibly cv-qualified) or a reference
+/// thereto. Otherwise, it is an alias for `std::false_type`.
 ///
 template <typename Patch>
 using is_generic_patch =
   typename detail::is_generic_patch<std20::remove_cvref_t<Patch>>::type;
 
 /// A type trait that checks if there is no custom patch type defined for `T`
-/// data type. It is `std::true_type`, if `patch_type_t<T>` is a generic patch.
-/// Otherwise, it is `std::false_type`.
+/// data type. It is an alias for `std::true_type`, if `patch_type_t<T>` is a
+/// generic patch. Otherwise, it is an alias for `std::false_type`.
 ///
 template <typename T>
 using is_trivially_patcheable = is_generic_patch<typename patch_type<T>::type>;
