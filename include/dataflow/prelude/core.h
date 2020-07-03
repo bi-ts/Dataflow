@@ -329,6 +329,26 @@ using is_var = typename detail::is_var<std20::remove_cvref_t<T>>::type;
 
 namespace detail
 {
+template <typename T> struct is_sig
+{
+  using type = std::false_type;
+};
+
+template <> struct is_sig<sig>
+{
+  using type = std::true_type;
+};
+}
+
+/// A type trait that checks whether type `T` is a signal. It is an alias for
+/// `std::true_type`, if type `T` is `sig` (possibly cv-qualified) or a
+/// reference thereto. Otherwise, it is an alias for `std::false_type`.
+///
+template <typename T>
+using is_sig = typename detail::is_sig<std20::remove_cvref_t<T>>::type;
+
+namespace detail
+{
 template <typename T> struct init_function_type
 {
 private:
