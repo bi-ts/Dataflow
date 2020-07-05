@@ -20,280 +20,210 @@
 #error '.inl' file can't be included directly. Use 'qt.h' instead
 #endif
 
-#include "qt/internal/context_builder.h"
+#include "qt/internal/qobject_builder.h"
+
+#include <dataflow/utility/std_future.h>
+#include <dataflow/utility/utility.h>
 
 namespace dataflow
 {
 namespace qt
 {
+namespace internal
+{
 namespace detail
 {
-struct add_rw_property
+template <std::size_t N, std::size_t I, bool finished, std::size_t... Vs>
+struct filtered_index_sequence_builder;
+
+template <std::size_t N, std::size_t I, std::size_t... Vs>
+struct filtered_index_sequence_builder<N, I, false, 1, Vs...>
+: filtered_index_sequence_builder<N, I + 1, I + 1 == N, Vs..., I>
 {
-  template <typename T>
-  void operator()(const std::string& name, var<T>& x) const
-  {
-    // TODO: avoid this shared var
-    const auto p_x = std::make_shared<var<T>>(x);
-
-    builder.add_property(name, T{}, [p_x](const QVariant& value) {
-      *p_x = converter<T>::from_qml_type(value);
-    });
-  }
-
-  internal::context_builder& builder;
 };
 
-struct add_property
+template <std::size_t N, std::size_t I, std::size_t... Vs>
+struct filtered_index_sequence_builder<N, I, false, 0, Vs...>
+: filtered_index_sequence_builder<N, I + 1, I + 1 == N, Vs...>
 {
-  template <std::size_t idx, typename T>
-  void operator()(const std::string& name) const
-  {
-    builder.add_property(name, T{});
-  }
-
-  internal::context_builder& builder;
 };
 
-struct set_property
+template <std::size_t N, std::size_t... Vs>
+struct filtered_index_sequence_builder<N, N, true, Vs...>
 {
-  template <typename T>
-  void operator()(const std::string& name, var<T>& x) const
-  {
-    p_object->setProperty(name.c_str(), convert_to_qml_type(*x));
-  }
-
-  std::shared_ptr<QObject> p_object;
+  using type = std14::index_sequence<Vs...>;
 };
-
-template <typename... Refs> class rw_props_definition;
-
-template <typename T, typename... Refs>
-class rw_props_definition<std::reference_wrapper<var<T>>, Refs...>
-: public rw_props_definition<Refs...>
-{
-public:
-  rw_props_definition(
-    std::pair<std::string, std::reference_wrapper<var<T>>> def,
-    std::pair<std::string, Refs>... defs)
-  : rw_props_definition<Refs...>(defs...)
-  , name_(std::move(def.first))
-  , x_(std::move(def.second))
-  {
-  }
-
-  template <typename F> void for_each(const F& f)
-  {
-    f(name_, x_);
-
-    rw_props_definition<Refs...>::for_each(f);
-  }
-
-private:
-  std::string name_;
-  var<T> x_;
-};
-
-template <typename T, typename... Refs>
-class rw_props_definition<ref<T>, Refs...> : public rw_props_definition<Refs...>
-{
-public:
-  rw_props_definition(std::pair<std::string, ref<T>> def,
-                      std::pair<std::string, Refs>... defs)
-  : rw_props_definition<Refs...>(defs...)
-  {
-  }
-
-  template <typename F> void for_each(const F& f)
-  {
-    rw_props_definition<Refs...>::for_each(f);
-  }
-};
-
-template <> class rw_props_definition<>
-{
-public:
-  template <typename F> void for_each(const F& f)
-  {
-  }
-};
-
-template <typename... Refs> class props_definition;
-
-template <typename T, typename... Refs>
-class props_definition<std::reference_wrapper<var<T>>, Refs...>
-: private props_definition<Refs...>
-{
-public:
-  props_definition(std::pair<std::string, std::reference_wrapper<var<T>>> def,
-                   std::pair<std::string, Refs>... defs)
-  : props_definition<Refs...>(defs...)
-  {
-  }
-
-  template <std::size_t Idx = 0, typename F> void for_each(const F& f) const
-  {
-    props_definition<Refs...>::template for_each<Idx>(f);
-  }
-
-  template <typename Ret, typename... Xs, typename F>
-  Ret apply(F&& f, const Xs&... xs)
-  {
-    return props_definition<Refs...>::template apply<Ret>(std::forward<F>(f),
-                                                          xs...);
-  }
-};
-
-template <typename T, typename... Refs>
-class props_definition<ref<T>, Refs...> : private props_definition<Refs...>
-{
-public:
-  props_definition(std::pair<std::string, ref<T>> def,
-                   std::pair<std::string, Refs>... defs)
-  : props_definition<Refs...>(defs...)
-  , name_(std::move(def.first))
-  , x_(std::move(def.second))
-  {
-  }
-
-  template <std::size_t Idx = 0, typename F> void for_each(const F& f) const
-  {
-    f.template operator()<Idx, T>(name_);
-
-    props_definition<Refs...>::template for_each<Idx + 1>(f);
-  }
-
-  template <typename Ret, typename... Xs, typename F>
-  Ret apply(F&& f, const Xs&... xs)
-  {
-    return props_definition<Refs...>::template apply<Ret>(
-      std::forward<F>(f), xs..., x_);
-  }
-
-private:
-  std::string name_;
-  ref<T> x_;
-};
-
-template <> class props_definition<>
-{
-public:
-  template <std::size_t Idx = 0, typename F> void for_each(const F& f) const
-  {
-  }
-
-  template <typename Ret, typename... Xs, typename F>
-  Ret apply(F&& f, const Xs&... xs)
-  {
-    return f(xs...);
-  }
-};
-
-template <typename... Ts> struct set_property_from_value
-{
-  template <std::size_t Idx, typename>
-  void operator()(const std::string& name) const
-  {
-    p_object->setProperty(name.c_str(),
-                          convert_to_qml_type(std::get<Idx>(values_)));
-  }
-
-  std::tuple<Ts...> values_;
-  std::shared_ptr<QObject> p_object;
-};
-
-template <typename... Ts, typename... Us, std::size_t... Is>
-void set_properties(const std::shared_ptr<QObject>& p_context,
-                    const props_definition<Us...>& props,
-                    const std14::index_sequence<Is...>&,
-                    const Ts&... values)
-{
-  props.for_each(
-    set_property_from_value<Ts...>{std::make_tuple(values...), p_context});
 }
 
-template <typename... Refs> class qml_context_creator
+template <std::size_t... Ps>
+using make_filtered_index_sequence =
+  typename detail::filtered_index_sequence_builder<sizeof...(Ps),
+                                                   0,
+                                                   sizeof...(Ps) == 0,
+                                                   Ps...>::type;
+
+class qobject_patch
 {
 public:
-  qml_context_creator(rw_props_definition<Refs...> rw_props,
-                      props_definition<Refs...> props)
-  : rw_props_(std::move(rw_props))
-  , props_(std::move(props))
+  explicit qobject_patch(const std::shared_ptr<QObject>& curr,
+                         const std::shared_ptr<QObject>& prev)
+  : global_signal_indices_{}
   {
   }
 
-  template <typename... Rs>
-  ref<std::shared_ptr<QObject>> operator()(const Rs&... xs)
+  explicit qobject_patch(std::vector<int> global_signal_indices)
+  : global_signal_indices_{std::move(global_signal_indices)}
   {
-    class policy
+  }
+
+  std::shared_ptr<QObject>
+  apply(const std::shared_ptr<QObject>& p_qobject) const
+  {
+    for (const auto& idx : global_signal_indices_)
     {
-    public:
-      policy(rw_props_definition<Refs...> rw_props,
-             const props_definition<Refs...>& props)
-      : rw_props_(std::move(rw_props))
-      , props_(props)
-      {
-      }
+      const QMetaMethod method = p_qobject->metaObject()->method(idx);
+      method.invoke(p_qobject.get());
+    }
 
-      std::string label() const
-      {
-        return "qml-context";
-      }
-
-      std::shared_ptr<QObject> calculate(const core::data_type_t<Rs>&... values)
-      {
-        internal::context_builder builder;
-
-        rw_props_.for_each(add_rw_property{builder});
-        props_.for_each(add_property{builder});
-
-        const auto p_context = builder.build();
-
-        p_context->blockSignals(true);
-
-        rw_props_.for_each(set_property{p_context});
-
-        set_properties(p_context,
-                       props_,
-                       std14::make_index_sequence<sizeof...(Rs)>(),
-                       values...);
-
-        p_context->blockSignals(false);
-
-        return p_context;
-      };
-
-      std::shared_ptr<QObject> update(const std::shared_ptr<QObject>& p_context,
-                                      const core::data_type_t<Rs>&... values)
-      {
-        set_properties(p_context,
-                       props_,
-                       std14::make_index_sequence<sizeof...(Rs)>(),
-                       values...);
-
-        return p_context;
-      }
-
-    private:
-      rw_props_definition<Refs...> rw_props_;
-      props_definition<Refs...> props_;
-    };
-
-    return core::LiftUpdater(policy{rw_props_, props_}, xs...);
+    return p_qobject;
   }
 
 private:
-  rw_props_definition<Refs...> rw_props_;
-  props_definition<Refs...> props_;
+  std::vector<int> global_signal_indices_;
 };
+}
+}
+}
+
+namespace dataflow
+{
+namespace core
+{
+template <> struct patch_type<std::shared_ptr<QObject>>
+{
+  using type = dataflow::qt::internal::qobject_patch;
+};
+}
+}
+
+namespace dataflow
+{
+namespace qt
+{
+namespace internal
+{
+template <typename... Refs,
+          std::size_t... ReadOnlyIndices,
+          std::size_t... ReadWriteIndices,
+          std::size_t... SignalsIndices>
+ref<std::shared_ptr<QObject>>
+make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
+                 const std14::index_sequence<ReadOnlyIndices...>&,
+                 const std14::index_sequence<ReadWriteIndices...>&,
+                 const std14::index_sequence<SignalsIndices...>&)
+{
+  const auto read_only_props =
+    std::make_tuple(std::get<ReadOnlyIndices>(defs)...);
+
+  const auto read_write_props =
+    std::make_tuple(std::get<ReadWriteIndices>(defs)...);
+
+  const auto signal_definitions =
+    std::make_tuple(std::get<SignalsIndices>(defs)...);
+
+  class policy
+  {
+  public:
+    std::string label() const
+    {
+      return "qml-context";
+    }
+
+    std::shared_ptr<QObject> calculate(
+      const core::data_type_t<
+        typename std::tuple_element<ReadOnlyIndices,
+                                    std::tuple<Refs...>>::type>&... values)
+    {
+      internal::qobject_builder builder;
+
+      utility::for_each_tuple_element(
+        read_only_props_, [&builder](const auto& def) {
+          builder.add_property(def.first, [x = def.second]() {
+            using type = core::data_type_t<decltype(x)>;
+            // TODO: improve to-qml-conversion
+            return QVariant(qml_data{x.template value<type>()});
+          });
+        });
+
+      utility::for_each_tuple_element(
+        read_write_props_, [&builder](const auto& def) {
+          builder.add_property(
+            def.first,
+            [x = def.second]() { return convert_to_qml_type(*x); },
+            [x = def.second](const QVariant& v) {
+              using type = core::data_type_t<decltype(x)>;
+
+              const auto& value = converter<type>::from_qml_type(v);
+              if (*x != value)
+              {
+                x = value;
+                return true;
+              }
+              return false;
+            });
+        });
+
+      utility::for_each_tuple_element(
+        signal_definitions_, [&builder](const auto& def) {
+          builder.add_slot(def.first, [x = def.second]() { return x(); });
+        });
+
+      return builder.build();
+    };
+
+    qobject_patch prepare_patch(
+      const core::diff_type_t<core::data_type_t<
+        typename std::tuple_element<ReadOnlyIndices,
+                                    std::tuple<Refs...>>::type>>&... diffs)
+    {
+      std::vector<bool> flags{(diffs.curr() != diffs.prev())...};
+
+      std::vector<int> global_signal_indices;
+      for (int i = 0; i < flags.size(); ++i)
+      {
+        if (flags[i])
+        {
+          global_signal_indices.push_back(
+            QObject::staticMetaObject.methodCount() + i);
+        }
+      }
+
+      return qobject_patch{global_signal_indices};
+    }
+
+    decltype(read_only_props) read_only_props_;
+    decltype(read_write_props) read_write_props_;
+    decltype(signal_definitions) signal_definitions_;
+  };
+
+  return core::LiftPatcher(
+    policy{read_only_props, read_write_props, signal_definitions},
+    std::get<ReadOnlyIndices>(defs).second...);
+}
 }
 }
 
 template <typename T>
-std::pair<std::string, std::reference_wrapper<var<T>>>
-qt::QmlPropertyRW(const std::string& name, var<T>& x)
+std::pair<std::string, var<T>> qt::QmlPropertyRW(const std::string& name,
+                                                 var<T>& x)
 {
-  return std::make_pair(name, std::ref(x));
+  return std::make_pair(name, x);
+}
+
+inline std::pair<std::string, sig> qt::QmlFunction(const std::string& name,
+                                                   const sig& x)
+{
+  return std::make_pair(name, x);
 }
 
 template <typename T>
@@ -304,13 +234,21 @@ std::pair<std::string, ref<T>> qt::QmlProperty(const std::string& name,
 }
 
 template <typename... Refs>
-ref<std::shared_ptr<QObject>>
-qt::QmlContext(const std::pair<std::string, Refs>&... defs)
+ref<qt::qml_data> qt::QmlContext(const std::pair<std::string, Refs>&... defs)
 {
-  detail::props_definition<Refs...> props{defs...};
+  const auto read_only_props_indices = internal::make_filtered_index_sequence<(
+    core::is_ref<Refs>::value && !core::is_var<Refs>::value &&
+    !core::is_sig<Refs>::value)...>{};
 
-  detail::qml_context_creator<Refs...> builder{{defs...}, props};
+  const auto read_write_props_indices =
+    internal::make_filtered_index_sequence<core::is_var<Refs>::value...>{};
 
-  return props.template apply<ref<std::shared_ptr<QObject>>>(builder);
+  const auto signals_indices =
+    internal::make_filtered_index_sequence<core::is_sig<Refs>::value...>{};
+
+  return QmlData(internal::make_qml_context(std::make_tuple(defs...),
+                                            read_only_props_indices,
+                                            read_write_props_indices,
+                                            signals_indices));
 }
 } // dataflow

@@ -56,12 +56,10 @@ QQmlEngine& EngineQml::GetQmlEngine()
   return qml_engine_;
 }
 
-ref<std::shared_ptr<QObject>>
-qt::QmlComponent(const arg<std::string>& qml_url,
-                 const arg<std::shared_ptr<QObject>>& context)
+ref<qt::qml_data> qt::QmlComponent(const arg<std::string>& qml_url,
+                                   const arg<qml_data>& context)
 {
-  using component_data =
-    tupleC<std::shared_ptr<QQmlContext>, std::shared_ptr<QObject>>;
+  using component_data = tupleC<std::shared_ptr<QQmlContext>, qml_data>;
 
   class policy
   {
@@ -72,7 +70,7 @@ qt::QmlComponent(const arg<std::string>& qml_url,
     }
 
     component_data calculate(const std::string& qml_url,
-                             const std::shared_ptr<QObject>& p_context)
+                             const qml_data& context)
     {
       QQmlComponent qml_component_factory{
         &EngineQml::instance().GetQmlEngine(),
@@ -80,13 +78,15 @@ qt::QmlComponent(const arg<std::string>& qml_url,
 
       if (qml_component_factory.isError())
       {
-        throw std::runtime_error("Can't create qml component");
+        throw std::runtime_error(
+          "Can't create qml component: " +
+          qml_component_factory.errorString().toStdString());
       }
 
       const auto p_qml_context = internal::qobject_factory::create<QQmlContext>(
         EngineQml::instance().GetQmlEngine().rootContext());
 
-      p_qml_context->setContextProperty("view_context", p_context.get());
+      p_qml_context->setContextProperty("view_context", context);
 
       const auto p_qml_component = internal::qobject_factory::make_shared(
         qml_component_factory.create(p_qml_context.get()));
