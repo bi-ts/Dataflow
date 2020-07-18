@@ -115,6 +115,7 @@ dataflow_add_test_project(qt
           qt/internal/js_engine.h
           qt/internal/lambda_connector.cpp
           qt/internal/lambda_connector.h
+          qt/internal/test_internal.cpp
           qt/internal/test_qobject_builder.cpp
   LIBRARIES dataflow-qt
   TARGET_PROPERTIES AUTOMOC ON
