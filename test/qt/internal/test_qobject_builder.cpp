@@ -21,6 +21,7 @@
 #include <dataflow/qt.h>
 
 #include "example_qobject.h"
+#include "js_engine.h"
 #include "lambda_connector.h"
 
 #include <boost/test/unit_test.hpp>
@@ -39,34 +40,6 @@ bool invoke_method(QObject* p_qobject, int global_method_idx)
   const QMetaMethod method = p_qobject->metaObject()->method(global_method_idx);
   return method.invoke(p_qobject);
 }
-
-class TestJSEngine
-{
-public:
-  explicit TestJSEngine(const std::string& object_name,
-                        const std::shared_ptr<QObject>& p_qobject)
-  : js_engine_{}
-  {
-    QJSValue js_object = js_engine_.newQObject(p_qobject.get());
-
-    QQmlEngine::setObjectOwnership(p_qobject.get(), QQmlEngine::CppOwnership);
-
-    js_engine_.globalObject().setProperty(object_name.c_str(), js_object);
-  }
-
-  void eval(const std::string& code)
-  {
-    const QJSValue result = js_engine_.evaluate(code.c_str());
-
-    if (result.isError())
-    {
-      throw std::runtime_error(result.toString().toStdString());
-    }
-  }
-
-private:
-  QJSEngine js_engine_;
-};
 
 namespace
 {
@@ -220,10 +193,19 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_rw_property)
   BOOST_CHECK_EQUAL(*p_x, 1);
   BOOST_CHECK_EQUAL(*p_x_change_count, 0);
 
+  // Assign via `setProperty()`
   BOOST_CHECK_EQUAL(p_qobject->setProperty("x", 10), true);
 
   BOOST_CHECK_EQUAL(*p_x, 10);
   BOOST_CHECK_EQUAL(*p_x_change_count, 1);
+
+  // Assign from javascript
+  js_engine js{"testContext", p_qobject};
+
+  js.eval("testContext.x = 5;\n");
+
+  BOOST_CHECK_EQUAL(*p_x, 5);
+  BOOST_CHECK_EQUAL(*p_x_change_count, 2);
 }
 
 BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_add_slot)
@@ -277,14 +259,14 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_add_slot)
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
 
   // Invoke from javascript
-  TestJSEngine js_engine{"testContext", p_qobject};
+  js_engine js{"testContext", p_qobject};
 
-  js_engine.eval("testContext.myFuncA();");
+  js.eval("testContext.myFuncA();");
 
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 3);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
 
-  js_engine.eval("testContext.myFuncB();");
+  js.eval("testContext.myFuncB();");
 
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 3);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 3);
