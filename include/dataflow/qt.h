@@ -23,7 +23,8 @@
 
 #include "dataflow-qt_export.h"
 
-#include <dataflow/prelude/core.h>
+#include <dataflow/list.h>
+#include <dataflow/prelude.h>
 #include <dataflow/qt/conversion.h>
 #include <dataflow/qt/qml_data.h>
 
@@ -72,6 +73,8 @@ std::pair<std::string, ref<T>> QmlProperty(const std::string& name,
 
 template <typename... Refs>
 ref<qml_data> QmlContext(const std::pair<std::string, Refs>&... props);
+
+template <typename T> ref<qml_data> QmlData(const ref<listC<T>>& xs);
 
 DATAFLOW_QT_EXPORT ref<qml_data> QmlComponent(const arg<std::string>& qml_url,
                                               const arg<qml_data>& context);

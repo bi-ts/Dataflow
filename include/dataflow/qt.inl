@@ -251,4 +251,20 @@ ref<qt::qml_data> qt::QmlContext(const std::pair<std::string, Refs>&... defs)
                                             read_write_props_indices,
                                             signals_indices));
 }
+
+namespace qt
+{
+namespace internal
+{
+DATAFLOW_QT_EXPORT ref<qml_data>
+create_qml_data_list(const ref<listC<qml_data>>& xs);
+}
+}
+
+template <typename T> ref<qt::qml_data> qt::QmlData(const ref<listC<T>>& xs)
+{
+  const auto ys = Map(xs, [](const T& x) { return qml_data{x}; });
+
+  return internal::create_qml_data_list(ys);
+}
 } // dataflow

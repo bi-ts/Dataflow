@@ -185,6 +185,8 @@ add_library(dataflow-qt SHARED
   src/qt/internal/qobject_factory.h
   src/qt/internal/qobject_tracker.cpp
   src/qt/internal/qobject_tracker.h
+  src/qt/internal/qvariant_list_model.cpp
+  src/qt/internal/qvariant_list_model.h
   src/qt/qml_data.cpp
 )
 

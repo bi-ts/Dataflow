@@ -17,6 +17,8 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include "qt/internal/qobject_factory.h"
+#include "qt/internal/qvariant_list_model.h"
+
 #include <dataflow/qt.h>
 #include <dataflow/tuple.h>
 
@@ -96,5 +98,75 @@ ref<qt::qml_data> qt::QmlComponent(const arg<std::string>& qml_url,
   };
 
   return Second(core::Lift<policy>(qml_url, context));
+}
+
+namespace qt
+{
+namespace internal
+{
+class qvariant_list_model_patch
+{
+public:
+  explicit qvariant_list_model_patch(
+    const std::shared_ptr<qvariant_list_model>& curr,
+    const std::shared_ptr<qvariant_list_model>& prev)
+  : patch_{curr->list_data(), prev->list_data()}
+  {
+  }
+
+  explicit qvariant_list_model_patch(const list_patch<qml_data>& patch)
+  : patch_{patch}
+  {
+  }
+
+  std::shared_ptr<qvariant_list_model>
+  apply(const std::shared_ptr<qvariant_list_model>& p_model) const
+  {
+    patch_.apply(
+      [&](const integer& idx, const qml_data& x) { p_model->insert(idx, x); },
+      [&](const integer& idx) { p_model->erase(idx); });
+
+    return p_model;
+  }
+
+private:
+  list_patch<qml_data> patch_;
+};
+}
+}
+
+namespace core
+{
+template <>
+struct patch_type<std::shared_ptr<qt::internal::qvariant_list_model>>
+{
+  using type = qt::internal::qvariant_list_model_patch;
+};
+}
+
+ref<qt::qml_data>
+qt::internal::create_qml_data_list(const ref<listC<qml_data>>& xs)
+{
+  struct policy
+  {
+    std::string label() const
+    {
+      return "qml-data-list";
+    }
+
+    static std::shared_ptr<qvariant_list_model>
+    calculate(const listC<qml_data>& xs)
+    {
+      return qobject_factory::create<qvariant_list_model>(xs, nullptr);
+    }
+
+    qvariant_list_model_patch
+    prepare_patch(const core::diff_type_t<listC<qml_data>>& d)
+    {
+      return qvariant_list_model_patch{d.patch()};
+    }
+  };
+
+  return QmlData(core::LiftPatcher<policy>(xs));
 }
 }
