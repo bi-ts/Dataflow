@@ -103,6 +103,15 @@ BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_wrong_engine_type)
   BOOST_CHECK_THROW(dataflow::EngineQml::instance(), std::logic_error);
 }
 
+BOOST_AUTO_TEST_CASE(test_QmlData_listC_minimal)
+{
+  dataflow::Engine engine;
+
+  auto xs = dataflow::Var<dataflow::listC<int>>();
+
+  const auto ys = Main(dataflow::qt::QmlData(xs));
+}
+
 BOOST_AUTO_TEST_CASE(test_QmlContext_minimal)
 {
   QCoreApplication app(g_argc, g_argv);
