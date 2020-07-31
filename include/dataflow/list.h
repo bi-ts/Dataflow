@@ -172,7 +172,16 @@ public:
 
   ref<T> operator()(dtime t) const;
 
+  template <typename..., typename ArgX>
+  ref<list<T>> insert(const arg<integer>& idx, const ArgX& x) const;
+
+  ref<list<T>> erase(const arg<integer>& idx) const;
+
+  ref<list<T>> take(const arg<integer>& n) const;
+
   ref<maybe<T>> operator[](const arg<integer>& idx) const;
+
+  ref<integer> length() const;
 };
 
 template <typename T> class var<list<T>> final : public core::var_base<list<T>>

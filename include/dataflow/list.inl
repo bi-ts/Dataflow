@@ -322,9 +322,33 @@ template <typename T> ref<T> ref<list<T>>::operator()(dtime t) const
 }
 
 template <typename T>
+template <typename..., typename ArgX>
+ref<list<T>> ref<list<T>>::insert(const arg<integer>& idx, const ArgX& x) const
+{
+  return Insert(*this, idx, x);
+}
+
+template <typename T>
+ref<list<T>> ref<list<T>>::erase(const arg<integer>& idx) const
+{
+  return Erase(*this, idx);
+}
+
+template <typename T>
+ref<list<T>> ref<list<T>>::take(const arg<integer>& n) const
+{
+  return Take(*this, n);
+}
+
+template <typename T>
 ref<maybe<T>> ref<list<T>>::operator[](const arg<integer>& idx) const
 {
   return Get(static_cast<const ref<list<T>>&>(*this), idx);
+}
+
+template <typename T> ref<integer> ref<list<T>>::length() const
+{
+  return Length(*this);
 }
 
 template <typename T>

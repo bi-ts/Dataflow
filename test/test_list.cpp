@@ -81,6 +81,21 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Length)
   BOOST_CHECK_EQUAL(*b, 0);
 }
 
+BOOST_AUTO_TEST_CASE(test_listC_length_ref_mem_func)
+{
+  Engine engine;
+
+  auto a = Var<listC<std::string>>();
+
+  const auto b = Main(a.length());
+
+  BOOST_CHECK_EQUAL(*b, 0);
+
+  a.insert(0, "0");
+
+  BOOST_CHECK_EQUAL(*b, 1);
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Var_insert_inactive)
 {
   Engine engine;
@@ -420,6 +435,25 @@ BOOST_AUTO_TEST_CASE(test_ListC_Insert)
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(111 0 333 11)");
 }
 
+BOOST_AUTO_TEST_CASE(test_ListC_insert_ref_mem_func)
+{
+  Engine engine;
+
+  auto idx = Var(1);
+
+  const auto xs = ListC(Const(1), Const(2), Const(3));
+
+  const auto ys = xs.insert(idx, 11);
+
+  auto f = Main(ys);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 11 2 3)");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 2 11 3)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Var_Insert_out_of_range)
 {
   Engine engine;
@@ -495,6 +529,25 @@ BOOST_AUTO_TEST_CASE(test_ListC_Erase)
   x2 = 222;
 
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(111 222)");
+}
+
+BOOST_AUTO_TEST_CASE(test_ListC_erase_ref_mem_func)
+{
+  Engine engine;
+
+  auto idx = Var(1);
+
+  const auto xs = ListC(Const(1), Const(2), Const(3));
+
+  const auto ys = xs.erase(idx);
+
+  const auto f = Main(ys);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 3)");
+
+  idx = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 2)");
 }
 
 BOOST_AUTO_TEST_CASE(test_listC_Erase_out_of_range)
@@ -812,6 +865,25 @@ BOOST_AUTO_TEST_CASE(test_listC_Var_Take)
   xs.erase(3);
 
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 22 33 6)");
+}
+
+BOOST_AUTO_TEST_CASE(test_ListC_take_ref_mem_func)
+{
+  Engine engine;
+
+  auto n = Var(1);
+
+  const auto xs = ListC(Const(1), Const(2), Const(3));
+
+  auto ys = xs.take(n);
+
+  auto f = Main(ys);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1)");
+
+  n = 2;
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 2)");
 }
 
 BOOST_AUTO_TEST_CASE(test_listC_Var_Map)
