@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,10 +18,7 @@
 
 #pragma once
 
-#include <dataflow/introspect.h>
-
 namespace dataflow_test
 {
-bool graph_invariant_holds(const dataflow::introspect::dependency_graph& g =
-                             dataflow::introspect::graph());
+bool graph_invariant_holds();
 }

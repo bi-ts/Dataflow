@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,6 +17,9 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include "graph_invariant.h"
+
+#define DATAFLOW_CONFIG_HEADER_INTROSPECT_BOOST_GRAPH_COMPATIBLE
+#include <dataflow/introspect.h>
 
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
@@ -161,7 +164,7 @@ private:
 };
 } // anonymous
 
-bool dataflow_test::graph_invariant_holds(const introspect::dependency_graph& g)
+bool dataflow_test::graph_invariant_holds()
 {
   std::map<introspect::dependency_graph::vertex_descriptor,
            boost::default_color_type>
@@ -171,8 +174,9 @@ bool dataflow_test::graph_invariant_holds(const introspect::dependency_graph& g)
   std::vector<vertex_descriptor> bad_vertices;
 
   boost::depth_first_search(
-    boost::make_filtered_graph(
-      g, introspect::active_dependency, introspect::active_node),
+    boost::make_filtered_graph(introspect::graph(),
+                               introspect::active_dependency,
+                               introspect::active_node),
     validation_dfs_visitor(bad_edges, bad_vertices),
     boost::make_assoc_property_map(color_map));
 

@@ -25,7 +25,7 @@
 
 #include <dataflow/prelude/core.h>
 
-#ifndef DATAFLOW___NO_BOOST
+#ifdef DATAFLOW_CONFIG_HEADER_INTROSPECT_BOOST_GRAPH_COMPATIBLE
 #include <boost/graph/graph_traits.hpp>
 #endif
 
@@ -126,7 +126,7 @@ public:
     std::size_t idx;
   };
 
-#ifndef DATAFLOW___NO_BOOST
+#ifdef DATAFLOW_CONFIG_HEADER_INTROSPECT_BOOST_GRAPH_COMPATIBLE
   using directed_category = boost::directed_tag;
   using edge_parallel_category = boost::allow_parallel_edge_tag;
   class traversal_category : public boost::incidence_graph_tag,

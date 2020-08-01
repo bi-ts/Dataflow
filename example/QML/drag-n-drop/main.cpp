@@ -16,8 +16,6 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#define DATAFLOW___NO_BOOST
-
 #include <dataflow/introspect.h>
 #include <dataflow/prelude.h>
 #include <dataflow/qt.h>
