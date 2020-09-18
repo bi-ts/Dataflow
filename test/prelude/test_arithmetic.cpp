@@ -29,6 +29,40 @@ namespace dataflow_test
 namespace
 {
 
+enum class type_Plus
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_Plus value)
+{
+  return out << "type_Plus::"
+             << (value == type_Plus::value1 ? "value1" : "value2");
+}
+
+inline int operator+(type_Plus x)
+{
+  return static_cast<int>(x);
+}
+
+enum class type_Inv
+{
+  value1 = 1,
+  value2 = 2
+};
+
+inline std::ostream& operator<<(std::ostream& out, type_Inv value)
+{
+  return out << "type_Inv::"
+             << (value == type_Inv::value1 ? "value1" : "value2");
+}
+
+inline int operator-(type_Inv x)
+{
+  return -static_cast<int>(x);
+}
+
 enum class type_a_Add
 {
   value3 = 3,
@@ -504,6 +538,27 @@ BOOST_AUTO_TEST_CASE(test_Plus_int)
   BOOST_CHECK_EQUAL(*f, 5);
 }
 
+BOOST_AUTO_TEST_CASE(test_Plus_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_Plus>();
+
+  const ref<int> a = Plus(x);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "(+)");
+
+  const auto f = Main(a);
+
+  x = type_Plus::value1;
+
+  BOOST_CHECK_EQUAL(*f, 1);
+
+  x = type_Plus::value2;
+
+  BOOST_CHECK_EQUAL(*f, 2);
+}
+
 // Additive inverse
 
 BOOST_AUTO_TEST_CASE(test_Inv_int)
@@ -529,6 +584,27 @@ BOOST_AUTO_TEST_CASE(test_Inv_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(*f, -5);
+}
+
+BOOST_AUTO_TEST_CASE(test_Inv_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_Inv>();
+
+  const ref<int> a = Inv(x);
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "(-)");
+
+  const auto f = Main(a);
+
+  x = type_Inv::value1;
+
+  BOOST_CHECK_EQUAL(*f, -1);
+
+  x = type_Inv::value2;
+
+  BOOST_CHECK_EQUAL(*f, -2);
 }
 
 // Multiplication
@@ -1374,6 +1450,27 @@ BOOST_AUTO_TEST_CASE(test_Plus_operator_int)
   BOOST_CHECK_EQUAL(*f, 5);
 }
 
+BOOST_AUTO_TEST_CASE(test_Plus_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_Plus>();
+
+  const ref<int> a = +x;
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "(+)");
+
+  const auto f = Main(a);
+
+  x = type_Plus::value1;
+
+  BOOST_CHECK_EQUAL(*f, 1);
+
+  x = type_Plus::value2;
+
+  BOOST_CHECK_EQUAL(*f, 2);
+}
+
 // Unary minus (additive inverse)
 
 BOOST_AUTO_TEST_CASE(test_Inv_operator_int)
@@ -1397,6 +1494,27 @@ BOOST_AUTO_TEST_CASE(test_Inv_operator_int)
   x = 5;
 
   BOOST_CHECK_EQUAL(*f, -5);
+}
+
+BOOST_AUTO_TEST_CASE(test_Inv_operator_mixed_types)
+{
+  Engine engine;
+
+  auto x = Var<type_Inv>();
+
+  const ref<int> a = -x;
+
+  BOOST_CHECK_EQUAL(introspect::label(a), "(-)");
+
+  const auto f = Main(a);
+
+  x = type_Inv::value1;
+
+  BOOST_CHECK_EQUAL(*f, -1);
+
+  x = type_Inv::value2;
+
+  BOOST_CHECK_EQUAL(*f, -2);
 }
 
 // Multiplication

@@ -72,20 +72,28 @@ template <typename ArgX,
                                            core::is_trivially_patcheable<T>>>
 ref<T> Sub(const ArgX& x, const ArgY& y);
 
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_if_all_t<void,
-                                           core::is_regular_data_type<T>,
-                                           core::is_trivially_patcheable<T>>>
+template <
+  typename ArgX,
+  typename...,
+  typename X = core::argument_data_type_t<ArgX>,
+  typename T = core::convert_to_flowable_t<decltype(+std::declval<X>())>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<X>,
+                                   core::is_trivially_patcheable<X>,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
 ref<T> Plus(const ArgX& x);
 
-template <typename ArgX,
-          typename...,
-          typename T = core::argument_data_type_t<ArgX>,
-          typename = core::enable_if_all_t<void,
-                                           core::is_regular_data_type<T>,
-                                           core::is_trivially_patcheable<T>>>
+template <
+  typename ArgX,
+  typename...,
+  typename X = core::argument_data_type_t<ArgX>,
+  typename T = core::convert_to_flowable_t<decltype(-std::declval<X>())>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<X>,
+                                   core::is_trivially_patcheable<X>,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
 ref<T> Inv(const ArgX& x);
 
 template <typename ArgX,
@@ -196,21 +204,29 @@ ref<T> operator-(const ArgX& x, const ArgY& y);
 
 /// Unary plus
 ///
-template <typename T,
-          typename...,
-          typename = core::enable_if_all_t<void,
-                                           core::is_regular_data_type<T>,
-                                           core::is_trivially_patcheable<T>>>
-ref<T> operator+(const ref<T>& x);
+template <
+  typename X,
+  typename...,
+  typename T = core::convert_to_flowable_t<decltype(+std::declval<X>())>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<X>,
+                                   core::is_trivially_patcheable<X>,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator+(const ref<X>& x);
 
 /// Unary minus (additive inverse)
 ///
-template <typename T,
-          typename...,
-          typename = core::enable_if_all_t<void,
-                                           core::is_regular_data_type<T>,
-                                           core::is_trivially_patcheable<T>>>
-ref<T> operator-(const ref<T>& x);
+template <
+  typename X,
+  typename...,
+  typename T = core::convert_to_flowable_t<decltype(-std::declval<X>())>,
+  typename = core::enable_if_all_t<void,
+                                   core::is_regular_data_type<X>,
+                                   core::is_trivially_patcheable<X>,
+                                   core::is_regular_data_type<T>,
+                                   core::is_trivially_patcheable<T>>>
+ref<T> operator-(const ref<X>& x);
 
 /// Multiplication
 ///

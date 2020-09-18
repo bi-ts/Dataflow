@@ -85,7 +85,7 @@ dataflow::ref<T> dataflow::Sub(const ArgX& x, const ArgY& y)
   return core::Lift<policy>(core::make_argument(x), core::make_argument(y));
 }
 
-template <typename ArgX, typename..., typename T, typename>
+template <typename ArgX, typename..., typename X, typename T, typename>
 dataflow::ref<T> dataflow::Plus(const ArgX& x)
 {
   struct policy
@@ -94,7 +94,7 @@ dataflow::ref<T> dataflow::Plus(const ArgX& x)
     {
       return "(+)";
     }
-    T calculate(const T& x)
+    T calculate(const X& x)
     {
       return +x;
     }
@@ -102,7 +102,7 @@ dataflow::ref<T> dataflow::Plus(const ArgX& x)
   return core::Lift<policy>(core::make_argument(x));
 }
 
-template <typename ArgX, typename..., typename T, typename>
+template <typename ArgX, typename..., typename X, typename T, typename>
 dataflow::ref<T> dataflow::Inv(const ArgX& x)
 {
   struct policy
@@ -111,7 +111,7 @@ dataflow::ref<T> dataflow::Inv(const ArgX& x)
     {
       return "(-)";
     }
-    T calculate(const T& x)
+    T calculate(const X& x)
     {
       return -x;
     }
@@ -248,14 +248,14 @@ dataflow::ref<T> dataflow::operator-(const ArgX& x, const ArgY& y)
   return Sub(x, y);
 }
 
-template <typename T, typename..., typename>
-dataflow::ref<T> dataflow::operator+(const ref<T>& x)
+template <typename X, typename..., typename T, typename>
+dataflow::ref<T> dataflow::operator+(const ref<X>& x)
 {
   return Plus(x);
 }
 
-template <typename T, typename..., typename>
-dataflow::ref<T> dataflow::operator-(const ref<T>& x)
+template <typename X, typename..., typename T, typename>
+dataflow::ref<T> dataflow::operator-(const ref<X>& x)
 {
   return Inv(x);
 }
