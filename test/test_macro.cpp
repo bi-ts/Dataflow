@@ -36,6 +36,9 @@ DATAFLOW_DATA(mixed,
 
 DATAFLOW_COMPOSITE(composite_data, CompositeData, (int, field));
 
+DATAFLOW_COMPOSITE(
+  composite_data_3, CompositeData3, (int, x), (std::string, y), (char, z));
+
 using namespace dataflow;
 
 BOOST_AUTO_TEST_SUITE(test_macro)
@@ -141,7 +144,7 @@ BOOST_AUTO_TEST_CASE(test_DATAFLOW_DATA_mixed_Var)
   auto x = Var<mixed>(a, "str", c);
   auto y = Main(x);
 
-  BOOST_CHECK_EQUAL(introspect::value(y), "mixed");
+  BOOST_CHECK_EQUAL(introspect::value(y).substr(0, 5), "mixed");
 }
 
 BOOST_AUTO_TEST_CASE(test_DATAFLOW_DATA_mixed_selectors)
@@ -204,6 +207,22 @@ BOOST_AUTO_TEST_CASE(test_DATAFLOW_COMPOSITE_Data1)
   x = 23;
 
   BOOST_CHECK_EQUAL(*f, composite_data(23));
+}
+
+BOOST_AUTO_TEST_CASE(test_DATAFLOW_COMPOSITE_Data3_value)
+{
+  Engine engine;
+
+  auto a = Var(1);
+  auto b = Var("str");
+  auto c = Var('c');
+  const auto x = CompositeData3(a, b, c);
+
+  BOOST_CHECK_EQUAL(introspect::label(x), "composite_data_3");
+
+  const auto f = Main(x);
+
+  BOOST_CHECK_EQUAL(introspect::value(f), "composite_data_3(1; str; c)");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

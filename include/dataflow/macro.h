@@ -43,6 +43,8 @@
 
 #endif
 
+#include <sstream>
+
 /// \defgroup macro
 /// \{
 
@@ -107,6 +109,14 @@
     friend std::ostream& operator<<(std::ostream& out, const name& value)      \
     {                                                                          \
       out << #name;                                                            \
+                                                                               \
+      std::stringstream ss;                                                    \
+      ss << value.data_;                                                       \
+                                                                               \
+      const auto str = ss.str();                                               \
+                                                                               \
+      out << str.substr(str.find('('));                                        \
+                                                                               \
       return out;                                                              \
     }                                                                          \
                                                                                \
