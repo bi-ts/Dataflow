@@ -66,6 +66,16 @@ template <typename T> vec2<T> vec2<T>::operator+(const vec2& other) const
   return {x() + other.x(), y() + other.y()};
 }
 
+template <typename T> vec2<T> vec2<T>::operator-() const
+{
+  return {-x_, -y_};
+}
+
+template <typename T> const vec2<T>& vec2<T>::operator+() const
+{
+  return *this;
+}
+
 template <typename T> T vec2<T>::squared_norm() const
 {
   return x() * x() + y() * y();

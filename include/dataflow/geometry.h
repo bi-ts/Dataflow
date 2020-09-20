@@ -43,6 +43,9 @@ public:
   vec2 operator-(const vec2& other) const;
   vec2 operator+(const vec2& other) const;
 
+  vec2 operator-() const;
+  const vec2& operator+() const;
+
   T squared_norm() const;
 
 private:
