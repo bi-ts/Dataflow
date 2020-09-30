@@ -24,8 +24,10 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <iomanip> // std::quoted
 #include <memory>
 #include <regex>
+#include <sstream> // std::stringstream
 #include <type_traits>
 
 namespace dataflow
@@ -477,7 +479,11 @@ void introspect::write_graphviz(std::ostream& out)
   {
     const auto u = *vs.first;
     out << indent << u;
-    out << " [label=\"" << label(u) << " (" << value(u) << ")\"";
+
+    std::stringstream ss;
+    ss << label(u) << " (" << value(u) << ")";
+
+    out << " [label=" << std::quoted(ss.str());
     if (!active_node(u))
     {
       out << ", color=lightgray";
