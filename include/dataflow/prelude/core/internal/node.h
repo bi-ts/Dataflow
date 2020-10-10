@@ -20,6 +20,8 @@
 
 #include "dataflow++_export.h"
 
+#include "config.h"
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -79,7 +81,14 @@ class DATAFLOW___EXPORT node
 public:
   void activate(node_id id, const tick_count& t0)
   {
+    DATAFLOW___CHECK_PRECONDITION_DEBUG(activation_count_ ==
+                                        deactivation_count_);
+
     activate_(id, t0);
+
+#ifndef NDEBUG
+    ++activation_count_;
+#endif
   }
 
   update_status update(node_id id,
@@ -87,12 +96,22 @@ public:
                        const node** p_args,
                        std::size_t args_count)
   {
+    DATAFLOW___CHECK_PRECONDITION_DEBUG(activation_count_ ==
+                                        deactivation_count_ + 1);
+
     return update_(id, initialized, p_args, args_count);
   }
 
   void deactivate(node_id id)
   {
+    DATAFLOW___CHECK_PRECONDITION_DEBUG(activation_count_ ==
+                                        deactivation_count_ + 1);
+
     deactivate_(id);
+
+#ifndef NDEBUG
+    ++deactivation_count_;
+#endif
   }
 
   std::string label() const
@@ -110,7 +129,19 @@ public:
     return mem_info_();
   }
 
-  virtual ~node(){};
+  node()
+#ifndef NDEBUG
+  : activation_count_()
+  , deactivation_count_()
+#endif
+  {
+  }
+
+  virtual ~node()
+  {
+    DATAFLOW___CHECK_PRECONDITION_DEBUG(activation_count_ ==
+                                        deactivation_count_);
+  }
 
 protected:
   static const tick_count& ticks_();
@@ -139,6 +170,12 @@ private:
   virtual std::string to_string_() const = 0;
 
   virtual std::pair<std::size_t, std::size_t> mem_info_() const = 0;
+
+private:
+#ifndef NDEBUG
+  std::size_t activation_count_;
+  std::size_t deactivation_count_;
+#endif
 };
 }
 }

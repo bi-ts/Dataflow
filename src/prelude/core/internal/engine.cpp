@@ -46,12 +46,12 @@ void engine::start(void* p_data)
   const auto v = add_vertex(vertex(p_node), gp_engine_->graph_);
 
   gp_engine_->graph_[v].eager = true;
+
+  gp_engine_->activate_vertex_(
+    v, gp_engine_->order_.insert(gp_engine_->order_.end(), v), v);
+
+  // TODO: check why it is necessary?
   gp_engine_->graph_[v].initialized = true;
-
-  gp_engine_->add_logical_edge_(v, v);
-
-  gp_engine_->graph_[v].position =
-    gp_engine_->order_.insert(gp_engine_->order_.end(), v);
 
   gp_engine_->add_ref(v);
 
@@ -94,11 +94,10 @@ vertex_descriptor engine::add_node(node* p_node,
   if (eager)
   {
     graph_[v].eager = true;
-    graph_[v].position = order_.insert(order_.end(), v);
+
+    activate_vertex_(v, order_.insert(order_.end(), v), order_.front());
 
     order_.mark(graph_[v].position);
-
-    add_logical_edge_(v, order_.front());
 
     auto es = out_edges(v, graph_);
 
