@@ -51,10 +51,15 @@ sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
 
 } // dataflow
 
-dataflow::ref<std::size_t> dataflow::CurrentTime()
+dataflow::ref<dataflow::dtimestamp> dataflow::CurrentTime()
 {
-  return core::ref_base<std::size_t>(internal::nodes_factory::get_time(),
-                                     internal::ref::ctor_guard);
+  return core::ref_base<dtimestamp>(internal::nodes_factory::get_time(),
+                                    internal::ref::ctor_guard);
+}
+
+dataflow::ref<dataflow::dtimestamp> dataflow::Timestamp(dtime t)
+{
+  return CurrentTime()(t);
 }
 
 dataflow::sig dataflow::Signal()

@@ -1647,6 +1647,37 @@ BOOST_AUTO_TEST_CASE(test_core_to_string_convertible_to_flowable)
   BOOST_CHECK_EQUAL(core::to_string("str"), "str");
 }
 
+BOOST_AUTO_TEST_CASE(test_Timestamp)
+{
+  Engine engine;
+
+  auto x = Var(true);
+
+  const auto m = Main(If(
+    x,
+    [](dtime t0) { return Timestamp(t0); },
+    [](dtime t0) { return Timestamp(t0); }));
+
+  BOOST_CHECK_EQUAL(*m, 0);
+
+  x = false; // t=2
+
+  BOOST_CHECK_EQUAL(*m, 2);
+
+  x = true; // t=4
+
+  BOOST_CHECK_EQUAL(*m, 4);
+}
+
+BOOST_AUTO_TEST_CASE(test_Timestamp_main)
+{
+  Engine engine;
+
+  const auto m = Main([](dtime t0) { return Timestamp(t0); });
+
+  BOOST_CHECK_EQUAL(*m, 0);
+}
+
 BOOST_AUTO_TEST_CASE(test_Since)
 {
   Engine engine;
@@ -1673,43 +1704,43 @@ BOOST_AUTO_TEST_CASE(test_Since)
     Main([=, x = x.as_ref(), use_since = use_since.as_ref()](dtime t0) {
       const auto z = If(
         y,
-        [](dtime t0) { return Const(dtimestamp(t0)); },
-        [](dtime t0) { return Const(dtimestamp(t0)); },
+        [](dtime t0) { return Timestamp(t0); },
+        [](dtime t0) { return Timestamp(t0); },
         t0);
 
       return If(
         use_since,
-        Since(z, [](dtime t0) { return Const<std::size_t>(dtimestamp(t0)); }),
+        Since(z, [](dtime t0) { return Cast<std::size_t>(Timestamp(t0)); }),
         std::size_t(101010),
         t0);
     });
 
   BOOST_CHECK_EQUAL(*m, 0);
 
-  // t = 1
+  // t = 2
   x = 10;
 
   BOOST_CHECK_EQUAL(*m, 0);
 
-  // t = 2
+  // t = 3
   x = 100;
 
-  BOOST_CHECK_EQUAL(*m, 2);
+  BOOST_CHECK_EQUAL(*m, 3);
 
-  // t = 3
+  // t = 5
   x = 110;
 
-  BOOST_CHECK_EQUAL(*m, 2);
+  BOOST_CHECK_EQUAL(*m, 3);
 
-  // t = 4
+  // t = 6
   use_since = false;
 
   BOOST_CHECK_EQUAL(*m, 101010);
 
-  // t = 5
+  // t = 7
   use_since = true;
 
-  BOOST_CHECK_EQUAL(*m, 5);
+  BOOST_CHECK_EQUAL(*m, 7);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

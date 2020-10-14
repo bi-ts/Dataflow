@@ -74,12 +74,12 @@ ref<T> make_state_machine(
     static init_function<internal::transition> make_case(integer idx,
                                                          std::true_type)
     {
-      return [=](dtime t0) { return Const<internal::transition>(idx, t0); };
+      return [=](dtime t0) { return internal::Transition(idx, t0); };
     }
   };
 
   const auto tr = Recursion(
-    internal::transition(0, t0),
+    internal::Transition(0, t0),
     [=](ref<internal::transition> sp) {
       return Switch(
         Case(std::get<Is>(transitions).first,
@@ -92,7 +92,7 @@ ref<T> make_state_machine(
 
   const auto tr_idx = Index(tr);
 
-  return Since(Timestamp(tr),
+  return Since(When(tr),
                Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
                            std::get<Is>(transitions).second)...,
                       Default(initial)),

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -27,11 +27,6 @@ dtimestamp::dtimestamp()
 {
 }
 
-dtimestamp::dtimestamp(dtime t)
-: timestamp_(internal::engine::instance().ticks())
-{
-}
-
 dtimestamp::operator std::size_t() const
 {
   return timestamp_;
@@ -45,6 +40,11 @@ bool dtimestamp::operator==(const dtimestamp& other) const
 bool dtimestamp::operator!=(const dtimestamp& other) const
 {
   return !(*this == other);
+}
+
+dtimestamp::dtimestamp(std::size_t ticks)
+: timestamp_(ticks)
+{
 }
 } // dataflow
 

@@ -31,9 +31,9 @@ transition::transition()
 {
 }
 
-transition::transition(integer idx, const dtimestamp& t)
+transition::transition(integer idx, const dtimestamp& when)
 : idx_(idx)
-, t_(t)
+, t_(when)
 {
 }
 
@@ -52,7 +52,7 @@ integer transition::index() const
   return idx_;
 }
 
-const dtimestamp& transition::timestamp() const
+const dtimestamp& transition::when() const
 {
   return t_;
 }
@@ -63,8 +63,25 @@ const dtimestamp& transition::timestamp() const
 std::ostream& stateful::internal::operator<<(std::ostream& out,
                                              const transition& value)
 {
-  return out << "transition(" << value.index() << "; " << value.timestamp()
-             << ")";
+  return out << "transition(" << value.index() << "; " << value.when() << ")";
+}
+
+ref<stateful::internal::transition>
+stateful::internal::Transition(const arg<integer>& idx, dtime t)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "transition";
+    }
+    static transition calculate(const integer& idx, const dtimestamp& when)
+    {
+      return {idx, when};
+    }
+  };
+
+  return core::Lift(policy(), idx, Timestamp(t));
 }
 
 ref<integer> stateful::internal::Index(const ref<transition>& tr)
@@ -84,17 +101,17 @@ ref<integer> stateful::internal::Index(const ref<transition>& tr)
   return core::Lift(policy(), tr);
 }
 
-ref<dtimestamp> stateful::internal::Timestamp(const ref<transition>& tr)
+ref<dtimestamp> stateful::internal::When(const ref<transition>& tr)
 {
   struct policy
   {
     static std::string label()
     {
-      return "transition-timestamp";
+      return "transition-when";
     }
     static dtimestamp calculate(const transition& tr)
     {
-      return tr.timestamp();
+      return tr.when();
     }
   };
 

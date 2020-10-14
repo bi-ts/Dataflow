@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -33,20 +33,25 @@ namespace dataflow
 namespace internal
 {
 class tick_count;
+class node_time;
 }
 
 using dtime = const internal::tick_count&;
 
 class DATAFLOW___EXPORT dtimestamp final
 {
+  friend class internal::node_time;
+
 public:
   dtimestamp();
-  dtimestamp(dtime t);
 
   operator std::size_t() const;
 
   bool operator==(const dtimestamp& other) const;
   bool operator!=(const dtimestamp& other) const;
+
+private:
+  explicit dtimestamp(std::size_t ticks);
 
 private:
   std::size_t timestamp_;

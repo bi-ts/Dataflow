@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -34,13 +34,13 @@ class DATAFLOW___EXPORT transition
 {
 public:
   transition();
-  transition(integer idx, const dtimestamp& t);
+  transition(integer idx, const dtimestamp& when);
 
   bool operator==(const transition& other) const;
   bool operator!=(const transition& other) const;
 
   integer index() const;
-  const dtimestamp& timestamp() const;
+  const dtimestamp& when() const;
 
 private:
   integer idx_;
@@ -50,9 +50,11 @@ private:
 DATAFLOW___EXPORT std::ostream& operator<<(std::ostream& out,
                                            const transition& value);
 
+DATAFLOW___EXPORT ref<transition> Transition(const arg<integer>& idx, dtime t);
+
 DATAFLOW___EXPORT ref<integer> Index(const ref<transition>& tr);
 
-DATAFLOW___EXPORT ref<dtimestamp> Timestamp(const ref<transition>& tr);
+DATAFLOW___EXPORT ref<dtimestamp> When(const ref<transition>& tr);
 
 } // internal
 } // stateful

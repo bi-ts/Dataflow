@@ -693,7 +693,9 @@ ref<T> LiftPatcher(const ref<Xs>&... xs);
 
 // Basic functions
 
-DATAFLOW___EXPORT ref<std::size_t> CurrentTime();
+DATAFLOW___EXPORT ref<dtimestamp> CurrentTime();
+
+DATAFLOW___EXPORT ref<dtimestamp> Timestamp(dtime t);
 
 template <typename T, typename FwT = core::convert_to_flowable_t<T>>
 ref<FwT> Const(const T& v);

@@ -61,45 +61,45 @@ BOOST_AUTO_TEST_CASE(test_dtimestamp_ctor)
   // t = 0
   const val<dtimestamp> ts = Main(If(
     make_timestamp,
-    [=](dtime t0) { return Const<dtimestamp>(t0); },
-    [=](dtime t0) { return Const<dtimestamp>(); }));
-
-  BOOST_CHECK_EQUAL(*ts, 0);
-
-  // t = 1
-  x = 0;
+    [=](dtime t0) { return Timestamp(t0); },
+    Const<dtimestamp>()));
 
   BOOST_CHECK_EQUAL(*ts, 0);
 
   // t = 2
-  x = 110;
+  x = 0;
 
-  BOOST_CHECK_EQUAL(*ts, 2);
+  BOOST_CHECK_EQUAL(*ts, 0);
 
   // t = 3
+  x = 110;
+
+  BOOST_CHECK_EQUAL(*ts, 3);
+
+  // t = 5
   x = 10;
 
   BOOST_CHECK_EQUAL(*ts, 0);
 
-  // t = 4
+  // t = 6
   x = 120;
 
-  BOOST_CHECK_EQUAL(*ts, 4);
+  BOOST_CHECK_EQUAL(*ts, 6);
 
-  // t = 5
+  // t = 8
   x = 130;
 
-  BOOST_CHECK_EQUAL(*ts, 4);
+  BOOST_CHECK_EQUAL(*ts, 6);
 
-  // t = 6
+  // t = 9
   x = 20;
 
   BOOST_CHECK_EQUAL(*ts, 0);
 
-  // t = 7
+  // t = 10
   x = 140;
 
-  BOOST_CHECK_EQUAL(*ts, 7);
+  BOOST_CHECK_EQUAL(*ts, 10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

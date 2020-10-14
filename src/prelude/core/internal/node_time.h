@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,17 +20,18 @@
 
 #include "config.h"
 
+#include <dataflow/prelude/core/dtime.h>
 #include <dataflow/prelude/core/internal/node_t.h>
 
 namespace dataflow
 {
 namespace internal
 {
-class node_time final : public node_t<std::size_t>
+class node_time final : public node_t<dtimestamp>
 {
 public:
   explicit node_time()
-  : node_t<std::size_t>(std::numeric_limits<std::size_t>::max())
+  : node_t<dtimestamp>(dtimestamp{std::numeric_limits<std::size_t>::max()})
   , next_value_(std::numeric_limits<std::size_t>::max())
   {
   }
@@ -46,7 +47,7 @@ private:
                                 const node** p_args,
                                 std::size_t args_count) override
   {
-    return this->set_value_(next_value_);
+    return this->set_value_(dtimestamp{next_value_});
   }
 
   virtual std::string label_() const override
