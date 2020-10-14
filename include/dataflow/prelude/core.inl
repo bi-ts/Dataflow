@@ -497,6 +497,24 @@ dataflow::var<T> dataflow::Var(Args&&... args)
   return Var(T(std::forward<Args>(args)...));
 }
 
+template <typename T, typename..., typename ArgX, typename X, typename>
+dataflow::ref<T> dataflow::Cast(const ArgX& x)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "cast";
+    }
+    static T calculate(const X& x)
+    {
+      return static_cast<T>(x);
+    }
+  };
+
+  return core::Lift<policy>(core::make_argument(x));
+}
+
 template <typename T> dataflow::val<T> dataflow::Curr(ref<T> x)
 {
   return val<T>(internal::node_main<T>::create([x](dtime) { return x; }),

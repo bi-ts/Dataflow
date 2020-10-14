@@ -627,6 +627,25 @@ BOOST_FIXTURE_TEST_CASE(test_Var_deferred_assign, test_core_fixture)
   BOOST_CHECK_EQUAL(*z, 200);
 }
 
+BOOST_AUTO_TEST_CASE(test_Cast_double_to_int)
+{
+  Engine engine;
+
+  auto x = Var(3.14);
+  const auto y = Cast<int>(x);
+  const auto m = Main(y);
+
+  BOOST_CHECK_EQUAL(*m, 3);
+
+  x = 2.17;
+
+  BOOST_CHECK_EQUAL(*m, 2);
+
+  x = 4.99;
+
+  BOOST_CHECK_EQUAL(*m, 4);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Main_ref_arg, test_core_fixture)
 {
   const var<int> x = Var<int>(6);

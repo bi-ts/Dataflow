@@ -713,6 +713,14 @@ template <typename T,
           typename = core::enable_if_flowable_t<T>>
 var<T> Var(Args&&... args);
 
+template <
+  typename T,
+  typename...,
+  typename ArgX,
+  typename X = core::argument_data_type_t<ArgX>,
+  typename = typename std::enable_if<std::is_convertible<X, T>::value>::type>
+ref<T> Cast(const ArgX& x);
+
 template <typename T> val<T> Curr(ref<T> x);
 
 template <typename F, typename T = core::init_function_type_t<F>>
