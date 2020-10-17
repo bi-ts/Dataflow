@@ -20,7 +20,7 @@ endif()
 
 if(NOT TARGET dst)
   include(get_dst)
-  get_dst(0.2.0 fa115e5bfcf5b3cdbac0201c4872ffb1)
+  get_dst(0.3.0 3520f9fb5417f9eedd827eff603a4408)
 endif()
 
 include(get_google_benchmark)
