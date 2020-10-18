@@ -18,21 +18,19 @@
 
 #pragma once
 
-#include <cstddef>
-
 namespace dataflow
 {
 namespace internal
 {
-class tick_count
+class discrete_time
 {
 public:
-  tick_count() = default;
+  discrete_time() = default;
 
 private:
-  tick_count(const tick_count&) = delete;
-  tick_count& operator=(const tick_count&) = delete;
-  tick_count operator++(int) = delete;
+  discrete_time(const discrete_time&) = delete;
+  discrete_time& operator=(const discrete_time&) = delete;
+  discrete_time operator++(int) = delete;
 };
 
 } // internal

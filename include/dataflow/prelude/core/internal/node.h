@@ -33,7 +33,7 @@ namespace dataflow
 namespace internal
 {
 
-class tick_count;
+class discrete_time;
 
 using node_id = std::intptr_t;
 
@@ -79,7 +79,7 @@ public:
 class DATAFLOW___EXPORT node
 {
 public:
-  void activate(node_id id, const tick_count& t0)
+  void activate(node_id id, const discrete_time& t0)
   {
     DATAFLOW___CHECK_PRECONDITION_DEBUG(activation_count_ ==
                                         deactivation_count_);
@@ -144,7 +144,7 @@ public:
   }
 
 protected:
-  static const tick_count& ticks_();
+  static const discrete_time& ticks_();
   static void schedule_and_pump(node_id id);
   static void set_metadata(const node* p_node,
                            std::shared_ptr<const metadata> p_metadata);
@@ -152,7 +152,7 @@ protected:
   get_metadata(const node* p_node);
 
 private:
-  virtual void activate_(node_id id, const tick_count& t0)
+  virtual void activate_(node_id id, const discrete_time& t0)
   {
   }
 

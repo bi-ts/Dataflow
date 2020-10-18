@@ -32,11 +32,11 @@ namespace dataflow
 
 namespace internal
 {
-class tick_count;
+class discrete_time;
 class node_time;
 }
 
-using dtime = const internal::tick_count&;
+using dtime = const internal::discrete_time&;
 
 class DATAFLOW___EXPORT dtimestamp final
 {

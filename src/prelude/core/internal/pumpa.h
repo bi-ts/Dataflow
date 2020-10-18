@@ -20,7 +20,6 @@
 
 #include "graph.h"
 #include "node_time.h"
-#include "tick_count.h"
 
 #include <memory>
 #include <unordered_map>

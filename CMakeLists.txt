@@ -118,6 +118,7 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/core/dtime.cpp
   src/prelude/core/internal/config.h
   src/prelude/core/internal/converter.h
+  src/prelude/core/internal/discrete_time.h
   src/prelude/core/internal/engine.cpp
   src/prelude/core/internal/engine.h
   src/prelude/core/internal/engine.inl
@@ -136,7 +137,6 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/core/internal/pumpa.cpp
   src/prelude/core/internal/pumpa.h
   src/prelude/core/internal/ref.cpp
-  src/prelude/core/internal/tick_count.h
   src/prelude/core/internal/vd_handle.h
   src/prelude/core/internal/vd_handle.inl
   src/prelude/logical.cpp

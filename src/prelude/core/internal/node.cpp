@@ -25,7 +25,7 @@ namespace dataflow
 namespace internal
 {
 
-const tick_count& node::ticks_()
+const discrete_time& node::ticks_()
 {
   return engine::instance().ticks();
 }

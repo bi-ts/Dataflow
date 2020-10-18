@@ -39,19 +39,19 @@ template <typename T> class node_compound final : public node_t<T>
   friend class nodes_factory;
 
 public:
-  static ref create(const std::function<ref(const tick_count&)>& f)
+  static ref create(const std::function<ref(const discrete_time&)>& f)
   {
     return nodes_factory::create<node_compound<T>>(
       nullptr, 0, node_flags::none, f);
   }
 
 private:
-  explicit node_compound(const std::function<ref(const tick_count&)>& f)
+  explicit node_compound(const std::function<ref(const discrete_time&)>& f)
   : f_(f)
   {
   }
 
-  virtual void activate_(node_id id, const tick_count& t0) override
+  virtual void activate_(node_id id, const discrete_time& t0) override
   {
     activate_node_compound(id, f_(t0).id());
   }
@@ -85,7 +85,7 @@ private:
   }
 
 private:
-  const std::function<ref(const tick_count&)> f_;
+  const std::function<ref(const discrete_time&)> f_;
 };
 } // internal
 } // dataflow

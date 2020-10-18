@@ -22,9 +22,9 @@
 #define DATAFLOW___INTERNAL_ENGINE_H
 
 #include "converter.h"
+#include "discrete_time.h"
 #include "graph.h"
 #include "pumpa.h"
-#include "tick_count.h"
 
 #include <utility>
 #include <vector>
@@ -45,7 +45,7 @@ public:
 
   const topological_list& order() const;
 
-  const tick_count& ticks() const;
+  const discrete_time& ticks() const;
 
   const node* get_node(vertex_descriptor v) const;
 
@@ -171,7 +171,7 @@ private:
   dependency_graph graph_;
   topological_list order_;
   pumpa pumpa_;
-  tick_count ticks_;
+  discrete_time ticks_;
   vertex_descriptor time_node_v_;
 
 private:

@@ -41,7 +41,7 @@ inline const topological_list& engine::order() const
   return order_;
 }
 
-inline const tick_count& engine::ticks() const
+inline const discrete_time& engine::ticks() const
 {
   return ticks_;
 }
