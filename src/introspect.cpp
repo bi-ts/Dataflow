@@ -462,7 +462,7 @@ bool introspect::secondary_dependency(dependency_graph::edge_descriptor e)
 
 integer introspect::current_time()
 {
-  return static_cast<integer>(internal::engine::instance().ticks());
+  return static_cast<integer>(internal::engine::instance().current_time());
 }
 
 void introspect::write_graphviz(std::ostream& out)

@@ -47,16 +47,14 @@ public:
 
   void pump(dependency_graph& graph,
             topological_list& order,
-            vertex_descriptor time_node_v,
-            tick_count& ticks);
+            vertex_descriptor time_node_v);
 
   bool is_pumping() const;
 
 private:
   void pump_(dependency_graph& graph,
              topological_list& order,
-             vertex_descriptor time_node_v,
-             tick_count& ticks);
+             vertex_descriptor time_node_v);
 
 private:
   bool pumping_started_;

@@ -58,6 +58,8 @@ public:
 
   static engine& instance();
 
+  dtimestamp current_time() const;
+
   static void* data();
 
   bool is_logical_dependency(edge_descriptor e) const;
@@ -116,7 +118,8 @@ public:
 
   update_status update_node_since_activator(vertex_descriptor v,
                                             bool initialized,
-                                            std::size_t ti);
+                                            std::size_t ti,
+                                            std::size_t t);
 
   void update_node_recursion(vertex_descriptor v);
 

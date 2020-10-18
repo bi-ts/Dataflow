@@ -72,6 +72,14 @@ vertex_descriptor engine::get_time_node() const
   return time_node_v_;
 }
 
+dtimestamp engine::current_time() const
+{
+  const auto p_time_node =
+    static_cast<const node_time*>(graph_[time_node_v_].p_node);
+
+  return p_time_node->value();
+}
+
 vertex_descriptor engine::add_node(node* p_node,
                                    const node_id* p_args,
                                    std::size_t args_count,
@@ -162,7 +170,7 @@ void engine::schedule_and_pump(vertex_descriptor v)
 
   order_.mark(graph_[v].position);
 
-  pumpa_.pump(graph_, order_, time_node_v_, ticks_);
+  pumpa_.pump(graph_, order_, time_node_v_);
 }
 
 void engine::schedule_for_next_update(vertex_descriptor v)
@@ -300,16 +308,15 @@ update_status engine::update_node_snapshot_activator(vertex_descriptor v,
 
 update_status engine::update_node_since_activator(vertex_descriptor v,
                                                   bool initialized,
-                                                  std::size_t ti)
+                                                  std::size_t ti,
+                                                  std::size_t t)
 {
-  const auto t = static_cast<std::size_t>(ticks_);
-
   CHECK_PRECONDITION(t >= ti);
-
-  const auto w = main_consumer_(v);
 
   if (!initialized)
   {
+    const auto w = main_consumer_(v);
+
     const auto e = *(out_edges(w, graph_).first + 1);
 
     activate_subgraph_(e);
@@ -320,6 +327,8 @@ update_status engine::update_node_since_activator(vertex_descriptor v,
   {
     if (t == ti)
     {
+      const auto w = main_consumer_(v);
+
       const auto e = out_edge_at_(w, 1);
 
       deactivate_subgraph_(e);

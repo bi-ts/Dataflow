@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -28,9 +28,11 @@ namespace internal
 {
 ref node_since_activator::create(const ref& x)
 {
-  const auto id = x.id();
+  const std::array<node_id, 2> args = {
+    {x.id(), nodes_factory::get_time().id()}};
 
-  return nodes_factory::create<node_since_activator>(&id, 1, node_flags::none);
+  return nodes_factory::create<node_since_activator>(
+    &args[0], args.size(), node_flags::none);
 }
 
 node_since_activator::node_since_activator()
@@ -43,14 +45,17 @@ update_status node_since_activator::update_(node_id id,
                                             const node** p_deps,
                                             std::size_t deps_count)
 {
-  CHECK_PRECONDITION(p_deps != nullptr && deps_count == 1);
+  CHECK_PRECONDITION(p_deps != nullptr && deps_count == 2);
 
-  const auto new_value = extract_node_value<dtimestamp>(p_deps[0]);
+  const auto ti = extract_node_value<dtimestamp>(p_deps[0]);
+  const auto t = extract_node_value<dtimestamp>(p_deps[1]);
+
+  CHECK_PRECONDITION(t >= ti);
 
   const auto result = engine::instance().update_node_since_activator(
-    converter::convert(id), initialized, std::size_t(new_value));
+    converter::convert(id), initialized, ti, t);
 
-  return this->set_value_(new_value) | result;
+  return this->set_value_(ti) | result;
 }
 
 std::string node_since_activator::label_() const

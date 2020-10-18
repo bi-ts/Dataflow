@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -27,30 +27,12 @@ namespace internal
 class tick_count
 {
 public:
-  tick_count()
-  : ticks_(std::numeric_limits<std::size_t>::max())
-  {
-  }
-
-  tick_count& operator++()
-  {
-    ++ticks_;
-    return *this;
-  }
-
-  operator std::size_t() const
-  {
-    return ticks_;
-  }
+  tick_count() = default;
 
 private:
   tick_count(const tick_count&) = delete;
   tick_count& operator=(const tick_count&) = delete;
   tick_count operator++(int) = delete;
-
-private:
-  // TODO: get rid of parallel counters (the second counter is in `node_time`)
-  std::size_t ticks_;
 };
 
 } // internal

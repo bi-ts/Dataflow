@@ -77,8 +77,7 @@ const std::shared_ptr<const metadata>& pumpa::get_metadata(const node* p_node)
 
 void pumpa::pump(dependency_graph& graph,
                  topological_list& order,
-                 vertex_descriptor time_node_v,
-                 tick_count& ticks)
+                 vertex_descriptor time_node_v)
 {
   CHECK_PRECONDITION(!pumping_started_);
 
@@ -86,7 +85,7 @@ void pumpa::pump(dependency_graph& graph,
 
   try
   {
-    pump_(graph, order, time_node_v, ticks);
+    pump_(graph, order, time_node_v);
 
     while (!next_update_.empty())
     {
@@ -95,7 +94,7 @@ void pumpa::pump(dependency_graph& graph,
 
       next_update_.clear();
 
-      pump_(graph, order, time_node_v, ticks);
+      pump_(graph, order, time_node_v);
     }
   }
   catch (...)
@@ -119,10 +118,8 @@ bool pumpa::is_pumping() const
 
 void pumpa::pump_(dependency_graph& graph,
                   topological_list& order,
-                  vertex_descriptor time_node_v,
-                  tick_count& ticks)
+                  vertex_descriptor time_node_v)
 {
-  ++ticks;
   changed_nodes_count_ = 0;
   updated_nodes_count_ = 0;
 
