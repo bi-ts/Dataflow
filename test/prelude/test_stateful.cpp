@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_num_vertices_fots)
   }));
 
   // TODO: calculate and illustrate how many nodes are really needed
-  BOOST_CHECK_EQUAL(introspect::num_vertices(), 38);
+  BOOST_CHECK_EQUAL(introspect::num_vertices(), 39);
 }
 
 BOOST_AUTO_TEST_CASE(test_StateMachine_refs)

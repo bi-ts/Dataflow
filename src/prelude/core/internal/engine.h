@@ -118,8 +118,7 @@ public:
 
   update_status update_node_since_activator(vertex_descriptor v,
                                             bool initialized,
-                                            std::size_t ti,
-                                            std::size_t t);
+                                            bool start_condition);
 
   void update_node_recursion(vertex_descriptor v);
 

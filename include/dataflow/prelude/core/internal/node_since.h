@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -39,7 +39,7 @@ template <typename T> class node_since final : public node_t<T>
 public:
   static ref create(const ref& basis, const ref& x, bool eager)
   {
-    DATAFLOW___CHECK_PRECONDITION(basis.template is_of_type<dtimestamp>());
+    DATAFLOW___CHECK_PRECONDITION(basis.template is_of_type<bool>());
     DATAFLOW___CHECK_PRECONDITION(x.template is_of_type<T>());
 
     const std::array<node_id, 2> args = {{basis.id(), x.id()}};

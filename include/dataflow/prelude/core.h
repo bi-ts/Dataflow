@@ -776,10 +776,10 @@ template <typename Arg,
 ref<T> Recursion(const Arg& s0, F tf, dtime t0);
 
 template <typename F, typename..., typename T = core::init_function_type_t<F>>
-ref<T> Since(const ref<dtimestamp>& ti, const F& f, dtime t0);
+ref<T> Since(const ref<bool>& ti, const F& f, dtime t0);
 
 template <typename F, typename..., typename T = core::init_function_type_t<F>>
-init_function<T> Since(const ref<dtimestamp>& ti, const F& f);
+init_function<T> Since(const ref<bool>& ti, const F& f);
 
 /// \}
 }

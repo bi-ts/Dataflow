@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -23,13 +23,11 @@
 #include "node_t.h"
 #include "ref.h"
 
-#include <dataflow/prelude/core/dtime.h>
-
 namespace dataflow
 {
 namespace internal
 {
-class DATAFLOW___EXPORT node_since_activator final : public node_t<dtimestamp>
+class DATAFLOW___EXPORT node_since_activator final : public node_t<bool>
 {
   friend class nodes_factory;
 

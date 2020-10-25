@@ -308,11 +308,8 @@ update_status engine::update_node_snapshot_activator(vertex_descriptor v,
 
 update_status engine::update_node_since_activator(vertex_descriptor v,
                                                   bool initialized,
-                                                  std::size_t ti,
-                                                  std::size_t t)
+                                                  bool start_condition)
 {
-  CHECK_PRECONDITION(t >= ti);
-
   if (!initialized)
   {
     const auto w = main_consumer_(v);
@@ -325,7 +322,7 @@ update_status engine::update_node_since_activator(vertex_descriptor v,
   }
   else
   {
-    if (t == ti)
+    if (start_condition)
     {
       const auto w = main_consumer_(v);
 

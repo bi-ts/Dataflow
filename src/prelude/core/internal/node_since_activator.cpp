@@ -28,15 +28,14 @@ namespace internal
 {
 ref node_since_activator::create(const ref& x)
 {
-  const std::array<node_id, 2> args = {
-    {x.id(), nodes_factory::get_time().id()}};
+  const std::array<node_id, 1> args = {{x.id()}};
 
   return nodes_factory::create<node_since_activator>(
     &args[0], args.size(), node_flags::none);
 }
 
 node_since_activator::node_since_activator()
-: node_t<dtimestamp>()
+: node_t<bool>(true)
 {
 }
 
@@ -45,17 +44,14 @@ update_status node_since_activator::update_(node_id id,
                                             const node** p_deps,
                                             std::size_t deps_count)
 {
-  CHECK_PRECONDITION(p_deps != nullptr && deps_count == 2);
+  CHECK_PRECONDITION(p_deps != nullptr && deps_count == 1);
 
-  const auto ti = extract_node_value<dtimestamp>(p_deps[0]);
-  const auto t = extract_node_value<dtimestamp>(p_deps[1]);
-
-  CHECK_PRECONDITION(t >= ti);
+  const auto start_condition = extract_node_value<bool>(p_deps[0]);
 
   const auto result = engine::instance().update_node_since_activator(
-    converter::convert(id), initialized, ti, t);
+    converter::convert(id), initialized, start_condition);
 
-  return this->set_value_(ti) | result;
+  return this->set_value_(start_condition) | result;
 }
 
 std::string node_since_activator::label_() const

@@ -92,7 +92,7 @@ ref<T> make_state_machine(
 
   const auto tr_idx = Index(tr);
 
-  return Since(When(tr),
+  return Since(When(tr) == CurrentTime(),
                Switch(Case(tr_idx == Const(static_cast<integer>(Is) + 1),
                            std::get<Is>(transitions).second)...,
                       Default(initial)),

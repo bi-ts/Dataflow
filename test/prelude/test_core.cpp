@@ -1691,65 +1691,45 @@ BOOST_AUTO_TEST_CASE(test_Since)
 {
   Engine engine;
 
-  auto x = Var(0);
+  auto restart = Signal();
   auto use_since = Var(true);
 
-  struct policy : test_policy_base
-  {
-    static std::string label()
-    {
-      return ">=100";
-    }
-    static bool calculate(int v)
-    {
-      return v >= 100;
-    }
-  };
-
-  const auto y = core::Lift(policy(), x);
-
   // t = 0
-  const auto m =
-    Main([=, x = x.as_ref(), use_since = use_since.as_ref()](dtime t0) {
-      const auto z = If(
-        y,
-        [](dtime t0) { return Timestamp(t0); },
-        [](dtime t0) { return Timestamp(t0); },
-        t0);
-
-      return If(
-        use_since,
-        Since(z, [](dtime t0) { return Cast<std::size_t>(Timestamp(t0)); }),
-        std::size_t(101010),
-        t0);
-    });
+  const auto m = Main([restart = restart.as_ref(),
+                       use_since = use_since.as_ref()](dtime t0) {
+    return If(
+      use_since,
+      Since(restart, [](dtime t0) { return Cast<std::size_t>(Timestamp(t0)); }),
+      std::size_t(101010),
+      t0);
+  });
 
   BOOST_CHECK_EQUAL(*m, 0);
 
   // t = 2
-  x = 10;
+  restart();
 
-  BOOST_CHECK_EQUAL(*m, 0);
+  BOOST_CHECK_EQUAL(*m, 2);
 
-  // t = 3
-  x = 100;
+  // t = 4
+  restart();
 
-  BOOST_CHECK_EQUAL(*m, 3);
-
-  // t = 5
-  x = 110;
-
-  BOOST_CHECK_EQUAL(*m, 3);
+  BOOST_CHECK_EQUAL(*m, 4);
 
   // t = 6
+  restart();
+
+  BOOST_CHECK_EQUAL(*m, 6);
+
+  // t = 8
   use_since = false;
 
   BOOST_CHECK_EQUAL(*m, 101010);
 
-  // t = 7
+  // t = 9
   use_since = true;
 
-  BOOST_CHECK_EQUAL(*m, 7);
+  BOOST_CHECK_EQUAL(*m, 9);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

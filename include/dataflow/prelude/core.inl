@@ -626,8 +626,7 @@ dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, dtime t0)
 }
 
 template <typename F, typename..., typename T>
-dataflow::ref<T>
-dataflow::Since(const ref<dtimestamp>& ti, const F& f, dtime t0)
+dataflow::ref<T> dataflow::Since(const ref<bool>& ti, const F& f, dtime t0)
 {
   return core::ref_base<T>(
     internal::node_since<T>::create(internal::node_since_activator::create(ti),
@@ -637,8 +636,7 @@ dataflow::Since(const ref<dtimestamp>& ti, const F& f, dtime t0)
 }
 
 template <typename F, typename..., typename T>
-dataflow::init_function<T> dataflow::Since(const ref<dtimestamp>& ti,
-                                           const F& f)
+dataflow::init_function<T> dataflow::Since(const ref<bool>& ti, const F& f)
 {
   return [=](dtime t0) { return Since(ti, f, t0); };
 }
