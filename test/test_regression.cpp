@@ -171,5 +171,47 @@ BOOST_AUTO_TEST_CASE(test_regression_no_bad_var_type_conversion)
   BOOST_CHECK((!std::is_constructible<var<int>, var<std::string>>::value));
 }
 
+BOOST_AUTO_TEST_CASE(test_regression_rebase_nodes_used_by_another_cond_node)
+{
+  Engine engine;
+
+  auto x = Var<bool>(false);
+
+  const auto y = !Var<bool>(false);
+
+  const auto f = Main(If(x || y, y, false));
+
+  BOOST_CHECK(graph_invariant_holds());
+
+  //           f                            f
+  //           |                            |
+  //    .-no-<if>-yes---.            .-no-<if>-yes-.
+  //    |      |        |            |      |      |
+  //  false    |        |          false    |      y
+  //           |        |                   |      |
+  //           |        |                   |     not
+  //           |        |                   |      |
+  //           |        |                   |    false
+  //           |        |                   |
+  //           *        |                   *
+  //           |        |                   |
+  //   .-yes-<if>-no--. |   ==>     .-yes-<if>-no--.
+  //   |       |      | |           |       |      |
+  //  true     |      y-'          true     |      y
+  //           |      |                     |
+  //           |     not                    |
+  //           |      |                     |
+  //           |    false                   |
+  //           |                            |
+  //           *                            *
+  //           |                            |
+  //           x (false)                    x (true)
+  //
+
+  x = true;
+
+  BOOST_CHECK(graph_invariant_holds());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

@@ -783,7 +783,7 @@ void engine::deactivate_subgraph_(edge_descriptor e)
         if (marked)
           order_.mark(graph_[w].position);
 
-        reset_activator_(w, activator_(*it));
+        reset_activator_(w, implied_activator_(*it, w));
 
         for (auto es = out_edges(w, graph_); es.first != es.second; ++es.first)
         {
