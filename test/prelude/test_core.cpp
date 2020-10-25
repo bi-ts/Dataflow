@@ -413,6 +413,15 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
   }
 }
 
+BOOST_FIXTURE_TEST_CASE(test_Signal_as_ref, test_core_fixture)
+{
+  const sig x = Signal();
+
+  const auto m = Main([x = x.as_ref()](dtime) { return x; });
+
+  BOOST_CHECK_EQUAL(*m, false);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
 {
   var<int> x = Var<int>(3);

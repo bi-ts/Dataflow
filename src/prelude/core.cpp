@@ -39,6 +39,11 @@ Engine* Engine::engine_()
   return static_cast<Engine*>(internal::engine::data());
 }
 
+const ref<bool>& sig::as_ref() const
+{
+  return *this;
+}
+
 void sig::operator()() const
 {
   this->schedule_();

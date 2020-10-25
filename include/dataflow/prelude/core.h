@@ -117,6 +117,8 @@ class DATAFLOW___EXPORT sig final : public ref<bool>
 public:
   explicit sig(const internal::ref& r, internal::ref::ctor_guard_t);
 
+  const ref<bool>& as_ref() const;
+
   void operator()() const;
 };
 
