@@ -151,6 +151,12 @@ public:
     }
   }
 
+  template <typename G>
+  void forward_or_cross_edge(edge_descriptor e, const G& g)
+  {
+    tree_edge(e, g);
+  }
+
   template <typename G> void back_edge(edge_descriptor e, const G& g)
   {
     assert(introspect::active_dependency(e));
