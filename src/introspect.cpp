@@ -25,6 +25,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <iomanip> // std::quoted
+#include <iostream>
 #include <memory>
 #include <regex>
 #include <sstream> // std::stringstream
@@ -525,4 +526,8 @@ void introspect::write_graphviz(std::ostream& out)
   out << "}" << delimiter;
 }
 
+void introspect::write_graphviz()
+{
+  write_graphviz(std::cout);
+}
 } // dataflow

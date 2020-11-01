@@ -283,6 +283,8 @@ DATAFLOW___EXPORT integer current_time();
 
 void DATAFLOW___EXPORT write_graphviz(std::ostream& out);
 
+void DATAFLOW___EXPORT write_graphviz();
+
 } // introspect
 } // dataflow
 
