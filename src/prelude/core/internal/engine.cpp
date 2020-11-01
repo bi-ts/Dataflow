@@ -526,6 +526,21 @@ void engine::deactivate_vertex_(vertex_descriptor v)
   remove_edge(last_out_edge_(v), graph_);
 }
 
+void engine::move_to_topological_position_(vertex_descriptor v,
+                                           vertex_descriptor w)
+{
+  CHECK_PRECONDITION(is_active_node(v));
+  CHECK_PRECONDITION(is_active_node(w));
+
+  const bool marked = order_.marked(graph_[v].position);
+
+  order_.erase(graph_[v].position);
+  graph_[v].position = order_.insert(graph_[w].position, v);
+
+  if (marked)
+    order_.mark(graph_[v].position);
+}
+
 void engine::reset_activator_(vertex_descriptor v, vertex_descriptor w)
 {
   CHECK_PRECONDITION(is_active_node(v));
@@ -649,13 +664,7 @@ void engine::activate_subgraph_(edge_descriptor e)
 
           if (repositioned)
           {
-            bool marked = order_.marked(graph_[v].position);
-
-            order_.erase(graph_[v].position);
-            graph_[v].position = order_.insert(graph_[u].position, v);
-
-            if (marked)
-              order_.mark(graph_[v].position);
+            move_to_topological_position_(v, u);
           }
 
           if (repositioned || rebased)
@@ -697,13 +706,7 @@ void engine::activate_subgraph_(edge_descriptor e)
 
         if (repositioned)
         {
-          bool marked = order_.marked(graph_[v].position);
-
-          order_.erase(graph_[v].position);
-          graph_[v].position = order_.insert(graph_[u].position, v);
-
-          if (marked)
-            order_.mark(graph_[v].position);
+          move_to_topological_position_(v, u);
         }
 
         if (repositioned || rebased)
@@ -746,6 +749,8 @@ void engine::deactivate_subgraph_(edge_descriptor e)
 
     if (graph_[w].consumers.empty())
     {
+      CHECK_CONDITION(graph_[w].consumers.empty());
+
       for (auto es = out_edges(w, graph_); es.first != es.second; ++es.first)
       {
         const auto& e = *es.first;
@@ -762,28 +767,33 @@ void engine::deactivate_subgraph_(edge_descriptor e)
     }
     else
     {
-      const auto b = activator_(w);
+      CHECK_CONDITION(!graph_[w].consumers.empty());
+
+      const auto a = activator_(w);
       if (std::none_of(
             graph_[w].consumers.begin(),
             graph_[w].consumers.end(),
-            [this, b](vertex_descriptor u) { return b == activator_(u); }))
+            [this, a](vertex_descriptor u) { return a == activator_(u); }))
       {
-        const auto it = std::min_element(
+        const auto b = *std::min_element(
           graph_[w].consumers.begin(),
           graph_[w].consumers.end(),
           [this](vertex_descriptor u, vertex_descriptor v) {
             return order_.order(graph_[u].position, graph_[v].position);
           });
 
-        const bool marked = order_.marked(graph_[w].position);
+        move_to_topological_position_(w, b);
 
-        order_.erase(graph_[w].position);
-        graph_[w].position = order_.insert(graph_[*it].position, w);
+        const auto c = *std::min_element(
+          graph_[w].consumers.begin(),
+          graph_[w].consumers.end(),
+          [this, w](vertex_descriptor u, vertex_descriptor v) {
+            const auto uim = implied_activator_(u, w);
+            const auto vim = implied_activator_(v, w);
+            return order_.order(graph_[uim].position, graph_[vim].position);
+          });
 
-        if (marked)
-          order_.mark(graph_[w].position);
-
-        reset_activator_(w, implied_activator_(*it, w));
+        reset_activator_(w, implied_activator_(c, w));
 
         for (auto es = out_edges(w, graph_); es.first != es.second; ++es.first)
         {

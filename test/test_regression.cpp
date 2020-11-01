@@ -213,5 +213,59 @@ BOOST_AUTO_TEST_CASE(test_regression_rebase_nodes_used_by_another_cond_node)
   BOOST_CHECK(graph_invariant_holds());
 }
 
+BOOST_AUTO_TEST_CASE(
+  test_regression_rebase_deps_of_nodes_with_different_activators)
+{
+  Engine engine;
+
+  auto x = Var<bool>(false);
+
+  const auto y = !Var<bool>(false);
+
+  //           f                                   f
+  //           |                                   |
+  //    .-no-<if>-yes---.                   .-no-<if>-yes---.
+  //    |      |        |                   |      |        |
+  //    |      |        &---------.         |      |        &---------.
+  //    |      |        |         |         |      |        |         |
+  //  false    |  .-no-<if>-yes-. |       false    |  .-no-<if>-yes-. |
+  //           |  |     |       | |                |  |     |       | |
+  //           | false  |       y-'                | false  |       y-'
+  //           |        |       |                  |        |       |
+  //           |        *       |                  |        *       |
+  //           |        |       |                  |        |      not
+  //           |        |       |                  |        |       |
+  //           |        |       |                  |        |     false
+  //           |        |       |                  |        |
+  //           *        |       |    ==>           *        |
+  //           |        |       |                  |        |
+  //           .--------'       |                  .--------'
+  //           |                |                  |
+  //           z                |                  z
+  //           |                |                  |
+  //   .-yes-<if>-no--.         |          .-yes-<if>-no--.
+  //   |       |      |         |          |       |      |
+  //  true     |      y---------'         true     |      y
+  //           |      |                            |
+  //           |     not                           |
+  //           |      |                            |
+  //           |    false                          |
+  //           |                                   |
+  //           *                                   *
+  //           |                                   |
+  //           x (false)                           x (true)
+  //
+
+  const auto z = x || y;
+
+  const auto f = Main(If(z, If(z, y, false) & y, false));
+
+  BOOST_CHECK(graph_invariant_holds());
+
+  x = true;
+
+  BOOST_CHECK(graph_invariant_holds());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }

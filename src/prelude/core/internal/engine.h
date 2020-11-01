@@ -152,6 +152,8 @@ private:
 
   void deactivate_vertex_(vertex_descriptor v);
 
+  void move_to_topological_position_(vertex_descriptor v, vertex_descriptor w);
+
   void reset_activator_(vertex_descriptor v, vertex_descriptor w);
 
   void activate_edge_(edge_descriptor e);
