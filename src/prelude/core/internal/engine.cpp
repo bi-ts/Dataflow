@@ -769,11 +769,11 @@ void engine::deactivate_subgraph_(edge_descriptor e)
     {
       CHECK_CONDITION(!graph_[w].consumers.empty());
 
-      const auto a = activator_(w);
-      if (std::none_of(
-            graph_[w].consumers.begin(),
-            graph_[w].consumers.end(),
-            [this, a](vertex_descriptor u) { return a == activator_(u); }))
+      if (std::none_of(graph_[w].consumers.begin(),
+                       graph_[w].consumers.end(),
+                       [this, w, a = activator_(w)](vertex_descriptor u) {
+                         return a == implied_activator_(u, w);
+                       }))
       {
         const auto b = *std::min_element(
           graph_[w].consumers.begin(),
@@ -792,6 +792,8 @@ void engine::deactivate_subgraph_(edge_descriptor e)
             const auto vim = implied_activator_(v, w);
             return order_.order(graph_[uim].position, graph_[vim].position);
           });
+
+        CHECK_CONDITION(activator_(w) != implied_activator_(c, w));
 
         reset_activator_(w, implied_activator_(c, w));
 
