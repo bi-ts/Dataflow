@@ -61,7 +61,7 @@ ref<game> GameState(const sig& turn_east,
       const auto snake_body =
         If(!game_over && step != Vec2(0, 0),
            prev_snake_body.erase(prev_snake_body.length() - 1)
-             .insert(0, head_position),
+             .prepend(head_position),
            prev_snake_body);
 
       return Game(snake_body, game_over);

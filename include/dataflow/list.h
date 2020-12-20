@@ -175,6 +175,9 @@ public:
   template <typename..., typename ArgX>
   ref<list<T>> insert(const arg<integer>& idx, const ArgX& x) const;
 
+  template <typename..., typename ArgX>
+  ref<list<T>> prepend(const ArgX& x) const;
+
   ref<list<T>> erase(const arg<integer>& idx) const;
 
   ref<list<T>> take(const arg<integer>& n) const;
@@ -194,6 +197,8 @@ public:
   DATAFLOW_VAR_CONST var& operator=(const list<T>& v) DATAFLOW_VAR_CONST;
 
   void insert(integer idx, const T& v);
+
+  void prepend(const T& v);
 
   void erase(integer idx);
 };
@@ -223,6 +228,12 @@ template <typename ArgL,
           typename = core::enable_for_argument_data_type_t<ArgI, integer>,
           typename = core::enable_for_argument_data_type_t<ArgX, T>>
 ref<list<T>> Insert(const ArgL& l, const ArgI& idx, const ArgX& x);
+
+template <typename ArgL,
+          typename ArgX,
+          typename T = list_element_type_t<core::argument_data_type_t<ArgL>>,
+          typename = core::enable_for_argument_data_type_t<ArgX, T>>
+ref<list<T>> Prepend(const ArgL& l, const ArgX& x);
 
 template <typename ArgL,
           typename ArgI,

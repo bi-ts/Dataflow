@@ -329,6 +329,13 @@ ref<list<T>> ref<list<T>>::insert(const arg<integer>& idx, const ArgX& x) const
 }
 
 template <typename T>
+template <typename..., typename ArgX>
+ref<list<T>> ref<list<T>>::prepend(const ArgX& x) const
+{
+  return Prepend(*this, x);
+}
+
+template <typename T>
 ref<list<T>> ref<list<T>>::erase(const arg<integer>& idx) const
 {
   return Erase(*this, idx);
@@ -377,6 +384,15 @@ template <typename T> void var<list<T>>::insert(integer idx, const T& v)
   list_patch<T> patch;
 
   patch.insert(idx, v);
+
+  this->set_patch_(patch);
+}
+
+template <typename T> void var<list<T>>::prepend(const T& v)
+{
+  list_patch<T> patch;
+
+  patch.insert(0, v);
 
   this->set_patch_(patch);
 }
@@ -553,6 +569,12 @@ dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
 
   return core::LiftPatcher<policy>(
     core::make_argument(l), core::make_argument(idx), core::make_argument(x));
+}
+
+template <typename ArgL, typename ArgX, typename T, typename>
+dataflow::ref<dataflow::list<T>> dataflow::Prepend(const ArgL& l, const ArgX& x)
+{
+  return Insert(l, 0, x);
 }
 
 template <typename ArgL, typename ArgI, typename T, typename>
