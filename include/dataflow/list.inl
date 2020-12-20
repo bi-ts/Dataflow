@@ -335,6 +335,13 @@ ref<list<T>> ref<list<T>>::prepend(const ArgX& x) const
 }
 
 template <typename T>
+template <typename..., typename ArgX>
+ref<list<T>> ref<list<T>>::append(const ArgX& x) const
+{
+  return Append(*this, x);
+}
+
+template <typename T>
 ref<list<T>> ref<list<T>>::erase(const arg<integer>& idx) const
 {
   return Erase(*this, idx);
@@ -574,6 +581,12 @@ template <typename ArgL, typename ArgX, typename T, typename>
 dataflow::ref<dataflow::list<T>> dataflow::Prepend(const ArgL& l, const ArgX& x)
 {
   return Insert(l, 0, x);
+}
+
+template <typename ArgL, typename ArgX, typename T, typename>
+dataflow::ref<dataflow::list<T>> dataflow::Append(const ArgL& l, const ArgX& x)
+{
+  return Insert(l, Length(l), x);
 }
 
 template <typename ArgL, typename ArgI, typename T, typename>

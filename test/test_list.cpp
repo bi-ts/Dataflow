@@ -534,6 +534,23 @@ BOOST_AUTO_TEST_CASE(test_ListC_Prepend)
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(11 111 0)");
 }
 
+BOOST_AUTO_TEST_CASE(test_ListC_Append)
+{
+  Engine engine;
+
+  auto xs = Var(make_listC(1, 2, 3));
+
+  auto ys = Append(xs, 11);
+
+  auto f = Main(ys);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 2 3 11)");
+
+  xs = make_listC(3, 4);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(3 4 11)");
+}
+
 BOOST_AUTO_TEST_CASE(test_ListC_prepend_ref_mem_func)
 {
   Engine engine;
@@ -549,6 +566,23 @@ BOOST_AUTO_TEST_CASE(test_ListC_prepend_ref_mem_func)
   xs = make_listC(3, 4);
 
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(11 3 4)");
+}
+
+BOOST_AUTO_TEST_CASE(test_ListC_append_ref_mem_func)
+{
+  Engine engine;
+
+  auto xs = Var(make_listC(1, 2, 3));
+
+  auto ys = xs.append(11);
+
+  auto f = Main(ys);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 2 3 11)");
+
+  xs = make_listC(3, 4);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(3 4 11)");
 }
 
 BOOST_AUTO_TEST_CASE(test_ListC_Erase)
