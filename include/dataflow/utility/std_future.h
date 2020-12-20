@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <cstddef> // std::size_t
 #include <memory>  // std::unique_ptr
 #include <type_traits>
@@ -93,6 +94,18 @@ template <typename B>
 struct negation : bool_constant<!static_cast<bool>(B::value)>
 {
 };
+
+template <typename T>
+constexpr const T&
+clamp(const T& value, const T& lower_bound, const T& upper_bound)
+{
+  assert(upper_bound >= lower_bound);
+
+  if (value < lower_bound)
+    return lower_bound;
+
+  return upper_bound < value ? upper_bound : value;
+}
 }
 
 namespace std20

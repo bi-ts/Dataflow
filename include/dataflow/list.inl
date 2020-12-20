@@ -64,8 +64,7 @@ template <typename T> bool is_valid_erase_index(const list<T>& lst, integer idx)
 
 template <typename T> integer insert_index(const list<T>& lst, integer idx)
 {
-  // TODO: std17::clamp?
-  return std::max(std::min(idx, static_cast<integer>(lst.size())), 0);
+  return std17::clamp(idx, 0, static_cast<integer>(lst.size()));
 }
 }
 
