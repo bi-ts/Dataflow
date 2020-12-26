@@ -145,7 +145,6 @@ public:
 
 protected:
   static const discrete_time& ticks_();
-  static void schedule_and_pump(node_id id);
   static void set_metadata(const node* p_node,
                            std::shared_ptr<const metadata> p_metadata);
   static const std::shared_ptr<const metadata>&

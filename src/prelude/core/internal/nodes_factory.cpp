@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -46,12 +46,13 @@ ref nodes_factory::add_(node* p_node,
                         std::size_t args_count,
                         node_flags flags)
 {
-  return ref(converter::convert(
-    engine::instance().add_node(p_node,
-                                p_args,
-                                args_count,
-                                (flags & node_flags::eager) != node_flags::none,
-                                false)));
+  return ref(converter::convert(engine::instance().add_node(
+    p_node,
+    p_args,
+    args_count,
+    (flags & node_flags::eager) != node_flags::none,
+    false,
+    (flags & node_flags::pump) != node_flags::none)));
 }
 
 ref nodes_factory::add_conditional_(node* p_node,

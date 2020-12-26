@@ -42,10 +42,8 @@ public:
 
     const auto id = x.id();
 
-    const ref y =
-      nodes_factory::create<node_main<T>>(&id, 1, node_flags::eager);
-
-    node::schedule_and_pump(y.id());
+    const ref y = nodes_factory::create<node_main<T>>(
+      &id, 1, node_flags::eager | node_flags::pump);
 
     return y;
   }

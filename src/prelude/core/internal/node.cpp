@@ -30,11 +30,6 @@ const discrete_time& node::ticks_()
   return engine::instance().ticks();
 }
 
-void node::schedule_and_pump(node_id id)
-{
-  engine::instance().schedule_and_pump(converter::convert(id));
-}
-
 void node::set_metadata(const node* p_node,
                         std::shared_ptr<const metadata> p_metadata)
 {

@@ -84,8 +84,10 @@ vertex_descriptor engine::add_node(node* p_node,
                                    const node_id* p_args,
                                    std::size_t args_count,
                                    bool eager,
-                                   bool conditional)
+                                   bool conditional,
+                                   bool pump)
 {
+  CHECK_ARGUMENT(!pump || eager); // pump => (implies) eager
   CHECK_PRECONDITION(p_node != nullptr);
 
   const auto v = add_vertex(vertex(p_node), graph_);
@@ -124,6 +126,15 @@ vertex_descriptor engine::add_node(node* p_node,
 
   CHECK_POSTCONDITION(is_active_node(v) == eager);
   CHECK_POSTCONDITION(is_conditional_node(v) == conditional);
+
+  if (pump)
+  {
+    CHECK_CONDITION(!is_pumping());
+    CHECK_CONDITION(eager);
+    CHECK_CONDITION(order_.marked(graph_[v].position));
+
+    pumpa_.pump(graph_, order_, time_node_v_);
+  }
 
   return v;
 }

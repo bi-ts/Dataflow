@@ -86,7 +86,8 @@ public:
                              const node_id* p_args,
                              std::size_t args_count,
                              bool eager,
-                             bool conditional = false);
+                             bool conditional = false,
+                             bool pump = false);
 
   vertex_descriptor add_persistent_node(node* p_node);
 
