@@ -28,7 +28,6 @@
 #include "core/internal/node_main.h"
 #include "core/internal/node_n_ary.h"
 #include "core/internal/node_patcher_n_ary.h"
-#include "core/internal/node_previous.h"
 #include "core/internal/node_recursion.h"
 #include "core/internal/node_recursion_activator.h"
 #include "core/internal/node_selector.h"
@@ -589,14 +588,6 @@ dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z)
 }
 
 // Stateful functions
-
-template <typename ArgV0, typename ArgX, typename FwT, typename>
-dataflow::ref<FwT> dataflow::Prev(const ArgV0& v0, const ArgX& x, dtime t0)
-{
-  return core::ref_base<FwT>(
-    internal::node_previous<FwT>::create(core::make_argument(v0)(t0), x),
-    internal::ref::ctor_guard);
-}
 
 template <typename Arg, typename F, typename..., typename T, typename>
 dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, dtime t0)

@@ -760,12 +760,6 @@ init_function<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
 
 // Stateful functions
 
-template <typename ArgV0,
-          typename ArgX,
-          typename FwT = core::argument_data_type_t<ArgV0>,
-          typename = core::enable_for_argument_data_type_t<ArgX, FwT>>
-ref<FwT> Prev(const ArgV0& v0, const ArgX& x, dtime t0);
-
 template <typename Arg,
           typename F,
           typename...,

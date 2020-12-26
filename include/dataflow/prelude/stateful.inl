@@ -20,6 +20,7 @@
 #error '.inl' file can't be included directly. Use 'stateful.h' instead
 #endif
 
+#include "stateful/internal/curr_prev.h"
 #include "stateful/internal/transition.h"
 
 #include "conditional.h"
@@ -172,4 +173,15 @@ std::pair<
 dataflow::On(const ArgT& x, const FArgU& y)
 {
   return std::make_pair(core::make_argument(x), core::make_farg(y));
+}
+
+template <typename ArgV0, typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::Prev(const ArgV0& v0, const ArgX& x, dtime t0)
+{
+  return stateful::internal::Prev(Recursion(
+    stateful::internal::CurrPrev(x, v0),
+    [=](const ref<stateful::internal::curr_prev<T>>& pv) {
+      return stateful::internal::CurrPrev(x, Curr(pv));
+    },
+    t0));
 }

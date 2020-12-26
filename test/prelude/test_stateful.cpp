@@ -20,6 +20,9 @@
 
 #include <dataflow/prelude.h>
 
+#include "../tools/graph_invariant.h"
+#include "../tools/io_fixture.h"
+
 #include <dataflow/introspect.h>
 
 #include <boost/mpl/list.hpp>
@@ -228,6 +231,143 @@ BOOST_AUTO_TEST_CASE(test_StateMachine_initial_state)
   x = 22;
 
   BOOST_CHECK_EQUAL(*m, 22);
+}
+
+BOOST_AUTO_TEST_CASE(test_Prev)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  const ref<int> v0 = Var<int>(1);
+  var<int> x = Var<int>(3);
+
+  io.capture_output();
+
+  const auto z = Main([=, x = x.as_ref()](dtime t0) {
+    return introspect::Log(Prev(v0, x, t0), "prev");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] prev = 1;[t=1] prev = 3;");
+
+  io.capture_output();
+
+  x = 5; // t=3
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] prev = 1;[t=1] prev = 3;[t=4] prev = 5;");
+
+  io.capture_output();
+
+  x = 9; // t=6
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(
+    io.log_string(),
+    "[t=0] prev = 1;[t=1] prev = 3;[t=4] prev = 5;[t=7] prev = 9;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Prev_deferred_use)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  const ref<int> v0 = Var<int>(1);
+  var<int> x = Var<int>(3);
+  var<bool> b = Var<bool>(false);
+
+  io.capture_output();
+
+  const auto z = Main([=, x = x.as_ref(), b = b.as_ref()](dtime t0) {
+    return If(b, introspect::Log(Prev(v0, x, t0), "prev"), 0);
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(introspect::active_node(v0), false);
+  BOOST_CHECK_EQUAL(introspect::active_node(x), true);
+
+  io.capture_output();
+
+  x = 7; // t=3
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(io.log_string(), "");
+
+  io.capture_output();
+
+  b = true; // t=5
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=6] prev = 7;");
+
+  io.capture_output();
+
+  x = 5; // t=7
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=6] prev = 7;[t=8] prev = 5;");
+
+  io.capture_output();
+
+  x = 9; // t=10
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=6] prev = 7;[t=8] prev = 5;[t=11] prev = 9;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Prev_overloads)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Prev(x, Prev(33, x, t0), t0), "prev");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] prev = 3;[t=1] prev = 33;[t=2] prev = 3;");
+
+  io.capture_output();
+
+  x = 10; // t=4
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(
+    io.log_string(),
+    "[t=0] prev = 3;[t=1] prev = 33;[t=2] prev = 3;[t=6] prev = 10;");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -78,7 +78,6 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core/internal/node_main.h
   include/dataflow/prelude/core/internal/node_n_ary.h
   include/dataflow/prelude/core/internal/node_patcher_n_ary.h
-  include/dataflow/prelude/core/internal/node_previous.h
   include/dataflow/prelude/core/internal/node_recursion.h
   include/dataflow/prelude/core/internal/node_recursion_activator.h
   include/dataflow/prelude/core/internal/node_selector.h
@@ -97,6 +96,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/logical.inl
   include/dataflow/prelude/stateful.h
   include/dataflow/prelude/stateful.inl
+  include/dataflow/prelude/stateful/internal/curr_prev.h
   include/dataflow/prelude/stateful/internal/transition.h
   include/dataflow/string.h
   include/dataflow/string.inl

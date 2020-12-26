@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -67,6 +67,12 @@ template <typename ArgT, typename FArgU>
 std::pair<ref<core::enable_for_argument_data_type_t<ArgT, bool>>,
           core::farg_result_t<core::farg_data_type_t<FArgU>, FArgU>>
 On(const ArgT& x, const FArgU& y);
+
+template <typename ArgV0,
+          typename ArgX,
+          typename...,
+          typename T = core::common_argument_data_type_t<ArgV0, ArgX>>
+ref<T> Prev(const ArgV0& v0, const ArgX& x, dtime t0);
 
 /// \}
 } // dataflow
