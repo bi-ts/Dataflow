@@ -143,6 +143,10 @@ private:
   edge_descriptor add_logical_edge_(vertex_descriptor u, vertex_descriptor v);
   edge_descriptor add_data_edge_(vertex_descriptor u, vertex_descriptor v);
 
+  void remove_from_topological_list_(vertex_descriptor v);
+  topological_position new_topological_pos_(topological_position position,
+                                            vertex_descriptor v);
+
   void delete_node_(vertex_descriptor v);
 
   void activate_vertex_(vertex_descriptor v,

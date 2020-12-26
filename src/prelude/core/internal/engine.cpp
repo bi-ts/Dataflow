@@ -48,7 +48,7 @@ void engine::start(void* p_data)
   gp_engine_->graph_[v].eager = true;
 
   gp_engine_->activate_vertex_(
-    v, gp_engine_->order_.insert(gp_engine_->order_.end(), v), v);
+    v, gp_engine_->new_topological_pos_(gp_engine_->order_.end(), v), v);
 
   // TODO: check why it is necessary?
   gp_engine_->graph_[v].initialized = true;
@@ -105,7 +105,7 @@ vertex_descriptor engine::add_node(node* p_node,
   {
     graph_[v].eager = true;
 
-    activate_vertex_(v, order_.insert(order_.end(), v), order_.front());
+    activate_vertex_(v, new_topological_pos_(order_.end(), v), order_.front());
 
     order_.mark(graph_[v].position);
 
@@ -359,7 +359,7 @@ void engine::update_node_recursion(vertex_descriptor v)
 
   CHECK_CONDITION(w != vertex_descriptor());
 
-  pumpa_.schedule_for_next_update(graph_[w].position);
+  schedule_for_next_update(w);
 }
 
 std::pair<const node*, update_status>
@@ -445,7 +445,7 @@ vertex_descriptor engine::implied_activator_(vertex_descriptor u,
       return w;
   }
 
-  return target(last_out_edge_(u), graph_);
+  return activator_(u);
 }
 
 edge_descriptor engine::add_logical_edge_(vertex_descriptor u,
@@ -473,6 +473,25 @@ edge_descriptor engine::add_data_edge_(vertex_descriptor u, vertex_descriptor v)
   graph_[v].add_ref();
 
   return new_e;
+}
+
+void engine::remove_from_topological_list_(vertex_descriptor v)
+{
+  const auto position = graph_[v].position;
+
+  CHECK_PRECONDITION(position != topological_position());
+
+  order_.erase(position);
+
+  graph_[v].position = topological_position();
+}
+
+topological_position engine::new_topological_pos_(topological_position position,
+                                                  vertex_descriptor v)
+{
+  CHECK_PRECONDITION(position != topological_position());
+
+  return order_.insert(position, v);
 }
 
 void engine::delete_node_(vertex_descriptor v)
@@ -517,8 +536,7 @@ void engine::deactivate_vertex_partially_(vertex_descriptor v)
   CHECK_PRECONDITION(graph_[v].consumers.size() == 0);
   CHECK_PRECONDITION(graph_[v].p_node != nullptr);
 
-  order_.erase(graph_[v].position);
-  graph_[v].position = topological_position();
+  remove_from_topological_list_(v);
 
   graph_[v].initialized = false;
 
@@ -545,8 +563,9 @@ void engine::move_to_topological_position_(vertex_descriptor v,
 
   const bool marked = order_.marked(graph_[v].position);
 
-  order_.erase(graph_[v].position);
-  graph_[v].position = order_.insert(graph_[w].position, v);
+  remove_from_topological_list_(v);
+
+  graph_[v].position = new_topological_pos_(graph_[w].position, v);
 
   if (marked)
     order_.mark(graph_[v].position);
@@ -626,8 +645,9 @@ void engine::activate_subgraph_(edge_descriptor e)
       {
         assert(requires_activation(v));
 
-        activate_vertex_(
-          v, order_.insert(graph_[u].position, v), implied_activator_(u, v));
+        activate_vertex_(v,
+                         new_topological_pos_(graph_[u].position, v),
+                         implied_activator_(u, v));
 
         order_.mark(graph_[v].position);
 
