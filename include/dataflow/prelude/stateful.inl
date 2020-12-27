@@ -178,10 +178,19 @@ dataflow::On(const ArgT& x, const FArgU& y)
 template <typename ArgV0, typename ArgX, typename..., typename T>
 dataflow::ref<T> dataflow::Prev(const ArgV0& v0, const ArgX& x, dtime t0)
 {
-  return stateful::internal::Prev(Recursion(
-    stateful::internal::CurrPrev(x, v0),
-    [=](const ref<stateful::internal::curr_prev<T>>& pv) {
-      return stateful::internal::CurrPrev(x, Curr(pv));
-    },
+  using namespace stateful::internal;
+
+  return Prev(Recursion(
+    CurrPrev(x, v0),
+    [=](const ref<curr_prev<T>>& pv) { return CurrPrev(x, Curr(pv)); },
     t0));
 }
+
+template <typename ArgV0, typename ArgX, typename..., typename T>
+dataflow::init_function<T> dataflow::Prev(const ArgV0& v0, const ArgX& x)
+{
+  return [v0 = core::make_argument(v0), x = core::make_argument(x)](dtime t0) {
+    return Prev(v0, x, t0);
+  };
+}
+

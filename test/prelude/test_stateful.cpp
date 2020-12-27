@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(test_Prev_deferred_use)
                     "[t=6] prev = 7;[t=8] prev = 5;[t=11] prev = 9;");
 }
 
-BOOST_AUTO_TEST_CASE(test_Prev_overloads)
+BOOST_AUTO_TEST_CASE(test_Prev_sequence)
 {
   Engine engine;
 
@@ -368,6 +368,22 @@ BOOST_AUTO_TEST_CASE(test_Prev_overloads)
   BOOST_CHECK_EQUAL(
     io.log_string(),
     "[t=0] prev = 3;[t=1] prev = 33;[t=2] prev = 3;[t=6] prev = 10;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Prev_overloads)
+{
+  Engine engine;
+
+  var<int> x = Var<int>(3);
+
+  const auto z = Main(Prev(0, x));
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*z, 3);
+
+  x = 10;
+
+  BOOST_CHECK_EQUAL(*z, 10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
