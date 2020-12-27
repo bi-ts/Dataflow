@@ -121,17 +121,6 @@ template <typename T> ref<box<T>> Box(const ref<T>& value)
   return Const(make_box(value));
 }
 
-class test_core_fixture : public io_fixture
-{
-protected:
-  test_core_fixture()
-  {
-  }
-
-private:
-  Engine engine_;
-};
-
 BOOST_AUTO_TEST_SUITE(test_core)
 
 BOOST_AUTO_TEST_CASE(test_Box)
@@ -252,22 +241,28 @@ BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
   BOOST_CHECK_EQUAL(*f, 3);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_CurrentTime, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_CurrentTime)
 {
+  Engine engine;
+
   const auto x = Main([=](dtime t0) { return CurrentTime(); });
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*x, 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_ref, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_ref)
 {
+  Engine engine;
+
   BOOST_CHECK_EQUAL((std::is_copy_assignable<ref<int>>::value), false);
   BOOST_CHECK_EQUAL((std::is_copy_constructible<ref<int>>::value), true);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Const)
 {
+  Engine engine;
+
   const ref<int> x = Const(17);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
@@ -279,8 +274,10 @@ BOOST_FIXTURE_TEST_CASE(test_Const, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 17);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_default_constructor, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Const_default_constructor)
 {
+  Engine engine;
+
   const ref<int> x = Const<int>();
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
@@ -292,8 +289,10 @@ BOOST_FIXTURE_TEST_CASE(test_Const_default_constructor, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_forward_args, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Const_forward_args)
 {
+  Engine engine;
+
   const auto x = Const(17);
   const auto y = Const<box<int>>(x);
 
@@ -305,9 +304,10 @@ BOOST_FIXTURE_TEST_CASE(test_Const_forward_args, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_forward_args_to_string_constructor,
-                        test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Const_forward_args_to_string_constructor)
 {
+  Engine engine;
+
   const auto x = Const<std::string>(10, '*');
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
@@ -319,8 +319,10 @@ BOOST_FIXTURE_TEST_CASE(test_Const_forward_args_to_string_constructor,
   BOOST_CHECK_EQUAL(*y, "**********");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Const_string_literal)
 {
+  Engine engine;
+
   const ref<std::string> x = Const("some text");
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
@@ -332,8 +334,10 @@ BOOST_FIXTURE_TEST_CASE(test_Const_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, "some text");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Const_via_arg_ctor, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Const_via_arg_ctor)
 {
+  Engine engine;
+
   std::function<ref<std::string>(const arg<std::string>& x)> fn =
     [](const arg<std::string>& x) { return x; };
 
@@ -348,64 +352,68 @@ BOOST_FIXTURE_TEST_CASE(test_Const_via_arg_ctor, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, "some text");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Signal)
 {
+  Engine engine;
+
+  io_fixture io;
+
   const sig x = Signal();
 
   BOOST_CHECK_EQUAL(introspect::label(x), "signal");
   BOOST_CHECK(graph_invariant_holds());
 
   {
-    capture_output();
+    io.capture_output();
 
     auto y = Main(introspect::Log(x, "x"));
 
-    reset_output();
+    io.reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
     BOOST_CHECK_EQUAL(*y, false);
 
-    BOOST_CHECK_EQUAL(log_string(), "[t=0] x = false;");
+    BOOST_CHECK_EQUAL(io.log_string(), "[t=0] x = false;");
 
-    capture_output();
+    io.capture_output();
 
     x();
 
-    reset_output();
+    io.reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
     BOOST_CHECK_EQUAL(*y, false);
 
-    BOOST_CHECK_EQUAL(log_string(),
+    BOOST_CHECK_EQUAL(io.log_string(),
                       "[t=0] x = false;"
                       "[t=1] x = true;[t=2] x = false;");
   }
 
   {
-    capture_output();
+    io.capture_output();
 
     auto y = Main(introspect::Log(x, "x"));
 
-    reset_output();
+    io.reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
     BOOST_CHECK_EQUAL(*y, false);
 
-    BOOST_CHECK_EQUAL(log_string(),
+    BOOST_CHECK_EQUAL(io.log_string(),
                       "[t=0] x = false;"
                       "[t=1] x = true;[t=2] x = false;"
                       "[t=3] x = false;");
 
-    capture_output();
+    io.capture_output();
 
     x();
 
-    reset_output();
+    io.reset_output();
 
     BOOST_CHECK(graph_invariant_holds());
     BOOST_CHECK_EQUAL(*y, false);
 
-    BOOST_CHECK_EQUAL(log_string(),
+    BOOST_CHECK_EQUAL(io.log_string(),
                       "[t=0] x = false;"
                       "[t=1] x = true;[t=2] x = false;"
                       "[t=3] x = false;"
@@ -413,8 +421,10 @@ BOOST_FIXTURE_TEST_CASE(test_Signal, test_core_fixture)
   }
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Signal_as_ref, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Signal_as_ref)
 {
+  Engine engine;
+
   const sig x = Signal();
 
   const auto m = Main([x = x.as_ref()](dtime) { return x; });
@@ -422,8 +432,10 @@ BOOST_FIXTURE_TEST_CASE(test_Signal_as_ref, test_core_fixture)
   BOOST_CHECK_EQUAL(*m, false);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Snapshot)
 {
+  Engine engine;
+
   var<int> x = Var<int>(3);
 
   const auto y = Main([x = x.as_ref()](dtime t0) { return x(t0); });
@@ -445,8 +457,10 @@ BOOST_FIXTURE_TEST_CASE(test_Snapshot, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 3);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var)
 {
+  Engine engine;
+
   var<int> x = Var(1);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
@@ -491,8 +505,10 @@ BOOST_FIXTURE_TEST_CASE(test_Var, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 7);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_indirection, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_indirection)
 {
+  Engine engine;
+
   var<int> x = Var(6);
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
@@ -514,8 +530,10 @@ BOOST_FIXTURE_TEST_CASE(test_Var_indirection, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 2020);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_default_constructor)
 {
+  Engine engine;
+
   auto x = Var<int>();
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
@@ -527,8 +545,10 @@ BOOST_FIXTURE_TEST_CASE(test_Var_default_constructor, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_forward_args, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_forward_args)
 {
+  Engine engine;
+
   const auto a = Const(1);
   const auto b = Const(2);
   auto x = Var<box<int>>(a);
@@ -543,9 +563,10 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args, test_core_fixture)
   BOOST_CHECK(graph_invariant_holds());
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_forward_args_to_string_constructor,
-                        test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_forward_args_to_string_constructor)
 {
+  Engine engine;
+
   const auto x = Var<std::string>(10, '*');
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
@@ -557,8 +578,10 @@ BOOST_FIXTURE_TEST_CASE(test_Var_forward_args_to_string_constructor,
   BOOST_CHECK_EQUAL(*y, "**********");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_string_literal)
 {
+  Engine engine;
+
   var<std::string> x = Var("some text");
 
   BOOST_CHECK_EQUAL(introspect::label(x), "var");
@@ -575,8 +598,10 @@ BOOST_FIXTURE_TEST_CASE(test_Var_string_literal, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, "other text");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_copy_constructor, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_copy_constructor)
 {
+  Engine engine;
+
   auto x = Var<int>();
 
   auto y = x;
@@ -592,8 +617,12 @@ BOOST_FIXTURE_TEST_CASE(test_Var_copy_constructor, test_core_fixture)
 #endif
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Var_deferred_assign, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Var_deferred_assign)
 {
+  Engine engine;
+
+  io_fixture io;
+
   var<int> x = Var<int>(0);
 
   struct policy
@@ -613,25 +642,26 @@ BOOST_FIXTURE_TEST_CASE(test_Var_deferred_assign, test_core_fixture)
 
   const auto y = core::Lift(policy{x}, x);
 
-  capture_output();
+  io.capture_output();
 
   const auto z = Main(introspect::Log(y, "y"));
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "[t=0] y = 0;");
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] y = 0;");
 
   BOOST_CHECK_EQUAL(*z, 0);
 
-  capture_output();
+  io.capture_output();
 
   x = 1;
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "[t=0] y = 0;[t=1] y = 100;[t=2] y = 200;");
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] y = 0;[t=1] y = 100;[t=2] y = 200;");
 
   BOOST_CHECK_EQUAL(*z, 200);
 }
@@ -655,8 +685,10 @@ BOOST_AUTO_TEST_CASE(test_Cast_double_to_int)
   BOOST_CHECK_EQUAL(*m, 4);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Main_ref_arg, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Main_ref_arg)
 {
+  Engine engine;
+
   const var<int> x = Var<int>(6);
 
   BOOST_CHECK(graph_invariant_holds());
@@ -671,8 +703,10 @@ BOOST_FIXTURE_TEST_CASE(test_Main_ref_arg, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 6);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Main_init_func_arg, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Main_init_func_arg)
 {
+  Engine engine;
+
   var<int> x = Var<int>(6);
 
   const auto y = Main([x = x.as_ref()](dtime t) { return x; });
@@ -686,8 +720,10 @@ BOOST_FIXTURE_TEST_CASE(test_Main_init_func_arg, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 25);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_var_var_var)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto y = Var<int>(10);
   auto z = Var<int>(20);
@@ -703,8 +739,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_var, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 20);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_var_int_var)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto z = Var<int>(20);
 
@@ -719,8 +757,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_var, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 20);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_var_var_int)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto y = Var<int>(10);
 
@@ -735,8 +775,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_var_int, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 20);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_var_int_int)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
 
   auto f = Main(If(x, 10, 20));
@@ -750,8 +792,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_int_int, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 20);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_var_str_strliteral, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_var_str_strliteral)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
 
   auto f = Main(If(x, std::string("str"), "strliteral"));
@@ -765,8 +809,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_var_str_strliteral, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, "strliteral");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_fn_fn)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
   auto z = Var<int>(12);
@@ -812,8 +858,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 13);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_ref_fn, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_ref_fn)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
   auto z = Var<int>(12);
@@ -843,8 +891,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_ref_fn, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 15);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_fn_ref, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_fn_ref)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
   auto z = Var<int>(12);
@@ -875,8 +925,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_ref, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, 15);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_If_fn_fn_eagerness)
 {
+  Engine engine;
+
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
   auto z = Var<int>(12);
@@ -905,8 +957,10 @@ BOOST_FIXTURE_TEST_CASE(test_If_fn_fn_eagerness, test_core_fixture)
   BOOST_CHECK_EQUAL(introspect::active_node(z), true);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_policy_member_func_no_args, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_policy_member_func_no_args)
 {
+  Engine engine;
+
   struct policy
   {
     static std::string label()
@@ -929,8 +983,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_policy_member_func_no_args, test_core_fixture)
   BOOST_CHECK_EQUAL(*y, 19042020);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_unary_policy_static_func)
 {
+  Engine engine;
+
   const var<int> x = Var<int>('A');
 
   struct policy : test_policy_base
@@ -954,8 +1010,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*z, 'C');
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_unary_policy_member_func)
 {
+  Engine engine;
+
   const var<int> x = Var<int>('C');
 
   struct policy : test_policy_base
@@ -983,8 +1041,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_policy_member_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*z, 'c');
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_unary_lambda)
 {
+  Engine engine;
+
   const auto x = Var<char>('B');
 
   const auto y =
@@ -998,8 +1058,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_lambda, test_core_fixture)
   BOOST_CHECK_EQUAL(*z, "BBB");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_unary_function_pointer)
 {
+  Engine engine;
+
   const auto x = Var<char>('C');
 
   struct tool
@@ -1020,8 +1082,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_unary_function_pointer, test_core_fixture)
   BOOST_CHECK_EQUAL(*z, "CC");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_binary_policy_static_func)
 {
+  Engine engine;
+
   const var<char> x = Var<char>('A');
   const var<int> y = Var<int>(4);
 
@@ -1046,8 +1110,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*a, 'E');
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_binary_policy_member_func)
 {
+  Engine engine;
+
   const var<int> x = Var<int>('C');
   var<bool> y = Var<bool>(true);
 
@@ -1081,8 +1147,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_policy_member_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*a, 'C');
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_binary_lambda)
 {
+  Engine engine;
+
   auto x = Var<char>('B');
   auto y = Var<int>(4);
 
@@ -1107,8 +1175,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_lambda, test_core_fixture)
   BOOST_CHECK_EQUAL(*a, "AA");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_binary_function_pointer)
 {
+  Engine engine;
+
   auto x = Var<char>('C');
   auto y = Var<int>(3);
 
@@ -1140,8 +1210,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_binary_function_pointer, test_core_fixture)
   BOOST_CHECK_EQUAL(*a, "AA");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Lift_n_ary_policy_static_func)
 {
+  Engine engine;
+
   var<std::string> a = Var("text");
   var<char> b = Var('A');
   var<int> c = Var(4);
@@ -1189,9 +1261,10 @@ BOOST_FIXTURE_TEST_CASE(test_Lift_n_ary_policy_static_func, test_core_fixture)
   BOOST_CHECK_EQUAL(*f, "other-text/BBBBBB/111%");
 }
 
-BOOST_FIXTURE_TEST_CASE(test_LiftUpdater_policy_member_func_no_args,
-                        test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_LiftUpdater_policy_member_func_no_args)
 {
+  Engine engine;
+
   struct policy
   {
     static std::string label()
@@ -1214,8 +1287,10 @@ BOOST_FIXTURE_TEST_CASE(test_LiftUpdater_policy_member_func_no_args,
   BOOST_CHECK_EQUAL(*y, 19042020);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_LiftUpdater_binary_func, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_LiftUpdater_binary_func)
 {
+  Engine engine;
+
   var<char> x = Var<char>('A');
   var<int> y = Var<int>(4);
 
@@ -1333,9 +1408,10 @@ BOOST_FIXTURE_TEST_CASE(test_LiftUpdater_binary_func, test_core_fixture)
   }
 }
 
-BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
-                        test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_LiftPuller_n_ary_policy_static_func)
 {
+  Engine engine;
+
   const auto a = Var(33);
   const auto b = Var(44);
   const auto c = Var(55);
@@ -1370,11 +1446,15 @@ BOOST_FIXTURE_TEST_CASE(test_LiftPuller_n_ary_policy_static_func,
   BOOST_CHECK_EQUAL(*e, 132);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
+BOOST_AUTO_TEST_CASE(test_Recursion)
 {
+  Engine engine;
+
+  io_fixture io;
+
   var<char> x = Var<char>('a');
 
-  capture_output();
+  io.capture_output();
 
   const auto y = Main([x = x.as_ref()](dtime t0) {
     const auto tf = [=](ref<int> s) {
@@ -1409,52 +1489,53 @@ BOOST_FIXTURE_TEST_CASE(test_Recursion, test_core_fixture)
     return introspect::Log(s);
   });
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(), "[t=0] recursion = 0;[t=1] recursion = 1;");
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] recursion = 0;[t=1] recursion = 1;");
 
-  capture_output();
+  io.capture_output();
 
   x = 'b'; // t=2
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(
-    log_string(),
+    io.log_string(),
     "[t=0] recursion = 0;[t=1] recursion = 1;[t=3] recursion = 2;");
 
-  capture_output();
+  io.capture_output();
 
   x = 'd'; // t=4
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(
-    log_string(),
+    io.log_string(),
     "[t=0] recursion = 0;[t=1] recursion = 1;[t=3] recursion = 2;");
 
-  capture_output();
+  io.capture_output();
 
   x = 'c'; // t=5
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(),
+  BOOST_CHECK_EQUAL(io.log_string(),
                     "[t=0] recursion = 0;[t=1] recursion = 1;"
                     "[t=3] recursion = 2;[t=6] recursion = 3;");
 
-  capture_output();
+  io.capture_output();
 
   x = 'd'; // t=7
 
-  reset_output();
+  io.reset_output();
 
   BOOST_CHECK(graph_invariant_holds());
-  BOOST_CHECK_EQUAL(log_string(),
+  BOOST_CHECK_EQUAL(io.log_string(),
                     "[t=0] recursion = 0;[t=1] recursion = 1;"
                     "[t=3] recursion = 2;[t=6] recursion = 3;"
                     "[t=8] recursion = 4;");
