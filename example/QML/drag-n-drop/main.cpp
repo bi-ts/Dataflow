@@ -40,14 +40,13 @@ std::ostream& operator<<(std::ostream& out, mode value)
 
 using point = vec2<double>;
 
-ref<point> AdjustableCirclePosition(const arg<point>& initial_circle_pos,
-                                    const arg<double>& radius,
-                                    const arg<point>& mouse_pos,
-                                    const arg<int>& mouse_pressed,
-                                    dtime t0)
+ref<point> DragNDrop(const arg<point>& initial_circle_pos,
+                     const arg<double>& radius,
+                     const arg<point>& mouse_pos,
+                     const arg<int>& mouse_pressed,
+                     dtime t0)
 {
-  const auto mouse_down =
-    mouse_pressed - Prev(mouse_pressed(t0), mouse_pressed, t0);
+  const auto mouse_down = Diff(mouse_pressed, t0);
 
   const auto s = StateMachine(
     TupleC(mode::idle, initial_circle_pos),
@@ -84,8 +83,8 @@ int main(int argc, char* p_argv[])
 
     const auto circle_radius = Const(50.0);
 
-    const auto circle_pos = AdjustableCirclePosition(
-      point(100, 100), circle_radius, mouse_pos, lmb_pressed, t0);
+    const auto circle_pos =
+      DragNDrop(point(100, 100), circle_radius, mouse_pos, lmb_pressed, t0);
 
     const auto context =
       qt::QmlContext(qt::QmlPropertyRW("mousePressed", lmb_pressed),
