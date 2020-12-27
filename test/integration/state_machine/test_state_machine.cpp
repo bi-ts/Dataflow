@@ -68,9 +68,7 @@ ref<point> DragNDropCircle(const arg<point>& initial_circle_pos,
                            const arg<button_state>& mouse_button,
                            dtime t0)
 {
-  // TODO: add Diff(d0, x, t0) function
-  const auto mouse_button_action =
-    mouse_button - Prev(mouse_button(t0), mouse_button, t0);
+  const auto mouse_button_action = Diff(mouse_button, t0);
 
   const auto s = StateMachine(
     Idle(initial_circle_pos),
