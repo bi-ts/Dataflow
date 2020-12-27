@@ -194,3 +194,14 @@ dataflow::init_function<T> dataflow::Prev(const ArgV0& v0, const ArgX& x)
   };
 }
 
+template <typename ArgX, typename..., typename X, typename T>
+dataflow::ref<T> dataflow::Diff(const ArgX& x, dtime t0)
+{
+  return x - Prev(x, x, t0);
+}
+
+template <typename ArgX, typename..., typename X, typename T>
+dataflow::init_function<T> dataflow::Diff(const ArgX& x)
+{
+  return [x = core::make_argument(x)](dtime t0) { return Diff(x, t0); };
+}

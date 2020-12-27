@@ -386,6 +386,89 @@ BOOST_AUTO_TEST_CASE(test_Prev_overloads)
   BOOST_CHECK_EQUAL(*z, 10);
 }
 
+// Backward finite difference
+
+BOOST_AUTO_TEST_CASE(test_Diff)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Diff(x, t0), "diff");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] diff = 0;");
+
+  io.capture_output();
+
+  x = 5; // t=2
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] diff = 0;[t=2] diff = 2;[t=3] diff = 0;");
+}
+
+struct test_type_Diff
+{
+  int value;
+
+  bool operator==(const test_type_Diff& other) const
+  {
+    return value == other.value;
+  }
+
+  bool operator!=(const test_type_Diff& other) const
+  {
+    return !(*this == other);
+  }
+};
+
+inline std::ostream& operator<<(std::ostream& out, test_type_Diff x)
+{
+  return out << "test_type_Diff(" << x.value << ")";
+}
+
+inline int operator-(test_type_Diff x, test_type_Diff y)
+{
+  return x.value - y.value;
+}
+
+BOOST_AUTO_TEST_CASE(test_Diff_mixed_types)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<test_type_Diff> x = Var(test_type_Diff{2});
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Diff(x, t0), "diff");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] diff = 0;");
+
+  io.capture_output();
+
+  x = test_type_Diff{0}; // t=2
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] diff = 0;[t=2] diff = -2;[t=3] diff = 0;");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } // dataflow_test

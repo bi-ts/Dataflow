@@ -83,6 +83,23 @@ template <typename ArgV0,
 init_function<T> Prev(const ArgV0& v0, const ArgX& x);
 /// \}
 
+/// Backward finite difference
+/// \{
+template <typename ArgX,
+          typename...,
+          typename X = core::argument_data_type_t<ArgX>,
+          typename T = core::convert_to_flowable_t<decltype(std::declval<X>() -
+                                                            std::declval<X>())>>
+ref<T> Diff(const ArgX& x, dtime t0);
+
+template <typename ArgX,
+          typename...,
+          typename X = core::argument_data_type_t<ArgX>,
+          typename T = core::convert_to_flowable_t<decltype(std::declval<X>() -
+                                                            std::declval<X>())>>
+init_function<T> Diff(const ArgX& x);
+/// \}
+
 /// \}
 } // dataflow
 
