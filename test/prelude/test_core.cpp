@@ -1689,6 +1689,26 @@ BOOST_AUTO_TEST_CASE(test_Since)
   BOOST_CHECK_EQUAL(*m, 9);
 }
 
+BOOST_AUTO_TEST_CASE(test_Timeout)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  io.capture_output();
+
+  const auto y =
+    Main([](dtime t0) { return introspect::Log(Timeout(1000, t0), "x"); });
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*y, false);
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] x = false;[t=1] x = true;[t=2] x = false;");
+}
+
 BOOST_AUTO_TEST_CASE(test_unit)
 {
   Engine engine;

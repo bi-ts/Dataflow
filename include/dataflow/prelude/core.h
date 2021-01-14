@@ -47,16 +47,6 @@ namespace dataflow
 
 using integer = int;
 
-class DATAFLOW___EXPORT Engine
-{
-public:
-  Engine();
-  virtual ~Engine();
-
-protected:
-  static Engine* engine_();
-};
-
 namespace core
 {
 template <typename T>
@@ -137,6 +127,21 @@ public:
   explicit val(const internal::ref& r, internal::ref::ctor_guard_t);
 
   const T& operator*() const;
+};
+
+class DATAFLOW___EXPORT Engine
+{
+  friend ref<bool> Timeout(const arg<integer>& interval_msec, dtime t0);
+
+public:
+  Engine();
+  virtual ~Engine();
+
+protected:
+  static Engine* engine_();
+
+private:
+  virtual ref<bool> timeout_(const ref<integer>& interval_msec, dtime t0);
 };
 
 namespace core
@@ -766,6 +771,9 @@ template <typename FArgT,
                                            core::is_init_function<FArgT>,
                                            core::is_init_function<FArgU>>>
 init_function<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
+
+DATAFLOW___EXPORT ref<bool> Timeout(const arg<integer>& interval_msec,
+                                    dtime t0);
 
 // Stateful functions
 

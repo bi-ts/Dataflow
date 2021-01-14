@@ -57,6 +57,55 @@ Engine* Engine::engine_()
   return static_cast<Engine*>(internal::engine::data());
 }
 
+ref<bool> Engine::timeout_(const ref<integer>& interval_msec, dtime t0)
+{
+  struct active_policy
+  {
+    static std::string label()
+    {
+      return "active";
+    }
+    bool calculate(const int& x)
+    {
+      return x == 1;
+    }
+  };
+
+  struct final_policy
+  {
+    static std::string label()
+    {
+      return "final";
+    }
+    bool calculate(const int& x)
+    {
+      return x == 2;
+    }
+  };
+
+  struct incr_policy
+  {
+    static std::string label()
+    {
+      return "incr";
+    }
+    int calculate(int x)
+    {
+      return ++x;
+    }
+  };
+
+  const auto s = Recursion(
+    0,
+    [](const ref<int>& prev) {
+      const auto final_state = core::Lift<final_policy>(prev);
+      return If(final_state, prev, core::Lift<incr_policy>(prev));
+    },
+    t0);
+
+  return core::Lift<active_policy>(s);
+}
+
 const ref<bool>& sig::as_ref() const
 {
   return *this;
@@ -88,4 +137,12 @@ dataflow::ref<dataflow::dtimestamp> dataflow::Timestamp(dtime t)
 dataflow::sig dataflow::Signal()
 {
   return sig(internal::node_signal::create(), internal::ref::ctor_guard);
+}
+
+dataflow::ref<bool> dataflow::Timeout(const arg<integer>& interval_msec,
+                                      dtime t0)
+{
+  DATAFLOW___CHECK_PRECONDITION(Engine::engine_() != nullptr);
+
+  return Engine::engine_()->timeout_(interval_msec, t0);
 }
