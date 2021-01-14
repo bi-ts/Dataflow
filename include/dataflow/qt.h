@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -53,6 +53,10 @@ public:
   static EngineQml& instance();
 
   QQmlEngine& GetQmlEngine();
+
+private:
+  virtual ref<bool> timeout_(const ref<integer>& interval_msec,
+                             dtime t0) override;
 
 private:
   const QCoreApplication& app_;

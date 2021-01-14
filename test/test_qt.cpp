@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,9 +20,15 @@
 
 #include <dataflow/prelude.h>
 
+#include "tools/graph_invariant.h"
+#include "tools/io_fixture.h"
+
 #include <dataflow/introspect.h>
 
 #include <boost/test/unit_test.hpp>
+
+#include <chrono>
+#include <thread>
 
 namespace dataflow2qt = dataflow::qt;
 
@@ -211,6 +217,48 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
   (*m).to_qobject()->setProperty("z", 4.14f);
 
   BOOST_CHECK_EQUAL((*m).to_qobject()->property("c").toFloat(), 8.28f);
+}
+
+BOOST_AUTO_TEST_CASE(test_Timeout)
+{
+  QCoreApplication app(g_argc, g_argv);
+
+  dataflow::EngineQml engine(app);
+
+  io_fixture io;
+
+  const int timeout = 1000;
+
+  io.capture_output();
+
+  const auto y = dataflow::Main([=](dataflow::dtime t0) {
+    return dataflow::introspect::Log(dataflow::Timeout(timeout, t0), "x");
+  });
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(timeout / 2));
+
+  QCoreApplication::processEvents();
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*y, false);
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] x = false;");
+
+  io.capture_output();
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
+
+  QCoreApplication::processEvents();
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(*y, false);
+
+  // TODO: figure out why second update is at t=2 (expected t=1)
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] x = false;[t=2] x = true;[t=3] x = false;");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

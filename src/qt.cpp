@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -56,6 +56,37 @@ EngineQml& EngineQml::instance()
 QQmlEngine& EngineQml::GetQmlEngine()
 {
   return qml_engine_;
+}
+
+ref<bool> EngineQml::timeout_(const ref<integer>& interval_msec, dtime t0)
+{
+  const auto p_tick = std::make_shared<sig>(Signal());
+
+  struct policy
+  {
+    std::string label() const
+    {
+      return "timeout";
+    }
+
+    unit calculate(const int& msec)
+    {
+      QTimer::singleShot(msec, [p_tick = std::weak_ptr<sig>(this->p_tick)]() {
+        if (const auto ptr = p_tick.lock())
+        {
+          (*ptr)();
+        }
+      });
+
+      return {};
+    }
+
+    const std::shared_ptr<sig> p_tick;
+  };
+
+  const auto timer = core::LiftPuller(policy{p_tick}, interval_msec(t0));
+
+  return Second(TupleC(timer, *p_tick));
 }
 
 ref<qt::qml_data> qt::QmlComponent(const arg<std::string>& qml_url,
