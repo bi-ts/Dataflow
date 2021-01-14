@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -1687,6 +1687,36 @@ BOOST_AUTO_TEST_CASE(test_Since)
   use_since = true;
 
   BOOST_CHECK_EQUAL(*m, 9);
+}
+
+BOOST_AUTO_TEST_CASE(test_unit)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  io.capture_output();
+
+  auto x = Var(unit{});
+
+  const auto y = Main(introspect::Log(x, "x"));
+
+  io.reset_output();
+
+  BOOST_CHECK(graph_invariant_holds());
+  BOOST_CHECK_EQUAL(*y, unit{});
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] x = ();");
+
+  io.capture_output();
+
+  x = unit{};
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(*y, unit{});
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] x = ();");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

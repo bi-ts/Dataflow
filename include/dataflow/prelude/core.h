@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -85,6 +85,15 @@ protected:
   void reset_(const ref_base<T>& other);
 };
 }
+
+class DATAFLOW___EXPORT unit
+{
+public:
+  bool operator==(const unit&) const;
+  bool operator!=(const unit&) const;
+};
+
+DATAFLOW___EXPORT std::ostream& operator<<(std::ostream& out, const unit& v);
 
 template <typename T> class ref : public core::ref_base<T>
 {

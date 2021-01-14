@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -21,6 +21,24 @@
 #include "core/internal/engine.h"
 
 #include <dataflow/prelude/core/internal/node_signal.h>
+
+namespace dataflow
+{
+bool unit::operator==(const unit&) const
+{
+  return true;
+}
+
+bool unit::operator!=(const unit&) const
+{
+  return false;
+}
+}
+
+std::ostream& dataflow::operator<<(std::ostream& out, const unit&)
+{
+  return (out << "()");
+}
 
 namespace dataflow
 {
