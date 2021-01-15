@@ -227,7 +227,9 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   io_fixture io;
 
-  const int timeout = 1000;
+  const int interval_msec = 1000;
+
+  auto timeout = dataflow::Var(interval_msec);
 
   io.capture_output();
 
@@ -235,11 +237,15 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
     return dataflow::introspect::Log(dataflow::Timeout(timeout, t0), "x");
   });
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(timeout / 2));
+  std::this_thread::sleep_for(std::chrono::milliseconds(interval_msec / 2));
+
+  timeout = 0; // Should not matter
 
   QCoreApplication::processEvents();
 
   io.reset_output();
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::active_node(timeout), false);
 
   BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*y, false);
@@ -248,7 +254,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   io.capture_output();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(timeout));
+  std::this_thread::sleep_for(std::chrono::milliseconds(interval_msec));
 
   QCoreApplication::processEvents();
 
@@ -256,7 +262,6 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   BOOST_CHECK_EQUAL(*y, false);
 
-  // TODO: figure out why second update is at t=2 (expected t=1)
   BOOST_CHECK_EQUAL(io.log_string(),
                     "[t=0] x = false;[t=2] x = true;[t=3] x = false;");
 }
