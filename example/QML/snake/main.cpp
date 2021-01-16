@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -25,11 +25,27 @@
 
 using namespace dataflow;
 
-DATAFLOW_COMPOSITE(game, Game, (list<vec2<int>>, SnakeBody), (bool, GameOver));
+DATAFLOW_COMPOSITE(game,
+                   Game,
+                   (vec2<int>, SnakeDir),
+                   (list<vec2<int>>, SnakeBody),
+                   (bool, GameOver),
+                   (bool, Tick));
 
-ref<game> InitialGame()
+ref<game> InitialGame(dtime t0)
 {
-  return Game(ListC(Vec2(10, 15), Vec2(10, 16), Vec2(10, 17)), false);
+  return Game(Vec2(0, -1),
+              ListC(Vec2(15, 15),
+                    Vec2(15, 16),
+                    Vec2(15, 17),
+                    Vec2(14, 17),
+                    Vec2(13, 17),
+                    Vec2(13, 18),
+                    Vec2(13, 19),
+                    Vec2(12, 19),
+                    Vec2(11, 19)),
+              false,
+              Timeout(500, t0));
 }
 
 ref<game> GameState(const sig& turn_east,
@@ -40,31 +56,45 @@ ref<game> GameState(const sig& turn_east,
                     dtime t0)
 {
   return Recursion(
-    InitialGame(),
+    InitialGame(t0),
     [=](const ref<game>& prev_game) {
-      const auto prev_snake_body = SnakeBody(prev_game);
       const auto prev_game_over = GameOver(prev_game);
+      const auto prev_snake_body = SnakeBody(prev_game);
+      const auto prev_snake_dir = SnakeDir(prev_game);
 
-      const auto step = Switch(turn_north >>= Vec2(0, -1),
-                               turn_east >>= Vec2(1, 0),
-                               turn_south >>= Vec2(0, 1),
-                               turn_west >>= Vec2(-1, 0),
-                               Default(Vec2(0, 0)));
+      const auto requested_dir = Switch(turn_north >>= Vec2(0, -1),
+                                        turn_east >>= Vec2(1, 0),
+                                        turn_south >>= Vec2(0, 1),
+                                        turn_west >>= Vec2(-1, 0),
+                                        Default(prev_snake_dir));
 
-      const auto head_position = FromMaybe(prev_snake_body[0]) + step;
+      const auto step = Tick(prev_game) || (prev_snake_dir != -requested_dir &&
+                                            prev_snake_dir != requested_dir);
 
-      const auto game_over = prev_game_over || head_position.x() < 0 ||
-                             head_position.y() < 0 ||
-                             head_position.x() >= field_size.x() ||
-                             head_position.y() >= field_size.y();
+      const auto snake_dir = If(step, requested_dir, prev_snake_dir);
+
+      const auto next_head_position = FromMaybe(prev_snake_body[0]) + snake_dir;
+
+      const auto game_over = prev_game_over || next_head_position.x() < 0 ||
+                             next_head_position.y() < 0 ||
+                             next_head_position.x() >= field_size.x() ||
+                             next_head_position.y() >= field_size.y();
 
       const auto snake_body =
-        If(!game_over && step != Vec2(0, 0),
+        If(!game_over,
+           // TODO: add PopBack(), PopFront()
            prev_snake_body.erase(prev_snake_body.length() - 1)
-             .prepend(head_position),
+             .prepend(next_head_position),
            prev_snake_body);
 
-      return Game(snake_body, game_over);
+      return [=](dtime t0) {
+        const auto tick = Since(
+          step, [=](dtime t0) { return Timeout(50, t0); }, t0);
+
+        return If(step,
+                  Game(snake_dir, snake_body, game_over, tick),
+                  Game(prev_snake_dir, prev_snake_body, prev_game_over, tick));
+      };
     },
     t0);
 }
