@@ -49,14 +49,14 @@ std::ostream& operator<<(std::ostream& out, game_state v)
 
 DATAFLOW_COMPOSITE(game,
                    Game,
-                   (vec2<int>, SnakeDir),
+                   (dir2, SnakeDir),
                    (list<vec2<int>>, SnakeBody),
                    (game_state, CurrentState),
                    (bool, Tick));
 
 ref<game> InitialGame(const ref<integer>& timeout, dtime t0)
 {
-  return Game(Vec2(0, -1),
+  return Game(dir2::north,
               ListC(Vec2(15, 15),
                     Vec2(15, 16),
                     Vec2(15, 17),
@@ -87,10 +87,10 @@ ref<game> GameState(const sig& turn_east,
       const auto prev_snake_body = SnakeBody(prev_game);
       const auto prev_snake_dir = SnakeDir(prev_game);
 
-      const auto requested_dir = Switch(turn_north >>= Vec2(0, -1),
-                                        turn_east >>= Vec2(1, 0),
-                                        turn_south >>= Vec2(0, 1),
-                                        turn_west >>= Vec2(-1, 0),
+      const auto requested_dir = Switch(turn_north >>= dir2::north,
+                                        turn_east >>= dir2::east,
+                                        turn_south >>= dir2::south,
+                                        turn_west >>= dir2::west,
                                         Default(prev_snake_dir));
 
       const auto step = Tick(prev_game) || (prev_snake_dir != -requested_dir &&
@@ -98,7 +98,8 @@ ref<game> GameState(const sig& turn_east,
 
       const auto snake_dir = If(step, requested_dir, prev_snake_dir);
 
-      const auto next_head_position = FromMaybe(prev_snake_body[0]) + snake_dir;
+      const auto next_head_position =
+        FromMaybe(prev_snake_body[0]) + ToVec2<int>(snake_dir);
 
       const auto next_head_position_is_bad =
         next_head_position.x() < 0 || next_head_position.y() < 0 ||
