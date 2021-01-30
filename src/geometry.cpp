@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,3 +17,41 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/geometry.h>
+
+std::ostream& dataflow::operator<<(std::ostream& out, dir2 v)
+{
+  out << "dir2::";
+
+  switch (v)
+  {
+  case dir2::east:
+    return out << "east";
+  case dir2::north:
+    return out << "north";
+  case dir2::south:
+    return out << "south";
+  case dir2::west:
+    return out << "west";
+  default:
+    return out << "unknown (" << static_cast<int>(v) << ")";
+  }
+
+  return out;
+}
+
+dataflow::dir2 dataflow::operator-(dir2 dir)
+{
+  switch (dir)
+  {
+  case dir2::north:
+    return dir2::south;
+  case dir2::east:
+    return dir2::west;
+  case dir2::south:
+    return dir2::north;
+  case dir2::west:
+    return dir2::east;
+  };
+
+  return dir;
+}

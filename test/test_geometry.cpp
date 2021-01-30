@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -274,6 +274,77 @@ BOOST_AUTO_TEST_CASE(test_vec2_PointsClose)
   y = vec2<int>(2, 4);
 
   BOOST_CHECK_EQUAL(*m, true);
+}
+
+BOOST_AUTO_TEST_CASE(test_dir2_to_string)
+{
+  Engine engine;
+
+  auto x = Var<dir2>();
+
+  const auto f = Main(x);
+
+  BOOST_CHECK_EQUAL(*f, dir2::north);
+  BOOST_CHECK_EQUAL(introspect::value(f), "dir2::north");
+
+  x = dir2::east;
+
+  BOOST_CHECK_EQUAL(*f, dir2::east);
+  BOOST_CHECK_EQUAL(introspect::value(f), "dir2::east");
+
+  x = dir2::south;
+
+  BOOST_CHECK_EQUAL(*f, dir2::south);
+  BOOST_CHECK_EQUAL(introspect::value(f), "dir2::south");
+
+  x = dir2::west;
+
+  BOOST_CHECK_EQUAL(*f, dir2::west);
+  BOOST_CHECK_EQUAL(introspect::value(f), "dir2::west");
+
+  x = dir2::north;
+
+  BOOST_CHECK_EQUAL(*f, dir2::north);
+  BOOST_CHECK_EQUAL(introspect::value(f), "dir2::north");
+
+  const auto bad_dir = static_cast<dir2>(12345);
+
+  x = bad_dir;
+
+  BOOST_CHECK_EQUAL(introspect::value(f), "dir2::unknown (12345)");
+}
+
+BOOST_AUTO_TEST_CASE(test_dir2_opposite_dir)
+{
+  Engine engine;
+
+  auto x = Var<dir2>();
+
+  const auto f = Main(-x);
+
+  BOOST_CHECK_EQUAL(*f, dir2::south);
+
+  x = dir2::east;
+
+  BOOST_CHECK_EQUAL(*f, dir2::west);
+
+  x = dir2::south;
+
+  BOOST_CHECK_EQUAL(*f, dir2::north);
+
+  x = dir2::west;
+
+  BOOST_CHECK_EQUAL(*f, dir2::east);
+
+  x = dir2::north;
+
+  BOOST_CHECK_EQUAL(*f, dir2::south);
+
+  const auto bad_dir = static_cast<dir2>(12345);
+
+  x = bad_dir;
+
+  BOOST_CHECK_EQUAL(*f, bad_dir);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

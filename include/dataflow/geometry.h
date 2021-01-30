@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -97,6 +97,26 @@ template <
   typename T = vec_data_type_t<core::common_argument_data_type_t<ArgV1, ArgV2>>,
   typename = core::enable_for_argument_data_type_t<ArgR, T>>
 ref<bool> PointsClose(const ArgV1& v1, const ArgV2& v2, const ArgR& radius);
+
+enum class dir2
+{
+  north = 0,
+  east,
+  south,
+  west,
+};
+
+DATAFLOW___EXPORT std::ostream& operator<<(std::ostream& out, dir2 v);
+
+DATAFLOW___EXPORT dir2 operator-(dir2 dir);
+
+template <typename T>
+ref<vec2<T>> ToVec2(const arg<dir2>& dir,
+                    const ref<vec2<T>>& north_dir,
+                    const ref<vec2<T>>& east_dir);
+
+template <typename T> ref<vec2<T>> ToVec2(const arg<dir2>& dir);
+
 }
 
 #include "geometry.inl"

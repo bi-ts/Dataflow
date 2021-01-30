@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -184,4 +184,24 @@ dataflow::ref<bool>
 dataflow::PointsClose(const ArgV1& v1, const ArgV2& v2, const ArgR& radius)
 {
   return SquaredNorm(v1 - v2) <= radius * radius;
+}
+
+template <typename T>
+dataflow::ref<dataflow::vec2<T>> dataflow::ToVec2(const arg<dir2>& dir,
+                                                  const ref<vec2<T>>& north_dir,
+                                                  const ref<vec2<T>>& east_dir)
+{
+  return Switch(dir == dir2::north >>= north_dir,
+                dir == dir2::east >>= east_dir,
+                dir == dir2::south >>= -north_dir,
+                dir == dir2::west >>= -east_dir,
+                Default(Vec2(0, 0)));
+}
+
+template <typename T>
+dataflow::ref<dataflow::vec2<T>> dataflow::ToVec2(const arg<dir2>& dir)
+{
+  return ToVec2(dir,
+                Vec2(static_cast<T>(0), static_cast<T>(-1)),
+                Vec2(static_cast<T>(1), static_cast<T>(0)));
 }
