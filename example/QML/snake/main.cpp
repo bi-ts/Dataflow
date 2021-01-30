@@ -25,14 +25,36 @@
 
 using namespace dataflow;
 
+enum class game_state
+{
+  running,
+  paused,
+  ended
+};
+
+std::ostream& operator<<(std::ostream& out, game_state v)
+{
+  switch (v)
+  {
+  case game_state::running:
+    return out << "game_state::running";
+  case game_state::paused:
+    return out << "game_state::paused";
+  case game_state::ended:
+    return out << "game_state::ended";
+  };
+
+  return out;
+};
+
 DATAFLOW_COMPOSITE(game,
                    Game,
                    (vec2<int>, SnakeDir),
                    (list<vec2<int>>, SnakeBody),
-                   (bool, GameOver),
+                   (game_state, CurrentState),
                    (bool, Tick));
 
-ref<game> InitialGame(dtime t0)
+ref<game> InitialGame(const ref<integer>& timeout, dtime t0)
 {
   return Game(Vec2(0, -1),
               ListC(Vec2(15, 15),
@@ -44,19 +66,23 @@ ref<game> InitialGame(dtime t0)
                     Vec2(13, 19),
                     Vec2(12, 19),
                     Vec2(11, 19)),
-              false,
-              Timeout(500, t0));
+              game_state::running,
+              Timeout(timeout, t0));
 }
 
 ref<game> GameState(const sig& turn_east,
                     const sig& turn_north,
                     const sig& turn_south,
                     const sig& turn_west,
+                    const sig& toggle_pause,
+                    const sig& restart_game,
                     const ref<vec2<int>>& field_size,
                     dtime t0)
 {
+  const auto timeout = Const(100);
+
   return StateMachine(
-    InitialGame(t0),
+    InitialGame(timeout, t0),
     [=](const ref<game>& prev_game) {
       const auto prev_snake_body = SnakeBody(prev_game);
       const auto prev_snake_dir = SnakeDir(prev_game);
@@ -80,15 +106,30 @@ ref<game> GameState(const sig& turn_east,
         next_head_position.y() >= field_size.y();
 
       return Transitions(
-        On(!GameOver(prev_game) && step && next_head_position_is_bad,
-           Game(snake_dir, prev_snake_body, true, false)),
-        On(!GameOver(prev_game) && step, [=](dtime t0) {
-          const auto snake_body =
-            prev_snake_body.erase(prev_snake_body.length() - 1)
-              .prepend(next_head_position);
+        On(restart_game, [=](dtime t0) { return InitialGame(timeout, t0); }),
+        On(CurrentState(prev_game) == game_state::running && step &&
+             next_head_position_is_bad,
+           Game(snake_dir, prev_snake_body, game_state::ended, false)),
+        On(CurrentState(prev_game) == game_state::running && toggle_pause,
+           Game(prev_snake_dir, prev_snake_body, game_state::paused, false)),
+        On(CurrentState(prev_game) == game_state::paused && toggle_pause,
+           [=](dtime t0) {
+             return Game(prev_snake_dir,
+                         prev_snake_body,
+                         game_state::running,
+                         Timeout(timeout, t0));
+           }),
+        On(CurrentState(prev_game) == game_state::running && step,
+           [=](dtime t0) {
+             const auto snake_body =
+               prev_snake_body.erase(prev_snake_body.length() - 1)
+                 .prepend(next_head_position);
 
-          return Game(snake_dir, snake_body(t0), false, Timeout(50, t0));
-        }));
+             return Game(snake_dir,
+                         snake_body(t0),
+                         game_state::running,
+                         Timeout(timeout, t0));
+           }));
     },
     t0);
 }
@@ -106,18 +147,29 @@ int main(int argc, char* p_argv[])
     auto turn_north = Signal();
     auto turn_south = Signal();
     auto turn_west = Signal();
+    auto toggle_pause = Signal();
+    auto restart_game = Signal();
 
-    const auto game_state =
-      GameState(turn_east, turn_north, turn_south, turn_west, field_size, t0);
+    const auto game_state = GameState(turn_east,
+                                      turn_north,
+                                      turn_south,
+                                      turn_west,
+                                      toggle_pause,
+                                      restart_game,
+                                      field_size,
+                                      t0);
 
     const auto context = qt::QmlContext(
       qt::QmlFunction("turnNorth", turn_north),
       qt::QmlFunction("turnEast", turn_east),
       qt::QmlFunction("turnSouth", turn_south),
       qt::QmlFunction("turnWest", turn_west),
+      qt::QmlFunction("togglePause", toggle_pause),
+      qt::QmlFunction("restartGame", restart_game),
       qt::QmlProperty("fieldSize", field_size),
       qt::QmlProperty("snakeBody", qt::QmlData(SnakeBody(game_state))),
-      qt::QmlProperty("gameOver", GameOver(game_state)));
+      qt::QmlProperty("gameOver",
+                      CurrentState(game_state) == game_state::ended));
 
     return qt::QmlComponent("qrc:/view.qml", context);
   });

@@ -16,6 +16,12 @@ ApplicationWindow {
     Keys.onLeftPressed: view_context.turnWest();
     Keys.onRightPressed: view_context.turnEast();
     Keys.onUpPressed: view_context.turnNorth();
+    Keys.onReturnPressed: view_context.togglePause();
+  }
+
+  Shortcut {
+    sequence: "Ctrl+R"
+    onActivated: view_context.restartGame();
   }
 
   Text {
