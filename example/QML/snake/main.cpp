@@ -55,10 +55,9 @@ ref<game> GameState(const sig& turn_east,
                     const ref<vec2<int>>& field_size,
                     dtime t0)
 {
-  return Recursion(
+  return StateMachine(
     InitialGame(t0),
     [=](const ref<game>& prev_game) {
-      const auto prev_game_over = GameOver(prev_game);
       const auto prev_snake_body = SnakeBody(prev_game);
       const auto prev_snake_dir = SnakeDir(prev_game);
 
@@ -75,26 +74,21 @@ ref<game> GameState(const sig& turn_east,
 
       const auto next_head_position = FromMaybe(prev_snake_body[0]) + snake_dir;
 
-      const auto game_over = prev_game_over || next_head_position.x() < 0 ||
-                             next_head_position.y() < 0 ||
-                             next_head_position.x() >= field_size.x() ||
-                             next_head_position.y() >= field_size.y();
+      const auto next_head_position_is_bad =
+        next_head_position.x() < 0 || next_head_position.y() < 0 ||
+        next_head_position.x() >= field_size.x() ||
+        next_head_position.y() >= field_size.y();
 
-      const auto snake_body =
-        If(!game_over,
-           // TODO: add PopBack(), PopFront()
-           prev_snake_body.erase(prev_snake_body.length() - 1)
-             .prepend(next_head_position),
-           prev_snake_body);
+      return Transitions(
+        On(!GameOver(prev_game) && step && next_head_position_is_bad,
+           Game(snake_dir, prev_snake_body, true, false)),
+        On(!GameOver(prev_game) && step, [=](dtime t0) {
+          const auto snake_body =
+            prev_snake_body.erase(prev_snake_body.length() - 1)
+              .prepend(next_head_position);
 
-      return [=](dtime t0) {
-        const auto tick = Since(
-          step, [=](dtime t0) { return Timeout(50, t0); }, t0);
-
-        return If(step,
-                  Game(snake_dir, snake_body, game_over, tick),
-                  Game(prev_snake_dir, prev_snake_body, prev_game_over, tick));
-      };
+          return Game(snake_dir, snake_body(t0), false, Timeout(50, t0));
+        }));
     },
     t0);
 }
