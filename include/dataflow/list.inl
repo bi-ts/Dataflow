@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -315,7 +315,7 @@ ref<list<T>>::ref(core::ref_base<list<T>> base)
 {
 }
 
-template <typename T> ref<T> ref<list<T>>::operator()(dtime t) const
+template <typename T> ref<list<T>> ref<list<T>>::operator()(dtime t) const
 {
   return this->snapshot_(t);
 }

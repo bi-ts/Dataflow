@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -1128,6 +1128,29 @@ BOOST_AUTO_TEST_CASE(test_ListC_ToString_with_delimiter)
   x3 = 8;
 
   BOOST_CHECK_EQUAL(*f, "2//8//");
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_Snapshot)
+{
+  Engine engine;
+
+  auto x1 = Var(1);
+  auto x2 = Var(2);
+  auto x3 = Var(3);
+
+  auto xs = ListC(x1, x2, x3);
+
+  const auto y = Main([=](dtime t0) { return xs(t0); });
+
+  BOOST_CHECK(!introspect::active_node(x1));
+  BOOST_CHECK(!introspect::active_node(x2));
+  BOOST_CHECK(!introspect::active_node(x3));
+
+  BOOST_CHECK_EQUAL(*y, make_listC(1, 2, 3));
+
+  x1 = 4;
+
+  BOOST_CHECK_EQUAL(*y, make_listC(1, 2, 3));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

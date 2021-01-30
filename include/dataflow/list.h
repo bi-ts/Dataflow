@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -170,7 +170,7 @@ template <typename T> class ref<list<T>> : public core::ref_base<list<T>>
 public:
   ref(core::ref_base<list<T>> base);
 
-  ref<T> operator()(dtime t) const;
+  ref<list<T>> operator()(dtime t) const;
 
   template <typename..., typename ArgX>
   ref<list<T>> insert(const arg<integer>& idx, const ArgX& x) const;
