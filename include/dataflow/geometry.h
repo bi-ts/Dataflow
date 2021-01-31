@@ -111,11 +111,22 @@ DATAFLOW___EXPORT std::ostream& operator<<(std::ostream& out, dir2 v);
 DATAFLOW___EXPORT dir2 operator-(dir2 dir);
 
 template <typename T>
-ref<vec2<T>> ToVec2(const arg<dir2>& dir,
-                    const ref<vec2<T>>& north_dir,
-                    const ref<vec2<T>>& east_dir);
+vec2<T> to_vec2(dir2 dir,
+                const vec2<T>& east_dir = vec2<T>(static_cast<T>(1),
+                                                  static_cast<T>(0)),
+                const vec2<T>& north_dir = vec2<T>(static_cast<T>(0),
+                                                   static_cast<T>(-1)));
 
 template <typename T> ref<vec2<T>> ToVec2(const arg<dir2>& dir);
+
+template <typename...,
+          typename ArgEastDir,
+          typename ArgNorthDir,
+          typename T = vec_data_type_t<
+            core::common_argument_data_type_t<ArgEastDir, ArgNorthDir>>>
+ref<vec2<T>> ToVec2(const arg<dir2>& dir,
+                    const ArgEastDir& east_dir,
+                    const ArgNorthDir& north_dir);
 
 }
 

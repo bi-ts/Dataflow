@@ -21,6 +21,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <cstdint>
+
 using namespace dataflow;
 
 namespace dataflow_test
@@ -345,6 +347,72 @@ BOOST_AUTO_TEST_CASE(test_dir2_opposite_dir)
   x = bad_dir;
 
   BOOST_CHECK_EQUAL(*f, bad_dir);
+}
+
+BOOST_AUTO_TEST_CASE(test_dir2_ToVec2)
+{
+  Engine engine;
+
+  auto x = Var<dir2>();
+
+  const auto f = Main(ToVec2<std::int16_t>(x));
+
+  BOOST_CHECK_EQUAL(*f, vec2<std::int16_t>(0, -1));
+
+  x = dir2::east;
+
+  BOOST_CHECK_EQUAL(*f, vec2<std::int16_t>(1, 0));
+
+  x = dir2::south;
+
+  BOOST_CHECK_EQUAL(*f, vec2<std::int16_t>(0, 1));
+
+  x = dir2::west;
+
+  BOOST_CHECK_EQUAL(*f, vec2<std::int16_t>(-1, 0));
+
+  x = dir2::north;
+
+  BOOST_CHECK_EQUAL(*f, vec2<std::int16_t>(0, -1));
+
+  const auto bad_dir = static_cast<dir2>(12345);
+
+  x = bad_dir;
+
+  BOOST_CHECK_EQUAL(*f, vec2<std::int16_t>(0, 0));
+}
+
+BOOST_AUTO_TEST_CASE(test_dir2_ToVec2_with_basis)
+{
+  Engine engine;
+
+  auto x = Var<dir2>();
+
+  const auto f = Main(ToVec2(x, vec2<int>(0, 1), Const<vec2<int>>(1, 0)));
+
+  BOOST_CHECK_EQUAL(*f, vec2<int>(1, 0));
+
+  x = dir2::east;
+
+  BOOST_CHECK_EQUAL(*f, vec2<int>(0, 1));
+
+  x = dir2::south;
+
+  BOOST_CHECK_EQUAL(*f, vec2<int>(-1, 0));
+
+  x = dir2::west;
+
+  BOOST_CHECK_EQUAL(*f, vec2<int>(0, -1));
+
+  x = dir2::north;
+
+  BOOST_CHECK_EQUAL(*f, vec2<int>(1, 0));
+
+  const auto bad_dir = static_cast<dir2>(12345);
+
+  x = bad_dir;
+
+  BOOST_CHECK_EQUAL(*f, vec2<int>(0, 0));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -187,21 +187,59 @@ dataflow::PointsClose(const ArgV1& v1, const ArgV2& v2, const ArgR& radius)
 }
 
 template <typename T>
-dataflow::ref<dataflow::vec2<T>> dataflow::ToVec2(const arg<dir2>& dir,
-                                                  const ref<vec2<T>>& north_dir,
-                                                  const ref<vec2<T>>& east_dir)
+dataflow::vec2<T>
+dataflow::to_vec2(dir2 dir, const vec2<T>& east_dir, const vec2<T>& north_dir)
 {
-  return Switch(dir == dir2::north >>= north_dir,
-                dir == dir2::east >>= east_dir,
-                dir == dir2::south >>= -north_dir,
-                dir == dir2::west >>= -east_dir,
-                Default(Vec2(0, 0)));
+  switch (dir)
+  {
+  case dir2::north:
+    return north_dir;
+  case dir2::east:
+    return east_dir;
+  case dir2::south:
+    return -north_dir;
+  case dir2::west:
+    return -east_dir;
+  };
+
+  return vec2<T>(0, 0);
 }
 
 template <typename T>
 dataflow::ref<dataflow::vec2<T>> dataflow::ToVec2(const arg<dir2>& dir)
 {
-  return ToVec2(dir,
-                Vec2(static_cast<T>(0), static_cast<T>(-1)),
-                Vec2(static_cast<T>(1), static_cast<T>(0)));
+  struct policy
+  {
+    static std::string label()
+    {
+      return "to_vec2";
+    }
+    static vec2<T> calculate(dir2 d)
+    {
+      return to_vec2<T>(d);
+    }
+  };
+
+  return core::Lift<policy>(dir);
+}
+
+template <typename..., typename ArgEastDir, typename ArgNorthDir, typename T>
+dataflow::ref<dataflow::vec2<T>> dataflow::ToVec2(const arg<dir2>& dir,
+                                                  const ArgEastDir& east_dir,
+                                                  const ArgNorthDir& north_dir)
+{
+  struct policy
+  {
+    static std::string label()
+    {
+      return "to_vec2";
+    }
+    static vec2<T> calculate(dir2 d, const vec2<T>& e, const vec2<T>& n)
+    {
+      return to_vec2(d, e, n);
+    }
+  };
+
+  return core::Lift<policy>(
+    dir, core::make_argument(east_dir), core::make_argument(north_dir));
 }
