@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -139,6 +139,11 @@ struct no_inequality_test
 {
   bool operator==(const no_inequality_test&) const;
 
+// If libc++ is used, targeting C++20 or above
+#if defined(_LIBCPP_VERSION) && _LIBCPP_STD_VER > 17
+  bool operator!=(const no_inequality_test&) const = delete;
+#endif
+
   friend std::ostream& operator<<(std::ostream&, const no_inequality_test&);
 };
 
@@ -192,6 +197,16 @@ struct ref_based : internal::ref
   friend std::ostream& operator<<(std::ostream&, const ref_based&);
 };
 
+struct callable
+{
+  bool operator==(const callable&) const;
+  bool operator!=(const callable&) const;
+
+  friend std::ostream& operator<<(std::ostream&, const callable&);
+
+  void operator()(int&, const float*, void*);
+};
+
 BOOST_AUTO_TEST_SUITE(test_core_type_traits)
 
 typedef boost::mpl::list<flowable, int> flowable_types;
@@ -209,7 +224,8 @@ using not_flowable_types = boost::mpl::list<no_default_constructor,
                                             no_inequality_test,
                                             bad_equality_test,
                                             bad_inequality_test,
-                                            ref_based>;
+                                            ref_based,
+                                            callable>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_flowable_false, T, not_flowable_types)
 {

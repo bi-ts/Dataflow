@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2019 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -60,5 +60,20 @@ public:
 };
 
 template <typename T> constexpr const bool is_equality_comparable<T>::value;
+
+template <typename T> struct is_callable
+{
+private:
+  template <typename U>
+  static decltype(&U::operator(), std::true_type()) test_(int);
+
+  template <typename> static std::false_type test_(...);
+
+public:
+  static constexpr const bool value = decltype(test_<T>(0))::value;
+};
+
+template <typename T> constexpr const bool is_callable<T>::value;
+
 }
 }

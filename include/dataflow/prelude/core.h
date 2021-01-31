@@ -56,6 +56,7 @@ struct is_flowable
                      std::is_copy_assignable<T>,
                      internal::is_streamable<T>,
                      internal::is_equality_comparable<T>,
+                     std17::negation<internal::is_callable<T>>,
                      std17::negation<std::is_base_of<internal::ref, T>>,
                      std17::negation<std::is_pointer<T>>,
                      std17::negation<std::is_reference<T>>>
