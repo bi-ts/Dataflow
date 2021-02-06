@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -274,9 +274,10 @@ ConstructLinearSequenceArrayAndPrintDescription(std::size_t exponent,
 template <typename T>
 void Benchmark(
   std::function<std::pair<ref<T>, std::size_t>(int, const ref<T>& x)>
-    constructor)
+    constructor,
+  engine_options options = engine_options::nothing)
 {
-  Engine engine;
+  Engine engine{options};
 
   const auto exponent = 14;
   const auto interactive_fps = 25;
@@ -364,13 +365,29 @@ int main(int argc, char** argv)
 
   Benchmark<int>(ConstructLinearSequenceAndPrintDescription);
 
+  std::cout << Title2("Linear sequence update (optimized)") << std::endl;
+
+  Benchmark<int>(ConstructLinearSequenceAndPrintDescription,
+                 engine_options::fully_optimized);
+
   std::cout << Title2("Conditional linear sequence update") << std::endl;
 
   Benchmark<int>(ConstructConditionalLinearSequenceAndPrintDescription);
 
+  std::cout << Title2("Conditional linear sequence update (optimized)")
+            << std::endl;
+
+  Benchmark<int>(ConstructConditionalLinearSequenceAndPrintDescription,
+                 engine_options::fully_optimized);
+
   std::cout << Title2("Binary nodes update") << std::endl;
 
   Benchmark<int>(ConstructBinaryAndPrintDescription);
+
+  std::cout << Title2("Binary nodes update (optimized)") << std::endl;
+
+  Benchmark<int>(ConstructBinaryAndPrintDescription,
+                 engine_options::fully_optimized);
 
   std::cout << Title2("Linear sequence update (array data)") << std::endl;
 
