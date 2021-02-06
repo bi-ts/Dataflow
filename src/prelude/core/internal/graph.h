@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -262,6 +262,32 @@ static_assert(
   "wrong vertex_descriptor type");
 
 using edge_descriptor = boost::graph_traits<dependency_graph>::edge_descriptor;
+
+// TODO: get rid of wrappers in engine.inl for the methods below
+inline bool is_active_node(vertex_descriptor v, const dependency_graph& g)
+{
+  CHECK_PRECONDITION(v != vertex_descriptor());
+
+  const auto position = g[v].position;
+
+  return position != topological_position() && *position == v;
+}
+
+inline edge_descriptor last_out_edge(vertex_descriptor v,
+                                     const dependency_graph& g)
+{
+  CHECK_PRECONDITION(out_degree(v, g) >= 1);
+
+  return *(out_edges(v, g).second - 1);
+}
+
+inline vertex_descriptor activator(vertex_descriptor v,
+                                   const dependency_graph& g)
+{
+  CHECK_PRECONDITION(is_active_node(v, g));
+
+  return target(last_out_edge(v, g), g);
+}
 
 } // internal
 } // dataflow

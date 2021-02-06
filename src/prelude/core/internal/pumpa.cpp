@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -24,8 +24,9 @@ namespace dataflow
 {
 namespace internal
 {
-pumpa::pumpa(const memory_allocator<char>& allocator)
-: pumping_started_(false)
+pumpa::pumpa(const memory_allocator<char>& allocator, engine_options options)
+: options_(options)
+, pumping_started_(false)
 , args_buffer_(allocator)
 , next_update_(allocator)
 , metadata_(allocator)
@@ -131,53 +132,72 @@ void pumpa::pump_(dependency_graph& graph,
 
   order.mark(graph[time_node_v].position);
 
+  std::vector<vertex_descriptor> queue;
+
   const auto to = order.end_marked();
   for (auto it = order.begin_marked(); it != to; it = order.begin_marked())
   {
-    const auto v = *it;
-
     order.unmark(it.base());
 
-    const auto p_node = graph[v].p_node;
+    queue.push_back(*it);
 
-    CHECK_CONDITION(p_node);
-
-    CHECK_CONDITION(args_buffer_.size() == 0);
-
-    for (auto es = out_edges(v, graph); es.first != es.second; ++es.first)
+    while (!queue.empty())
     {
-      const auto e = *es.first;
+      const auto v = queue.back();
+      queue.pop_back();
 
-      // Only active data dependencies get to the arguments list
-      if (graph[e] != active_edge_ticket())
-        args_buffer_.push_back(graph[target(e, graph)].p_node);
-    }
+      const auto p_node = graph[v].p_node;
 
-    const auto status = p_node->update(converter::convert(v),
-                                       graph[v].initialized,
-                                       args_buffer_.data(),
-                                       args_buffer_.size());
+      CHECK_CONDITION(p_node);
 
-    ++updated_nodes_count_;
+      CHECK_CONDITION(args_buffer_.size() == 0);
 
-    if ((status & update_status::updated_next) != update_status::nothing)
-    {
-      schedule_for_next_update(graph[v].position);
-    }
-
-    if ((status & update_status::updated) != update_status::nothing)
-    {
-      ++changed_nodes_count_;
-
-      for (auto u : graph[v].consumers)
+      for (auto es = out_edges(v, graph); es.first != es.second; ++es.first)
       {
-        order.mark(graph[u].position);
+        const auto e = *es.first;
+
+        // Only active data dependencies get to the arguments list
+        if (graph[e] != active_edge_ticket())
+          args_buffer_.push_back(graph[target(e, graph)].p_node);
+      }
+
+      const auto status = p_node->update(converter::convert(v),
+                                         graph[v].initialized,
+                                         args_buffer_.data(),
+                                         args_buffer_.size());
+
+      ++updated_nodes_count_;
+
+      if ((status & update_status::updated_next) != update_status::nothing)
+      {
+        schedule_for_next_update(graph[v].position);
+      }
+
+      graph[v].initialized = true;
+
+      args_buffer_.clear();
+
+      if ((status & update_status::updated) != update_status::nothing)
+      {
+        ++changed_nodes_count_;
+
+        for (const auto& u : graph[v].consumers)
+        {
+          if ((options_ & engine_options::straight_update_optimization) !=
+                engine_options::nothing &&
+              out_degree(u, graph) == 2 &&
+              activator(u, graph) == activator(v, graph))
+          {
+            order.unmark(graph[u].position);
+            queue.push_back(u);
+          }
+          else
+          {
+            order.mark(graph[u].position);
+          }
+        }
       }
     }
-
-    graph[v].initialized = true;
-
-    args_buffer_.clear();
   }
 
   CHECK_CONDITION(order.begin_marked() == order.end_marked());

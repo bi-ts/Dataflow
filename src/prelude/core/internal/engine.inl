@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -109,11 +109,7 @@ inline bool engine::is_active_data_dependency(edge_descriptor e) const
 
 inline bool engine::is_active_node(vertex_descriptor v) const
 {
-  CHECK_PRECONDITION(v != vertex_descriptor());
-
-  const auto position = graph_[v].position;
-
-  return position != topological_position() && *position == v;
+  return internal::is_active_node(v, graph_);
 }
 
 inline bool engine::is_conditional_node(vertex_descriptor v) const
@@ -185,9 +181,7 @@ inline edge_descriptor engine::out_edge_at_(vertex_descriptor v,
 
 inline edge_descriptor engine::last_out_edge_(vertex_descriptor v) const
 {
-  CHECK_PRECONDITION(out_degree(v, graph_) >= 1);
-
-  return *(out_edges(v, graph_).second - 1);
+  return last_out_edge(v, graph_);
 }
 
 inline vertex_descriptor engine::main_consumer_(vertex_descriptor v) const
@@ -204,9 +198,7 @@ inline vertex_descriptor engine::main_consumer_(vertex_descriptor v) const
 
 inline vertex_descriptor engine::activator_(vertex_descriptor v) const
 {
-  CHECK_PRECONDITION(is_active_node(v));
-
-  return target(last_out_edge_(v), graph_);
+  return activator(v, graph_);
 }
 
 } // internal

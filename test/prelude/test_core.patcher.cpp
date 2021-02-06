@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,6 +17,9 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/prelude/core.h>
+
+#include "../tools/EngineTest.h"
+#include "../tools/graph_invariant.h"
 
 #include <dataflow/introspect.h>
 
@@ -239,7 +242,7 @@ BOOST_AUTO_TEST_SUITE(test_core_patcher)
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_policy_member_func_no_args)
 {
-  Engine engine;
+  EngineTest engine;
 
   struct policy
   {
@@ -257,15 +260,17 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_policy_member_func_no_args)
   const auto x = core::LiftPatcher<policy>();
 
   BOOST_CHECK_EQUAL(introspect::label(x), "const");
+  BOOST_CHECK(graph_invariant_holds());
 
   const auto y = Main(x);
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*y, 31052020);
 }
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
 {
-  Engine engine;
+  EngineTest engine;
 
   patcher_test_counters make_data_counters;
   patcher_test_counters transform_data_counters;
@@ -276,29 +281,34 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
   auto a = MakeData(make_data_counters, x);
   auto b = TransformData(transform_data_counters, a, y);
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
   auto f = Main(b);
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(*f, data{24});
 
   x = 32;
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(*f, data{34});
 
   x = 12;
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(*f, data{14});
 
   y = 3;
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(*f, data{15});
@@ -306,7 +316,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_custom_patch)
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
 {
-  Engine engine;
+  EngineTest engine;
 
   patcher_test_counters transform_data_counters;
 
@@ -323,6 +333,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   // |              |
   // x              y
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
 
   auto f = Main(z);
@@ -335,6 +346,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=22           y=33
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*f, data{55});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
 
@@ -348,6 +360,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=44           y=33
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*f, data{77});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1, 1));
 
@@ -361,6 +374,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=44           y=55
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*f, data{99});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2, 1));
 
@@ -374,13 +388,14 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_restored_patches_from_var)
   //  |              |
   // x=11           y=55
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*f, data{66});
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3, 2));
 }
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
 {
-  Engine engine;
+  EngineTest engine;
 
   patcher_test_counters make_data_counters_a;
   patcher_test_counters make_data_counters_b;
@@ -427,6 +442,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |          |        |
   //       y          x        z
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(0, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(0, 0));
@@ -452,6 +468,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |          |        |
   //      y=2        x=22     z=2
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 0));
@@ -478,6 +495,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |          |        |
   //      y=2        x=32     z=2
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 1));
@@ -504,6 +522,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |          |        |
   //      y=2        x=32     z=3
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 0));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 2));
@@ -530,6 +549,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |                   |
   //      y=4                 z=3
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 3, 1));
@@ -556,6 +576,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |                   |
   //      y=8                 z=3
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(1, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 2));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 4, 1));
@@ -582,6 +603,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |          |        |
   //      y=3        x=32     z=3
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(2, 1));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 5, 2));
@@ -608,6 +630,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
   //       |          |        |
   //      y=3        x=0      z=3
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(make_data_counters_a, patcher_test_counters(2, 2));
   BOOST_CHECK_EQUAL(make_data_counters_b, patcher_test_counters(1, 3));
   BOOST_CHECK_EQUAL(transform_data_counters, patcher_test_counters(1, 6, 2));
@@ -616,7 +639,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_pass_custom_patch_through_if_block)
 
 BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
 {
-  Engine engine;
+  EngineTest engine;
 
   struct policy
   {
@@ -641,14 +664,17 @@ BOOST_AUTO_TEST_CASE(test_LiftPatcher_generic_patch)
   auto y = core::LiftPatcher<policy>(x);
   auto z = Main(y);
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*z, 110);
 
   x = 64;
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*z, 320);
 
   x = 0;
 
+  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*z, 0);
 }
 

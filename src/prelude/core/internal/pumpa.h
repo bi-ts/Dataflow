@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -21,6 +21,8 @@
 #include "graph.h"
 #include "node_time.h"
 
+#include <dataflow/prelude/core/engine_options.h>
+
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -32,7 +34,7 @@ namespace internal
 class pumpa final
 {
 public:
-  pumpa(const memory_allocator<char>& allocator);
+  pumpa(const memory_allocator<char>& allocator, engine_options options);
 
   std::size_t changed_nodes_count() const;
 
@@ -56,6 +58,7 @@ private:
              vertex_descriptor time_node_v);
 
 private:
+  const engine_options options_;
   bool pumping_started_;
   std::vector<const node*, memory_allocator<const node*>> args_buffer_;
   std::vector<topological_position, memory_allocator<topological_position>>

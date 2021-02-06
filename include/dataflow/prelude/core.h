@@ -24,6 +24,7 @@
 #include "dataflow++_export.h"
 
 #include "core/dtime.h"
+#include "core/engine_options.h"
 
 #include "core/internal/ref.h"
 
@@ -135,7 +136,7 @@ class DATAFLOW___EXPORT Engine
   friend ref<bool> Timeout(const arg<integer>& interval_msec, dtime t0);
 
 public:
-  Engine();
+  Engine(engine_options options = engine_options::fully_optimized);
   virtual ~Engine();
 
 protected:

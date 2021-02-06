@@ -42,9 +42,9 @@ std::ostream& dataflow::operator<<(std::ostream& out, const unit&)
 
 namespace dataflow
 {
-Engine::Engine()
+Engine::Engine(engine_options options)
 {
-  internal::engine::start(this);
+  internal::engine::start(this, options);
 }
 
 Engine::~Engine()

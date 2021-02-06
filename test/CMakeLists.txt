@@ -7,6 +7,8 @@ find_package(Boost 1.72.0 REQUIRED EXACT QUIET)
 
 add_library(testing_utilities STATIC
   main.cpp
+  tools/EngineTest.cpp
+  tools/EngineTest.h
   tools/graph_invariant.cpp
   tools/graph_invariant.h
   tools/io_fixture.cpp
@@ -21,17 +23,15 @@ target_link_libraries(testing_utilities PUBLIC dataflow++)
 function(dataflow_add_test_project name)
   set(_options)
   set(_one_value_args)
-  set(_multi_value_args SOURCES DEFINITIONS LIBRARIES TARGET_PROPERTIES)
+  set(_multi_value_args
+      SOURCES DEFINITIONS LIBRARIES TARGET_PROPERTIES PARAMETERS)
 
   cmake_parse_arguments(_test_project
     "${_options}" "${_one_value_args}" "${_multi_value_args}" ${ARGN}
   )
 
-  if(NOT _test_project_SOURCES
-     AND NOT _test_project_DEFINITIONS
-     AND NOT _test_project_LIBRARIES
-     AND NOT _test_project_TARGET_PROPERTIES)
-    set(src "${ARGN}")
+  if(NOT _test_project_SOURCES)
+    set(src "${_test_project_UNPARSED_ARGUMENTS}")
   endif()
 
   if(_test_project_SOURCES)
@@ -58,15 +58,23 @@ function(dataflow_add_test_project name)
   endif()
 
   add_test(NAME test_${name} COMMAND test_${name})
+
+  foreach(parameter ${_test_project_PARAMETERS})
+    add_test(NAME test_${name}${parameter}
+      COMMAND test_${name} "-- ${parameter}"
+    )
+  endforeach()
+
 endfunction()
 
 dataflow_add_test_project(test_tools)
 
 dataflow_add_test_project(core
-  prelude/core/test_dtime.cpp
-  prelude/test_core.cpp
-  prelude/test_core.patcher.cpp
-  prelude/test_core.type_traits.cpp
+  SOURCES prelude/core/test_dtime.cpp
+          prelude/test_core.cpp
+          prelude/test_core.patcher.cpp
+          prelude/test_core.type_traits.cpp
+  PARAMETERS --no-optimization
 )
 
 dataflow_add_test_project(prelude

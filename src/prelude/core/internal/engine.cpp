@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -32,11 +32,11 @@ namespace internal
 {
 engine* engine::gp_engine_ = nullptr;
 
-void engine::start(void* p_data)
+void engine::start(void* p_data, engine_options options)
 {
   CHECK_PRECONDITION(gp_engine_ == nullptr);
 
-  gp_engine_ = new engine(p_data);
+  gp_engine_ = new engine(p_data, options);
 
   const auto p_node = static_cast<node_time*>(dst::memory::allocate_aligned(
     gp_engine_->get_allocator(), sizeof(node_time), alignof(node_time)));
@@ -403,16 +403,17 @@ engine::update_node_recursion_activator(vertex_descriptor v, bool initialized)
   return std::make_pair(graph_[u].p_node, status);
 }
 
-engine::engine(void* p_data)
+engine::engine(void* p_data, engine_options options)
 : allocator_()
 , p_data_(p_data)
+, options_(options)
 , graph_()
 #ifdef DATAFLOW___EXPERIMENTAL_BUILD_WITH_BOOST_POOL_ALLOCATOR
 , order_()
 #else
 , order_(allocator_)
 #endif
-, pumpa_(allocator_)
+, pumpa_(allocator_, options)
 , ticks_()
 , time_node_v_()
 {

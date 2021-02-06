@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -25,6 +25,8 @@
 #include "discrete_time.h"
 #include "graph.h"
 #include "pumpa.h"
+
+#include <dataflow/prelude/core/engine_options.h>
 
 #include <utility>
 #include <vector>
@@ -53,7 +55,7 @@ public:
   engine(const engine&) = delete;
   engine& operator=(const engine&) = delete;
 
-  static void start(void* p_data);
+  static void start(void* p_data, engine_options options);
   static void stop();
 
   static engine& instance();
@@ -127,7 +129,7 @@ public:
   update_node_recursion_activator(vertex_descriptor v, bool initialized);
 
 private:
-  explicit engine(void* p_data);
+  explicit engine(void* p_data, engine_options options);
   ~engine() noexcept;
 
   edge_descriptor out_edge_at_(vertex_descriptor v, std::size_t idx) const;
@@ -174,6 +176,7 @@ private:
 private:
   allocator_type allocator_;
   void* p_data_;
+  const engine_options options_;
   dependency_graph graph_;
   topological_list order_;
   pumpa pumpa_;

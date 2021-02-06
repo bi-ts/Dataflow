@@ -69,6 +69,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/core.h
   include/dataflow/prelude/core.inl
   include/dataflow/prelude/core/dtime.h
+  include/dataflow/prelude/core/engine_options.h
   include/dataflow/prelude/core/internal/config.h
   include/dataflow/prelude/core/internal/node.h
   include/dataflow/prelude/core/internal/node_compound.h

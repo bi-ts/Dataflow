@@ -18,6 +18,7 @@
 
 #include <dataflow/prelude/core.h>
 
+#include "../tools/EngineTest.h"
 #include "../tools/graph_invariant.h"
 #include "../tools/io_fixture.h"
 
@@ -125,7 +126,7 @@ BOOST_AUTO_TEST_SUITE(test_core)
 
 BOOST_AUTO_TEST_CASE(test_Box)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Const<int>(13);
   auto y = Var<int>(22);
@@ -160,7 +161,7 @@ BOOST_AUTO_TEST_CASE(test_Box)
 
 BOOST_AUTO_TEST_CASE(test_Box_activation)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var(0);
   auto y = Var(make_box(x));
@@ -174,7 +175,7 @@ BOOST_AUTO_TEST_CASE(test_Box_activation)
 
 BOOST_AUTO_TEST_CASE(test_Box_conditional)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var(true);
   auto y = Var(22);
@@ -208,7 +209,7 @@ BOOST_AUTO_TEST_CASE(test_Box_conditional)
 
 BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto a = Var(11);
   auto b = Box(a);
@@ -243,7 +244,7 @@ BOOST_AUTO_TEST_CASE(test_Box_LiftSelector_additional_parameters)
 
 BOOST_AUTO_TEST_CASE(test_CurrentTime)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Main([=](dtime t0) { return CurrentTime(); });
 
@@ -253,7 +254,7 @@ BOOST_AUTO_TEST_CASE(test_CurrentTime)
 
 BOOST_AUTO_TEST_CASE(test_ref)
 {
-  Engine engine;
+  EngineTest engine;
 
   BOOST_CHECK_EQUAL((std::is_copy_assignable<ref<int>>::value), false);
   BOOST_CHECK_EQUAL((std::is_copy_constructible<ref<int>>::value), true);
@@ -261,7 +262,7 @@ BOOST_AUTO_TEST_CASE(test_ref)
 
 BOOST_AUTO_TEST_CASE(test_Const)
 {
-  Engine engine;
+  EngineTest engine;
 
   const ref<int> x = Const(17);
 
@@ -276,7 +277,7 @@ BOOST_AUTO_TEST_CASE(test_Const)
 
 BOOST_AUTO_TEST_CASE(test_Const_default_constructor)
 {
-  Engine engine;
+  EngineTest engine;
 
   const ref<int> x = Const<int>();
 
@@ -291,7 +292,7 @@ BOOST_AUTO_TEST_CASE(test_Const_default_constructor)
 
 BOOST_AUTO_TEST_CASE(test_Const_forward_args)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Const(17);
   const auto y = Const<box<int>>(x);
@@ -306,7 +307,7 @@ BOOST_AUTO_TEST_CASE(test_Const_forward_args)
 
 BOOST_AUTO_TEST_CASE(test_Const_forward_args_to_string_constructor)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Const<std::string>(10, '*');
 
@@ -321,7 +322,7 @@ BOOST_AUTO_TEST_CASE(test_Const_forward_args_to_string_constructor)
 
 BOOST_AUTO_TEST_CASE(test_Const_string_literal)
 {
-  Engine engine;
+  EngineTest engine;
 
   const ref<std::string> x = Const("some text");
 
@@ -336,7 +337,7 @@ BOOST_AUTO_TEST_CASE(test_Const_string_literal)
 
 BOOST_AUTO_TEST_CASE(test_Const_via_arg_ctor)
 {
-  Engine engine;
+  EngineTest engine;
 
   std::function<ref<std::string>(const arg<std::string>& x)> fn =
     [](const arg<std::string>& x) { return x; };
@@ -354,7 +355,7 @@ BOOST_AUTO_TEST_CASE(test_Const_via_arg_ctor)
 
 BOOST_AUTO_TEST_CASE(test_Signal)
 {
-  Engine engine;
+  EngineTest engine;
 
   io_fixture io;
 
@@ -423,7 +424,7 @@ BOOST_AUTO_TEST_CASE(test_Signal)
 
 BOOST_AUTO_TEST_CASE(test_Signal_as_ref)
 {
-  Engine engine;
+  EngineTest engine;
 
   const sig x = Signal();
 
@@ -434,7 +435,7 @@ BOOST_AUTO_TEST_CASE(test_Signal_as_ref)
 
 BOOST_AUTO_TEST_CASE(test_Snapshot)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<int> x = Var<int>(3);
 
@@ -459,7 +460,7 @@ BOOST_AUTO_TEST_CASE(test_Snapshot)
 
 BOOST_AUTO_TEST_CASE(test_Var)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<int> x = Var(1);
 
@@ -507,7 +508,7 @@ BOOST_AUTO_TEST_CASE(test_Var)
 
 BOOST_AUTO_TEST_CASE(test_Var_indirection)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<int> x = Var(6);
 
@@ -532,7 +533,7 @@ BOOST_AUTO_TEST_CASE(test_Var_indirection)
 
 BOOST_AUTO_TEST_CASE(test_Var_default_constructor)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<int>();
 
@@ -547,7 +548,7 @@ BOOST_AUTO_TEST_CASE(test_Var_default_constructor)
 
 BOOST_AUTO_TEST_CASE(test_Var_forward_args)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto a = Const(1);
   const auto b = Const(2);
@@ -565,7 +566,7 @@ BOOST_AUTO_TEST_CASE(test_Var_forward_args)
 
 BOOST_AUTO_TEST_CASE(test_Var_forward_args_to_string_constructor)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Var<std::string>(10, '*');
 
@@ -580,7 +581,7 @@ BOOST_AUTO_TEST_CASE(test_Var_forward_args_to_string_constructor)
 
 BOOST_AUTO_TEST_CASE(test_Var_string_literal)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<std::string> x = Var("some text");
 
@@ -600,7 +601,7 @@ BOOST_AUTO_TEST_CASE(test_Var_string_literal)
 
 BOOST_AUTO_TEST_CASE(test_Var_copy_constructor)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<int>();
 
@@ -619,7 +620,7 @@ BOOST_AUTO_TEST_CASE(test_Var_copy_constructor)
 
 BOOST_AUTO_TEST_CASE(test_Var_deferred_assign)
 {
-  Engine engine;
+  EngineTest engine;
 
   io_fixture io;
 
@@ -668,7 +669,7 @@ BOOST_AUTO_TEST_CASE(test_Var_deferred_assign)
 
 BOOST_AUTO_TEST_CASE(test_Cast_double_to_int)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var(3.14);
   const auto y = Cast<int>(x);
@@ -687,7 +688,7 @@ BOOST_AUTO_TEST_CASE(test_Cast_double_to_int)
 
 BOOST_AUTO_TEST_CASE(test_Main_ref_arg)
 {
-  Engine engine;
+  EngineTest engine;
 
   const var<int> x = Var<int>(6);
 
@@ -705,7 +706,7 @@ BOOST_AUTO_TEST_CASE(test_Main_ref_arg)
 
 BOOST_AUTO_TEST_CASE(test_Main_init_func_arg)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<int> x = Var<int>(6);
 
@@ -722,7 +723,7 @@ BOOST_AUTO_TEST_CASE(test_Main_init_func_arg)
 
 BOOST_AUTO_TEST_CASE(test_If_var_var_var)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto y = Var<int>(10);
@@ -741,7 +742,7 @@ BOOST_AUTO_TEST_CASE(test_If_var_var_var)
 
 BOOST_AUTO_TEST_CASE(test_If_var_int_var)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto z = Var<int>(20);
@@ -759,7 +760,7 @@ BOOST_AUTO_TEST_CASE(test_If_var_int_var)
 
 BOOST_AUTO_TEST_CASE(test_If_var_var_int)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto y = Var<int>(10);
@@ -777,7 +778,7 @@ BOOST_AUTO_TEST_CASE(test_If_var_var_int)
 
 BOOST_AUTO_TEST_CASE(test_If_var_int_int)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
 
@@ -794,7 +795,7 @@ BOOST_AUTO_TEST_CASE(test_If_var_int_int)
 
 BOOST_AUTO_TEST_CASE(test_If_var_str_strliteral)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
 
@@ -811,7 +812,7 @@ BOOST_AUTO_TEST_CASE(test_If_var_str_strliteral)
 
 BOOST_AUTO_TEST_CASE(test_If_fn_fn)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
@@ -860,7 +861,7 @@ BOOST_AUTO_TEST_CASE(test_If_fn_fn)
 
 BOOST_AUTO_TEST_CASE(test_If_ref_fn)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
@@ -893,7 +894,7 @@ BOOST_AUTO_TEST_CASE(test_If_ref_fn)
 
 BOOST_AUTO_TEST_CASE(test_If_fn_ref)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
@@ -927,7 +928,7 @@ BOOST_AUTO_TEST_CASE(test_If_fn_ref)
 
 BOOST_AUTO_TEST_CASE(test_If_fn_fn_eagerness)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<bool>(true);
   auto y = Var<int>(11);
@@ -959,7 +960,7 @@ BOOST_AUTO_TEST_CASE(test_If_fn_fn_eagerness)
 
 BOOST_AUTO_TEST_CASE(test_Lift_policy_member_func_no_args)
 {
-  Engine engine;
+  EngineTest engine;
 
   struct policy
   {
@@ -985,7 +986,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_policy_member_func_no_args)
 
 BOOST_AUTO_TEST_CASE(test_Lift_unary_policy_static_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   const var<int> x = Var<int>('A');
 
@@ -1012,7 +1013,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_unary_policy_static_func)
 
 BOOST_AUTO_TEST_CASE(test_Lift_unary_policy_member_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   const var<int> x = Var<int>('C');
 
@@ -1043,7 +1044,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_unary_policy_member_func)
 
 BOOST_AUTO_TEST_CASE(test_Lift_unary_lambda)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Var<char>('B');
 
@@ -1060,7 +1061,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_unary_lambda)
 
 BOOST_AUTO_TEST_CASE(test_Lift_unary_function_pointer)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Var<char>('C');
 
@@ -1084,7 +1085,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_unary_function_pointer)
 
 BOOST_AUTO_TEST_CASE(test_Lift_binary_policy_static_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   const var<char> x = Var<char>('A');
   const var<int> y = Var<int>(4);
@@ -1112,7 +1113,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_binary_policy_static_func)
 
 BOOST_AUTO_TEST_CASE(test_Lift_binary_policy_member_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   const var<int> x = Var<int>('C');
   var<bool> y = Var<bool>(true);
@@ -1149,7 +1150,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_binary_policy_member_func)
 
 BOOST_AUTO_TEST_CASE(test_Lift_binary_lambda)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<char>('B');
   auto y = Var<int>(4);
@@ -1177,7 +1178,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_binary_lambda)
 
 BOOST_AUTO_TEST_CASE(test_Lift_binary_function_pointer)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<char>('C');
   auto y = Var<int>(3);
@@ -1212,7 +1213,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_binary_function_pointer)
 
 BOOST_AUTO_TEST_CASE(test_Lift_n_ary_policy_static_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<std::string> a = Var("text");
   var<char> b = Var('A');
@@ -1263,7 +1264,7 @@ BOOST_AUTO_TEST_CASE(test_Lift_n_ary_policy_static_func)
 
 BOOST_AUTO_TEST_CASE(test_LiftUpdater_policy_member_func_no_args)
 {
-  Engine engine;
+  EngineTest engine;
 
   struct policy
   {
@@ -1289,7 +1290,7 @@ BOOST_AUTO_TEST_CASE(test_LiftUpdater_policy_member_func_no_args)
 
 BOOST_AUTO_TEST_CASE(test_LiftUpdater_binary_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   var<char> x = Var<char>('A');
   var<int> y = Var<int>(4);
@@ -1410,7 +1411,7 @@ BOOST_AUTO_TEST_CASE(test_LiftUpdater_binary_func)
 
 BOOST_AUTO_TEST_CASE(test_LiftPuller_n_ary_policy_static_func)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto a = Var(33);
   const auto b = Var(44);
@@ -1448,7 +1449,7 @@ BOOST_AUTO_TEST_CASE(test_LiftPuller_n_ary_policy_static_func)
 
 BOOST_AUTO_TEST_CASE(test_Recursion)
 {
-  Engine engine;
+  EngineTest engine;
 
   io_fixture io;
 
@@ -1544,7 +1545,7 @@ BOOST_AUTO_TEST_CASE(test_Recursion)
 BOOST_AUTO_TEST_CASE(
   test_Recursion_recursion_definition_function_requires_initialization)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var<int>(1);
 
@@ -1566,7 +1567,7 @@ BOOST_AUTO_TEST_CASE(
 BOOST_AUTO_TEST_CASE(
   test_Recursion_recursion_definition_function_creates_eager_node)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto const_true = Const<bool>(true);
   const auto const_false = Const<bool>(false);
@@ -1589,7 +1590,7 @@ BOOST_AUTO_TEST_CASE(
 
 BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto x = Const(0);
 
@@ -1601,21 +1602,21 @@ BOOST_AUTO_TEST_CASE(test_core_to_string_ref)
 
 BOOST_AUTO_TEST_CASE(test_core_to_string_flowable)
 {
-  Engine engine;
+  EngineTest engine;
 
   BOOST_CHECK_EQUAL(core::to_string(1), "1");
 }
 
 BOOST_AUTO_TEST_CASE(test_core_to_string_convertible_to_flowable)
 {
-  Engine engine;
+  EngineTest engine;
 
   BOOST_CHECK_EQUAL(core::to_string("str"), "str");
 }
 
 BOOST_AUTO_TEST_CASE(test_Timestamp)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto x = Var(true);
 
@@ -1637,7 +1638,7 @@ BOOST_AUTO_TEST_CASE(test_Timestamp)
 
 BOOST_AUTO_TEST_CASE(test_Timestamp_main)
 {
-  Engine engine;
+  EngineTest engine;
 
   const auto m = Main([](dtime t0) { return Timestamp(t0); });
 
@@ -1646,7 +1647,7 @@ BOOST_AUTO_TEST_CASE(test_Timestamp_main)
 
 BOOST_AUTO_TEST_CASE(test_Since)
 {
-  Engine engine;
+  EngineTest engine;
 
   auto restart = Signal();
   auto use_since = Var(true);
@@ -1691,7 +1692,7 @@ BOOST_AUTO_TEST_CASE(test_Since)
 
 BOOST_AUTO_TEST_CASE(test_Timeout)
 {
-  Engine engine;
+  EngineTest engine;
 
   io_fixture io;
 
@@ -1711,7 +1712,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
 BOOST_AUTO_TEST_CASE(test_unit)
 {
-  Engine engine;
+  EngineTest engine;
 
   io_fixture io;
 
