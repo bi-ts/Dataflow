@@ -157,7 +157,7 @@ void pumpa::pump_(dependency_graph& graph,
         const auto e = *es.first;
 
         // Only active data dependencies get to the arguments list
-        if (graph[e] != active_edge_ticket())
+        if (is_active_data_dependency(e, graph))
           args_buffer_.push_back(graph[target(e, graph)].p_node);
       }
 

@@ -264,6 +264,14 @@ static_assert(
 using edge_descriptor = boost::graph_traits<dependency_graph>::edge_descriptor;
 
 // TODO: get rid of wrappers in engine.inl for the methods below
+inline bool is_active_data_dependency(edge_descriptor e,
+                                      const dependency_graph& g)
+{
+  CHECK_PRECONDITION(e != edge_descriptor());
+
+  return g[e] != active_edge_ticket();
+}
+
 inline bool is_active_node(vertex_descriptor v, const dependency_graph& g)
 {
   CHECK_PRECONDITION(v != vertex_descriptor());

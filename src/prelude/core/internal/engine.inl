@@ -102,9 +102,7 @@ inline bool engine::is_secondary_data_dependency(edge_descriptor e) const
 
 inline bool engine::is_active_data_dependency(edge_descriptor e) const
 {
-  CHECK_PRECONDITION(e != edge_descriptor());
-
-  return graph_[e] != active_edge_ticket();
+  return internal::is_active_data_dependency(e, graph_);
 }
 
 inline bool engine::is_active_node(vertex_descriptor v) const
