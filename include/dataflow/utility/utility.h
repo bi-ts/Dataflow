@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -42,7 +42,7 @@ void utility::for_each_tuple_element(const Tuple& t,
                                      std14::index_sequence<Is...> indices,
                                      F f)
 {
-  std::make_tuple([&f, &t]() {
+  (void)std::make_tuple([&f, &t]() {
     f(std::get<Is>(t));
     return 0;
   }()...);

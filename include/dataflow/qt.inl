@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -210,6 +210,17 @@ make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
     policy{read_only_props, read_write_props, signal_definitions},
     std::get<ReadOnlyIndices>(defs).second...);
 }
+
+inline ref<std::shared_ptr<QObject>>
+make_qml_context(const std::tuple<>&,
+                 const std14::index_sequence<>&,
+                 const std14::index_sequence<>&,
+                 const std14::index_sequence<>&)
+{
+  internal::qobject_builder builder;
+  return Const(builder.build());
+}
+
 }
 }
 

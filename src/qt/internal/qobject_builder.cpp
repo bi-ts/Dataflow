@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -22,6 +22,10 @@
 #include "qobject_factory.h"
 
 #include <QtCore/private/qmetaobjectbuilder_p.h>
+
+#include <cstdlib> // std::free
+#include <stdexcept>
+#include <utility> // std::move
 
 namespace dataflow
 {

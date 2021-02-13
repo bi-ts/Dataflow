@@ -5,6 +5,10 @@ project(get-google_benchmark LANGUAGES NONE)
 
 include(ExternalProject)
 
+if("${CMAKE_GENERATOR}" EQUAL "Xcode")
+  set(_google_benchmark_xcode_flags "-DBENCHMARK_USE_LIBCXX=ON")
+endif()
+
 ExternalProject_add(google_benchmark
   PREFIX "@EXT_PROJECTS_DIR@/google_benchmark"
   URL "https://github.com/google/benchmark/archive/v@GOOGLE_BENCHMARK_VERSION@.zip"
@@ -12,7 +16,7 @@ ExternalProject_add(google_benchmark
   CONFIGURE_COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
                     -DCMAKE_DEBUG_POSTFIX=d
                     -DBENCHMARK_ENABLE_TESTING=OFF
-                    -DBENCHMARK_USE_LIBCXX=ON
+                    ${_google_benchmark_xcode_flags}
                     -DCMAKE_INSTALL_PREFIX=../google_benchmark-install
                     ../google_benchmark
   BUILD_COMMAND     ${CMAKE_COMMAND} --build . --config Release

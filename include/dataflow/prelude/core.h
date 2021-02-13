@@ -133,7 +133,8 @@ public:
 
 class DATAFLOW___EXPORT Engine
 {
-  friend ref<bool> Timeout(const arg<integer>& interval_msec, dtime t0);
+  DATAFLOW___EXPORT friend ref<bool> Timeout(const arg<integer>& interval_msec,
+                                             dtime t0);
 
 public:
   Engine(engine_options options = engine_options::fully_optimized);

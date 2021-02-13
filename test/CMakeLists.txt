@@ -16,6 +16,8 @@ add_library(testing_utilities STATIC
   tools/test_tools.h
 )
 
+target_compile_definitions(testing_utilities PUBLIC -DBOOST_ALL_NO_LIB)
+
 target_include_directories(testing_utilities PUBLIC "${Boost_INCLUDE_DIRS}")
 
 target_link_libraries(testing_utilities PUBLIC dataflow++)

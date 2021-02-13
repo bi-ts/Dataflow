@@ -118,7 +118,44 @@ using topological_position = topological_list::const_iterator;
 using consumers_list =
   std::list<vertex_descriptor, memory_allocator<vertex_descriptor>>;
 
+#if defined(_MSC_VER) && !defined(NDEBUG)
+class active_edge_ticket
+{
+public:
+  active_edge_ticket()
+  : engaged_{false}
+  {
+  }
+
+  active_edge_ticket(const consumers_list::const_iterator& ticket)
+  : engaged_{true}
+  , ticket_{ticket}
+  {
+  }
+
+  operator const consumers_list::const_iterator&() const
+  {
+    return ticket_;
+  }
+
+  bool operator==(const active_edge_ticket& other) const
+  {
+    return (engaged_ == other.engaged_) &&
+           (!engaged_ || ticket_ == other.ticket_);
+  }
+
+  bool operator!=(const active_edge_ticket& other) const
+  {
+    return !(*this == other);
+  }
+
+private:
+  bool engaged_;
+  consumers_list::const_iterator ticket_;
+};
+#else
 using active_edge_ticket = consumers_list::const_iterator;
+#endif
 
 class vertex final
 {

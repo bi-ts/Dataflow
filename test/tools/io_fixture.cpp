@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2017 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,6 +17,8 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include "io_fixture.h"
+
+#include <algorithm> // std::replace
 
 namespace dataflow_test
 {
