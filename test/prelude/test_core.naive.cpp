@@ -104,6 +104,57 @@ template <typename T> ref<T> Sum(const ref<T>& x, const ref<T>& y)
   return [x, y](dtime t) { return x(t) + y(t); };
 }
 
+// The semantic of conditional function `If`.
+//
+// If(x, y, z, t0, t) = If'(x, y, z, t0, t)(t), where
+//
+//                      ,
+//                      | undefined, if t < t0
+//                      | y(t),      if x(t) and (t = t0 or not x(t - 1))
+// If(x, y, z, t0, t) = { z(t),      if not x(t) and (t = t0 or x(t - 1))
+//                      | If(x, y, z, t0, t - 1), otherwise
+//                      `
+//
+// x :: t -> bool
+// y :: t -> t -> T
+// z :: t -> t -> T
+//
+// if x and y have type t -> T, previous formula boils down to this:
+//
+//                  ,
+//                  | y(t), if x(t)
+// If(x, y, z, t) = {
+//                  | z(t), if x(t)
+//                  `
+template <typename T>
+ref<T> If(const ref<bool>& x,
+          const init_function<T>& y,
+          const init_function<T>& z,
+          dtime t0)
+{
+  struct tool
+  {
+    static ref<T> If_(const ref<bool>& x,
+                      const init_function<T>& y,
+                      const init_function<T>& z,
+                      dtime t0,
+                      dtime t)
+    {
+      if (t < t0)
+        throw std::logic_error("If function is undefined for t < t0");
+
+      if (x(t) && (t == t0 || !x(t - 1)))
+        return y(t);
+
+      if (!x(t) && (t == t0 || x(t - 1)))
+        return z(t);
+
+      return If_(x, y, z, t0, t - 1);
+    };
+  };
+
+  return [=](dtime t) { return tool::If_(x, y, z, t0, t)(t); };
+}
 }
 
 using namespace dataflow_naive;
@@ -148,6 +199,41 @@ BOOST_AUTO_TEST_CASE(test_Var)
   BOOST_CHECK_EQUAL(y(1), 0);
   BOOST_CHECK_EQUAL(y(2), 100);
   BOOST_CHECK_EQUAL(y(3), 100);
+}
+
+BOOST_AUTO_TEST_CASE(test_If)
+{
+  Engine engine;
+
+  var<bool> x = Var(true);
+  var<int> y = Var(100);
+  var<int> z = Var(200);
+
+  const ref<int> f = Main<int>([=](dtime t0) {
+    return If<int>(
+      x,
+      [=](dtime t0) { return Sum<int>(y, Const(t0)); },
+      [=](dtime t0) { return Sum<int>(z, Const(t0)); },
+      t0);
+  });
+
+  BOOST_CHECK_EQUAL(g_time, 0);
+  BOOST_CHECK_EQUAL(f(g_time), 100);
+
+  y = 300;
+
+  BOOST_CHECK_EQUAL(g_time, 1);
+  BOOST_CHECK_EQUAL(f(g_time), 300);
+
+  x = false;
+
+  BOOST_CHECK_EQUAL(g_time, 2);
+  BOOST_CHECK_EQUAL(f(g_time), 202);
+
+  z = 400;
+
+  BOOST_CHECK_EQUAL(g_time, 3);
+  BOOST_CHECK_EQUAL(f(g_time), 402);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
