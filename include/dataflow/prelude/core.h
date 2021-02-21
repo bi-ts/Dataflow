@@ -775,9 +775,6 @@ template <typename FArgT,
                                            core::is_init_function<FArgU>>>
 init_function<T> If(const ref<bool>& x, const FArgT& y, const FArgU& z);
 
-DATAFLOW___EXPORT ref<bool> Timeout(const arg<integer>& interval_msec,
-                                    dtime t0);
-
 // Stateful functions
 
 template <typename Arg,
@@ -794,6 +791,9 @@ ref<T> Since(const ref<bool>& ti, const F& f, dtime t0);
 
 template <typename F, typename..., typename T = core::init_function_type_t<F>>
 init_function<T> Since(const ref<bool>& ti, const F& f);
+
+DATAFLOW___EXPORT ref<bool> Timeout(const arg<integer>& interval_msec,
+                                    dtime t0);
 
 /// \}
 }
