@@ -179,14 +179,10 @@ add_library(dataflow-qt SHARED
   include/dataflow/qt.h
   include/dataflow/qt.inl
   include/dataflow/qt/conversion.h
-  include/dataflow/qt/internal/context_builder.h
   include/dataflow/qt/internal/qobject_builder.h
   include/dataflow/qt/qml_data.h
   src/qt.cpp
   src/qt/conversion.cpp
-  src/qt/internal/context_builder.cpp
-  src/qt/internal/context_builder_impl.cpp
-  src/qt/internal/context_builder_impl.h
   src/qt/internal/dynamic_qobject.cpp
   src/qt/internal/dynamic_qobject.h
   src/qt/internal/qobject_builder.cpp
