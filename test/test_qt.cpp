@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   io_fixture io;
 
-  const int interval_msec = 2000;
+  const int interval_msec = 1000;
 
   auto timeout = dataflow::Var(interval_msec);
 
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
     return dataflow::introspect::Log(dataflow::Timeout(timeout, t0), "x");
   });
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(interval_msec / 2));
+  std::this_thread::sleep_for(std::chrono::milliseconds(interval_msec / 4));
 
   timeout = 0; // Should not matter
 
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   io.capture_output();
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(interval_msec));
+  std::this_thread::sleep_for(std::chrono::milliseconds(2 * interval_msec));
 
   QCoreApplication::processEvents();
 
