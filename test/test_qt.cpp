@@ -44,7 +44,7 @@ int g_argc = static_cast<int>((sizeof(g_argv) / sizeof(g_argv[0])) - 1);
 
 BOOST_AUTO_TEST_SUITE(test_qt)
 
-BOOST_AUTO_TEST_CASE(test_conversion_type_traits)
+BOOST_AUTO_TEST_CASE(test_is_convertible_to_qml_type)
 {
   BOOST_CHECK_EQUAL((dataflow2qt::is_convertible_to_qml_type<int>::value),
                     true);
@@ -53,6 +53,26 @@ BOOST_AUTO_TEST_CASE(test_conversion_type_traits)
     true);
   BOOST_CHECK_EQUAL((dataflow2qt::is_convertible_to_qml_type<void>::value),
                     false);
+}
+
+BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_int)
+{
+  const dataflow2qt::qvariant v = dataflow2qt::cast_to_qvariant(13);
+
+  BOOST_CHECK_EQUAL(v.get().toInt(), 13);
+}
+
+BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_qobject)
+{
+  dataflow::Engine engine;
+
+  const dataflow::val<dataflow2qt::qobject> m = Main(dataflow2qt::QmlContext());
+
+  const auto& obj = *m;
+
+  const dataflow2qt::qvariant& v = dataflow2qt::cast_to_qvariant(obj);
+
+  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(v.get()), obj.get());
 }
 
 BOOST_AUTO_TEST_CASE(test_qobject_default_ctor)
@@ -65,49 +85,6 @@ BOOST_AUTO_TEST_CASE(test_qobject_default_ctor)
   ss << obj;
 
   BOOST_CHECK_EQUAL(ss.str(), "QObject (null)");
-}
-
-BOOST_AUTO_TEST_CASE(test_QmlData_int)
-{
-  dataflow::Engine engine;
-
-  auto x = dataflow::Var(1);
-
-  const auto y = dataflow2qt::QmlData(x);
-
-  BOOST_CHECK_EQUAL(dataflow::introspect::label(y), "qml-data");
-
-  const auto z = Main(y);
-
-  BOOST_CHECK_EQUAL(static_cast<QVariant>(*z).toInt(), 1);
-
-  x = 3;
-
-  BOOST_CHECK_EQUAL(static_cast<QVariant>(*z).toInt(), 3);
-}
-
-BOOST_AUTO_TEST_CASE(test_QmlData_QObject)
-{
-  dataflow::Engine engine;
-
-  const auto p_qobject_a = std::shared_ptr<QObject>{new QObject{nullptr}};
-  const auto p_qobject_b = std::shared_ptr<QObject>{new QObject{nullptr}};
-
-  auto x = dataflow::Var(p_qobject_a);
-
-  const auto y = dataflow2qt::QmlData(x);
-
-  BOOST_CHECK_EQUAL(dataflow::introspect::label(y), "qml-data");
-
-  const auto z = Main(y);
-
-  BOOST_CHECK_EQUAL((*z).to_qobject(), p_qobject_a);
-  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(*z), p_qobject_a.get());
-
-  x = p_qobject_b;
-
-  BOOST_CHECK_EQUAL((*z).to_qobject(), p_qobject_b);
-  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(*z), p_qobject_b.get());
 }
 
 BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_no_engine)
@@ -242,7 +219,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   io_fixture io;
 
-  const int interval_msec = 1000;
+  const int interval_msec = 2000;
 
   auto timeout = dataflow::Var(interval_msec);
 

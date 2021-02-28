@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,98 +18,94 @@
 
 #include <dataflow/qt/conversion.h>
 
-#include <QtCore/QPoint>
-#include <QtCore/QString>
-
 namespace dataflow
 {
 namespace qt
 {
-
-QVariant converter<bool>::to_qml_type(bool v)
+bool converter<bool>::to_qml_type(bool v)
 {
-  return QVariant::fromValue(v);
+  return v;
 }
 
-bool converter<bool>::from_qml_type(const QVariant& v)
+bool converter<bool>::from_qml_type(bool v)
 {
-  return v.toBool();
+  return v;
 }
 
-QVariant converter<double>::to_qml_type(double v)
+double converter<double>::to_qml_type(double v)
 {
-  return QVariant::fromValue(v);
+  return v;
 }
 
-double converter<double>::from_qml_type(const QVariant& v)
+double converter<double>::from_qml_type(double v)
 {
-  return v.toDouble();
+  return v;
 }
 
-QVariant converter<float>::to_qml_type(float v)
+float converter<float>::to_qml_type(float v)
 {
-  return QVariant::fromValue(v);
+  return v;
 }
 
-float converter<float>::from_qml_type(const QVariant& v)
+float converter<float>::from_qml_type(float v)
 {
-  return v.toFloat();
+  return v;
 }
 
-QVariant converter<int>::to_qml_type(int v)
+int converter<int>::to_qml_type(int v)
 {
-  return QVariant::fromValue(v);
+  return v;
 }
 
-int converter<int>::from_qml_type(const QVariant& v)
+int converter<int>::from_qml_type(int v)
 {
-  return v.toInt();
+  return v;
 }
 
-QVariant converter<std::string>::to_qml_type(const std::string& v)
+QString converter<std::string>::to_qml_type(const std::string& v)
 {
-  return QVariant::fromValue(QString::fromUtf8(v.c_str()));
+  return QString::fromUtf8(v.c_str());
 }
 
-std::string converter<std::string>::from_qml_type(const QVariant& v)
+std::string converter<std::string>::from_qml_type(const QString& v)
 {
-  return v.toString().toStdString();
+  return v.toStdString();
 }
 
-QVariant converter<vec2<double>>::to_qml_type(const vec2<double>& v)
+QPointF converter<vec2<double>>::to_qml_type(const vec2<double>& v)
 {
-  return QVariant::fromValue(
-    QPointF(static_cast<qreal>(v.x()), static_cast<qreal>(v.y())));
+  return QPointF(static_cast<qreal>(v.x()), static_cast<qreal>(v.y()));
 }
 
-vec2<double> converter<vec2<double>>::from_qml_type(const QVariant& v)
+vec2<double> converter<vec2<double>>::from_qml_type(const QPointF& v)
 {
-  const auto& pt = v.toPointF();
-  return vec2<double>(static_cast<double>(pt.x()), static_cast<double>(pt.y()));
+  return vec2<double>(static_cast<double>(v.x()), static_cast<double>(v.y()));
 }
 
-QVariant converter<vec2<float>>::to_qml_type(const vec2<float>& v)
+QPointF converter<vec2<float>>::to_qml_type(const vec2<float>& v)
 {
-  return QVariant::fromValue(
-    QPointF(static_cast<qreal>(v.x()), static_cast<qreal>(v.y())));
+  return QPointF(static_cast<qreal>(v.x()), static_cast<qreal>(v.y()));
 }
 
-vec2<float> converter<vec2<float>>::from_qml_type(const QVariant& v)
+vec2<float> converter<vec2<float>>::from_qml_type(const QPointF& v)
 {
-  const auto& pt = v.toPointF();
-  return vec2<float>(static_cast<float>(pt.x()), static_cast<float>(pt.y()));
+  return vec2<float>(static_cast<float>(v.x()), static_cast<float>(v.y()));
 }
 
-QVariant converter<vec2<int>>::to_qml_type(const vec2<int>& v)
+QPointF converter<vec2<int>>::to_qml_type(const vec2<int>& v)
 {
-  return QVariant::fromValue(
-    QPointF(static_cast<qreal>(v.x()), static_cast<qreal>(v.y())));
+  return QPointF(static_cast<qreal>(v.x()), static_cast<qreal>(v.y()));
 }
 
-vec2<int> converter<vec2<int>>::from_qml_type(const QVariant& v)
+vec2<int> converter<vec2<int>>::from_qml_type(const QPointF& v)
 {
-  const auto& pt = v.toPointF();
-  return vec2<int>(static_cast<int>(pt.x()), static_cast<int>(pt.y()));
+  return vec2<int>(static_cast<int>(v.x()), static_cast<int>(v.y()));
 }
+
+QVariant converter<qvariant>::to_qml_type(const qvariant& v)
+{
+  return v.get();
+}
+
 }
 }

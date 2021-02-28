@@ -22,6 +22,8 @@
 
 #include "qt/internal/qobject_builder.h"
 
+#include <dataflow/qt/conversion.h>
+
 #include <dataflow/utility/std_future.h>
 #include <dataflow/utility/utility.h>
 
@@ -148,22 +150,22 @@ make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
         read_only_props_, [&builder](const auto& def) {
           builder.add_property(def.first, [x = def.second]() {
             using type = core::data_type_t<decltype(x)>;
-            return convert_to_qml_type(x.template value<type>());
+            return cast_to_qml_type(x.template value<type>());
           });
         });
 
       utility::for_each_tuple_element(
         read_write_props_, [&builder](const auto& def) {
+          using type = core::data_type_t<decltype(def.second)>;
+          using qml_type = decltype(cast_to_qml_type(*def.second));
           builder.add_property(
             def.first,
-            [x = def.second]() { return convert_to_qml_type(*x); },
-            [x = def.second](const QVariant& v) {
-              using type = core::data_type_t<decltype(x)>;
-
-              const auto& value = converter<type>::from_qml_type(v);
-              if (*x != value)
+            [x = def.second]() { return cast_to_qml_type(*x); },
+            [x = def.second](const qml_type& qml_v) {
+              const auto& v = cast_from_qml_type<type>(qml_v);
+              if (*x != v)
               {
-                x = value;
+                x = v;
                 return true;
               }
               return false;
@@ -264,14 +266,14 @@ namespace qt
 namespace internal
 {
 DATAFLOW_QT_EXPORT ref<qobject>
-create_qml_data_list(const ref<listC<qml_data>>& xs);
+create_qvariant_list(const ref<listC<qvariant>>& xs);
 }
 }
 
 template <typename T> ref<qt::qobject> qt::QmlData(const ref<listC<T>>& xs)
 {
-  const auto ys = Map(xs, [](const T& x) { return qml_data{x}; });
+  const auto ys = Map(xs, [](const T& x) { return cast_to_qvariant(x); });
 
-  return internal::create_qml_data_list(ys);
+  return internal::create_qvariant_list(ys);
 }
 } // dataflow

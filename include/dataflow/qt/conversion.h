@@ -21,64 +21,69 @@
 #include "dataflow-qt_export.h"
 
 #include "qhandle.h"
+#include "qvariant.h"
 
 #include <dataflow/geometry.h>
 #include <dataflow/utility/std_future.h>
 
+#include <QtCore/QPoint>
+#include <QtCore/QString>
 #include <QtCore/QVariant>
 
 namespace dataflow
 {
 namespace qt
 {
-template <typename T> struct converter;
+template <typename FwT> struct converter
+{
+};
 
 template <> struct DATAFLOW_QT_EXPORT converter<bool>
 {
-  static QVariant to_qml_type(bool v);
-  static bool from_qml_type(const QVariant& v);
+  static bool to_qml_type(bool v);
+  static bool from_qml_type(bool v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<double>
 {
-  static QVariant to_qml_type(double v);
-  static double from_qml_type(const QVariant& v);
+  static double to_qml_type(double v);
+  static double from_qml_type(double v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<float>
 {
-  static QVariant to_qml_type(float v);
-  static float from_qml_type(const QVariant& v);
+  static float to_qml_type(float v);
+  static float from_qml_type(float v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<int>
 {
-  static QVariant to_qml_type(int v);
-  static int from_qml_type(const QVariant& v);
+  static int to_qml_type(int v);
+  static int from_qml_type(int v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<std::string>
 {
-  static QVariant to_qml_type(const std::string& v);
-  static std::string from_qml_type(const QVariant& v);
+  static QString to_qml_type(const std::string& v);
+  static std::string from_qml_type(const QString& v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<vec2<double>>
 {
-  static QVariant to_qml_type(const vec2<double>& v);
-  static vec2<double> from_qml_type(const QVariant& v);
+  static QPointF to_qml_type(const vec2<double>& v);
+  static vec2<double> from_qml_type(const QPointF& v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<vec2<float>>
 {
-  static QVariant to_qml_type(const vec2<float>& v);
-  static vec2<float> from_qml_type(const QVariant& v);
+  static QPointF to_qml_type(const vec2<float>& v);
+  static vec2<float> from_qml_type(const QPointF& v);
 };
 
 template <> struct DATAFLOW_QT_EXPORT converter<vec2<int>>
 {
-  static QVariant to_qml_type(const vec2<int>& v);
-  static vec2<int> from_qml_type(const QVariant& v);
+  static QPointF to_qml_type(const vec2<int>& v);
+  static vec2<int> from_qml_type(const QPointF& v);
 };
 
 template <typename TQObject> struct converter<qhandle<TQObject>>
@@ -89,32 +94,54 @@ template <typename TQObject> struct converter<qhandle<TQObject>>
   }
 };
 
+template <> struct DATAFLOW_QT_EXPORT converter<qvariant>
+{
+  static QVariant to_qml_type(const qvariant& v);
+};
+
 namespace detail
 {
-template <typename T> struct is_convertible_to_qml_type
+template <typename FwT> struct is_convertible_to_qml_type
 {
 private:
-  template <typename TT,
-            typename = decltype(converter<TT>::to_qml_type(std::declval<TT>()))>
-  static std::true_type test_(const TT*);
+  template <typename T,
+            typename = decltype(converter<T>::to_qml_type(std::declval<T>()))>
+  static std::true_type test_(const T*);
 
   static std::false_type test_(...);
 
 public:
-  using type = decltype(test_(std::declval<const T*>()));
+  using type = decltype(test_(std::declval<const FwT*>()));
 };
 }
 
-template <typename T>
+/// A type trait that checks whether flowable type `FwT` is convertible to a
+/// type that can be used from QML.
+///
+template <typename FwT>
 using is_convertible_to_qml_type =
-  typename detail::is_convertible_to_qml_type<std20::remove_cvref_t<T>>::type;
+  typename detail::is_convertible_to_qml_type<std20::remove_cvref_t<FwT>>::type;
 
-template <typename T>
-typename std::enable_if<is_convertible_to_qml_type<T>::value, QVariant>::type
-convert_to_qml_type(const T& v)
+template <typename FwT>
+decltype(converter<FwT>::to_qml_type(std::declval<FwT>()))
+cast_to_qml_type(const FwT& v)
 {
-  return converter<T>::to_qml_type(v);
+  return converter<FwT>::to_qml_type(v);
 }
 
+template <typename FwT, typename..., typename QmlT>
+decltype(converter<FwT>::from_qml_type(std::declval<QmlT>()))
+cast_from_qml_type(const QmlT& v)
+{
+  return converter<FwT>::from_qml_type(v);
+}
+
+template <typename FwT> qvariant cast_to_qvariant(const FwT& v)
+{
+  static_assert(is_convertible_to_qml_type<FwT>::value,
+                "A convertible to qml type is expected");
+
+  return qvariant{cast_to_qml_type(v)};
+}
 }
 }

@@ -16,36 +16,42 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include "qvariant_list_model.h"
+#pragma once
 
-#include <QtCore/QPoint>
+#include "dataflow-qt_export.h"
+
+#include "qhandle.h"
+
+#include <QtCore/QVariant>
 
 namespace dataflow
 {
 namespace qt
 {
-namespace internal
+/// A flowable wrapper for `QVariant`.
+///
+class DATAFLOW_QT_EXPORT qvariant
 {
-qvariant_list_model::qvariant_list_model(list<qvariant> data, QObject* p_parent)
-: QAbstractListModel{p_parent}
-, data_{std::move(data)}
-{
-}
+  template <typename FwT> friend qvariant cast_to_qvariant(const FwT& v);
 
-int qvariant_list_model::rowCount(const QModelIndex& index) const
-{
-  return static_cast<int>(data_.size());
-}
+public:
+  qvariant();
 
-QVariant qvariant_list_model::data(const QModelIndex& index, int role) const
-{
-  const auto idx = static_cast<std::size_t>(index.row());
+  const QVariant& get() const;
 
-  if (idx < data_.size())
-    return cast_to_qml_type(data_[idx]);
+  bool operator==(const qvariant& other) const;
+  bool operator!=(const qvariant& other) const;
 
-  return {};
-}
-}
+private:
+  explicit qvariant(const qobject& obj);
+  explicit qvariant(const QVariant& value);
+
+private:
+  qobject obj_;
+  QVariant value_;
+};
+
+DATAFLOW_QT_EXPORT std::ostream& operator<<(std::ostream& out,
+                                            const qvariant& v);
 }
 }

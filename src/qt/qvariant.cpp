@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -16,36 +16,44 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/qt/qml_data.h>
+#include <dataflow/qt/qvariant.h>
 
 namespace dataflow
 {
 namespace qt
 {
-qml_data::qml_data() = default;
+qvariant::qvariant() = default;
 
-qml_data::operator const QVariant&() const
+const QVariant& qvariant::get() const
 {
   return value_;
 }
 
-const std::shared_ptr<QObject> qml_data::to_qobject() const
-{
-  return p_qobject_;
-}
-
-bool qml_data::operator==(const qml_data& other) const
+bool qvariant::operator==(const qvariant& other) const
 {
   return value_ == other.value_;
 }
 
-bool qml_data::operator!=(const qml_data& other) const
+bool qvariant::operator!=(const qvariant& other) const
 {
   return !(*this == other);
 }
+
+qvariant::qvariant(const qobject& obj)
+: obj_{obj}
+, value_{QVariant::fromValue(obj.get())}
+{
 }
 
-std::ostream& qt::operator<<(std::ostream& out, const qml_data& v)
+qvariant::qvariant(const QVariant& value)
+: obj_{}
+, value_{value}
+{
+}
+
+}
+
+std::ostream& qt::operator<<(std::ostream& out, const qvariant& v)
 {
   // TODO: implement
   return out;

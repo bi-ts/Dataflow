@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,7 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #include <dataflow/list.h>
-#include <dataflow/qt/qml_data.h>
+#include <dataflow/qt/conversion.h>
 
 #include <QtCore/QAbstractListModel>
 
@@ -32,17 +32,17 @@ class qvariant_list_model : public QAbstractListModel
   Q_OBJECT
 
 public:
-  qvariant_list_model(list<qml_data> data, QObject* p_parent = nullptr);
+  qvariant_list_model(list<qvariant> data, QObject* p_parent = nullptr);
 
   int rowCount(const QModelIndex& index) const override;
   QVariant data(const QModelIndex& index, int role) const override;
 
-  const list<qml_data>& list_data() const
+  const list<qvariant>& list_data() const
   {
     return data_;
   }
 
-  void insert(integer idx, const qml_data& v)
+  void insert(integer idx, const qvariant& v)
   {
     beginInsertRows(QModelIndex(), idx, idx);
 
@@ -61,7 +61,7 @@ public:
   }
 
 private:
-  list<qml_data> data_;
+  list<qvariant> data_;
 };
 }
 }

@@ -143,7 +143,7 @@ public:
   {
   }
 
-  explicit qvariant_list_model_patch(const list_patch<qml_data>& patch)
+  explicit qvariant_list_model_patch(const list_patch<qvariant>& patch)
   : patch_{patch}
   {
   }
@@ -152,14 +152,14 @@ public:
   apply(const qhandle<qvariant_list_model>& model) const
   {
     patch_.apply([&](const integer& idx,
-                     const qml_data& x) { model.get()->insert(idx, x); },
+                     const qvariant& x) { model.get()->insert(idx, x); },
                  [&](const integer& idx) { model.get()->erase(idx); });
 
     return model;
   }
 
 private:
-  list_patch<qml_data> patch_;
+  list_patch<qvariant> patch_;
 };
 }
 }
@@ -173,7 +173,7 @@ template <> struct patch_type<qt::qhandle<qt::internal::qvariant_list_model>>
 }
 
 ref<qt::qobject>
-qt::internal::create_qml_data_list(const ref<listC<qml_data>>& xs)
+qt::internal::create_qvariant_list(const ref<listC<qvariant>>& xs)
 {
   struct policy
   {
@@ -182,13 +182,13 @@ qt::internal::create_qml_data_list(const ref<listC<qml_data>>& xs)
       return "qml-data-list";
     }
 
-    static qhandle<qvariant_list_model> calculate(const listC<qml_data>& xs)
+    static qhandle<qvariant_list_model> calculate(const listC<qvariant>& xs)
     {
       return qobject_factory::create<qvariant_list_model>(xs, nullptr);
     }
 
     qvariant_list_model_patch
-    prepare_patch(const core::diff_type_t<listC<qml_data>>& d)
+    prepare_patch(const core::diff_type_t<listC<qvariant>>& d)
     {
       return qvariant_list_model_patch{d.patch()};
     }

@@ -181,7 +181,7 @@ add_library(dataflow-qt SHARED
   include/dataflow/qt/conversion.h
   include/dataflow/qt/internal/qobject_builder.h
   include/dataflow/qt/qhandle.h
-  include/dataflow/qt/qml_data.h
+  include/dataflow/qt/qvariant.h
   src/qt.cpp
   src/qt/conversion.cpp
   src/qt/internal/dynamic_qobject.cpp
@@ -195,7 +195,7 @@ add_library(dataflow-qt SHARED
   src/qt/internal/qobject_tracker.h
   src/qt/internal/qvariant_list_model.cpp
   src/qt/internal/qvariant_list_model.h
-  src/qt/qml_data.cpp
+  src/qt/qvariant.cpp
 )
 
 set_target_properties(dataflow-qt PROPERTIES AUTOMOC ON)
