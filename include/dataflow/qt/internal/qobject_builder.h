@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,9 +20,8 @@
 
 #include "dataflow-qt_export.h"
 
+#include <dataflow/qt/qhandle.h>
 #include <dataflow/utility/std_future.h>
-
-#include <QtCore/QObject>
 
 #include <functional>
 #include <memory>
@@ -56,7 +55,7 @@ public:
   template <typename Func0>
   int add_slot(const std::string& name, const Func0& func);
 
-  std::shared_ptr<QObject> build();
+  qobject build();
 
 private:
   int add_property_(const std::string& name,

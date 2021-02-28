@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -19,6 +19,8 @@
 #pragma once
 
 #include "dataflow-qt_export.h"
+
+#include "qhandle.h"
 
 #include <dataflow/geometry.h>
 #include <dataflow/utility/std_future.h>
@@ -77,6 +79,14 @@ template <> struct DATAFLOW_QT_EXPORT converter<vec2<int>>
 {
   static QVariant to_qml_type(const vec2<int>& v);
   static vec2<int> from_qml_type(const QVariant& v);
+};
+
+template <typename TQObject> struct converter<qhandle<TQObject>>
+{
+  static QVariant to_qml_type(const qhandle<TQObject>& v)
+  {
+    return QVariant::fromValue(v.get());
+  }
 };
 
 namespace detail

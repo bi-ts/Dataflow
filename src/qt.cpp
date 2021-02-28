@@ -89,10 +89,10 @@ ref<bool> EngineQml::timeout_(const ref<integer>& interval_msec, dtime t0)
   return Second(TupleC(timer, *p_tick));
 }
 
-ref<qt::qml_data> qt::QmlComponent(const arg<std::string>& qml_url,
-                                   const arg<qml_data>& context)
+ref<qt::qobject> qt::QmlComponent(const arg<std::string>& qml_url,
+                                  const arg<qobject>& context)
 {
-  using component_data = tupleC<std::shared_ptr<QQmlContext>, qml_data>;
+  using component_data = tupleC<qhandle<QQmlContext>, qobject>;
 
   class policy
   {
@@ -102,8 +102,7 @@ ref<qt::qml_data> qt::QmlComponent(const arg<std::string>& qml_url,
       return "qml-component";
     }
 
-    component_data calculate(const std::string& qml_url,
-                             const qml_data& context)
+    component_data calculate(const std::string& qml_url, const qobject& context)
     {
       QQmlComponent qml_component_factory{
         &EngineQml::instance().GetQmlEngine(),
@@ -116,15 +115,15 @@ ref<qt::qml_data> qt::QmlComponent(const arg<std::string>& qml_url,
           qml_component_factory.errorString().toStdString());
       }
 
-      const auto p_qml_context = internal::qobject_factory::create<QQmlContext>(
+      const auto qml_context = internal::qobject_factory::create<QQmlContext>(
         EngineQml::instance().GetQmlEngine().rootContext());
 
-      p_qml_context->setContextProperty("view_context", context);
+      qml_context.get()->setContextProperty("view_context", context.get());
 
-      const auto p_qml_component = internal::qobject_factory::make_shared(
-        qml_component_factory.create(p_qml_context.get()));
+      const auto qml_component = internal::qobject_factory::make_shared(
+        qml_component_factory.create(qml_context.get()));
 
-      return component_data{p_qml_context, p_qml_component};
+      return component_data{qml_context, qml_component};
     };
   };
 
@@ -138,10 +137,9 @@ namespace internal
 class qvariant_list_model_patch
 {
 public:
-  explicit qvariant_list_model_patch(
-    const std::shared_ptr<qvariant_list_model>& curr,
-    const std::shared_ptr<qvariant_list_model>& prev)
-  : patch_{curr->list_data(), prev->list_data()}
+  explicit qvariant_list_model_patch(const qhandle<qvariant_list_model>& curr,
+                                     const qhandle<qvariant_list_model>& prev)
+  : patch_{curr.get()->list_data(), prev.get()->list_data()}
   {
   }
 
@@ -150,14 +148,14 @@ public:
   {
   }
 
-  std::shared_ptr<qvariant_list_model>
-  apply(const std::shared_ptr<qvariant_list_model>& p_model) const
+  qhandle<qvariant_list_model>
+  apply(const qhandle<qvariant_list_model>& model) const
   {
-    patch_.apply(
-      [&](const integer& idx, const qml_data& x) { p_model->insert(idx, x); },
-      [&](const integer& idx) { p_model->erase(idx); });
+    patch_.apply([&](const integer& idx,
+                     const qml_data& x) { model.get()->insert(idx, x); },
+                 [&](const integer& idx) { model.get()->erase(idx); });
 
-    return p_model;
+    return model;
   }
 
 private:
@@ -168,14 +166,13 @@ private:
 
 namespace core
 {
-template <>
-struct patch_type<std::shared_ptr<qt::internal::qvariant_list_model>>
+template <> struct patch_type<qt::qhandle<qt::internal::qvariant_list_model>>
 {
   using type = qt::internal::qvariant_list_model_patch;
 };
 }
 
-ref<qt::qml_data>
+ref<qt::qobject>
 qt::internal::create_qml_data_list(const ref<listC<qml_data>>& xs)
 {
   struct policy
@@ -185,8 +182,7 @@ qt::internal::create_qml_data_list(const ref<listC<qml_data>>& xs)
       return "qml-data-list";
     }
 
-    static std::shared_ptr<qvariant_list_model>
-    calculate(const listC<qml_data>& xs)
+    static qhandle<qvariant_list_model> calculate(const listC<qml_data>& xs)
     {
       return qobject_factory::create<qvariant_list_model>(xs, nullptr);
     }
@@ -198,6 +194,6 @@ qt::internal::create_qml_data_list(const ref<listC<qml_data>>& xs)
     }
   };
 
-  return QmlData(core::LiftPatcher<policy>(xs));
+  return Cast<qobject>(core::LiftPatcher<policy>(xs));
 }
 }

@@ -28,6 +28,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <chrono>
+#include <sstream>
 #include <thread>
 
 namespace dataflow2qt = dataflow::qt;
@@ -52,6 +53,18 @@ BOOST_AUTO_TEST_CASE(test_conversion_type_traits)
     true);
   BOOST_CHECK_EQUAL((dataflow2qt::is_convertible_to_qml_type<void>::value),
                     false);
+}
+
+BOOST_AUTO_TEST_CASE(test_qobject_default_ctor)
+{
+  dataflow2qt::qobject obj;
+
+  BOOST_CHECK(obj.get() == nullptr);
+
+  std::stringstream ss;
+  ss << obj;
+
+  BOOST_CHECK_EQUAL(ss.str(), "QObject (null)");
 }
 
 BOOST_AUTO_TEST_CASE(test_QmlData_int)
@@ -130,7 +143,10 @@ BOOST_AUTO_TEST_CASE(test_QmlContext_minimal)
 
   const auto m = Main(context);
 
-  BOOST_CHECK((*m).to_qobject() != nullptr);
+  BOOST_CHECK((*m).get() != nullptr);
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::value(m),
+                    "QObject (dataflow::qt::internal::dynamic_qobject)");
 }
 
 BOOST_AUTO_TEST_CASE(test_QmlContext)
@@ -161,62 +177,61 @@ BOOST_AUTO_TEST_CASE(test_QmlContext)
 
   const auto m = Main(context);
 
-  BOOST_CHECK((*m).to_qobject() != nullptr);
+  BOOST_CHECK((*m).get() != nullptr);
 
-  BOOST_CHECK((*m).to_qobject()->property("x").isValid());
-  BOOST_CHECK((*m).to_qobject()->property("y").isValid());
-  BOOST_CHECK((*m).to_qobject()->property("z").isValid());
-  BOOST_CHECK((*m).to_qobject()->property("a").isValid());
-  BOOST_CHECK((*m).to_qobject()->property("b").isValid());
-  BOOST_CHECK((*m).to_qobject()->property("c").isValid());
-  BOOST_CHECK((*m).to_qobject()->property("d").isValid());
+  BOOST_CHECK((*m).get()->property("x").isValid());
+  BOOST_CHECK((*m).get()->property("y").isValid());
+  BOOST_CHECK((*m).get()->property("z").isValid());
+  BOOST_CHECK((*m).get()->property("a").isValid());
+  BOOST_CHECK((*m).get()->property("b").isValid());
+  BOOST_CHECK((*m).get()->property("c").isValid());
+  BOOST_CHECK((*m).get()->property("d").isValid());
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("x").toInt(), 1);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("y").toString().toStdString(),
-                    "str");
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("z").toFloat(), 3.14f);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("a").toInt(), 3);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("b").toString().toStdString(),
+  BOOST_CHECK_EQUAL((*m).get()->property("x").toInt(), 1);
+  BOOST_CHECK_EQUAL((*m).get()->property("y").toString().toStdString(), "str");
+  BOOST_CHECK_EQUAL((*m).get()->property("z").toFloat(), 3.14f);
+  BOOST_CHECK_EQUAL((*m).get()->property("a").toInt(), 3);
+  BOOST_CHECK_EQUAL((*m).get()->property("b").toString().toStdString(),
                     "str-str");
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("c").toFloat(), 6.28f);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("d").toInt(), 1);
+  BOOST_CHECK_EQUAL((*m).get()->property("c").toFloat(), 6.28f);
+  BOOST_CHECK_EQUAL((*m).get()->property("d").toInt(), 1);
 
   x = 3;
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("a").toInt(), 9);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("b").toString().toStdString(),
+  BOOST_CHECK_EQUAL((*m).get()->property("a").toInt(), 9);
+  BOOST_CHECK_EQUAL((*m).get()->property("b").toString().toStdString(),
                     "str-str");
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("c").toFloat(), 6.28f);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("d").toInt(), 3);
+  BOOST_CHECK_EQUAL((*m).get()->property("c").toFloat(), 6.28f);
+  BOOST_CHECK_EQUAL((*m).get()->property("d").toInt(), 3);
 
   y = "abc";
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("a").toInt(), 9);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("b").toString().toStdString(),
+  BOOST_CHECK_EQUAL((*m).get()->property("a").toInt(), 9);
+  BOOST_CHECK_EQUAL((*m).get()->property("b").toString().toStdString(),
                     "abc-abc");
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("c").toFloat(), 6.28f);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("d").toInt(), 3);
+  BOOST_CHECK_EQUAL((*m).get()->property("c").toFloat(), 6.28f);
+  BOOST_CHECK_EQUAL((*m).get()->property("d").toInt(), 3);
 
   z = 2.17f;
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("a").toInt(), 9);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("b").toString().toStdString(),
+  BOOST_CHECK_EQUAL((*m).get()->property("a").toInt(), 9);
+  BOOST_CHECK_EQUAL((*m).get()->property("b").toString().toStdString(),
                     "abc-abc");
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("c").toFloat(), 4.34f);
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("d").toInt(), 3);
+  BOOST_CHECK_EQUAL((*m).get()->property("c").toFloat(), 4.34f);
+  BOOST_CHECK_EQUAL((*m).get()->property("d").toInt(), 3);
 
-  (*m).to_qobject()->setProperty("x", 4);
+  (*m).get()->setProperty("x", 4);
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("a").toInt(), 12);
+  BOOST_CHECK_EQUAL((*m).get()->property("a").toInt(), 12);
 
-  (*m).to_qobject()->setProperty("y", "123");
+  (*m).get()->setProperty("y", "123");
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("b").toString().toStdString(),
+  BOOST_CHECK_EQUAL((*m).get()->property("b").toString().toStdString(),
                     "123-123");
 
-  (*m).to_qobject()->setProperty("z", 4.14f);
+  (*m).get()->setProperty("z", 4.14f);
 
-  BOOST_CHECK_EQUAL((*m).to_qobject()->property("c").toFloat(), 8.28f);
+  BOOST_CHECK_EQUAL((*m).get()->property("c").toFloat(), 8.28f);
 }
 
 BOOST_AUTO_TEST_CASE(test_Timeout)

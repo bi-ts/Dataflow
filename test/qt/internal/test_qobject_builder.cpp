@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -85,15 +85,15 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_minimal_qobject)
 
   dataflow2qt::internal::qobject_builder builder;
 
-  const auto p_qobject = builder.build();
+  const auto obj = builder.build();
 
-  BOOST_REQUIRE(p_qobject != nullptr);
+  BOOST_REQUIRE(obj.get() != nullptr);
 
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->className(),
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->className(),
                     "dataflow::qt::internal::dynamic_qobject");
 
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->propertyCount(), 1);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->methodCount(), 5);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->propertyCount(), 1);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->methodCount(), 5);
 }
 
 BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_readonly_property)
@@ -110,40 +110,40 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_readonly_property)
   const auto x_changed_signal_idx =
     builder.add_property("x", [p_x]() { return *p_x; });
 
-  const auto p_qobject = builder.build();
+  const auto obj = builder.build();
 
-  BOOST_REQUIRE(p_qobject != nullptr);
+  BOOST_REQUIRE(obj.get() != nullptr);
 
-  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->propertyCount(), 2);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->property(1).name(), "x");
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->property(1).typeName(), "int");
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->property(1).isWritable(), false);
+  BOOST_REQUIRE_EQUAL(obj.get()->metaObject()->propertyCount(), 2);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->property(1).name(), "x");
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->property(1).typeName(), "int");
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->property(1).isWritable(), false);
 
-  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->methodCount(), 6);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->method(5).methodType(),
+  BOOST_REQUIRE_EQUAL(obj.get()->metaObject()->methodCount(), 6);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->method(5).methodType(),
                     QMetaMethod::Signal);
 
-  BOOST_CHECK_EQUAL(p_qobject->property("x").toInt(), 1);
+  BOOST_CHECK_EQUAL(obj.get()->property("x").toInt(), 1);
 
-  lambda_connector::connect(p_qobject.get(),
+  lambda_connector::connect(obj.get(),
                             SIGNAL(xChanged()),
                             [p_x_change_count]() { (*p_x_change_count)++; });
 
   BOOST_CHECK_EQUAL(*p_x, 1);
   BOOST_CHECK_EQUAL(*p_x_change_count, 0);
 
-  BOOST_CHECK_EQUAL(p_qobject->setProperty("x", 10), false);
+  BOOST_CHECK_EQUAL(obj.get()->setProperty("x", 10), false);
 
   BOOST_CHECK_EQUAL(*p_x, 1);
   BOOST_CHECK_EQUAL(*p_x_change_count, 0);
 
   *p_x = 33;
 
-  BOOST_CHECK_EQUAL(p_qobject->property("x").toInt(), 33);
+  BOOST_CHECK_EQUAL(obj.get()->property("x").toInt(), 33);
   BOOST_CHECK_EQUAL(*p_x, 33);
   BOOST_CHECK_EQUAL(*p_x_change_count, 0);
 
-  BOOST_CHECK(invoke_method(p_qobject.get(), x_changed_signal_idx));
+  BOOST_CHECK(invoke_method(obj.get(), x_changed_signal_idx));
 
   BOOST_CHECK_EQUAL(*p_x_change_count, 1);
 }
@@ -171,22 +171,22 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_rw_property)
       return false;
     });
 
-  const auto p_qobject = builder.build();
+  const auto obj = builder.build();
 
-  BOOST_REQUIRE(p_qobject != nullptr);
+  BOOST_REQUIRE(obj.get() != nullptr);
 
-  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->propertyCount(), 2);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->property(1).name(), "x");
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->property(1).typeName(), "int");
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->property(1).isWritable(), true);
+  BOOST_REQUIRE_EQUAL(obj.get()->metaObject()->propertyCount(), 2);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->property(1).name(), "x");
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->property(1).typeName(), "int");
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->property(1).isWritable(), true);
 
-  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->methodCount(), 6);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->method(5).methodType(),
+  BOOST_REQUIRE_EQUAL(obj.get()->metaObject()->methodCount(), 6);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->method(5).methodType(),
                     QMetaMethod::Signal);
 
-  BOOST_CHECK_EQUAL(p_qobject->property("x").toInt(), 1);
+  BOOST_CHECK_EQUAL(obj.get()->property("x").toInt(), 1);
 
-  lambda_connector::connect(p_qobject.get(),
+  lambda_connector::connect(obj.get(),
                             SIGNAL(xChanged()),
                             [p_x_change_count]() { (*p_x_change_count)++; });
 
@@ -194,13 +194,13 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_rw_property)
   BOOST_CHECK_EQUAL(*p_x_change_count, 0);
 
   // Assign via `setProperty()`
-  BOOST_CHECK_EQUAL(p_qobject->setProperty("x", 10), true);
+  BOOST_CHECK_EQUAL(obj.get()->setProperty("x", 10), true);
 
   BOOST_CHECK_EQUAL(*p_x, 10);
   BOOST_CHECK_EQUAL(*p_x_change_count, 1);
 
   // Assign from javascript
-  js_engine js{"testContext", p_qobject};
+  js_engine js{"testContext", obj.get()};
 
   js.eval("testContext.x = 5;\n");
 
@@ -225,41 +225,41 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_add_slot)
   const auto func_b_idx = builder.add_slot(
     "myFuncB", [p_invoke_count_b]() { return ++(*p_invoke_count_b); });
 
-  const auto p_qobject = builder.build();
+  const auto obj = builder.build();
 
-  BOOST_REQUIRE(p_qobject != nullptr);
+  BOOST_REQUIRE(obj.get() != nullptr);
 
-  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->propertyCount(), 1);
+  BOOST_REQUIRE_EQUAL(obj.get()->metaObject()->propertyCount(), 1);
 
-  BOOST_REQUIRE_EQUAL(p_qobject->metaObject()->methodCount(), 7);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->method(5).methodType(),
+  BOOST_REQUIRE_EQUAL(obj.get()->metaObject()->methodCount(), 7);
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->method(5).methodType(),
                     QMetaMethod::Slot);
-  BOOST_CHECK_EQUAL(p_qobject->metaObject()->method(6).methodType(),
+  BOOST_CHECK_EQUAL(obj.get()->metaObject()->method(6).methodType(),
                     QMetaMethod::Slot);
 
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 0);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 0);
 
   // Invoke by method index
-  BOOST_CHECK(invoke_method(p_qobject.get(), func_a_idx));
+  BOOST_CHECK(invoke_method(obj.get(), func_a_idx));
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 1);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 0);
 
-  BOOST_CHECK(invoke_method(p_qobject.get(), func_b_idx));
+  BOOST_CHECK(invoke_method(obj.get(), func_b_idx));
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 1);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 1);
 
   // Invoke by method name
-  BOOST_CHECK(QMetaObject::invokeMethod(p_qobject.get(), "myFuncB"));
+  BOOST_CHECK(QMetaObject::invokeMethod(obj.get(), "myFuncB"));
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 1);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
 
-  BOOST_CHECK(QMetaObject::invokeMethod(p_qobject.get(), "myFuncA"));
+  BOOST_CHECK(QMetaObject::invokeMethod(obj.get(), "myFuncA"));
   BOOST_CHECK_EQUAL(*p_invoke_count_a, 2);
   BOOST_CHECK_EQUAL(*p_invoke_count_b, 2);
 
   // Invoke from javascript
-  js_engine js{"testContext", p_qobject};
+  js_engine js{"testContext", obj.get()};
 
   js.eval("testContext.myFuncA();");
 

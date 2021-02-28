@@ -65,8 +65,7 @@ using make_filtered_index_sequence =
 class qobject_patch
 {
 public:
-  explicit qobject_patch(const std::shared_ptr<QObject>& curr,
-                         const std::shared_ptr<QObject>& prev)
+  explicit qobject_patch(const qobject& curr, const qobject& prev)
   : global_signal_indices_{}
   {
   }
@@ -76,16 +75,15 @@ public:
   {
   }
 
-  std::shared_ptr<QObject>
-  apply(const std::shared_ptr<QObject>& p_qobject) const
+  qobject apply(const qobject& obj) const
   {
     for (const auto& idx : global_signal_indices_)
     {
-      const QMetaMethod method = p_qobject->metaObject()->method(idx);
-      method.invoke(p_qobject.get());
+      const QMetaMethod method = obj.get()->metaObject()->method(idx);
+      method.invoke(obj.get());
     }
 
-    return p_qobject;
+    return obj;
   }
 
 private:
@@ -99,7 +97,7 @@ namespace dataflow
 {
 namespace core
 {
-template <> struct patch_type<std::shared_ptr<QObject>>
+template <> struct patch_type<qt::qobject>
 {
   using type = dataflow::qt::internal::qobject_patch;
 };
@@ -116,7 +114,7 @@ template <typename... Refs,
           std::size_t... ReadOnlyIndices,
           std::size_t... ReadWriteIndices,
           std::size_t... SignalsIndices>
-ref<std::shared_ptr<QObject>>
+ref<qobject>
 make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
                  const std14::index_sequence<ReadOnlyIndices...>&,
                  const std14::index_sequence<ReadWriteIndices...>&,
@@ -139,7 +137,7 @@ make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
       return "qml-context";
     }
 
-    std::shared_ptr<QObject> calculate(
+    qobject calculate(
       const core::data_type_t<
         typename std::tuple_element<ReadOnlyIndices,
                                     std::tuple<Refs...>>::type>&... values)
@@ -150,8 +148,7 @@ make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
         read_only_props_, [&builder](const auto& def) {
           builder.add_property(def.first, [x = def.second]() {
             using type = core::data_type_t<decltype(x)>;
-            // TODO: improve to-qml-conversion
-            return QVariant(qml_data{x.template value<type>()});
+            return convert_to_qml_type(x.template value<type>());
           });
         });
 
@@ -211,11 +208,10 @@ make_qml_context(const std::tuple<std::pair<std::string, Refs>...>& defs,
     std::get<ReadOnlyIndices>(defs).second...);
 }
 
-inline ref<std::shared_ptr<QObject>>
-make_qml_context(const std::tuple<>&,
-                 const std14::index_sequence<>&,
-                 const std14::index_sequence<>&,
-                 const std14::index_sequence<>&)
+inline ref<qobject> make_qml_context(const std::tuple<>&,
+                                     const std14::index_sequence<>&,
+                                     const std14::index_sequence<>&,
+                                     const std14::index_sequence<>&)
 {
   internal::qobject_builder builder;
   return Const(builder.build());
@@ -245,7 +241,7 @@ std::pair<std::string, ref<T>> qt::QmlProperty(const std::string& name,
 }
 
 template <typename... Refs>
-ref<qt::qml_data> qt::QmlContext(const std::pair<std::string, Refs>&... defs)
+ref<qt::qobject> qt::QmlContext(const std::pair<std::string, Refs>&... defs)
 {
   const auto read_only_props_indices = internal::make_filtered_index_sequence<(
     core::is_ref<Refs>::value && !core::is_var<Refs>::value &&
@@ -257,22 +253,22 @@ ref<qt::qml_data> qt::QmlContext(const std::pair<std::string, Refs>&... defs)
   const auto signals_indices =
     internal::make_filtered_index_sequence<core::is_sig<Refs>::value...>{};
 
-  return QmlData(internal::make_qml_context(std::make_tuple(defs...),
-                                            read_only_props_indices,
-                                            read_write_props_indices,
-                                            signals_indices));
+  return internal::make_qml_context(std::make_tuple(defs...),
+                                    read_only_props_indices,
+                                    read_write_props_indices,
+                                    signals_indices);
 }
 
 namespace qt
 {
 namespace internal
 {
-DATAFLOW_QT_EXPORT ref<qml_data>
+DATAFLOW_QT_EXPORT ref<qobject>
 create_qml_data_list(const ref<listC<qml_data>>& xs);
 }
 }
 
-template <typename T> ref<qt::qml_data> qt::QmlData(const ref<listC<T>>& xs)
+template <typename T> ref<qt::qobject> qt::QmlData(const ref<listC<T>>& xs)
 {
   const auto ys = Map(xs, [](const T& x) { return qml_data{x}; });
 

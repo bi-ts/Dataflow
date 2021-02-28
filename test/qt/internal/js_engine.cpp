@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -24,13 +24,12 @@
 
 namespace dataflow_test
 {
-js_engine::js_engine(const std::string& object_name,
-                     const std::shared_ptr<QObject>& p_qobject)
+js_engine::js_engine(const std::string& object_name, QObject* p_qobject)
 : js_engine_{}
 {
-  QJSValue js_object = js_engine_.newQObject(p_qobject.get());
+  QJSValue js_object = js_engine_.newQObject(p_qobject);
 
-  QQmlEngine::setObjectOwnership(p_qobject.get(), QQmlEngine::CppOwnership);
+  QQmlEngine::setObjectOwnership(p_qobject, QQmlEngine::CppOwnership);
 
   js_engine_.globalObject().setProperty(object_name.c_str(), js_object);
 }

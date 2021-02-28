@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,9 +20,7 @@
 
 #include "qobject_deleter.h"
 
-#include <QtCore/QObject>
-
-#include <memory>
+#include <dataflow/qt/qhandle.h>
 
 namespace dataflow
 {
@@ -33,23 +31,19 @@ namespace internal
 class qobject_factory
 {
 public:
-  template <typename Object, typename... Args>
-  static std::shared_ptr<Object> create(Args&&... args)
-  {
-    const std::shared_ptr<Object> p_qobject{
-      new Object{std::forward<Args>(args)...}, qobject_deleter{}};
-
-    debug_track_(p_qobject.get());
-
-    return p_qobject;
-  }
-
-  template <typename Object>
-  static std::shared_ptr<Object> make_shared(Object* p_qobject)
+  template <typename TQObject>
+  static qhandle<TQObject> make_shared(TQObject* p_qobject)
   {
     debug_track_(p_qobject);
 
-    return std::shared_ptr<Object>{p_qobject, qobject_deleter{}};
+    return qhandle<TQObject>{
+      std::shared_ptr<TQObject>{p_qobject, qobject_deleter{}}};
+  }
+
+  template <typename TQObject, typename... Args>
+  static qhandle<TQObject> create(Args&&... args)
+  {
+    return make_shared<TQObject>(new TQObject{std::forward<Args>(args)...});
   }
 
   static void on_shutdown();

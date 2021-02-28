@@ -52,7 +52,7 @@ qobject_builder::~qobject_builder()
 {
 }
 
-std::shared_ptr<QObject> qobject_builder::build()
+qobject qobject_builder::build()
 {
   if (!p_data_)
     throw std::logic_error("qobject_builder can't be reused");
@@ -63,7 +63,7 @@ std::shared_ptr<QObject> qobject_builder::build()
   dynamic_qobject::qmeta_object_ptr p_meta_object{
     p_data_->meta_object_builder.toMetaObject(), std::free};
 
-  const auto p_qobject =
+  const auto obj =
     qobject_factory::create<dynamic_qobject>(nullptr,
                                              std::move(p_meta_object),
                                              std::move(p_data_->properties),
@@ -71,7 +71,7 @@ std::shared_ptr<QObject> qobject_builder::build()
 
   p_data_ = nullptr;
 
-  return p_qobject;
+  return obj;
 }
 
 int qobject_builder::add_property_(

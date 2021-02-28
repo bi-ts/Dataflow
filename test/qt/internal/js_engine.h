@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -18,7 +18,6 @@
 
 #include <QtQml/QJSEngine>
 
-#include <memory>
 #include <string>
 
 namespace dataflow_test
@@ -26,8 +25,7 @@ namespace dataflow_test
 class js_engine
 {
 public:
-  explicit js_engine(const std::string& object_name,
-                     const std::shared_ptr<QObject>& p_qobject);
+  explicit js_engine(const std::string& object_name, QObject* p_qobject);
 
   void eval(const std::string& code);
 
