@@ -172,28 +172,30 @@ template <> struct patch_type<qt::qhandle<qt::internal::qvariant_list_model>>
 };
 }
 
-ref<qt::qobject>
-qt::internal::create_qvariant_list(const ref<listC<qvariant>>& xs)
+std::pair<std::string, ref<qt::qobject>>
+qt::QmlProperty(const std::string& name, const ref<listC<qvariant>>& xs)
 {
   struct policy
   {
     std::string label() const
     {
-      return "qml-data-list";
+      return "qml-property-list";
     }
 
-    static qhandle<qvariant_list_model> calculate(const listC<qvariant>& xs)
+    static qhandle<internal::qvariant_list_model>
+    calculate(const listC<qvariant>& xs)
     {
-      return qobject_factory::create<qvariant_list_model>(xs, nullptr);
+      return internal::qobject_factory::create<internal::qvariant_list_model>(
+        xs, nullptr);
     }
 
-    qvariant_list_model_patch
+    internal::qvariant_list_model_patch
     prepare_patch(const core::diff_type_t<listC<qvariant>>& d)
     {
-      return qvariant_list_model_patch{d.patch()};
+      return internal::qvariant_list_model_patch{d.patch()};
     }
   };
 
-  return Cast<qobject>(core::LiftPatcher<policy>(xs));
+  return std::make_pair(name, Cast<qobject>(core::LiftPatcher<policy>(xs)));
 }
 }

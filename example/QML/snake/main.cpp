@@ -168,7 +168,7 @@ int main(int argc, char* p_argv[])
       qt::QmlFunction("togglePause", toggle_pause),
       qt::QmlFunction("restartGame", restart_game),
       qt::QmlProperty("fieldSize", field_size),
-      qt::QmlProperty("snakeBody", qt::QmlData(SnakeBody(game_state))),
+      qt::QmlProperty("snakeBody", SnakeBody(game_state)),
       qt::QmlProperty("gameOver",
                       CurrentState(game_state) == game_state::ended));
 

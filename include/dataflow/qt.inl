@@ -235,11 +235,19 @@ inline std::pair<std::string, sig> qt::QmlFunction(const std::string& name,
   return std::make_pair(name, x);
 }
 
-template <typename T>
+template <typename T, typename..., typename>
 std::pair<std::string, ref<T>> qt::QmlProperty(const std::string& name,
                                                const ref<T>& x)
 {
   return std::make_pair(name, x);
+}
+
+template <typename T>
+std::pair<std::string, ref<qt::qobject>>
+qt::QmlProperty(const std::string& name, const ref<listC<T>>& xs)
+{
+  return QmlProperty(name,
+                     Map(xs, [](const T& x) { return cast_to_qvariant(x); }));
 }
 
 template <typename... Refs>
@@ -259,21 +267,5 @@ ref<qt::qobject> qt::QmlContext(const std::pair<std::string, Refs>&... defs)
                                     read_only_props_indices,
                                     read_write_props_indices,
                                     signals_indices);
-}
-
-namespace qt
-{
-namespace internal
-{
-DATAFLOW_QT_EXPORT ref<qobject>
-create_qvariant_list(const ref<listC<qvariant>>& xs);
-}
-}
-
-template <typename T> ref<qt::qobject> qt::QmlData(const ref<listC<T>>& xs)
-{
-  const auto ys = Map(xs, [](const T& x) { return cast_to_qvariant(x); });
-
-  return internal::create_qvariant_list(ys);
 }
 } // dataflow

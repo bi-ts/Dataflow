@@ -25,7 +25,7 @@
 
 #include <dataflow/list.h>
 #include <dataflow/prelude.h>
-#include <dataflow/qt/qhandle.h>
+#include <dataflow/qt/conversion.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QObject>
@@ -70,14 +70,22 @@ std::pair<std::string, var<T>> QmlPropertyRW(const std::string& name,
 
 std::pair<std::string, sig> QmlFunction(const std::string& name, const sig& x);
 
-template <typename T>
+template <typename T,
+          typename...,
+          typename =
+            typename std::enable_if<is_convertible_to_qml_type<T>::value>::type>
 std::pair<std::string, ref<T>> QmlProperty(const std::string& name,
                                            const ref<T>& x);
 
+DATAFLOW_QT_EXPORT std::pair<std::string, ref<qobject>>
+QmlProperty(const std::string& name, const ref<listC<qvariant>>& xs);
+
+template <typename T>
+std::pair<std::string, ref<qobject>> QmlProperty(const std::string& name,
+                                                 const ref<listC<T>>& xs);
+
 template <typename... Refs>
 ref<qobject> QmlContext(const std::pair<std::string, Refs>&... props);
-
-template <typename T> ref<qobject> QmlData(const ref<listC<T>>& xs);
 
 DATAFLOW_QT_EXPORT ref<qobject> QmlComponent(const arg<std::string>& qml_url,
                                              const arg<qobject>& context);
