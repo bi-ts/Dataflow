@@ -120,25 +120,50 @@ template <typename FwT>
 using is_convertible_to_qml_type = typename detail::is_convertible_to_qml_type<
   dataflow::std20::remove_cvref_t<FwT>>::type;
 
-template <typename FwT>
-decltype(converter<FwT>::to_qml_type(std::declval<FwT>()))
-cast_to_qml_type(const FwT& v)
+template <
+  typename FwT,
+  typename...,
+  typename QmlT = decltype(converter<FwT>::to_qml_type(std::declval<FwT>()))>
+QmlT cast_to_qml_type(const FwT& v);
+
+template <
+  typename FwT,
+  typename...,
+  typename QmlT,
+  typename = decltype(converter<FwT>::from_qml_type(std::declval<QmlT>()))>
+FwT cast_from_qml_type(const QmlT& v);
+
+template <typename FwT> qvariant cast_to_qvariant(const FwT& v);
+
+template <typename TQObject>
+qvariant cast_to_qvariant(const qhandle<TQObject>& v);
+
+DATAFLOW_QT_EXPORT qvariant cast_to_qvariant(const qvariant& v);
+}
+
+template <typename FwT, typename..., typename QmlT>
+QmlT dataflow2qt::cast_to_qml_type(const FwT& v)
 {
   return converter<FwT>::to_qml_type(v);
 }
 
-template <typename FwT, typename..., typename QmlT>
-decltype(converter<FwT>::from_qml_type(std::declval<QmlT>()))
-cast_from_qml_type(const QmlT& v)
+template <typename FwT, typename..., typename QmlT, typename>
+FwT dataflow2qt::cast_from_qml_type(const QmlT& v)
 {
   return converter<FwT>::from_qml_type(v);
 }
 
-template <typename FwT> qvariant cast_to_qvariant(const FwT& v)
+template <typename FwT>
+dataflow2qt::qvariant dataflow2qt::cast_to_qvariant(const FwT& v)
 {
   static_assert(is_convertible_to_qml_type<FwT>::value,
-                "A convertible to qml type is expected");
+                "A type convertible to qml is expected");
 
   return qvariant{cast_to_qml_type(v)};
 }
+
+template <typename TQObject>
+dataflow2qt::qvariant dataflow2qt::cast_to_qvariant(const qhandle<TQObject>& v)
+{
+  return qvariant{v};
 }

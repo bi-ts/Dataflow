@@ -31,6 +31,10 @@ namespace dataflow2qt
 class DATAFLOW_QT_EXPORT qvariant
 {
   template <typename FwT> friend qvariant cast_to_qvariant(const FwT& v);
+  template <typename TQObject>
+  friend qvariant cast_to_qvariant(const qhandle<TQObject>& v);
+  DATAFLOW_QT_EXPORT friend std::ostream& operator<<(std::ostream& out,
+                                                     const qvariant& v);
 
 public:
   qvariant();

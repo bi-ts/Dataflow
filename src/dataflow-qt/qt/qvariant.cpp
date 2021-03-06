@@ -52,6 +52,18 @@ qvariant::qvariant(const QVariant& value)
 
 std::ostream& dataflow2qt::operator<<(std::ostream& out, const qvariant& v)
 {
-  // TODO: implement
+  out << "qvariant (";
+
+  if (qvariant_cast<QObject*>(v.get()) != nullptr)
+  {
+    out << v.obj_;
+  }
+  else
+  {
+    out << v.get().toString().toStdString();
+  }
+
+  out << ")";
+
   return out;
 }

@@ -113,3 +113,8 @@ QVariant converter<qvariant>::to_qml_type(const qvariant& v)
   return v.get();
 }
 }
+
+dataflow2qt::qvariant dataflow2qt::cast_to_qvariant(const qvariant& v)
+{
+  return v;
+}

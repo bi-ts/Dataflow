@@ -28,7 +28,6 @@
 #include <boost/test/unit_test.hpp>
 
 #include <chrono>
-#include <sstream>
 #include <thread>
 
 namespace dataflow_test
@@ -51,38 +50,6 @@ BOOST_AUTO_TEST_CASE(test_is_convertible_to_qml_type)
     true);
   BOOST_CHECK_EQUAL((dataflow2qt::is_convertible_to_qml_type<void>::value),
                     false);
-}
-
-BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_int)
-{
-  const dataflow2qt::qvariant v = dataflow2qt::cast_to_qvariant(13);
-
-  BOOST_CHECK_EQUAL(v.get().toInt(), 13);
-}
-
-BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_qobject)
-{
-  dataflow::Engine engine;
-
-  const dataflow::val<dataflow2qt::qobject> m = Main(dataflow2qt::QmlContext());
-
-  const auto& obj = *m;
-
-  const dataflow2qt::qvariant& v = dataflow2qt::cast_to_qvariant(obj);
-
-  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(v.get()), obj.get());
-}
-
-BOOST_AUTO_TEST_CASE(test_qobject_default_ctor)
-{
-  dataflow2qt::qobject obj;
-
-  BOOST_CHECK(obj.get() == nullptr);
-
-  std::stringstream ss;
-  ss << obj;
-
-  BOOST_CHECK_EQUAL(ss.str(), "QObject (null)");
 }
 
 BOOST_AUTO_TEST_CASE(test_EngineQml_instance_throws_if_no_engine)
@@ -114,14 +81,12 @@ BOOST_AUTO_TEST_CASE(test_QmlContext_minimal)
 
   const auto context = dataflow2qt::QmlContext();
 
+  // TODO: check if the `context` is constant
   // BOOST_CHECK_EQUAL(dataflow::introspect::label(context), "const");
 
   const auto m = Main(context);
 
   BOOST_CHECK((*m).get() != nullptr);
-
-  BOOST_CHECK_EQUAL(dataflow::introspect::value(m),
-                    "QObject (dataflow::qt::internal::dynamic_qobject)");
 }
 
 BOOST_AUTO_TEST_CASE(test_QmlContext)
@@ -254,6 +219,80 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   BOOST_CHECK_EQUAL(io.log_string(),
                     "[t=0] x = false;[t=2] x = true;[t=3] x = false;");
+}
+
+BOOST_AUTO_TEST_CASE(test_qobject_default_ctor)
+{
+  const dataflow2qt::qobject obj;
+
+  BOOST_CHECK(obj.get() == nullptr);
+
+  BOOST_CHECK_EQUAL(dataflow::core::to_string(obj), "QObject (null)");
+}
+
+BOOST_AUTO_TEST_CASE(test_qobject_to_string)
+{
+  QCoreApplication app(g_argc, g_argv);
+
+  dataflow2qt::EngineQml engine(app);
+
+  const auto m = Main(dataflow2qt::QmlContext());
+
+  BOOST_CHECK_EQUAL(dataflow::introspect::value(m),
+                    "QObject (dataflow::qt::internal::dynamic_qobject)");
+}
+
+BOOST_AUTO_TEST_CASE(test_qvariant_default_ctor)
+{
+  const dataflow2qt::qvariant v;
+
+  BOOST_CHECK_EQUAL(dataflow::core::to_string(v), "qvariant ()");
+}
+
+BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_null_qobject)
+{
+  const dataflow2qt::qvariant v =
+    dataflow2qt::cast_to_qvariant(dataflow2qt::qobject{});
+
+  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(v.get()), nullptr);
+
+  BOOST_CHECK_EQUAL(dataflow::core::to_string(v), "qvariant ()");
+}
+
+BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_int)
+{
+  const dataflow2qt::qvariant v = dataflow2qt::cast_to_qvariant(13);
+
+  BOOST_CHECK_EQUAL(v.get().toInt(), 13);
+
+  BOOST_CHECK_EQUAL(dataflow::core::to_string(v), "qvariant (13)");
+}
+
+BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_qobject)
+{
+  QCoreApplication app(g_argc, g_argv);
+
+  dataflow2qt::EngineQml engine(app);
+
+  const auto m = Main(dataflow2qt::QmlContext());
+
+  const auto& obj = *m;
+
+  const dataflow2qt::qvariant& v1 = dataflow2qt::cast_to_qvariant(obj);
+
+  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(v1.get()), obj.get());
+
+  BOOST_CHECK_EQUAL(
+    dataflow::core::to_string(v1),
+    "qvariant (QObject (dataflow::qt::internal::dynamic_qobject))");
+
+  const dataflow2qt::qvariant& v2 = dataflow2qt::cast_to_qvariant(v1);
+
+  BOOST_CHECK_EQUAL(qvariant_cast<QObject*>(v2.get()), obj.get());
+
+  BOOST_CHECK_EQUAL(
+    dataflow::core::to_string(v2),
+    "qvariant (QObject (dataflow::qt::internal::dynamic_qobject))");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
