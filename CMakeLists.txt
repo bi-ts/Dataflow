@@ -114,7 +114,6 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/tuple.h
   include/dataflow/tuple.inl
   include/dataflow/utility/std_future.h
-  include/dataflow/utility/utility.h
 
   src/behavior.cpp
   src/geometry.cpp
@@ -176,26 +175,26 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets REQUIRED)
 
 add_library(dataflow-qt SHARED
-  include/dataflow/qt.h
-  include/dataflow/qt.inl
-  include/dataflow/qt/conversion.h
-  include/dataflow/qt/internal/qobject_builder.h
-  include/dataflow/qt/qhandle.h
-  include/dataflow/qt/qvariant.h
-  src/qt.cpp
-  src/qt/conversion.cpp
-  src/qt/internal/dynamic_qobject.cpp
-  src/qt/internal/dynamic_qobject.h
-  src/qt/internal/qobject_builder.cpp
-  src/qt/internal/qobject_deleter.cpp
-  src/qt/internal/qobject_deleter.h
-  src/qt/internal/qobject_factory.cpp
-  src/qt/internal/qobject_factory.h
-  src/qt/internal/qobject_tracker.cpp
-  src/qt/internal/qobject_tracker.h
-  src/qt/internal/qvariant_list_model.cpp
-  src/qt/internal/qvariant_list_model.h
-  src/qt/qvariant.cpp
+  include/dataflow-qt/qt.h
+  include/dataflow-qt/qt.inl
+  include/dataflow-qt/qt/conversion.h
+  include/dataflow-qt/qt/internal/qobject_builder.h
+  include/dataflow-qt/qt/qhandle.h
+  include/dataflow-qt/qt/qvariant.h
+  src/dataflow-qt/qt.cpp
+  src/dataflow-qt/qt/conversion.cpp
+  src/dataflow-qt/qt/internal/dynamic_qobject.cpp
+  src/dataflow-qt/qt/internal/dynamic_qobject.h
+  src/dataflow-qt/qt/internal/qobject_builder.cpp
+  src/dataflow-qt/qt/internal/qobject_deleter.cpp
+  src/dataflow-qt/qt/internal/qobject_deleter.h
+  src/dataflow-qt/qt/internal/qobject_factory.cpp
+  src/dataflow-qt/qt/internal/qobject_factory.h
+  src/dataflow-qt/qt/internal/qobject_tracker.cpp
+  src/dataflow-qt/qt/internal/qobject_tracker.h
+  src/dataflow-qt/qt/internal/qvariant_list_model.cpp
+  src/dataflow-qt/qt/internal/qvariant_list_model.h
+  src/dataflow-qt/qt/qvariant.cpp
 )
 
 set_target_properties(dataflow-qt PROPERTIES AUTOMOC ON)

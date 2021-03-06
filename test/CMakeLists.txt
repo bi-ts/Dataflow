@@ -19,6 +19,7 @@ add_library(testing_utilities STATIC
 target_compile_definitions(testing_utilities PUBLIC -DBOOST_ALL_NO_LIB)
 
 target_include_directories(testing_utilities PUBLIC "${Boost_INCLUDE_DIRS}")
+target_include_directories(testing_utilities PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
 target_link_libraries(testing_utilities PUBLIC dataflow++)
 
@@ -119,18 +120,16 @@ dataflow_add_test_project(integration
 )
 
 dataflow_add_test_project(qt
-  SOURCES test_qt.cpp
-          qt/internal/example_qobject.cpp
-          qt/internal/example_qobject.h
-          qt/internal/js_engine.cpp
-          qt/internal/js_engine.h
-          qt/internal/lambda_connector.cpp
-          qt/internal/lambda_connector.h
-          qt/internal/test_internal.cpp
-          qt/internal/test_qobject_builder.cpp
+  SOURCES dataflow-qt/test_qt.cpp
+          dataflow-qt/qt/internal/example_qobject.cpp
+          dataflow-qt/qt/internal/example_qobject.h
+          dataflow-qt/qt/internal/js_engine.cpp
+          dataflow-qt/qt/internal/js_engine.h
+          dataflow-qt/qt/internal/lambda_connector.cpp
+          dataflow-qt/qt/internal/lambda_connector.h
+          dataflow-qt/qt/internal/test_internal.cpp
+          dataflow-qt/qt/internal/test_qobject_builder.cpp
   LIBRARIES dataflow-qt
   TARGET_PROPERTIES AUTOMOC ON
 )
-
-dataflow_add_test_project(utility)
 

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -16,9 +16,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
-#include <dataflow/introspect.h>
-#include <dataflow/prelude.h>
-#include <dataflow/qt.h>
+#include <dataflow-qt/qt.h>
 #include <dataflow/tuple.h>
 
 #include <QtQml/QQmlEngine>
@@ -73,7 +71,7 @@ int main(int argc, char* p_argv[])
 {
   QApplication app(argc, p_argv);
 
-  EngineQml engine(app);
+  dataflow2qt::EngineQml engine(app);
 
   // TODO: make sure `Main()` is called only once
   const auto m = Main([&](dtime t0) {
@@ -86,14 +84,14 @@ int main(int argc, char* p_argv[])
     const auto circle_pos =
       DragNDrop(point(100, 100), circle_radius, mouse_pos, lmb_pressed, t0);
 
-    const auto context =
-      qt::QmlContext(qt::QmlPropertyRW("mousePressed", lmb_pressed),
-                     qt::QmlPropertyRW("mousePos", mouse_pos),
-                     qt::QmlPropertyRW("view", view),
-                     qt::QmlProperty("circleRadius", circle_radius),
-                     qt::QmlProperty("circlePos", circle_pos));
+    const auto context = dataflow2qt::QmlContext(
+      dataflow2qt::QmlPropertyRW("mousePressed", lmb_pressed),
+      dataflow2qt::QmlPropertyRW("mousePos", mouse_pos),
+      dataflow2qt::QmlPropertyRW("view", view),
+      dataflow2qt::QmlProperty("circleRadius", circle_radius),
+      dataflow2qt::QmlProperty("circlePos", circle_pos));
 
-    return qt::QmlComponent("qrc:/" + view, context);
+    return dataflow2qt::QmlComponent("qrc:/" + view, context);
   });
 
   return app.exec();

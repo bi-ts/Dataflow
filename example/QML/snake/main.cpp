@@ -16,10 +16,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
+#include <dataflow-qt/qt.h>
 #include <dataflow/list.h>
 #include <dataflow/macro.h>
-#include <dataflow/prelude.h>
-#include <dataflow/qt.h>
 
 #include <QtWidgets/QApplication>
 
@@ -139,7 +138,7 @@ int main(int argc, char* p_argv[])
 {
   QApplication app(argc, p_argv);
 
-  EngineQml engine(app);
+  dataflow2qt::EngineQml engine(app);
 
   const auto field_size = Vec2(21, 30);
 
@@ -160,19 +159,19 @@ int main(int argc, char* p_argv[])
                                       field_size,
                                       t0);
 
-    const auto context = qt::QmlContext(
-      qt::QmlFunction("turnNorth", turn_north),
-      qt::QmlFunction("turnEast", turn_east),
-      qt::QmlFunction("turnSouth", turn_south),
-      qt::QmlFunction("turnWest", turn_west),
-      qt::QmlFunction("togglePause", toggle_pause),
-      qt::QmlFunction("restartGame", restart_game),
-      qt::QmlProperty("fieldSize", field_size),
-      qt::QmlProperty("snakeBody", SnakeBody(game_state)),
-      qt::QmlProperty("gameOver",
-                      CurrentState(game_state) == game_state::ended));
+    const auto context = dataflow2qt::QmlContext(
+      dataflow2qt::QmlFunction("turnNorth", turn_north),
+      dataflow2qt::QmlFunction("turnEast", turn_east),
+      dataflow2qt::QmlFunction("turnSouth", turn_south),
+      dataflow2qt::QmlFunction("turnWest", turn_west),
+      dataflow2qt::QmlFunction("togglePause", toggle_pause),
+      dataflow2qt::QmlFunction("restartGame", restart_game),
+      dataflow2qt::QmlProperty("fieldSize", field_size),
+      dataflow2qt::QmlProperty("snakeBody", SnakeBody(game_state)),
+      dataflow2qt::QmlProperty("gameOver",
+                               CurrentState(game_state) == game_state::ended));
 
-    return qt::QmlComponent("qrc:/view.qml", context);
+    return dataflow2qt::QmlComponent("qrc:/view.qml", context);
   });
 
   return app.exec();
