@@ -20,7 +20,7 @@
 
 #include <QtCore/QObject>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 class example_qobject : public QObject
 {

@@ -20,7 +20,7 @@
 
 #include <utility>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 QMetaObject::Connection
 lambda_connector::connect(QObject* p_sender,

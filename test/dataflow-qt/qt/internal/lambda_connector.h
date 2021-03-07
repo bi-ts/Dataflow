@@ -22,7 +22,7 @@
 
 #include <functional>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 class lambda_connector : public QObject
 {

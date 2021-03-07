@@ -18,7 +18,7 @@
 
 #include "example_qobject.h"
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 example_qobject::example_qobject(QObject* p_qobject)
 : QObject{p_qobject}

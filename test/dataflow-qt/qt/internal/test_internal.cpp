@@ -23,7 +23,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 namespace
 {
@@ -93,4 +93,4 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_for_each_tuple_element_with_indices)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-} // dataflow_test
+} // dataflow2qt_test

@@ -20,7 +20,7 @@
 
 #include <string>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 class js_engine
 {
@@ -32,4 +32,4 @@ public:
 private:
   QJSEngine js_engine_;
 };
-} // dataflow_test
+} // dataflow2qt_test

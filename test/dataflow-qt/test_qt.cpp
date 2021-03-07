@@ -20,7 +20,6 @@
 
 #include <dataflow/prelude.h>
 
-#include "tools/graph_invariant.h"
 #include "tools/io_fixture.h"
 
 #include <dataflow/introspect.h>
@@ -30,7 +29,7 @@
 #include <chrono>
 #include <thread>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 namespace
 {
@@ -180,7 +179,7 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   dataflow2qt::EngineQml engine(app);
 
-  io_fixture io;
+  dataflow_test::io_fixture io;
 
   const int interval_msec = 1000;
 
@@ -202,7 +201,6 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
 
   BOOST_CHECK_EQUAL(dataflow::introspect::active_node(timeout), false);
 
-  BOOST_CHECK(graph_invariant_holds());
   BOOST_CHECK_EQUAL(*y, false);
 
   BOOST_CHECK_EQUAL(io.log_string(), "[t=0] x = false;");
@@ -296,4 +294,4 @@ BOOST_AUTO_TEST_CASE(test_cast_to_qvariant_qobject)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-} // dataflow_test
+} // dataflow2qt_test

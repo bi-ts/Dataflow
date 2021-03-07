@@ -31,7 +31,7 @@
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlEngine>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 bool invoke_method(QObject* p_qobject, int global_method_idx)
 {
@@ -48,12 +48,12 @@ int g_argc = static_cast<int>((sizeof(g_argv) / sizeof(g_argv[0])) - 1);
 
 BOOST_AUTO_TEST_SUITE(test_dataflow2qt_internal_qobject_builder)
 
-BOOST_AUTO_TEST_CASE(test_dataflow_test_example_qobject)
+BOOST_AUTO_TEST_CASE(test_dataflow2qt_test_example_qobject)
 {
   example_qobject obj{};
 
   BOOST_CHECK_EQUAL(obj.metaObject()->className(),
-                    "dataflow_test::example_qobject");
+                    "dataflow2qt_test::example_qobject");
 
   BOOST_CHECK_EQUAL(obj.metaObject()->propertyCount(), 3);
   BOOST_CHECK_EQUAL(obj.metaObject()->methodCount(), 8);
@@ -271,4 +271,4 @@ BOOST_AUTO_TEST_CASE(test_qt_internal_qobject_builder_add_slot)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-} // dataflow_test
+} // dataflow2qt_test

@@ -22,7 +22,7 @@
 
 #include <stdexcept>
 
-namespace dataflow_test
+namespace dataflow2qt_test
 {
 js_engine::js_engine(const std::string& object_name, QObject* p_qobject)
 : js_engine_{}
@@ -43,4 +43,4 @@ void js_engine::eval(const std::string& code)
     throw std::runtime_error(result.toString().toStdString());
   }
 }
-} // dataflow_test
+} // dataflow2qt_test
