@@ -17,7 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #if !defined(DATAFLOW_QT_H)
-#error '.inl' file can't be included directly. Use 'qt.h' instead
+#error "'.inl' file can't be included directly. Use 'qt.h' instead"
 #endif
 
 #include "qt/conversion.h"

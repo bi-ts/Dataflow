@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -17,7 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #if !defined(DATAFLOW___ARITHMETIC_H)
-#error '.inl' file can't be included directly. Use 'arithmetic.h' instead
+#error "'.inl' file can't be included directly. Use 'arithmetic.h' instead"
 #endif
 
 #include <cstdlib>

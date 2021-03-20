@@ -17,7 +17,7 @@
 //  along with Dataflow++. If not, see <http://www.gnu.org/licenses/>.
 
 #if !defined(DATAFLOW___LIST_H)
-#error '.inl' file can't be included directly. Use 'list.h' instead
+#error "'.inl' file can't be included directly. Use 'list.h' instead"
 #endif
 
 #include <dataflow/list/internal/list_diff.h>
