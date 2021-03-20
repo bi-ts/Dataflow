@@ -795,6 +795,8 @@ init_function<T> Since(const ref<bool>& ti, const F& f);
 DATAFLOW___EXPORT ref<bool> Timeout(const arg<integer>& interval_msec,
                                     dtime t0);
 
+DATAFLOW___EXPORT init_function<bool>
+Timeout(const arg<integer>& interval_msec);
 /// \}
 }
 

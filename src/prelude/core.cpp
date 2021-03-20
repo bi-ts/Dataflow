@@ -146,3 +146,9 @@ dataflow::ref<bool> dataflow::Timeout(const arg<integer>& interval_msec,
 
   return Engine::engine_()->timeout_(interval_msec, t0);
 }
+
+dataflow::init_function<bool>
+dataflow::Timeout(const arg<integer>& interval_msec)
+{
+  return [=](dtime t0) { return Timeout(interval_msec, t0); };
+}

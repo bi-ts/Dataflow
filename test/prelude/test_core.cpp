@@ -1710,6 +1710,16 @@ BOOST_AUTO_TEST_CASE(test_Timeout)
                     "[t=0] x = false;[t=1] x = true;[t=2] x = false;");
 }
 
+BOOST_AUTO_TEST_CASE(test_Timeout_init_func)
+{
+  EngineTest engine;
+
+  // Just test that the overloaded version exists
+  const auto y = Main(Timeout(1));
+
+  BOOST_CHECK_EQUAL(*y, false);
+}
+
 BOOST_AUTO_TEST_CASE(test_unit)
 {
   EngineTest engine;
