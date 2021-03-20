@@ -107,7 +107,7 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/logical.inl
   include/dataflow/prelude/stateful.h
   include/dataflow/prelude/stateful.inl
-  include/dataflow/prelude/stateful/internal/curr_prev.h
+  include/dataflow/prelude/stateful/internal/memo_value.h
   include/dataflow/prelude/stateful/internal/transition.h
   include/dataflow/string.h
   include/dataflow/string.inl

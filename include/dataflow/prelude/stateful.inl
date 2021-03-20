@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -20,7 +20,7 @@
 #error '.inl' file can't be included directly. Use 'stateful.h' instead
 #endif
 
-#include "stateful/internal/curr_prev.h"
+#include "stateful/internal/memo_value.h"
 #include "stateful/internal/transition.h"
 
 #include "conditional.h"
@@ -178,11 +178,11 @@ dataflow::On(const ArgT& x, const FArgU& y)
 template <typename ArgV0, typename ArgX, typename..., typename T>
 dataflow::ref<T> dataflow::Prev(const ArgV0& v0, const ArgX& x, dtime t0)
 {
-  using namespace stateful::internal;
+  using stateful::internal::MemoValue;
 
-  return Prev(Recursion(
-    CurrPrev(x, v0),
-    [=](const ref<curr_prev<T>>& pv) { return CurrPrev(x, Curr(pv)); },
+  return Value(Recursion(
+    MemoValue(x, v0),
+    [=](const auto& pv) { return MemoValue(x, Memo(pv)); },
     t0));
 }
 
