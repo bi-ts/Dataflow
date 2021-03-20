@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -388,6 +388,56 @@ BOOST_AUTO_TEST_CASE(test_Prev_overloads)
 
 // Backward finite difference
 
+BOOST_AUTO_TEST_CASE(test_Diff_v0)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+  var<int> v0 = Var<int>(33);
+
+  io.capture_output();
+
+  const auto z = Main([v0 = v0.as_ref(), x = x.as_ref()](dtime t0) {
+    return introspect::Log(Diff(v0, x, t0), "diff");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] diff = 33;[t=1] diff = 0;");
+
+  io.capture_output();
+
+  v0 = 55;
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] diff = 33;[t=1] diff = 0;");
+
+  io.capture_output();
+
+  x = 5; // t=3
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(
+    io.log_string(),
+    "[t=0] diff = 33;[t=1] diff = 0;[t=3] diff = 2;[t=4] diff = 0;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Diff_v0_init)
+{
+  Engine engine;
+
+  var<int> x = Var<int>(3);
+  var<int> v0 = Var<int>(33);
+
+  const auto z = Main(Diff(v0, x));
+
+  BOOST_CHECK_EQUAL(*z, 0);
+}
+
 BOOST_AUTO_TEST_CASE(test_Diff)
 {
   Engine engine;
@@ -439,6 +489,35 @@ inline std::ostream& operator<<(std::ostream& out, test_type_Diff x)
 inline int operator-(test_type_Diff x, test_type_Diff y)
 {
   return x.value - y.value;
+}
+
+BOOST_AUTO_TEST_CASE(test_Diff_v0_mixed_types)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<test_type_Diff> x = Var(test_type_Diff{2});
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Diff(int{111}, x, t0), "diff");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] diff = 111;[t=1] diff = 0;");
+
+  io.capture_output();
+
+  x = test_type_Diff{0}; // t=3
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(
+    io.log_string(),
+    "[t=0] diff = 111;[t=1] diff = 0;[t=3] diff = -2;[t=4] diff = 0;");
 }
 
 BOOST_AUTO_TEST_CASE(test_Diff_mixed_types)

@@ -194,10 +194,29 @@ dataflow::init_function<T> dataflow::Prev(const ArgV0& v0, const ArgX& x)
   };
 }
 
+template <typename ArgV0, typename ArgX, typename..., typename T>
+dataflow::ref<T> dataflow::Diff(const ArgV0& v0, const ArgX& x, dtime t0)
+{
+  using stateful::internal::MemoValue;
+
+  return Value(Recursion(
+    MemoValue(x, v0),
+    [=](const auto& pv) { return MemoValue(x, x - Memo(pv)); },
+    t0));
+}
+
+template <typename ArgV0, typename ArgX, typename..., typename T>
+dataflow::init_function<T> dataflow::Diff(const ArgV0& v0, const ArgX& x)
+{
+  return [v0 = core::make_argument(v0), x = core::make_argument(x)](dtime t0) {
+    return Diff(v0, x, t0);
+  };
+}
+
 template <typename ArgX, typename..., typename X, typename T>
 dataflow::ref<T> dataflow::Diff(const ArgX& x, dtime t0)
 {
-  return x - Prev(x, x, t0);
+  return Diff(T{}, x, t0);
 }
 
 template <typename ArgX, typename..., typename X, typename T>

@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2014 - 2020 Maksym V. Bilinets.
+//  Copyright (c) 2014 - 2021 Maksym V. Bilinets.
 //
 //  This file is part of Dataflow++.
 //
@@ -85,6 +85,22 @@ init_function<T> Prev(const ArgV0& v0, const ArgX& x);
 
 /// Backward finite difference
 /// \{
+template <typename ArgV0,
+          typename ArgX,
+          typename...,
+          typename T = core::common_argument_data_type_t<
+            ArgV0,
+            decltype(std::declval<ArgX>() - std::declval<ArgX>())>>
+ref<T> Diff(const ArgV0& v0, const ArgX& x, dtime t0);
+
+template <typename ArgV0,
+          typename ArgX,
+          typename...,
+          typename T = core::common_argument_data_type_t<
+            ArgV0,
+            decltype(std::declval<ArgX>() - std::declval<ArgX>())>>
+init_function<T> Diff(const ArgV0& v0, const ArgX& x);
+
 template <typename ArgX,
           typename...,
           typename X = core::argument_data_type_t<ArgX>,
