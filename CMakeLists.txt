@@ -9,22 +9,14 @@ include(GenerateExportHeader)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-set(CMAKE_CONFIGURATION_TYPES Debug Release)
+include(conan)
 
-find_package(Boost 1.75.0 EXACT QUIET)
-
-if(NOT Boost_FOUND)
-  include(get_boost)
-  get_boost(1.75.0 d3b276f6d22246171f93282910a1d583)
-endif()
+conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP KEEP_RPATHS CMAKE_TARGETS)
 
 if(NOT TARGET dst)
   include(get_dst)
   get_dst(0.3.0 3520f9fb5417f9eedd827eff603a4408)
 endif()
-
-include(get_google_benchmark)
-get_google_benchmark(1.5.0 1af48846917b9730bee1848f6e38f563)
 
 include(get_immer)
 get_immer(0.6.2 4e3b26e398de68ec3bc67aece43b1db3)
@@ -157,7 +149,7 @@ add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC immer
-  PRIVATE dst
+  PRIVATE dst CONAN_PKG::boost
 )
 
 generate_export_header(${PROJECT_NAME})
@@ -166,10 +158,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-)
-
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${Boost_INCLUDE_DIRS}
 )
 
 find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets REQUIRED)

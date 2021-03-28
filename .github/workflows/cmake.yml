@@ -12,6 +12,20 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install Conan package manager (Unix)
+      shell: bash
+      run: sudo pip3 install conan
+      if: runner.os != 'Windows'
+
+    - name: Install Conan package manager (Windows)
+      shell: bash
+      run: pip3 install conan
+      if: runner.os == 'Windows'
+
+    - name: Check Conan version
+      shell: bash
+      run: conan --version
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
 

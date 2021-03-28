@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.4)
 
 project(dataflow_test)
 
-find_package(Boost 1.75.0 REQUIRED EXACT QUIET)
-
 add_library(testing_utilities STATIC
   main.cpp
   tools/EngineTest.cpp
@@ -18,10 +16,9 @@ add_library(testing_utilities STATIC
 
 target_compile_definitions(testing_utilities PUBLIC -DBOOST_ALL_NO_LIB)
 
-target_include_directories(testing_utilities PUBLIC "${Boost_INCLUDE_DIRS}")
 target_include_directories(testing_utilities PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
-target_link_libraries(testing_utilities PUBLIC dataflow++)
+target_link_libraries(testing_utilities PUBLIC dataflow++ CONAN_PKG::boost)
 
 function(dataflow_add_test_project name)
   set(_options)
