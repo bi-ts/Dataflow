@@ -34,7 +34,7 @@ namespace list_internal
 template <typename T> class assignable_ref : public core::ref_base<T>
 {
 public:
-  assignable_ref(core::ref_base<T> base)
+  explicit assignable_ref(core::ref_base<T> base)
   : core::ref_base<T>(base)
   {
   }
@@ -66,14 +66,11 @@ template <typename T> integer insert_index(const list<T>& lst, integer idx)
 {
   return std17::clamp(idx, 0, static_cast<integer>(lst.size()));
 }
-}
 
-namespace list_detail
+template <typename T, typename U, typename V = core::data_type_t<T>>
+assignable_ref<V> make_list_element(std::true_type, const U& x)
 {
-template <typename T, typename U>
-T make_list_element(std::true_type, const U& x)
-{
-  return core::make_argument(x);
+  return assignable_ref<V>{core::make_argument(x)};
 }
 
 template <typename T, typename U>
@@ -97,8 +94,8 @@ bool any_changed(const Diff& diff, const Diffs&... diffs)
 template <typename T>
 template <typename U, typename... Us>
 list<T>::list(const U& x, const Us&... xs)
-: data_({list_detail::make_list_element<T>(core::is_ref<T>(), x),
-         list_detail::make_list_element<T>(core::is_ref<T>(), xs)...})
+: data_({list_internal::make_list_element<T>(core::is_ref<T>(), x),
+         list_internal::make_list_element<T>(core::is_ref<T>(), xs)...})
 {
 }
 
@@ -142,7 +139,7 @@ template <typename T> list<T> list<T>::skip(integer n) const
 
 template <typename T> T list<T>::operator[](integer idx) const
 {
-  return data_.at(static_cast<std::size_t>(idx));
+  return T{data_.at(static_cast<std::size_t>(idx))};
 }
 
 template <typename T> list<T> list<T>::operator+(list<T> other) const
@@ -317,7 +314,7 @@ ref<list<T>>::ref(core::ref_base<list<T>> base)
 
 template <typename T> ref<list<T>> ref<list<T>>::operator()(dtime t) const
 {
-  return this->snapshot_(t);
+  return ref<list<T>>{this->snapshot_(t)};
 }
 
 template <typename T>
@@ -775,7 +772,7 @@ dataflow::Map(const ArgL& x, const F& f, const Args&... args)
 
       list_patch<U> patch;
 
-      if (list_detail::any_changed(xs...))
+      if (list_internal::any_changed(xs...))
       {
         const auto& curr = diff_l.curr();
         const auto& prev = diff_l.prev();

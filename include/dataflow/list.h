@@ -168,7 +168,7 @@ using list_element_type_t = typename list_element_type<T>::type;
 template <typename T> class ref<list<T>> : public core::ref_base<list<T>>
 {
 public:
-  ref(core::ref_base<list<T>> base);
+  explicit ref(core::ref_base<list<T>> base);
 
   ref<list<T>> operator()(dtime t) const;
 

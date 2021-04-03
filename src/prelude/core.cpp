@@ -125,8 +125,8 @@ sig::sig(const internal::ref& r, internal::ref::ctor_guard_t)
 
 dataflow::ref<dataflow::dtimestamp> dataflow::CurrentTime()
 {
-  return core::ref_base<dtimestamp>(internal::nodes_factory::get_time(),
-                                    internal::ref::ctor_guard);
+  return ref<dataflow::dtimestamp>{core::ref_base<dtimestamp>(
+    internal::nodes_factory::get_time(), internal::ref::ctor_guard)};
 }
 
 dataflow::ref<dataflow::dtimestamp> dataflow::Timestamp(dtime t)

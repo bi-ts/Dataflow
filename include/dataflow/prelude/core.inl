@@ -316,9 +316,9 @@ namespace detail
 template <typename T, typename Policy, typename X, typename... Xs>
 ref<T> lift(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
-                       std::move(policy), false, x, xs...),
-                     internal::ref::ctor_guard);
+  return ref<T>{ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
+                              std::move(policy), false, x, xs...),
+                            internal::ref::ctor_guard)};
 }
 
 template <typename T, typename Policy> ref<T> lift(Policy policy)
@@ -346,9 +346,10 @@ namespace detail
 template <typename T, typename Policy, typename X, typename... Xs>
 ref<T> lift_updater(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return ref_base<T>(internal::node_updater_n_ary<Policy, T, X, Xs...>::create(
-                       std::move(policy), false, x, xs...),
-                     internal::ref::ctor_guard);
+  return ref<T>{
+    ref_base<T>(internal::node_updater_n_ary<Policy, T, X, Xs...>::create(
+                  std::move(policy), false, x, xs...),
+                internal::ref::ctor_guard)};
 }
 
 template <typename T, typename Policy> ref<T> lift_updater(Policy policy)
@@ -373,9 +374,9 @@ ref<T> core::LiftUpdater(const ref<Xs>&... xs)
 template <typename Policy, typename X, typename... Xs, typename T>
 ref<T> core::LiftPuller(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
-                       std::move(policy), true, x, xs...),
-                     internal::ref::ctor_guard);
+  return ref<T>{ref_base<T>(internal::node_n_ary<Policy, T, X, Xs...>::create(
+                              std::move(policy), true, x, xs...),
+                            internal::ref::ctor_guard)};
 }
 
 template <typename Policy, typename X, typename... Xs, typename T>
@@ -398,12 +399,12 @@ ref<T> lift_selector(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
   static_assert(is_aggregate_data_type<X>::value,
                 "An aggregate type is required for the selector");
 
-  return ref_base<T>(
-    internal::node_selector<T, X, Policy>::create(
-      internal::node_selector_activator<Policy, X, Xs...>::create(
-        policy, x, xs...),
-      false),
-    internal::ref::ctor_guard);
+  return ref<T>{
+    ref_base<T>(internal::node_selector<T, X, Policy>::create(
+                  internal::node_selector_activator<Policy, X, Xs...>::create(
+                    policy, x, xs...),
+                  false),
+                internal::ref::ctor_guard)};
 }
 
 template <
@@ -439,14 +440,14 @@ namespace detail
 template <typename T, typename Policy, typename X, typename... Xs>
 ref<T> lift_patcher(Policy policy, const ref<X>& x, const ref<Xs>&... xs)
 {
-  return ref_base<T>(
+  return ref<T>{ref_base<T>(
     internal::node_patcher_n_ary<
       T,
       Policy,
       core::patch_type_t<T>,
       core::diff_type_t<X>,
       core::diff_type_t<Xs>...>::create(std::move(policy), false, x, xs...),
-    internal::ref::ctor_guard);
+    internal::ref::ctor_guard)};
 }
 
 template <typename T, typename Policy> ref<T> lift_patcher(Policy policy)
@@ -474,8 +475,8 @@ ref<T> core::LiftPatcher(const ref<Xs>&... xs)
 template <typename T, typename FwT>
 dataflow::ref<FwT> dataflow::Const(const T& v)
 {
-  return core::ref_base<FwT>(internal::node_const<FwT>::create(v),
-                             internal::ref::ctor_guard);
+  return ref<FwT>{core::ref_base<FwT>(internal::node_const<FwT>::create(v),
+                                      internal::ref::ctor_guard)};
 }
 
 template <typename T, typename... Args, typename>
@@ -533,13 +534,13 @@ template <typename T> dataflow::val<T> dataflow::Main(ref<T> x)
 template <typename T, typename U, typename FwT, typename>
 dataflow::ref<FwT> dataflow::If(const ref<bool>& x, const T& y, const U& z)
 {
-  return core::ref_base<FwT>(
+  return ref<FwT>{core::ref_base<FwT>(
     internal::node_if<FwT>::create(
       internal::node_if_activator::create(core::make_argument(x)),
       core::make_argument(y),
       core::make_argument(z),
       false),
-    internal::ref::ctor_guard);
+    internal::ref::ctor_guard)};
 }
 
 namespace dataflow
@@ -551,8 +552,8 @@ ref<core::init_function_type_t<F>> ref_from_init_function_or_ref(const F& f)
 {
   using type = core::init_function_type_t<F>;
 
-  return core::ref_base<type>(internal::node_compound<type>::create(f),
-                              internal::ref::ctor_guard);
+  return ref<core::init_function_type_t<F>>{core::ref_base<type>(
+    internal::node_compound<type>::create(f), internal::ref::ctor_guard)};
 }
 
 template <typename ArgT>
@@ -568,12 +569,12 @@ template <typename FArgT, typename FArgU, typename T, typename, typename>
 dataflow::ref<T>
 dataflow::If(const ref<bool>& x, const FArgT& y, const FArgU& z, dtime t0)
 {
-  return core::ref_base<T>(
+  return ref<T>{core::ref_base<T>(
     internal::node_if<T>::create(internal::node_if_activator::create(x),
                                  detail::ref_from_init_function_or_ref(y),
                                  detail::ref_from_init_function_or_ref(z),
                                  true),
-    internal::ref::ctor_guard);
+    internal::ref::ctor_guard)};
 }
 
 template <typename FArgT, typename FArgU, typename T, typename, typename>
@@ -601,29 +602,30 @@ dataflow::ref<T> dataflow::Recursion(const Arg& s0, F tf, dtime t0)
 
     static ref<T> init(const init_function<T>& f)
     {
-      return core::ref_base<T>(internal::node_compound<T>::create(f),
-                               internal::ref::ctor_guard);
+      return ref<T>{core::ref_base<T>(internal::node_compound<T>::create(f),
+                                      internal::ref::ctor_guard)};
     }
   };
 
-  const ref<T> sp = core::ref_base<T>(
-    internal::node_recursion_activator<T>::create(), internal::ref::ctor_guard);
+  const ref<T> sp =
+    ref<T>{core::ref_base<T>(internal::node_recursion_activator<T>::create(),
+                             internal::ref::ctor_guard)};
 
   const auto s = helper::init(tf(sp));
 
-  return core::ref_base<T>(
+  return ref<T>{core::ref_base<T>(
     internal::node_recursion<T>::create(sp, core::make_argument(s0), s),
-    internal::ref::ctor_guard);
+    internal::ref::ctor_guard)};
 }
 
 template <typename F, typename..., typename T>
 dataflow::ref<T> dataflow::Since(const ref<bool>& ti, const F& f, dtime t0)
 {
-  return core::ref_base<T>(
+  return ref<T>{core::ref_base<T>(
     internal::node_since<T>::create(internal::node_since_activator::create(ti),
                                     detail::ref_from_init_function_or_ref(f),
                                     true),
-    internal::ref::ctor_guard);
+    internal::ref::ctor_guard)};
 }
 
 template <typename F, typename..., typename T>

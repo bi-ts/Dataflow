@@ -90,14 +90,14 @@ DATAFLOW___EXPORT std::ostream& operator<<(std::ostream& out, const unit& v);
 template <typename T> class ref : public core::ref_base<T>
 {
 public:
-  ref(core::ref_base<T> base)
+  explicit ref(core::ref_base<T> base)
   : core::ref_base<T>(base)
   {
   }
 
   ref<T> operator()(dtime t) const
   {
-    return this->snapshot_(t);
+    return ref<T>{this->snapshot_(t)};
   }
 };
 

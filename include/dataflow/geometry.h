@@ -70,7 +70,7 @@ template <typename T> using vec_data_type_t = typename vec_data_type<T>::type;
 template <typename T> class ref<vec2<T>> : public core::ref_base<vec2<T>>
 {
 public:
-  ref(core::ref_base<vec2<T>> base);
+  explicit ref(core::ref_base<vec2<T>> base);
 
   ref<vec2<T>> operator()(dtime t) const;
 

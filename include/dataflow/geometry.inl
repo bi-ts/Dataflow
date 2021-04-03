@@ -98,7 +98,7 @@ ref<vec2<T>>::ref(core::ref_base<vec2<T>> base)
 
 template <typename T> ref<vec2<T>> ref<vec2<T>>::operator()(dtime t) const
 {
-  return this->snapshot_(t);
+  return ref<vec2<T>>{this->snapshot_(t)};
 }
 
 template <typename T> ref<T> ref<vec2<T>>::x() const
