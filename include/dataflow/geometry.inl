@@ -68,7 +68,7 @@ template <typename T> vec2<T> vec2<T>::operator+(const vec2& other) const
 
 template <typename T> vec2<T> vec2<T>::operator-() const
 {
-  return {-x_, -y_};
+  return {static_cast<T>(-x_), static_cast<T>(-y_)};
 }
 
 template <typename T> const vec2<T>& vec2<T>::operator+() const

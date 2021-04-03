@@ -1,0 +1,44 @@
+name: CMake/Unix Makefiles
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+        build-type: [Release, Debug]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Conan package manager
+      shell: bash
+      run: sudo pip3 install conan
+
+    - name: Check Conan version
+      shell: bash
+      run: conan --version
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+
+    - name: Create Build Environment
+      run: mkdir ${{github.workspace}}/build-${{ matrix.build-type }}
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/build-${{ matrix.build-type }}
+      run: cmake -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} $GITHUB_WORKSPACE
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build-${{ matrix.build-type }}
+      shell: bash
+      run: cmake --build .
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build-${{ matrix.build-type }}
+      shell: bash
+      run: ctest -V
