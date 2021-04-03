@@ -15,7 +15,7 @@ conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP KEEP_RPATHS CMAKE_TARGETS)
 
 if(NOT TARGET dst)
   include(get_dst)
-  get_dst(0.3.0 3520f9fb5417f9eedd827eff603a4408)
+  get_dst(0.3.1 6e7d41e6d838c5ed0c8274e7ca3a3b28)
 endif()
 
 include(get_immer)
