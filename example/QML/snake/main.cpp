@@ -50,23 +50,13 @@ DATAFLOW_COMPOSITE(game,
                    Game,
                    (dir2, SnakeDir),
                    (list<vec2<int>>, SnakeBody),
-                   (game_state, CurrentState),
-                   (bool, Tick));
+                   (game_state, CurrentState));
 
-ref<game> InitialGame(const ref<integer>& timeout, dtime t0)
+ref<game> InitialGame()
 {
   return Game(dir2::north,
-              ListC(Vec2(15, 15),
-                    Vec2(15, 16),
-                    Vec2(15, 17),
-                    Vec2(14, 17),
-                    Vec2(13, 17),
-                    Vec2(13, 18),
-                    Vec2(13, 19),
-                    Vec2(12, 19),
-                    Vec2(11, 19)),
-              game_state::running,
-              Timeout(timeout, t0));
+              ListC(Vec2(5, 15), Vec2(5, 16), Vec2(5, 17)),
+              game_state::running);
 }
 
 ref<game> GameState(const sig& turn_east,
@@ -78,58 +68,57 @@ ref<game> GameState(const sig& turn_east,
                     const ref<vec2<int>>& field_size,
                     dtime t0)
 {
-  const auto timeout = Const(100);
-
-  return StateMachine(
-    InitialGame(timeout, t0),
+  return Recursion(
+    InitialGame(),
     [=](const ref<game>& prev_game) {
-      const auto prev_snake_body = SnakeBody(prev_game);
-      const auto prev_snake_dir = SnakeDir(prev_game);
+      return [=](dtime t0) {
+        const auto tick =
+          Since(Diff(FromMaybe(SnakeBody(prev_game)[0]), t0) != Vec2(0, 0) ||
+                  (CurrentState(prev_game) == game_state::running &&
+                   CurrentState(prev_game) !=
+                     Prev(game_state::running, CurrentState(prev_game), t0)),
+                Timeout(100),
+                t0);
 
-      const auto requested_dir = Switch(turn_north >>= dir2::north,
-                                        turn_east >>= dir2::east,
-                                        turn_south >>= dir2::south,
-                                        turn_west >>= dir2::west,
-                                        Default(prev_snake_dir));
+        const auto prev_snake_body = SnakeBody(prev_game);
+        const auto prev_snake_dir = SnakeDir(prev_game);
 
-      const auto step = Tick(prev_game) || (prev_snake_dir != -requested_dir &&
-                                            prev_snake_dir != requested_dir);
+        const auto requested_dir = Switch(turn_north >>= dir2::north,
+                                          turn_east >>= dir2::east,
+                                          turn_south >>= dir2::south,
+                                          turn_west >>= dir2::west,
+                                          Default(prev_snake_dir));
 
-      const auto snake_dir = If(step, requested_dir, prev_snake_dir);
+        const auto step = tick || (prev_snake_dir != -requested_dir &&
+                                   prev_snake_dir != requested_dir);
 
-      const auto next_head_position =
-        FromMaybe(prev_snake_body[0]) + ToVec2<int>(snake_dir);
+        const auto snake_dir = If(step, requested_dir, prev_snake_dir);
 
-      const auto next_head_position_is_bad =
-        next_head_position.x() < 0 || next_head_position.y() < 0 ||
-        next_head_position.x() >= field_size.x() ||
-        next_head_position.y() >= field_size.y();
+        const auto next_head_position =
+          FromMaybe(prev_snake_body[0]) + ToVec2<int>(snake_dir);
 
-      return Transitions(
-        On(restart_game, [=](dtime t0) { return InitialGame(timeout, t0); }),
-        On(CurrentState(prev_game) == game_state::running && step &&
-             next_head_position_is_bad,
-           Game(snake_dir, prev_snake_body, game_state::ended, false)),
-        On(CurrentState(prev_game) == game_state::running && toggle_pause,
-           Game(prev_snake_dir, prev_snake_body, game_state::paused, false)),
-        On(CurrentState(prev_game) == game_state::paused && toggle_pause,
-           [=](dtime t0) {
-             return Game(prev_snake_dir,
-                         prev_snake_body,
-                         game_state::running,
-                         Timeout(timeout, t0));
-           }),
-        On(CurrentState(prev_game) == game_state::running && step,
-           [=](dtime t0) {
-             const auto snake_body =
-               prev_snake_body.erase(prev_snake_body.length() - 1)
-                 .prepend(next_head_position);
+        const auto next_head_position_is_bad =
+          next_head_position.x() < 0 || next_head_position.y() < 0 ||
+          next_head_position.x() >= field_size.x() ||
+          next_head_position.y() >= field_size.y();
 
-             return Game(snake_dir,
-                         snake_body(t0),
-                         game_state::running,
-                         Timeout(timeout, t0));
-           }));
+        const auto snake_body =
+          prev_snake_body.erase(prev_snake_body.length() - 1)
+            .prepend(next_head_position);
+
+        return Switch(
+          Case(restart_game, InitialGame()),
+          Case(CurrentState(prev_game) == game_state::running && toggle_pause,
+               Game(prev_snake_dir, prev_snake_body, game_state::paused)),
+          Case(CurrentState(prev_game) == game_state::paused && toggle_pause,
+               Game(prev_snake_dir, prev_snake_body, game_state::running)),
+          Case(CurrentState(prev_game) == game_state::running && step &&
+                 next_head_position_is_bad,
+               Game(snake_dir, prev_snake_body, game_state::ended)),
+          Case(CurrentState(prev_game) == game_state::running && step,
+               Game(snake_dir, snake_body, game_state::running)),
+          Default(prev_game));
+      };
     },
     t0);
 }
@@ -140,7 +129,7 @@ int main(int argc, char* p_argv[])
 
   dataflow2qt::EngineQml engine(app);
 
-  const auto field_size = Vec2(21, 30);
+  const auto field_size = Vec2(10, 20);
 
   const auto m = Main([=](dtime t0) {
     auto turn_east = Signal();
