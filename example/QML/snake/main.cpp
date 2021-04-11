@@ -73,10 +73,8 @@ ref<game> GameState(const sig& turn_east,
     [=](const ref<game>& prev_game) {
       return [=](dtime t0) {
         const auto tick =
-          Since(Diff(FromMaybe(SnakeBody(prev_game)[0]), t0) != Vec2(0, 0) ||
-                  (CurrentState(prev_game) == game_state::running &&
-                   CurrentState(prev_game) !=
-                     Prev(game_state::running, CurrentState(prev_game), t0)),
+          Since(Changed(SnakeBody(prev_game)[0], t0) ||
+                  Equalized(CurrentState(prev_game), game_state::running, t0),
                 Timeout(100),
                 t0);
 
