@@ -224,3 +224,76 @@ dataflow::init_function<T> dataflow::Diff(const ArgX& x)
 {
   return [x = core::make_argument(x)](dtime t0) { return Diff(x, t0); };
 }
+
+template <typename ArgV0, typename ArgX, typename..., typename, typename>
+dataflow::ref<bool> dataflow::Changed(const ArgV0& v0, const ArgX& x, dtime t0)
+{
+  using stateful::internal::MemoValue;
+
+  return Value(Recursion(
+    MemoValue(x, v0),
+    [=](const auto& pv) { return MemoValue(x, x != Memo(pv)); },
+    t0));
+}
+
+template <typename ArgV0, typename ArgX, typename..., typename, typename>
+dataflow::init_function<bool> dataflow::Changed(const ArgV0& v0, const ArgX& x)
+{
+  return [v0 = core::make_argument(v0), x = core::make_argument(x)](dtime t0) {
+    return Changed(v0, x, t0);
+  };
+}
+
+template <typename ArgX, typename..., typename X>
+dataflow::ref<bool> dataflow::Changed(const ArgX& x, dtime t0)
+{
+  return x != Prev(x, x, t0);
+}
+
+template <typename ArgX, typename..., typename X>
+dataflow::init_function<bool> dataflow::Changed(const ArgX& x)
+{
+  return [x = core::make_argument(x)](dtime t0) { return Changed(x, t0); };
+}
+
+template <typename ArgEqP,
+          typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename>
+dataflow::ref<bool>
+dataflow::Equalized(const ArgEqP& eqp, const ArgX& x, const ArgY& y, dtime t0)
+{
+  const auto eq = x == y;
+  return !Prev(eqp, eq, t0) && eq;
+}
+
+template <typename ArgEqP,
+          typename ArgX,
+          typename ArgY,
+          typename...,
+          typename,
+          typename>
+dataflow::init_function<bool>
+dataflow::Equalized(const ArgEqP& eqp, const ArgX& x, const ArgY& y)
+{
+  return
+    [eqp = core::make_argument(eqp),
+     x = core::make_argument(x),
+     y = core::make_argument(y)](dtime t0) { return Equalized(eqp, x, y, t0); };
+}
+
+template <typename ArgX, typename ArgY, typename..., typename>
+dataflow::ref<bool> dataflow::Equalized(const ArgX& x, const ArgY& y, dtime t0)
+{
+  return Equalized(false, x, y, t0);
+}
+
+template <typename ArgX, typename ArgY, typename..., typename>
+dataflow::init_function<bool> dataflow::Equalized(const ArgX& x, const ArgY& y)
+{
+  return [x = core::make_argument(x), y = core::make_argument(y)](dtime t0) {
+    return Equalized(x, y, t0);
+  };
+}

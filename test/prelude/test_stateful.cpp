@@ -548,6 +548,247 @@ BOOST_AUTO_TEST_CASE(test_Diff_mixed_types)
                     "[t=0] diff = 0;[t=2] diff = -2;[t=3] diff = 0;");
 }
 
+BOOST_AUTO_TEST_CASE(test_Changed_v0)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+  var<bool> v0 = Var<bool>(true);
+
+  io.capture_output();
+
+  const auto z = Main([v0 = v0.as_ref(), x = x.as_ref()](dtime t0) {
+    return introspect::Log(Changed(v0, x, t0), "changed");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] changed = true;[t=1] changed = false;");
+
+  io.capture_output();
+
+  v0 = false;
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] changed = true;[t=1] changed = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 2);
+
+  io.capture_output();
+
+  x = 5; // t=3
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] changed = true;[t=1] changed = false;"
+                    "[t=3] changed = true;[t=4] changed = false;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Changed_v0_init)
+{
+  Engine engine;
+
+  var<int> x = Var<int>(3);
+  var<bool> v0 = Var<bool>(true);
+
+  const auto z = Main(Changed(v0, x));
+
+  BOOST_CHECK_EQUAL(*z, false);
+}
+
+BOOST_AUTO_TEST_CASE(test_Changed)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Changed(x, t0), "changed");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] changed = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 1);
+
+  io.capture_output();
+
+  x = 5; // t=2
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] changed = false;"
+                    "[t=2] changed = true;[t=3] changed = false;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Changed_bool)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<bool> x = Var<bool>(true);
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref()](dtime t0) {
+    return introspect::Log(Changed(x, t0), "changed");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] changed = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 1);
+
+  io.capture_output();
+
+  x = false; // t=2
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] changed = false;"
+                    "[t=2] changed = true;[t=3] changed = false;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Changed_init)
+{
+  Engine engine;
+
+  var<int> x = Var<int>(3);
+
+  const auto z = Main(Changed(x));
+
+  BOOST_CHECK_EQUAL(*z, false);
+}
+
+BOOST_AUTO_TEST_CASE(test_Equalized_eqp)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+  var<int> y = Var<int>(3);
+  var<bool> eqp = Var<bool>(true);
+
+  io.capture_output();
+
+  const auto z =
+    Main([eqp = eqp.as_ref(), x = x.as_ref(), y = y.as_ref()](dtime t0) {
+      return introspect::Log(Equalized(eqp, x, y, t0), "equalized");
+    });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] equalized = false;");
+
+  io.capture_output();
+
+  eqp = false;
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] equalized = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 1);
+
+  io.capture_output();
+
+  x = 5; // t=2
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(), "[t=0] equalized = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 4);
+
+  io.capture_output();
+
+  y = 5; // t=5
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(
+    io.log_string(),
+    "[t=0] equalized = false;[t=5] equalized = true;[t=6] equalized = false;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Equalized_eqp_init)
+{
+  Engine engine;
+
+  var<int> x = Var<int>(3);
+  var<int> y = Var<int>(3);
+  var<bool> v0 = Var<bool>(true);
+
+  const auto z = Main(Equalized(v0, x, x));
+
+  BOOST_CHECK_EQUAL(*z, false);
+}
+
+BOOST_AUTO_TEST_CASE(test_Equalized)
+{
+  Engine engine;
+
+  io_fixture io;
+
+  var<int> x = Var<int>(3);
+  var<int> y = Var<int>(3);
+
+  io.capture_output();
+
+  const auto z = Main([x = x.as_ref(), y = y.as_ref()](dtime t0) {
+    return introspect::Log(Equalized(x, y, t0), "equalized");
+  });
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] equalized = true;[t=1] equalized = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 2);
+
+  io.capture_output();
+
+  x = 5; // t=3
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] equalized = true;[t=1] equalized = false;");
+  BOOST_CHECK_EQUAL(introspect::current_time(), 5);
+
+  io.capture_output();
+
+  y = 5; // t=6
+
+  io.reset_output();
+
+  BOOST_CHECK_EQUAL(io.log_string(),
+                    "[t=0] equalized = true;[t=1] equalized = false;"
+                    "[t=6] equalized = true;[t=7] equalized = false;");
+}
+
+BOOST_AUTO_TEST_CASE(test_Equalized_init)
+{
+  Engine engine;
+
+  var<int> x = Var<int>(3);
+  var<int> y = Var<int>(3);
+
+  const auto z = Main(Equalized(x, x));
+
+  BOOST_CHECK_EQUAL(*z, false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } // dataflow_test

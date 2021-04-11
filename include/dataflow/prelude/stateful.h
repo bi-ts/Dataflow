@@ -114,7 +114,60 @@ template <typename ArgX,
           typename T = core::convert_to_flowable_t<decltype(std::declval<X>() -
                                                             std::declval<X>())>>
 init_function<T> Diff(const ArgX& x);
+
 /// \}
+
+template <typename ArgV0,
+          typename ArgX,
+          typename...,
+          typename = core::enable_for_argument_data_type_t<ArgV0, bool>,
+          typename = core::argument_data_type_t<ArgX>>
+ref<bool> Changed(const ArgV0& v0, const ArgX& x, dtime t0);
+
+template <typename ArgV0,
+          typename ArgX,
+          typename...,
+          typename = core::enable_for_argument_data_type_t<ArgV0, bool>,
+          typename = core::argument_data_type_t<ArgX>>
+init_function<bool> Changed(const ArgV0& v0, const ArgX& x);
+
+template <typename ArgX,
+          typename...,
+          typename X = core::argument_data_type_t<ArgX>>
+ref<bool> Changed(const ArgX& x, dtime t0);
+
+template <typename ArgX,
+          typename...,
+          typename X = core::argument_data_type_t<ArgX>>
+init_function<bool> Changed(const ArgX& x);
+
+template <typename ArgEqP,
+          typename ArgX,
+          typename ArgY,
+          typename...,
+          typename = core::enable_for_argument_data_type_t<ArgEqP, bool>,
+          typename = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<bool> Equalized(const ArgEqP& eqp, const ArgX& x, const ArgY& y, dtime t0);
+
+template <typename ArgEqP,
+          typename ArgX,
+          typename ArgY,
+          typename...,
+          typename = core::enable_for_argument_data_type_t<ArgEqP, bool>,
+          typename = core::common_argument_data_type_t<ArgX, ArgY>>
+init_function<bool> Equalized(const ArgEqP& eqp, const ArgX& x, const ArgY& y);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename = core::common_argument_data_type_t<ArgX, ArgY>>
+ref<bool> Equalized(const ArgX& x, const ArgY& y, dtime t0);
+
+template <typename ArgX,
+          typename ArgY,
+          typename...,
+          typename = core::common_argument_data_type_t<ArgX, ArgY>>
+init_function<bool> Equalized(const ArgX& x, const ArgY& y);
 
 /// \}
 } // dataflow
