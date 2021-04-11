@@ -52,15 +52,18 @@ namespace core
 {
 template <typename T>
 struct is_flowable
-: std17::conjunction<std::is_default_constructible<T>,
-                     std::is_copy_constructible<T>,
-                     std::is_copy_assignable<T>,
-                     internal::is_streamable<T>,
-                     internal::is_equality_comparable<T>,
-                     std17::negation<internal::is_callable<T>>,
-                     std17::negation<std::is_base_of<internal::ref, T>>,
-                     std17::negation<std::is_pointer<T>>,
-                     std17::negation<std::is_reference<T>>>
+: std17::conjunction<
+    std17::negation<
+      std::is_same<std20::remove_cvref_t<T>, std20::remove_cvref_t<dtime>>>,
+    std::is_default_constructible<T>,
+    std::is_copy_constructible<T>,
+    std::is_copy_assignable<T>,
+    internal::is_streamable<T>,
+    internal::is_equality_comparable<T>,
+    std17::negation<internal::is_callable<T>>,
+    std17::negation<std::is_base_of<internal::ref, T>>,
+    std17::negation<std::is_pointer<T>>,
+    std17::negation<std::is_reference<T>>>
 {
 };
 

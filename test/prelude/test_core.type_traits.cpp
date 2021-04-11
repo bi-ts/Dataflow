@@ -243,6 +243,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_is_flowable_false, T, not_flowable_types)
   BOOST_CHECK_EQUAL(core::is_flowable<T>::value, false);
 }
 
+BOOST_AUTO_TEST_CASE(test_is_flowable_dtime)
+{
+  BOOST_CHECK_EQUAL(core::is_flowable<std20::remove_cvref_t<dtime>>::value,
+                    false);
+}
+
 BOOST_AUTO_TEST_CASE(test_is_flowable)
 {
   BOOST_CHECK_EQUAL(core::is_flowable<int>::value, true);
