@@ -560,7 +560,7 @@ dataflow::Insert(const ArgL& l, const ArgI& idx, const ArgX& x)
           patch.erase(adj_idx);
         });
 
-      if (shifted_ins_idx != diff_idx.curr())
+      if (shifted_ins_idx != diff_idx.curr() || diff_x.curr() != diff_x.prev())
       {
         patch.erase(shifted_ins_idx);
         patch.insert(diff_idx.curr(), diff_x.curr());

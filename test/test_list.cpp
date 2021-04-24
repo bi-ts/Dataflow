@@ -1069,6 +1069,26 @@ BOOST_AUTO_TEST_CASE(test_ListC_Map_int_to_string)
   BOOST_CHECK_EQUAL(core::to_string(*f), "list(#1 #2 #3)");
 }
 
+BOOST_AUTO_TEST_CASE(test_regression_ListC_Insert_Map)
+{
+  Engine engine;
+
+  const auto idx = Var(1);
+  const auto a = Var(100);
+  const auto xs = ListC(1, 2, 3);
+  const auto ys = Insert(xs, idx, a);
+
+  const auto zs = Map(ys, [&](int x) { return x; });
+
+  const auto f = Main(zs);
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 100 2 3)");
+
+  a = 150;
+
+  BOOST_CHECK_EQUAL(core::to_string(*f), "list(1 150 2 3)");
+}
+
 BOOST_AUTO_TEST_CASE(test_listC_Var_ToString)
 {
   Engine engine;
