@@ -80,7 +80,7 @@ arg<T>::arg(const ref<T>& x)
 template <typename T>
 template <typename U, typename..., typename>
 arg<T>::arg(U&& value)
-: arg(Const(value))
+: arg(Const<T>(std::forward<U>(value)))
 {
 }
 

@@ -353,6 +353,30 @@ BOOST_AUTO_TEST_CASE(test_Const_via_arg_ctor)
   BOOST_CHECK_EQUAL(*y, "some text");
 }
 
+BOOST_AUTO_TEST_CASE(test_regression_arg_ctor_mixed_types)
+{
+  EngineTest engine;
+
+  const arg<std::uint16_t> x{44};
+
+  const auto y = Main(x);
+
+  BOOST_CHECK_EQUAL(*y, 44);
+}
+
+BOOST_AUTO_TEST_CASE(test_regression_arg_ctor_forward_arg)
+{
+  EngineTest engine;
+
+  std::unique_ptr<int> p_int{new int{275}};
+
+  const arg<std::shared_ptr<int>> x{std::move(p_int)};
+
+  const auto y = Main(x);
+
+  BOOST_CHECK_EQUAL(**y, 275);
+}
+
 BOOST_AUTO_TEST_CASE(test_Signal)
 {
   EngineTest engine;
