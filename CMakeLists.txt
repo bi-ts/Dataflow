@@ -101,6 +101,8 @@ add_library(${PROJECT_NAME} SHARED
   include/dataflow/prelude/stateful.inl
   include/dataflow/prelude/stateful/internal/memo_value.h
   include/dataflow/prelude/stateful/internal/transition.h
+  include/dataflow/random.h
+  include/dataflow/random.inl
   include/dataflow/string.h
   include/dataflow/string.inl
   include/dataflow/tuple.h
@@ -143,6 +145,7 @@ add_library(${PROJECT_NAME} SHARED
   src/prelude/core/internal/vd_handle.inl
   src/prelude/logical.cpp
   src/prelude/stateful/internal/transition.cpp
+  src/random.cpp
   src/string.cpp
 
 )

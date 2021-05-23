@@ -100,6 +100,7 @@ dataflow_add_test_project(macro-boost
 
 dataflow_add_test_project(maybe)
 dataflow_add_test_project(pair)
+dataflow_add_test_project(random)
 dataflow_add_test_project(string)
 dataflow_add_test_project(tuple)
 
