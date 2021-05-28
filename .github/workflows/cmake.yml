@@ -14,12 +14,12 @@ jobs:
 
     - name: Install Conan package manager (Unix)
       shell: bash
-      run: sudo pip3 install conan
+      run: sudo pip3 install conan==1.34.1
       if: runner.os != 'Windows'
 
     - name: Install Conan package manager (Windows)
       shell: bash
-      run: pip3 install conan
+      run: pip3 install conan==1.34.1
       if: runner.os == 'Windows'
 
     - name: Check Conan version
