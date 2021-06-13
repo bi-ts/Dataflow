@@ -22,4 +22,17 @@
 
 namespace dataflow
 {
+template <typename T,
+          typename...,
+          typename ArgA,
+          typename ArgB,
+          typename ArgV,
+          typename,
+          typename,
+          typename,
+          typename>
+ref<T> random::FromRandomNumber(const ArgA& a, const ArgB& b, const ArgV& v)
+{
+  return Cast<T>(If(a <= b, a, b) + v % (1 + Abs(b - a)));
+}
 } // namespace dataflow

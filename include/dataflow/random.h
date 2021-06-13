@@ -26,6 +26,7 @@
 #include "prelude.h"
 
 #include <cstdint>
+#include <type_traits>
 
 namespace dataflow
 {
@@ -46,6 +47,19 @@ GenerateLCG(const arg<random_number>& seed);
 
 DATAFLOW___EXPORT ref<random_number> GenerateLCG();
 /// \}
+
+/// Converts the number `v` to a number of integral type `T` in the given
+/// interval [a, b].
+template <typename T,
+          typename...,
+          typename ArgA,
+          typename ArgB,
+          typename ArgV,
+          typename = typename std::enable_if<std::is_integral<T>::value>::type,
+          typename = core::enable_for_argument_data_type_t<ArgA, T>,
+          typename = core::enable_for_argument_data_type_t<ArgB, T>,
+          typename = core::enable_for_argument_data_type_t<ArgV, random_number>>
+ref<T> FromRandomNumber(const ArgA& a, const ArgB& b, const ArgV& v);
 
 }
 }

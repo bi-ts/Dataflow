@@ -83,5 +83,33 @@ BOOST_AUTO_TEST_CASE(test_random_GenerateLCG_seed_default)
   BOOST_CHECK_EQUAL(*m, 1291394886);
 }
 
+BOOST_AUTO_TEST_CASE(test_random_FromRandomNumber)
+{
+  Engine engine;
+
+  const auto rv = random::GenerateLCG();
+  const auto a = Var<std::int16_t>(-4);
+  const auto b = Var<std::int16_t>(2);
+  const auto m = Main(random::FromRandomNumber<std::int16_t>(a, b, rv));
+
+  BOOST_CHECK_EQUAL(*m, 1);
+
+  a = -2;
+
+  BOOST_CHECK_EQUAL(*m, -1);
+
+  b = 12;
+
+  BOOST_CHECK_EQUAL(*m, 4);
+
+  b = -18;
+
+  BOOST_CHECK_EQUAL(*m, -17);
+
+  a = -18;
+
+  BOOST_CHECK_EQUAL(*m, -18);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }
