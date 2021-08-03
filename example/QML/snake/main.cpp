@@ -19,6 +19,7 @@
 #include <dataflow-qt/qt.h>
 #include <dataflow/list.h>
 #include <dataflow/macro.h>
+#include <dataflow/random.h>
 
 #include <QtWidgets/QApplication>
 
@@ -50,12 +51,21 @@ DATAFLOW_COMPOSITE(game,
                    Game,
                    (dir2, SnakeDir),
                    (list<vec2<int>>, SnakeBody),
+                   (vec2<int>, FoodPos),
+                   (random::random_number, RandomSeed),
                    (game_state, CurrentState));
 
-ref<game> InitialGame()
+ref<game> InitialGame(const ref<vec2<int>>& field_size,
+                      const ref<random::random_number>& seed)
 {
+  const auto rv1 = random::GenerateLCG(seed);
+  const auto rv2 = random::GenerateLCG(rv1);
+
   return Game(dir2::north,
               ListC(Vec2(5, 15), Vec2(5, 16), Vec2(5, 17)),
+              Vec2(random::FromRandomNumber<int>(0, field_size.x() - 1, rv1),
+                   random::FromRandomNumber<int>(0, field_size.y() - 1, rv2)),
+              rv2,
               game_state::running);
 }
 
@@ -69,7 +79,7 @@ ref<game> GameState(const sig& turn_east,
                     dtime t0)
 {
   return Recursion(
-    InitialGame(),
+    InitialGame(field_size, random::DefaultSeed()),
     [=](const ref<game>& prev_game) {
       return [=](dtime t0) {
         const auto tick =
@@ -78,8 +88,10 @@ ref<game> GameState(const sig& turn_east,
                 Timeout(100),
                 t0);
 
-        const auto prev_snake_body = SnakeBody(prev_game);
         const auto prev_snake_dir = SnakeDir(prev_game);
+        const auto prev_snake_body = SnakeBody(prev_game);
+        const auto prev_food_pos = FoodPos(prev_game);
+        const auto prev_random_seed = RandomSeed(prev_game);
 
         const auto requested_dir = Switch(turn_north >>= dir2::north,
                                           turn_east >>= dir2::east,
@@ -100,21 +112,51 @@ ref<game> GameState(const sig& turn_east,
           next_head_position.x() >= field_size.x() ||
           next_head_position.y() >= field_size.y();
 
+        const auto food_eaten = next_head_position == prev_food_pos;
+
         const auto snake_body =
-          prev_snake_body.erase(prev_snake_body.length() - 1)
-            .prepend(next_head_position);
+          If(food_eaten,
+             prev_snake_body.prepend(next_head_position),
+             prev_snake_body.erase(prev_snake_body.length() - 1)
+               .prepend(next_head_position));
+
+        const auto rv1 = random::GenerateLCG(prev_random_seed);
+        const auto rv2 = random::GenerateLCG(rv1);
+
+        const auto food_pos =
+          Vec2(random::FromRandomNumber<int>(0, field_size.x() - 1, rv1),
+               random::FromRandomNumber<int>(0, field_size.y() - 1, rv2));
+
+        const auto next_food_pos = If(food_eaten, food_pos, prev_food_pos);
+        const auto next_random_seed = If(food_eaten, rv2, prev_random_seed);
 
         return Switch(
-          Case(restart_game, InitialGame()),
+          Case(restart_game, InitialGame(field_size, next_random_seed)),
           Case(CurrentState(prev_game) == game_state::running && toggle_pause,
-               Game(prev_snake_dir, prev_snake_body, game_state::paused)),
+               Game(prev_snake_dir,
+                    prev_snake_body,
+                    next_food_pos,
+                    next_random_seed,
+                    game_state::paused)),
           Case(CurrentState(prev_game) == game_state::paused && toggle_pause,
-               Game(prev_snake_dir, prev_snake_body, game_state::running)),
+               Game(prev_snake_dir,
+                    prev_snake_body,
+                    next_food_pos,
+                    next_random_seed,
+                    game_state::running)),
           Case(CurrentState(prev_game) == game_state::running && step &&
                  next_head_position_is_bad,
-               Game(snake_dir, prev_snake_body, game_state::ended)),
+               Game(snake_dir,
+                    prev_snake_body,
+                    next_food_pos,
+                    next_random_seed,
+                    game_state::ended)),
           Case(CurrentState(prev_game) == game_state::running && step,
-               Game(snake_dir, snake_body, game_state::running)),
+               Game(snake_dir,
+                    snake_body,
+                    next_food_pos,
+                    next_random_seed,
+                    game_state::running)),
           Default(prev_game));
       };
     },
@@ -154,7 +196,8 @@ int main(int argc, char* p_argv[])
       dataflow2qt::QmlFunction("togglePause", toggle_pause),
       dataflow2qt::QmlFunction("restartGame", restart_game),
       dataflow2qt::QmlProperty("fieldSize", field_size),
-      dataflow2qt::QmlProperty("snakeBody", SnakeBody(game_state)),
+      dataflow2qt::QmlProperty(
+        "snakeBody", SnakeBody(game_state).append(FoodPos(game_state))),
       dataflow2qt::QmlProperty("gameOver",
                                CurrentState(game_state) == game_state::ended));
 
