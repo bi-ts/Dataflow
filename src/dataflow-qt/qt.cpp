@@ -94,12 +94,9 @@ EngineQml::timeout_(const dataflow::ref<dataflow::integer>& interval_msec,
 }
 }
 
-dataflow::ref<dataflow2qt::qobject>
-dataflow2qt::QmlComponent(const dataflow::arg<std::string>& qml_url,
-                          const dataflow::arg<qobject>& context)
+dataflow::ref<dataflow2qt::qml_component>
+dataflow2qt::QmlComponent(const dataflow::arg<std::string>& qml_url)
 {
-  using component_data = dataflow::tupleC<qhandle<QQmlContext>, qobject>;
-
   class policy
   {
   public:
@@ -108,32 +105,70 @@ dataflow2qt::QmlComponent(const dataflow::arg<std::string>& qml_url,
       return "qml-component";
     }
 
-    component_data calculate(const std::string& qml_url, const qobject& context)
+    qml_component calculate(const std::string& qml_url)
     {
-      QQmlComponent qml_component_factory{
+      const auto component = internal::qobject_factory::create<QQmlComponent>(
         &EngineQml::instance().GetQmlEngine(),
-        QUrl(QString::fromUtf8(qml_url.c_str()))};
+        QUrl(QString::fromUtf8(qml_url.c_str())));
 
-      if (qml_component_factory.isError())
+      if (component.get()->isError())
       {
-        throw std::runtime_error(
-          "Can't create qml component: " +
-          qml_component_factory.errorString().toStdString());
+        // TODO: create a component with the error message instead.
+        throw std::runtime_error("Can't create qml component: " +
+                                 component.get()->errorString().toStdString());
       }
 
+      return component;
+    };
+  };
+
+  return dataflow::core::Lift<policy>(qml_url);
+}
+
+dataflow::ref<dataflow2qt::qobject> dataflow2qt::QmlComponentInstance(
+  const dataflow::arg<qml_component>& component,
+  const dataflow::arg<qobject>& context,
+  const dataflow::arg<std::string>& context_property_name)
+{
+  using component_data = dataflow::tupleC<qhandle<QQmlContext>, qobject>;
+
+  class policy
+  {
+  public:
+    std::string label() const
+    {
+      return "qml-component-instance";
+    }
+
+    component_data calculate(const qml_component& component,
+                             const qobject& context,
+                             const std::string& context_property_name)
+    {
       const auto qml_context = internal::qobject_factory::create<QQmlContext>(
         EngineQml::instance().GetQmlEngine().rootContext());
 
-      qml_context.get()->setContextProperty("view_context", context.get());
+      qml_context.get()->setContextProperty(
+        QString::fromUtf8(context_property_name.c_str()), context.get());
 
       const auto qml_component = internal::qobject_factory::make_shared(
-        qml_component_factory.create(qml_context.get()));
+        component.get()->create(qml_context.get()));
 
       return component_data{qml_context, qml_component};
     };
   };
 
-  return Second(dataflow::core::Lift<policy>(qml_url, context));
+  return Second(
+    dataflow::core::Lift<policy>(component, context, context_property_name));
+}
+
+DATAFLOW_QT_EXPORT dataflow::ref<dataflow2qt::qobject>
+dataflow2qt::QmlComponentInstance(
+  const dataflow::arg<std::string>& qml_url,
+  const dataflow::arg<qobject>& context,
+  const dataflow::arg<std::string>& context_property_name)
+{
+  return QmlComponentInstance(
+    QmlComponent(qml_url), context, context_property_name);
 }
 
 namespace dataflow2qt

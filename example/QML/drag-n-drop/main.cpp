@@ -91,7 +91,8 @@ int main(int argc, char* p_argv[])
       dataflow2qt::QmlProperty("circleRadius", circle_radius),
       dataflow2qt::QmlProperty("circlePos", circle_pos));
 
-    return dataflow2qt::QmlComponent("qrc:/" + view, context);
+    return dataflow2qt::QmlComponentInstance(
+      "qrc:/" + view, context, "view_context");
   });
 
   return app.exec();

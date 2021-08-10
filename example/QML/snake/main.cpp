@@ -135,8 +135,8 @@ ref<game> GameState(const sig& turn_east,
           Case(CurrentState(prev_game) == game_state::running && toggle_pause,
                Game(prev_snake_dir,
                     prev_snake_body,
-                    next_food_pos,
-                    next_random_seed,
+                    prev_food_pos,
+                    prev_random_seed,
                     game_state::paused)),
           Case(CurrentState(prev_game) == game_state::paused && toggle_pause,
                Game(prev_snake_dir,
@@ -201,7 +201,8 @@ int main(int argc, char* p_argv[])
       dataflow2qt::QmlProperty("gameOver",
                                CurrentState(game_state) == game_state::ended));
 
-    return dataflow2qt::QmlComponent("qrc:/view.qml", context);
+    return dataflow2qt::QmlComponentInstance(
+      "qrc:/view.qml", context, "view_context");
   });
 
   return app.exec();

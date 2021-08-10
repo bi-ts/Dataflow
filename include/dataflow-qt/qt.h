@@ -30,6 +30,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QObject>
+#include <QtQml/QQmlComponent>
 #include <QtQml/QQmlEngine>
 
 #include <functional>
@@ -90,9 +91,20 @@ QmlProperty(const std::string& name,
 template <typename... Refs>
 dataflow::ref<qobject> QmlContext(const std::pair<std::string, Refs>&... props);
 
+using qml_component = qhandle<QQmlComponent>;
+
+DATAFLOW_QT_EXPORT dataflow::ref<qml_component>
+QmlComponent(const dataflow::arg<std::string>& qml_url);
+
 DATAFLOW_QT_EXPORT dataflow::ref<qobject>
-QmlComponent(const dataflow::arg<std::string>& qml_url,
-             const dataflow::arg<qobject>& context);
+QmlComponentInstance(const dataflow::arg<qml_component>& component,
+                     const dataflow::arg<qobject>& context,
+                     const dataflow::arg<std::string>& context_property_name);
+
+DATAFLOW_QT_EXPORT dataflow::ref<qobject>
+QmlComponentInstance(const dataflow::arg<std::string>& qml_url,
+                     const dataflow::arg<qobject>& context,
+                     const dataflow::arg<std::string>& context_property_name);
 /// \}
 } // dataflow2qt
 
